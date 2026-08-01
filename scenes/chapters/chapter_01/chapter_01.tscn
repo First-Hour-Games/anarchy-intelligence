@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://cns2rdsfcp16v"]
+
+[ext_resource type="Script" path="res://scenes/chapters/chapter_01/chapter_01.gd" id="1_chapter01_script"]
+[ext_resource type="AudioStream" uid="uid://btap2o1spd6nd" path="res://sounds/ambience/snowstorm.mp3" id="2_snowstorm_ambience"]
+[ext_resource type="Shader" path="res://shaders/snow_ground.gdshader" id="3_snow_shader"]
+[ext_resource type="Texture2D" uid="uid://bcepqn3yfbt11" path="res://img/materials/snow/Snow009A_1K-JPG_Color.jpg" id="4_snow_albedo"]
+[ext_resource type="Texture2D" uid="uid://pnmbl0dx1u0s" path="res://img/materials/snow/Snow009A_1K-JPG_NormalGL.jpg" id="5_snow_normal"]
+[ext_resource type="Texture2D" uid="uid://xtgcdhqumvoq" path="res://img/materials/snow/Snow009A_1K-JPG_Roughness.jpg" id="6_snow_roughness"]
+[ext_resource type="Texture2D" uid="uid://ck5yj64evw8bq" path="res://img/materials/snow/Snow009A_1K-JPG_AmbientOcclusion.jpg" id="7_snow_ao"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_winter_morning"]
+sky_top_color = Color(0.32, 0.44, 0.58, 1)
+sky_horizon_color = Color(0.72, 0.62, 0.58, 1)
+ground_bottom_color = Color(0.22, 0.24, 0.28, 1)
+
+[sub_resource type="Sky" id="Sky_winter_morning"]
+sky_material = SubResource("ProceduralSkyMaterial_winter_morning")
+
+[sub_resource type="Environment" id="Environment_winter_morning"]
+background_mode = 2
+sky = SubResource("Sky_winter_morning")
+ambient_light_color = Color(0.55, 0.6, 0.68, 1)
+ambient_light_energy = 0.5
+reflected_light_source = 2
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.2
+fog_enabled = true
+fog_light_color = Color(0.65, 0.64, 0.66, 1)
+fog_density = 0.02
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(40, 40)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_snow_ground"]
+render_priority = 0
+shader = ExtResource("3_snow_shader")
+shader_parameter/albedo_texture = ExtResource("4_snow_albedo")
+shader_parameter/normal_texture = ExtResource("5_snow_normal")
+shader_parameter/roughness_texture = ExtResource("6_snow_roughness")
+shader_parameter/ao_texture = ExtResource("7_snow_ao")
+shader_parameter/tiling = 6.0
+shader_parameter/randomize_rotation = 1.0
+shader_parameter/normal_scale = 1.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_player"]
+albedo_color = Color(0.18, 0.85, 0.82, 1)
+emission_enabled = true
+emission = Color(0.1, 0.6, 0.6, 1)
+emission_energy_multiplier = 0.3
+
+[node name="Chapter01" type="Node3D" unique_id=1010101]
+script = ExtResource("1_chapter01_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1010103]
+environment = SubResource("Environment_winter_morning")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1010104]
+transform = Transform3D(0.866025, -0.3, 0.45, 0, 0.83205, 0.5547, -0.5, -0.480385, 0.720577, 0, 10, 0)
+light_color = Color(0.92, 0.82, 0.72, 1)
+light_energy = 0.65
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1010105]
+transform = Transform3D(1, 0, 0, 0, 0.906308, 0.422618, 0, -0.422618, 0.906308, 0, 3.5, 6)
+
+[node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=1010106]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("ShaderMaterial_snow_ground")
+
+[node name="PlayerMesh" type="MeshInstance3D" parent="." unique_id=1010111]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_player")
+surface_material_override/0 = SubResource("StandardMaterial3D_player")
+
+[node name="AmbiencePlayer" type="AudioStreamPlayer" parent="." unique_id=1010102]
+unique_name_in_owner = true
+stream = ExtResource("2_snowstorm_ambience")
+
+[node name="IntroCanvasLayer" type="CanvasLayer" parent="." unique_id=1010107]
+
+[node name="IntroBlackOverlay" type="ColorRect" parent="IntroCanvasLayer" unique_id=1010108]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)

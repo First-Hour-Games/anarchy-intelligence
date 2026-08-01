@@ -1,0 +1,144 @@
+[gd_scene format=3 uid="uid://g0k3ubifu5mc"]
+
+[ext_resource type="Texture2D" uid="uid://bdebcs6v1mqy2" path="res://img/menu/title.png" id="1_v2lfg"]
+[ext_resource type="Script" uid="uid://b8urfnsyn4v7a" path="res://scenes/mainMenu/menu.gd" id="2_menu_script"]
+[ext_resource type="AudioStream" uid="uid://cyu0y4q4kwr06" path="res://music/menu.wav" id="3_menu_music"]
+[ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
+[ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
+[ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="6_teletext_font"]
+
+[sub_resource type="Environment" id="Environment_jpyye"]
+ambient_light_color = Color(0.18039216, 0.972549, 0.96862745, 1)
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=1280559174]
+script = ExtResource("2_menu_script")
+
+[node name="Node3D" type="Node3D" parent="." unique_id=1848326248]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Node3D" unique_id=540767423]
+environment = SubResource("Environment_jpyye")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Node3D" unique_id=993146702]
+offset_left = -1.0
+offset_right = 1151.0
+offset_bottom = 648.0
+
+[node name="SubViewport" type="SubViewport" parent="Node3D/SubViewportContainer" unique_id=2026657784]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Node3D/SubViewportContainer/SubViewport" unique_id=1069963422]
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=1846702775]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="AspectRatioContainer" unique_id=490690623]
+layout_mode = 2
+
+[node name="RightGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1973616543]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2000.0
+offset_right = 4000.0
+offset_bottom = 2000.0
+grow_horizontal = 0
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="LeftGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=148141344]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -4000.0
+offset_top = -2000.0
+offset_bottom = 2000.0
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="AspectRatioContainer/Control" unique_id=1362830248]
+visible = false
+layout_mode = 0
+offset_right = 648.0
+offset_bottom = 648.0
+
+[node name="Fade" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1950018627]
+visible = false
+z_index = 5
+layout_mode = 0
+offset_right = 648.0
+offset_bottom = 648.0
+color = Color(0, 0, 0, 1)
+
+[node name="Title" type="TextureRect" parent="AspectRatioContainer/Control" unique_id=762819847]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -240.5
+offset_top = 80.0
+offset_right = 240.5
+offset_bottom = 196.0
+grow_horizontal = 2
+texture = ExtResource("1_v2lfg")
+
+[node name="MenuContainer" type="VBoxContainer" parent="AspectRatioContainer/Control" unique_id=314159265]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="StartLabel" type="Label" parent="AspectRatioContainer/Control/MenuContainer" unique_id=314159266]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_teletext_font")
+theme_override_font_sizes/font_size = 30
+text = "Start Game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionsLabel" type="Label" parent="AspectRatioContainer/Control/MenuContainer" unique_id=314159267]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_teletext_font")
+theme_override_font_sizes/font_size = 20
+text = "Options"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitLabel" type="Label" parent="AspectRatioContainer/Control/MenuContainer" unique_id=314159268]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_teletext_font")
+theme_override_font_sizes/font_size = 20
+text = "Quit"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=314159269]
+stream = ExtResource("3_menu_music")
+autoplay = true
+
+[node name="MoveSfxPlayer" type="AudioStreamPlayer" parent="." unique_id=314159270]
+stream = ExtResource("4_move_sfx")
+volume_db = -10.0
+
+[node name="ClickSfxPlayer" type="AudioStreamPlayer" parent="." unique_id=314159271]
+stream = ExtResource("5_click_sfx")
+volume_db = -10.0

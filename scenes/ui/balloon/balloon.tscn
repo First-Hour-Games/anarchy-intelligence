@@ -1,0 +1,165 @@
+[gd_scene format=3 uid="uid://customdialogueballoon01"]
+
+[ext_resource type="Script" path="res://scenes/ui/balloon/balloon.gd" id="1_balloon_script"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
+[ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
+[ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
+[ext_resource type="FontFile" uid="uid://b2i55e65n0tsr" path="res://fonts/ReceiptionalReceipt.ttf" id="6_receipt_font"]
+[ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="7_teletext_font"]
+[ext_resource type="AudioStream" uid="uid://cj8odkb3mkay6" path="res://sounds/dialogue/narrator.mp3" id="8_narrator_sfx"]
+
+[node name="CustomDialogueBalloon" type="CanvasLayer" unique_id=9090901]
+script = ExtResource("1_balloon_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=9090913]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0)
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=9090902]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="AspectRatioContainer" unique_id=9090903]
+layout_mode = 2
+
+[node name="RightGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1973616543]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = -2000.0
+offset_right = 4000.0
+offset_bottom = 2000.0
+grow_horizontal = 0
+color = Color(0, 0, 0, 1)
+
+[node name="LeftGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=148141344]
+layout_mode = 1
+anchors_preset = 9
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = -4000.0
+offset_top = -2000.0
+offset_right = 0.0
+offset_bottom = 2000.0
+color = Color(0, 0, 0, 1)
+
+[node name="Balloon" type="Control" parent="AspectRatioContainer/Control" unique_id=9090904]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 2
+
+[node name="DialogueBackground" type="ColorRect" parent="AspectRatioContainer/Control/Balloon" unique_id=9090914]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.3)
+
+[node name="MarginContainer" type="MarginContainer" parent="AspectRatioContainer/Control/Balloon" unique_id=9090905]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 96
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer" unique_id=9090906]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CharacterLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/VBoxContainer" unique_id=9090907]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.7, 0.7, 0.7, 0.8)
+theme_override_fonts/normal_font = ExtResource("7_teletext_font")
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "CHARACTER NAME"
+fit_content = true
+scroll_active = false
+
+[node name="DialogueLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/VBoxContainer" unique_id=9090908]
+unique_name_in_owner = true
+clip_contents = false
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("6_receipt_font")
+theme_override_font_sizes/normal_font_size = 18
+theme_override_constants/line_separation = 4
+bbcode_enabled = true
+text = "IT APPEARS YOU HAVE REACHED AN END."
+fit_content = true
+scroll_active = false
+script = ExtResource("2_dialogue_label")
+seconds_per_step = 0.08
+seconds_per_pause_step = 0.4
+
+[node name="ResponsesMenu" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/VBoxContainer" unique_id=9090909]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+script = ExtResource("3_responses_menu")
+
+[node name="ProgressIndicator" type="Label" parent="AspectRatioContainer/Control/Balloon" unique_id=9090910]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -40.0
+offset_right = -32.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 0.7)
+theme_override_fonts/font = ExtResource("7_teletext_font")
+theme_override_font_sizes/font_size = 14
+text = "[ ENTER ]"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="MoveSfx" type="AudioStreamPlayer" parent="." unique_id=9090911]
+unique_name_in_owner = true
+stream = ExtResource("4_move_sfx")
+volume_db = -10.0
+
+[node name="ClickSfx" type="AudioStreamPlayer" parent="." unique_id=9090912]
+unique_name_in_owner = true
+stream = ExtResource("5_click_sfx")
+volume_db = -10.0
+
+[node name="TalkSfx" type="AudioStreamPlayer" parent="." unique_id=9090915]
+unique_name_in_owner = true
+stream = ExtResource("8_narrator_sfx")
+volume_db = -8.0
