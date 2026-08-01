@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://c3734nqh1a5c6"]
+
+[ext_resource type="PackedScene" uid="uid://6j3h3luf7qo7" path="res://models/DeadTreePack.fbx" id="1_78bke"]
+
+[node name="DeadTreePack" unique_id=1553375046 instance=ExtResource("1_78bke")]

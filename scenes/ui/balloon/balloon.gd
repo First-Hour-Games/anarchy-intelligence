@@ -21,6 +21,7 @@ var is_waiting_for_input: bool = false
 var is_post_typing_delay: bool = false
 var will_hide_balloon: bool = false
 var locals: Dictionary = {}
+var accumulated_dialogue_text: String = ""
 
 var dialogue_line: DialogueLine:
 	set(value):
@@ -29,14 +30,18 @@ var dialogue_line: DialogueLine:
 			apply_dialogue_line()
 		else:
 			if talk_sfx: talk_sfx.stop()
+			if balloon: balloon.hide()
+			if click_sfx and click_sfx.playing:
+				await click_sfx.finished
+			# 2-second delay of black after final dialogue line (skips when running in Godot editor)
+			if not OS.has_feature("editor"):
+				await get_tree().create_timer(2.0).timeout
 			if owner == null:
 				queue_free()
 			else:
 				hide()
 	get:
 		return dialogue_line
-
-var mutation_cooldown: Timer = Timer.new()
 
 func _ready() -> void:
 	balloon.hide()
@@ -47,9 +52,6 @@ func _ready() -> void:
 
 	if talk_sfx:
 		talk_sfx.finished.connect(_on_talk_sfx_finished)
-
-	mutation_cooldown.timeout.connect(_on_mutation_cooldown_timeout)
-	add_child(mutation_cooldown)
 
 	if auto_start:
 		start()
@@ -65,17 +67,26 @@ func _on_talk_sfx_finished() -> void:
 		_play_talk_sfx()
 
 func _process(_delta: float) -> void:
-	if is_instance_valid(dialogue_line) and progress_indicator:
+	if is_instance_valid(dialogue_line) and dialogue_label:
 		var should_show: bool = not dialogue_label.is_typing and dialogue_line.responses.size() == 0 and is_waiting_for_input
-		progress_indicator.visible = should_show
+		
 		if should_show:
-			# Smooth 1-second pulse/flash effect
-			var flash: float = (sin(Time.get_ticks_msec() * 0.006) + 1.0) * 0.5
-			progress_indicator.modulate.a = lerp(0.2, 1.0, flash)
+			# Constant hard blink (0.35s ON, 0.35s OFF) for both [ ENTER ] and inline _ cursor at end of full text
+			var blink_on: bool = (int(Time.get_ticks_msec() / 350) % 2) == 0
+			var full_base_text: String = accumulated_dialogue_text.strip_edges(false, true)
+			dialogue_label.text = full_base_text + (" _" if blink_on else "  ")
+			
+			if progress_indicator:
+				progress_indicator.visible = blink_on
+				progress_indicator.modulate.a = 1.0
+		else:
+			if progress_indicator:
+				progress_indicator.visible = false
 
 func _unhandled_input(event: InputEvent) -> void:
 	if will_block_other_input:
-		get_viewport().set_input_as_handled()
+		if is_inside_tree() and get_viewport():
+			get_viewport().set_input_as_handled()
 
 	if not is_instance_valid(dialogue_line):
 		return
@@ -96,6 +107,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				next(dialogue_line.next_id)
 
 func start(with_dialogue_resource: DialogueResource = null, cue: String = "", extra_game_states: Array = []) -> void:
+	accumulated_dialogue_text = ""
 	temporary_game_states = [self] + extra_game_states
 	is_waiting_for_input = false
 	is_post_typing_delay = false
@@ -107,7 +119,6 @@ func start(with_dialogue_resource: DialogueResource = null, cue: String = "", ex
 	show()
 
 func apply_dialogue_line() -> void:
-	mutation_cooldown.stop()
 	if progress_indicator:
 		progress_indicator.hide()
 	is_waiting_for_input = false
@@ -120,6 +131,11 @@ func apply_dialogue_line() -> void:
 		character_label.text = tr(dialogue_line.character, "dialogue").to_upper()
 
 	dialogue_label.hide()
+
+	# Combine previous dialogue lines with the current line
+	var full_text: String = accumulated_dialogue_text + dialogue_line.text
+	var prev_length: int = accumulated_dialogue_text.length()
+
 	dialogue_label.dialogue_line = dialogue_line
 
 	responses_menu.hide()
@@ -132,17 +148,24 @@ func apply_dialogue_line() -> void:
 	if not dialogue_line.text.is_empty():
 		_play_talk_sfx()
 		dialogue_label.type_out()
+		# Set text to cumulative multi-line text right after type_out initializes typing
+		dialogue_label.text = full_text
+		if prev_length > 0 and prev_length < dialogue_label.get_total_character_count():
+			dialogue_label.visible_characters = prev_length
 		await dialogue_label.finished_typing
 		if talk_sfx:
 			talk_sfx.stop()
+
+	accumulated_dialogue_text = full_text + "\n"
 
 	if dialogue_line.responses.size() > 0:
 		balloon.focus_mode = Control.FOCUS_NONE
 		responses_menu.show()
 	else:
-		# Add 0.5 second delay after dialogue typing ends before displaying [ ENTER ]
+		# Add 0.5 second delay after dialogue typing ends (skips in Godot editor)
 		is_post_typing_delay = true
-		await get_tree().create_timer(0.5).timeout
+		if not OS.has_feature("editor"):
+			await get_tree().create_timer(0.5).timeout
 		is_post_typing_delay = false
 		is_waiting_for_input = true
 		balloon.focus_mode = Control.FOCUS_ALL
@@ -155,21 +178,25 @@ func next(next_id: String) -> void:
 	is_post_typing_delay = false
 	dialogue_line = await dialogue_resource.get_next_dialogue_line(next_id, temporary_game_states)
 
-func _on_mutation_cooldown_timeout() -> void:
-	if will_hide_balloon:
-		will_hide_balloon = false
-		if talk_sfx: talk_sfx.stop()
-		balloon.hide()
-
 func _on_mutated(mutation: Dictionary) -> void:
 	if not mutation.is_inline:
+		# Clear accumulated dialogue history when a do function trigger runs
+		accumulated_dialogue_text = ""
 		is_waiting_for_input = false
 		is_post_typing_delay = false
-		will_hide_balloon = true
 		if talk_sfx: talk_sfx.stop()
-		mutation_cooldown.start(0.1)
 
 func _on_responses_menu_response_selected(response: DialogueResponse) -> void:
 	if talk_sfx: talk_sfx.stop()
 	if click_sfx: click_sfx.play()
 	next(response.next_id)
+
+func set_dialogue_ui_visible(is_visible: bool) -> void:
+	if balloon:
+		balloon.visible = is_visible
+	if progress_indicator and not is_visible:
+		progress_indicator.hide()
+
+func set_background_visible(is_visible: bool) -> void:
+	if has_node("Background"):
+		get_node("Background").visible = is_visible

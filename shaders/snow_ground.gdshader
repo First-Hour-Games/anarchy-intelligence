@@ -4,10 +4,12 @@ uniform sampler2D albedo_texture : source_color, filter_linear_mipmap;
 uniform sampler2D normal_texture : hint_normal, filter_linear_mipmap;
 uniform sampler2D roughness_texture : hint_default_white, filter_linear_mipmap;
 uniform sampler2D ao_texture : hint_default_white, filter_linear_mipmap;
+uniform sampler2D height_texture : hint_default_white, filter_linear_mipmap;
 
 uniform float tiling = 4.0;
 uniform float randomize_rotation : hint_range(0.0, 1.0) = 1.0;
 uniform float normal_scale : hint_range(0.0, 5.0) = 1.0;
+uniform float height_scale : hint_range(0.0, 2.0) = 0.15;
 
 float rand(vec2 p) {
 	return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);
@@ -29,6 +31,22 @@ vec4 sample_tiled_texture(sampler2D tex, vec2 uv) {
 	vec2 rotated_uv = rotate_uv(grid_uv, random_angle);
 	
 	return texture(tex, rotated_uv);
+}
+
+vec4 sample_tiled_texture_lod(sampler2D tex, vec2 uv, float lod) {
+	vec2 st = uv * tiling;
+	vec2 grid_id = floor(st);
+	vec2 grid_uv = fract(st);
+	
+	float random_angle = rand(grid_id) * 6.2831853 * randomize_rotation;
+	vec2 rotated_uv = rotate_uv(grid_uv, random_angle);
+	
+	return textureLod(tex, rotated_uv, lod);
+}
+
+void vertex() {
+	vec4 height_tex = sample_tiled_texture_lod(height_texture, UV, 0.0);
+	VERTEX.y += (height_tex.r - 0.5) * height_scale;
 }
 
 void fragment() {

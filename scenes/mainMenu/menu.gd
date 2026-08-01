@@ -15,13 +15,17 @@ var sub_options: Array[Dictionary] = []
 var selected_index: int = 0
 var is_in_options_menu: bool = false
 var master_volume_percent: int = 80
+var music_volume_percent: int = 80
 
-const SELECTED_FONT_SIZE: int = 32
-const UNSELECTED_FONT_SIZE: int = 20
+const SELECTED_FONT_SIZE: int = 36
+const UNSELECTED_FONT_SIZE: int = 24
+const SELECTED_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
+const UNSELECTED_COLOR: Color = Color(0.65, 0.65, 0.65, 0.65)
 
 func _ready() -> void:
-	# Set initial Master Audio Bus volume to 80%
+	# Set initial Master and Music Audio Bus volumes
 	_apply_master_volume()
+	_apply_music_volume()
 
 	main_options = [
 		{"label": start_label, "action": _start_game},
@@ -30,7 +34,8 @@ func _ready() -> void:
 	]
 	
 	sub_options = [
-		{"label": options_label, "action": _toggle_volume_step},
+		{"label": start_label, "action": _toggle_master_volume_step},
+		{"label": options_label, "action": _toggle_music_volume_step},
 		{"label": quit_label, "action": _close_options}
 	]
 	
@@ -61,6 +66,21 @@ func _on_label_gui_input(event: InputEvent, idx: int) -> void:
 		_update_menu_display(false)
 		_trigger_option_action()
 
+func _process(_delta: float) -> void:
+	# Smooth 1-second white pulse/flash effect on the currently selected menu button
+	var active_list = sub_options if is_in_options_menu else main_options
+	for i in range(active_list.size()):
+		var lbl: Label = active_list[i]["label"]
+		if i == selected_index:
+			var flash: float = (sin(Time.get_ticks_msec() * 0.006) + 1.0) * 0.5
+			lbl.modulate = Color(1.0, 1.0, 1.0, lerp(0.75, 1.0, flash))
+		else:
+			lbl.modulate = UNSELECTED_COLOR
+
+func _mark_input_handled() -> void:
+	if is_inside_tree() and get_viewport():
+		get_viewport().set_input_as_handled()
+
 func _input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo():
 		return
@@ -71,13 +91,13 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_up") or (event is InputEventKey and (event.keycode == KEY_UP or event.keycode == KEY_W)):
 		selected_index = (selected_index - 1 + active_list.size()) % active_list.size()
 		_update_menu_display(true)
-		get_viewport().set_input_as_handled()
+		_mark_input_handled()
 		
 	# Down Arrow / S key
 	elif event.is_action_pressed("ui_down") or (event is InputEventKey and (event.keycode == KEY_DOWN or event.keycode == KEY_S)):
 		selected_index = (selected_index + 1) % active_list.size()
 		_update_menu_display(true)
-		get_viewport().set_input_as_handled()
+		_mark_input_handled()
 		
 	# Left Arrow / A key (Adjust volume down in Options)
 	elif is_in_options_menu and (event.is_action_pressed("ui_left") or (event is InputEventKey and (event.keycode == KEY_LEFT or event.keycode == KEY_A))):
@@ -85,7 +105,12 @@ func _input(event: InputEvent) -> void:
 			master_volume_percent = clamp(master_volume_percent - 10, 0, 100)
 			_apply_master_volume()
 			_update_menu_display(true)
-			get_viewport().set_input_as_handled()
+			_mark_input_handled()
+		elif selected_index == 1:
+			music_volume_percent = clamp(music_volume_percent - 10, 0, 100)
+			_apply_music_volume()
+			_update_menu_display(true)
+			_mark_input_handled()
 
 	# Right Arrow / D key (Adjust volume up in Options)
 	elif is_in_options_menu and (event.is_action_pressed("ui_right") or (event is InputEventKey and (event.keycode == KEY_RIGHT or event.keycode == KEY_D))):
@@ -93,29 +118,36 @@ func _input(event: InputEvent) -> void:
 			master_volume_percent = clamp(master_volume_percent + 10, 0, 100)
 			_apply_master_volume()
 			_update_menu_display(true)
-			get_viewport().set_input_as_handled()
+			_mark_input_handled()
+		elif selected_index == 1:
+			music_volume_percent = clamp(music_volume_percent + 10, 0, 100)
+			_apply_music_volume()
+			_update_menu_display(true)
+			_mark_input_handled()
 
 	# Escape key (Return from Options menu)
 	elif is_in_options_menu and (event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE)):
 		_close_options()
-		get_viewport().set_input_as_handled()
+		_mark_input_handled()
 
 	# Enter / Space key
 	elif event.is_action_pressed("ui_accept") or (event is InputEventKey and (event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE)):
 		_trigger_option_action()
-		get_viewport().set_input_as_handled()
+		_mark_input_handled()
 
 func _update_menu_display(play_sound: bool = true) -> void:
 	if is_in_options_menu:
-		start_label.hide()
+		start_label.show()
 		options_label.show()
 		quit_label.show()
 		
-		options_label.text = "Master Volume: < " + str(master_volume_percent) + "% >"
+		start_label.text = "Master Volume: < " + str(master_volume_percent) + "% >"
+		options_label.text = "Music Volume: < " + str(music_volume_percent) + "% >"
 		quit_label.text = "Back"
 		
-		_apply_label_style(options_label, selected_index == 0)
-		_apply_label_style(quit_label, selected_index == 1)
+		_apply_label_style(start_label, selected_index == 0)
+		_apply_label_style(options_label, selected_index == 1)
+		_apply_label_style(quit_label, selected_index == 2)
 	else:
 		start_label.show()
 		options_label.show()
@@ -138,11 +170,27 @@ func _apply_label_style(lbl: Label, is_selected: bool) -> void:
 		lbl.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	else:
 		lbl.add_theme_font_size_override("font_size", UNSELECTED_FONT_SIZE)
-		lbl.modulate = Color(0.55, 0.55, 0.55, 0.6)
+		lbl.modulate = UNSELECTED_COLOR
 
 func _apply_master_volume() -> void:
 	var linear_val: float = float(master_volume_percent) / 100.0
-	AudioServer.set_bus_volume_db(0, linear_to_db(linear_val))
+	var bus_idx: int = AudioServer.get_bus_index("Master")
+	if bus_idx != -1:
+		if master_volume_percent <= 0:
+			AudioServer.set_bus_mute(bus_idx, true)
+		else:
+			AudioServer.set_bus_mute(bus_idx, false)
+			AudioServer.set_bus_volume_db(bus_idx, linear_to_db(linear_val))
+
+func _apply_music_volume() -> void:
+	var linear_val: float = float(music_volume_percent) / 100.0
+	var bus_idx: int = AudioServer.get_bus_index("Music")
+	if bus_idx != -1:
+		if music_volume_percent <= 0:
+			AudioServer.set_bus_mute(bus_idx, true)
+		else:
+			AudioServer.set_bus_mute(bus_idx, false)
+			AudioServer.set_bus_volume_db(bus_idx, linear_to_db(linear_val))
 
 func _trigger_option_action() -> void:
 	if click_sfx_player:
@@ -151,8 +199,14 @@ func _trigger_option_action() -> void:
 	active_list[selected_index]["action"].call()
 
 func _start_game() -> void:
-	print("Start Game selected! Fading screen and music over 3 seconds...")
+	print("Start Game selected!")
 	
+	if OS.has_feature("editor"):
+		if music_player: music_player.stop()
+		get_tree().change_scene_to_file("res://scenes/chapters/chapter_01/chapter_01.tscn")
+		return
+
+	print("Fading screen and music over 3 seconds...")
 	var tween = create_tween().set_parallel(true)
 	if fade_rect:
 		fade_rect.color.a = 0.0
@@ -175,16 +229,23 @@ func _start_game() -> void:
 func _open_options() -> void:
 	is_in_options_menu = true
 	selected_index = 0
+	_setup_mouse_listeners()
 	_update_menu_display(false)
 
-func _toggle_volume_step() -> void:
+func _toggle_master_volume_step() -> void:
 	master_volume_percent = (master_volume_percent + 10) if master_volume_percent < 100 else 0
 	_apply_master_volume()
+	_update_menu_display(false)
+
+func _toggle_music_volume_step() -> void:
+	music_volume_percent = (music_volume_percent + 10) if music_volume_percent < 100 else 0
+	_apply_music_volume()
 	_update_menu_display(false)
 
 func _close_options() -> void:
 	is_in_options_menu = false
 	selected_index = 1
+	_setup_mouse_listeners()
 	_update_menu_display(false)
 
 func _quit_game() -> void:

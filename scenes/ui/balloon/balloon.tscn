@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://cj8odkb3mkay6" path="res://sounds/dialogue/narrator.mp3" id="8_narrator_sfx"]
 
 [node name="CustomDialogueBalloon" type="CanvasLayer" unique_id=9090901]
+layer = 10
 script = ExtResource("1_balloon_script")
 
 [node name="Background" type="ColorRect" parent="." unique_id=9090913]
@@ -26,6 +27,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+ratio = 1.33333
 
 [node name="Control" type="Control" parent="AspectRatioContainer" unique_id=9090903]
 layout_mode = 2
@@ -84,8 +86,8 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = ExtResource("6_receipt_font")
-theme_override_font_sizes/normal_font_size = 18
-theme_override_constants/line_separation = 4
+theme_override_font_sizes/normal_font_size = 24
+theme_override_constants/line_separation = 20
 bbcode_enabled = true
 text = "IT APPEARS YOU HAVE REACHED AN END."
 fit_content = true
@@ -115,7 +117,7 @@ offset_right = -32.0
 offset_bottom = -16.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 0.7)
+theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 0.8)
 theme_override_fonts/font = ExtResource("7_teletext_font")
 theme_override_font_sizes/font_size = 14
 text = "[ ENTER ]"

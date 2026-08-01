@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://g0k3ubifu5mc"]
 
 [ext_resource type="Texture2D" uid="uid://bdebcs6v1mqy2" path="res://img/menu/title.png" id="1_v2lfg"]
-[ext_resource type="Script" path="res://scenes/mainMenu/menu.gd" id="2_menu_script"]
+[ext_resource type="Script" uid="uid://b8urfnsyn4v7a" path="res://scenes/mainMenu/menu.gd" id="2_menu_script"]
 [ext_resource type="AudioStream" uid="uid://cyu0y4q4kwr06" path="res://music/menu.wav" id="3_menu_music"]
 [ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
 [ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
@@ -24,9 +24,56 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+ratio = 1.33333
 
 [node name="Control" type="Control" parent="AspectRatioContainer" unique_id=490690623]
 layout_mode = 2
+
+[node name="RightGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1973616543]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2000.0
+offset_right = 4000.0
+offset_bottom = 2000.0
+grow_horizontal = 0
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="LeftGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=148141344]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -4000.0
+offset_top = -2000.0
+offset_bottom = 2000.0
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TopGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=148141345]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -4000.0
+offset_top = -4000.0
+offset_right = 4000.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BottomGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=148141346]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4000.0
+offset_right = 4000.0
+offset_bottom = 4000.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0, 0, 0, 1)
 
 [node name="Fade" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1950018627]
 visible = false
@@ -68,35 +115,39 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="StartLabel" type="Label" parent="AspectRatioContainer/Control/MenuContainer" unique_id=314159266]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_teletext_font")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 24
 text = "Start Game"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="OptionsLabel" type="Label" parent="AspectRatioContainer/Control/MenuContainer" unique_id=314159267]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 0.6)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_teletext_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "Options"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="QuitLabel" type="Label" parent="AspectRatioContainer/Control/MenuContainer" unique_id=314159268]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 0.6)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_teletext_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "Quit"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=314159269]
 stream = ExtResource("3_menu_music")
-autoplay = true
+volume_db = -1.0
+bus = &"Music"
 
 [node name="MoveSfxPlayer" type="AudioStreamPlayer" parent="." unique_id=314159270]
 stream = ExtResource("4_move_sfx")

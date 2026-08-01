@@ -1,5 +1,11 @@
 ~ start
-it's cold.
-the air is breezing through me.
-slowly freezing my whole body.
+It feels cold.
+The air was breezing through my face,
+now slowly freezing my entire body.
+do trigger_car_revving()
+
+i can hear the engine screaming its life,
+yet, its argument cannot disturb my slumberness...
+do trigger_car_slumbering()
+
 => END
