@@ -18,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0)
+color = Color(0, 0, 0, 1)
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=9090902]
 anchors_preset = 15
@@ -29,33 +29,6 @@ grow_vertical = 2
 
 [node name="Control" type="Control" parent="AspectRatioContainer" unique_id=9090903]
 layout_mode = 2
-
-[node name="RightGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1973616543]
-layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = -2000.0
-offset_right = 4000.0
-offset_bottom = 2000.0
-grow_horizontal = 0
-color = Color(0, 0, 0, 1)
-
-[node name="LeftGutter" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=148141344]
-layout_mode = 1
-anchors_preset = 9
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 1.0
-offset_left = -4000.0
-offset_top = -2000.0
-offset_right = 0.0
-offset_bottom = 2000.0
-color = Color(0, 0, 0, 1)
 
 [node name="Balloon" type="Control" parent="AspectRatioContainer/Control" unique_id=9090904]
 unique_name_in_owner = true
@@ -74,7 +47,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.3)
+color = Color(0, 0, 0, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="AspectRatioContainer/Control/Balloon" unique_id=9090905]
 layout_mode = 1
