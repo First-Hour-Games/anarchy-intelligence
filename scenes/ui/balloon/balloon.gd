@@ -102,7 +102,13 @@ func _unhandled_input(event: InputEvent) -> void:
 					talk_sfx.stop()
 				dialogue_label.skip_typing()
 			elif (is_waiting_for_input or is_post_typing_delay) and dialogue_line.responses.size() == 0:
-				if click_sfx:
+				var is_car_revving_transition: bool = false
+				if is_instance_valid(dialogue_line) and dialogue_line.text:
+					var lower_text: String = dialogue_line.text.to_lower()
+					if "freezing my entire body" in lower_text or "car_revving" in lower_text:
+						is_car_revving_transition = true
+
+				if click_sfx and not is_car_revving_transition:
 					click_sfx.play()
 				next(dialogue_line.next_id)
 
