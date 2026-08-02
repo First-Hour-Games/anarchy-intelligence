@@ -162,7 +162,7 @@ func apply_dialogue_line() -> void:
 		if talk_sfx:
 			talk_sfx.stop()
 
-	accumulated_dialogue_text = full_text + "\n"
+	accumulated_dialogue_text = full_text + "\n\n"
 
 	if dialogue_line.responses.size() > 0:
 		balloon.focus_mode = Control.FOCUS_NONE
