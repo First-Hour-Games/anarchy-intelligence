@@ -137,4 +137,4 @@ volume_db = -10.0
 [node name="TalkSfx" type="AudioStreamPlayer" parent="." unique_id=9090915]
 unique_name_in_owner = true
 stream = ExtResource("8_narrator_sfx")
-volume_db = -8.0
+volume_db = -18.0
