@@ -9,7 +9,7 @@ extends Camera3D
 
 var trauma: float = 0.0
 var trauma_power: float = 2.0
-var noise_speed: float = 15.0
+var noise_speed: float = 9
 var _noise_y: float = 0.0
 var seed_offset: float = 0.0
 

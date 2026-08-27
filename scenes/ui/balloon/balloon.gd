@@ -182,10 +182,15 @@ func next(next_id: String) -> void:
 	is_post_typing_delay = false
 	dialogue_line = await dialogue_resource.get_next_dialogue_line(next_id, temporary_game_states)
 
+func clear_dialogue_text() -> void:
+	accumulated_dialogue_text = ""
+	if dialogue_label:
+		dialogue_label.text = ""
+
 func _on_mutated(mutation: Dictionary) -> void:
 	if not mutation.is_inline:
 		# Clear accumulated dialogue history when a do function trigger runs
-		accumulated_dialogue_text = ""
+		clear_dialogue_text()
 		is_waiting_for_input = false
 		is_post_typing_delay = false
 		if talk_sfx: talk_sfx.stop()
@@ -196,6 +201,8 @@ func _on_responses_menu_response_selected(response: DialogueResponse) -> void:
 	next(response.next_id)
 
 func set_dialogue_ui_visible(is_visible: bool) -> void:
+	if not is_visible:
+		clear_dialogue_text()
 	if balloon:
 		balloon.visible = is_visible
 	if progress_indicator and not is_visible:

@@ -1,13 +1,13 @@
 [gd_scene format=4 uid="uid://cns2rdsfcp16v"]
 
 [ext_resource type="Script" uid="uid://bl17a6s15bjm4" path="res://scenes/chapters/chapter_01/chapter_01.gd" id="1_chapter01_script"]
-[ext_resource type="AudioStream" uid="uid://btap2o1spd6nd" path="res://sounds/ambience/snowstorm.mp3" id="2_snowstorm_ambience"]
 [ext_resource type="Shader" uid="uid://c5cotxt4fso8o" path="res://shaders/snow_ground.gdshader" id="3_snow_shader"]
 [ext_resource type="Texture2D" uid="uid://bcepqn3yfbt11" path="res://img/materials/snow/Snow009A_1K-JPG_Color.jpg" id="4_snow_albedo"]
 [ext_resource type="Texture2D" uid="uid://pnmbl0dx1u0s" path="res://img/materials/snow/Snow009A_1K-JPG_NormalGL.jpg" id="5_snow_normal"]
 [ext_resource type="Texture2D" uid="uid://xtgcdhqumvoq" path="res://img/materials/snow/Snow009A_1K-JPG_Roughness.jpg" id="6_snow_roughness"]
 [ext_resource type="Texture2D" uid="uid://ck5yj64evw8bq" path="res://img/materials/snow/Snow009A_1K-JPG_AmbientOcclusion.jpg" id="7_snow_ao"]
 [ext_resource type="Texture2D" uid="uid://1bq2lo0evyo1" path="res://img/materials/snow/Snow009A_1K-JPG_Displacement.jpg" id="8_snow_displacement"]
+[ext_resource type="AudioStream" uid="uid://cr7iy360nudja" path="res://sounds/ambience/waterDrippingLoop.wav" id="9_1niit"]
 [ext_resource type="Texture2D" uid="uid://cm8vso33wyytp" path="res://models/Bark1M.jpg" id="9_8ktlb"]
 [ext_resource type="AudioStream" uid="uid://drmhk4rglbr3p" path="res://music/intro1.wav" id="10_okppq"]
 [ext_resource type="Texture2D" uid="uid://c0o1i3drq2aie" path="res://models/Bark1C.jpg" id="10_uemwo"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://b7k7gmew8yr8s" path="res://scenes/chapters/chapter_01/camera_shake.gd" id="12_camera_shake"]
 [ext_resource type="PackedScene" uid="uid://cgw1nrglg6uwi" path="res://models/snowy_car.glb" id="13_snowy_car"]
 [ext_resource type="Shader" uid="uid://c304gga0hm2bv" path="res://shaders/blur.gdshader" id="15_blur_shader"]
+[ext_resource type="Texture2D" uid="uid://c6islulrieg7u" path="res://img/sprites/snowflakes.png" id="16_snowflakes_tex"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_winter_morning"]
 sky_top_color = Color(0.75992745, 0.82859534, 0.84357315, 1)
@@ -317,12 +318,29 @@ loop = true
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jpyye"]
 emission_shape = 3
-emission_box_extents = Vector3(15, 1, 15)
-direction = Vector3(1, -1, 0)
-angular_velocity_min = -30.000015
+emission_box_extents = Vector3(10, 1, 10)
+spread = 30.0
+angular_velocity_min = -25.000015
 angular_velocity_max = 49.99998
+scale_min = 0.19999999
+scale_max = 0.5
+anim_offset_max = 1.0
+turbulence_noise_strength = 0.1
+turbulence_noise_scale = 5.0
+collision_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_snowflake"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("16_snowflakes_tex")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 3
+particles_anim_v_frames = 4
+particles_anim_loop = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_orua6"]
+material = SubResource("StandardMaterial3D_snowflake")
 
 [node name="Chapter01" type="Node3D" unique_id=1010101]
 script = ExtResource("1_chapter01_script")
@@ -354,7 +372,7 @@ metadata/_edit_lock_ = true
 
 [node name="AmbiencePlayer" type="AudioStreamPlayer" parent="." unique_id=1010102]
 unique_name_in_owner = true
-stream = ExtResource("2_snowstorm_ambience")
+stream = ExtResource("9_1niit")
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=2132557813]
 stream = ExtResource("10_okppq")
@@ -624,11 +642,17 @@ stream = SubResource("AudioStreamMP3_xtsls")
 attenuation_model = 2
 bus = &"InGameFootage"
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=102653065]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.627745, 0)
-amount = 300
-lifetime = 4.31
-speed_scale = 0.2
+[node name="Node3D" type="Node3D" parent="." unique_id=204166600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.1921387, 0)
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Node3D" unique_id=102653065]
+amount = 400
+lifetime = 4.0
+speed_scale = 0.22
 randomness = 0.5
 process_material = SubResource("ParticleProcessMaterial_jpyye")
 draw_pass_1 = SubResource("QuadMesh_orua6")
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="Node3D" unique_id=1269315191]
+transform = Transform3D(-0.46691397, 0.0057047145, 1.1054224, 0.014660402, 1.1999106, 0, -1.10534, 0.0135049485, -0.46694875, -1.0357319, -6.8905554, 1.8827537)
+size = Vector3(1.6391602, 1.0268555, 2)

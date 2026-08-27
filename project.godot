@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="ALL OVER ME Redux"
+config/name="Anarchy Intelligence"
 run/main_scene="res://scenes/mainMenu/menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
