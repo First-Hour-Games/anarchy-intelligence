@@ -203,7 +203,7 @@ func _start_game() -> void:
 	
 	if OS.has_feature("editor"):
 		if music_player: music_player.stop()
-		get_tree().change_scene_to_file("res://scenes/chapters/chapter_01/chapter_01.tscn")
+		get_tree().change_scene_to_file("res://scenes/chapters/intro/intro.tscn")
 		return
 
 	print("Fading screen and music over 3 seconds...")
@@ -224,7 +224,7 @@ func _start_game() -> void:
 	print("Fade complete. Pausing 3 seconds in pitch black silence...")
 	await get_tree().create_timer(3.0).timeout
 	
-	get_tree().change_scene_to_file("res://scenes/chapters/chapter_01/chapter_01.tscn")
+	get_tree().change_scene_to_file("res://scenes/chapters/intro/intro.tscn")
 
 func _open_options() -> void:
 	is_in_options_menu = true

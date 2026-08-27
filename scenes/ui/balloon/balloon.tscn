@@ -127,12 +127,12 @@ vertical_alignment = 1
 [node name="MoveSfx" type="AudioStreamPlayer" parent="." unique_id=9090911]
 unique_name_in_owner = true
 stream = ExtResource("4_move_sfx")
-volume_db = -10.0
+volume_db = -18.0
 
 [node name="ClickSfx" type="AudioStreamPlayer" parent="." unique_id=9090912]
 unique_name_in_owner = true
 stream = ExtResource("5_click_sfx")
-volume_db = -10.0
+volume_db = -18.0
 
 [node name="TalkSfx" type="AudioStreamPlayer" parent="." unique_id=9090915]
 unique_name_in_owner = true
