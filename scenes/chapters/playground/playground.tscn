@@ -1,9 +1,149 @@
 [gd_scene format=3 uid="uid://bi7ao1ifa0v2a"]
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_x1e4l"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/scrap_automaton/scrap_automaton.tscn" id="2_automaton"]
 
-[node name="Playground" type="Node3D" unique_id=1225474330]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_test"]
+sky_top_color = Color(0.08, 0.1, 0.14, 1)
+sky_horizon_color = Color(0.32, 0.35, 0.4, 1)
+ground_bottom_color = Color(0.025, 0.03, 0.04, 1)
+ground_horizon_color = Color(0.18, 0.2, 0.23, 1)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=370692248]
-transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0)
-mesh = SubResource("PlaneMesh_x1e4l")
+[sub_resource type="Sky" id="Sky_test"]
+sky_material = SubResource("ProceduralSkyMaterial_test")
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 2
+sky = SubResource("Sky_test")
+ambient_light_source = 3
+ambient_light_color = Color(0.52, 0.58, 0.68, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.42, 0.46, 0.52, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("Material_ground")
+size = Vector3(24, 0.5, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape_ground"]
+size = Vector3(24, 0.5, 24)
+
+[sub_resource type="StandardMaterial3D" id="Material_wall"]
+albedo_color = Color(0.16, 0.19, 0.23, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_long"]
+material = SubResource("Material_wall")
+size = Vector3(24, 3, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape_wall_long"]
+size = Vector3(24, 3, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_side"]
+material = SubResource("Material_wall")
+size = Vector3(0.5, 3, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape_wall_side"]
+size = Vector3(0.5, 3, 24)
+
+[sub_resource type="StandardMaterial3D" id="Material_obstacle"]
+albedo_color = Color(0.38, 0.19, 0.14, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_obstacle"]
+material = SubResource("Material_obstacle")
+size = Vector3(2.4, 1.2, 2.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape_obstacle"]
+size = Vector3(2.4, 1.2, 2.4)
+
+[node name="Playground" type="Node3D" unique_id=1951081846]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1562402711]
+environment = SubResource("Environment_test")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1733233001]
+transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
+light_color = Color(0.74, 0.81, 0.95, 1)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=797958885]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=1801225023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05027497, 0.3825432, 0.46792805)
+mesh = SubResource("BoxMesh_ground")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1880191563]
+shape = SubResource("BoxShape_ground")
+
+[node name="NorthWall" type="StaticBody3D" parent="." unique_id=687665447]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -12)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NorthWall" unique_id=1632255277]
+mesh = SubResource("BoxMesh_wall_long")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthWall" unique_id=115109023]
+shape = SubResource("BoxShape_wall_long")
+
+[node name="SouthWall" type="StaticBody3D" parent="." unique_id=357537601]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 12)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SouthWall" unique_id=1374045919]
+mesh = SubResource("BoxMesh_wall_long")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthWall" unique_id=1982531894]
+shape = SubResource("BoxShape_wall_long")
+
+[node name="WestWall" type="StaticBody3D" parent="." unique_id=104402336]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WestWall" unique_id=926238883]
+mesh = SubResource("BoxMesh_wall_side")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WestWall" unique_id=3177397]
+shape = SubResource("BoxShape_wall_side")
+
+[node name="EastWall" type="StaticBody3D" parent="." unique_id=620596459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EastWall" unique_id=1977072167]
+mesh = SubResource("BoxMesh_wall_side")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EastWall" unique_id=1794959059]
+shape = SubResource("BoxShape_wall_side")
+
+[node name="ScaleReference" type="StaticBody3D" parent="." unique_id=1790837548]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -3)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ScaleReference" unique_id=791462715]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8559872, 0.2845428, 0)
+mesh = SubResource("BoxMesh_obstacle")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ScaleReference" unique_id=754102793]
+shape = SubResource("BoxShape_obstacle")
+
+[node name="Player" parent="." unique_id=1121259494 instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 7)
+
+[node name="ScrapAutomaton" parent="." unique_id=830449426 instance=ExtResource("2_automaton")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2050147, 0.19103831, -2.7963426)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=787541053]
+
+[node name="Instructions" type="Label" parent="HUD" unique_id=1325415239]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 520.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.92, 0.95, 1, 0.9)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 18
+text = "WASD: Move    Shift + W: Sprint    Mouse: Look
+The automaton moves slowly only while unseen    Escape: Release mouse"

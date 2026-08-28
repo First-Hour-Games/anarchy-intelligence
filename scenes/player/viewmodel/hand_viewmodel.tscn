@@ -1,0 +1,120 @@
+[gd_scene load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://scenes/player/viewmodel/hand_viewmodel.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_00.png" id="2_idle_00"]
+[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_01.png" id="3_idle_01"]
+[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_02.png" id="4_idle_02"]
+[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_03.png" id="5_idle_03"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_00.png" id="6_walk_00"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_01.png" id="7_walk_01"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_02.png" id="8_walk_02"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_03.png" id="9_walk_03"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_04.png" id="10_walk_04"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_05.png" id="11_walk_05"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_06.png" id="12_walk_06"]
+[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_07.png" id="13_walk_07"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_00.png" id="14_sprint_00"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_01.png" id="15_sprint_01"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_02.png" id="16_sprint_02"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_03.png" id="17_sprint_03"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_04.png" id="18_sprint_04"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_05.png" id="19_sprint_05"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_06.png" id="20_sprint_06"]
+[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_07.png" id="21_sprint_07"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hands"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_idle_00")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_idle_01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_idle_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_idle_03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_idle_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_idle_01")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_sprint_00")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_sprint_01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_sprint_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_sprint_03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_sprint_04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_sprint_05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_sprint_06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_sprint_07")
+}],
+"loop": true,
+"name": &"sprint",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_walk_00")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_walk_01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_walk_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_walk_03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_walk_04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_walk_05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_walk_06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_walk_07")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
+[node name="HandViewmodel" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_script")
+
+[node name="HandPivot" type="Node2D" parent="."]
+
+[node name="Hands" type="AnimatedSprite2D" parent="HandPivot"]
+texture_filter = 2
+position = Vector2(0, -443.5)
+sprite_frames = SubResource("SpriteFrames_hands")
+animation = &"idle"
+autoplay = "idle"

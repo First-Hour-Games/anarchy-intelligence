@@ -276,6 +276,18 @@ namespace DialogueManagerRuntime
         }
 
 
+
+        /// <summary>
+        /// Set the default balloon to use at runtime.
+        /// </summary>
+        /// <param name="balloonScene"></param>
+        /// <returns></returns>
+        public static Error SetDefaultBalloon(Variant balloonScene)
+        {
+            return (Error)(int)Instance.Call("set_default_balloon", balloonScene);
+        }
+
+
         /// <summary>
         /// Show the example balloon
         /// </summary>
@@ -891,6 +903,12 @@ namespace DialogueManagerRuntime
         public static string GetErrorMessage(int error)
         {
             return (string)Instance.Call("_bridge_get_error_message", error);
+        }
+
+
+        public static string Translate(string s)
+        {
+            return (string)Instance.Call("_bridge_translate", s);
         }
     }
 

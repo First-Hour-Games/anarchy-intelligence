@@ -2,17 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dppsuhlvbcbjc"
-path="res://.godot/imported/actionable_3d.svg-85d0e9dfc13a1adaf60f5d47256da010.ctex"
+uid="uid://kh815hl6u1dd"
+path="res://.godot/imported/hands_idle_01.png-e6451a3e295cc0b8a970e601abbb816e.ctex"
 metadata={
-"has_editor_variant": true,
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/dialogue_manager/nodes/actionable/actionable_3d.svg"
-dest_files=["res://.godot/imported/actionable_3d.svg-85d0e9dfc13a1adaf60f5d47256da010.ctex"]
+source_file="res://img/player/hands/idle/hands_idle_01.png"
+dest_files=["res://.godot/imported/hands_idle_01.png-e6451a3e295cc0b8a970e601abbb816e.ctex"]
 
 [params]
 
@@ -38,7 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
-svg/scale=1.0
-editor/scale_with_editor_scale=true
-editor/convert_colors_with_editor_theme=true
+detect_3d/compress_to=1

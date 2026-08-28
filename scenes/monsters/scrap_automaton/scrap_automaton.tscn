@@ -1,0 +1,69 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scenes/monsters/scrap_automaton/scrap_automaton.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_00.png" id="2_direction_00"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_01.png" id="3_direction_01"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_02.png" id="4_direction_02"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_03.png" id="5_direction_03"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_04.png" id="6_direction_04"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_05.png" id="7_direction_05"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_06.png" id="8_direction_06"]
+[ext_resource type="Texture2D" path="res://img/monsters/scrap_automaton/directions/automaton_direction_07.png" id="9_direction_07"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_automaton"]
+radius = 0.43
+height = 2.65
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_directions"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_direction_00")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_direction_01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_direction_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_direction_03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_direction_04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_direction_05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_direction_06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_direction_07")
+}],
+"loop": false,
+"name": &"directions",
+"speed": 5.0
+}]
+
+[node name="ScrapAutomaton" type="CharacterBody3D"]
+floor_snap_length = 0.3
+floor_max_angle = 0.785398
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 1.325, 0)
+shape = SubResource("CapsuleShape3D_automaton")
+
+[node name="VisualPivot" type="Node3D" parent="."]
+
+[node name="DirectionalSprite" type="AnimatedSprite3D" parent="VisualPivot"]
+position = Vector3(0, 1.34, 0)
+pixel_size = 0.00185
+billboard = 1
+shaded = true
+double_sided = true
+no_depth_test = false
+texture_filter = 2
+sprite_frames = SubResource("SpriteFrames_directions")
+animation = &"directions"

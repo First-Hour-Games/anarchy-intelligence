@@ -15,17 +15,13 @@ run/main_scene="res://scenes/mainMenu/menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[audio]
-
-buses/default_bus_layout="uid://bxj5h2hcmgduk"
-
 [autoload]
 
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [dialogue_manager]
 
-general/balloon_path="res://scenes/ui/balloon/balloon.tscn"
+runtime/balloon_path="res://scenes/ui/balloon/balloon.tscn"
 
 [display]
 

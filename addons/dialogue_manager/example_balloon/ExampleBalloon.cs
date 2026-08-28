@@ -95,7 +95,7 @@ namespace DialogueManagerRuntime
       }
       responsesMenu.ResponseSelected += (response) =>
       {
-        Next(((DialogueResponse)response.Obj).NextId);
+        Next(response.NextId);
       };
 
 
@@ -120,6 +120,17 @@ namespace DialogueManagerRuntime
         }
         Start();
       }
+
+      // EXAMPLE MESSAGE
+      var warning = new Button
+      {
+        Text = DialogueManager.Translate("This is an example balloon. Create your own balloon in 'Project > Tools > Dialogue > Create Balloon...'"),
+        Disabled = true
+      };
+      warning.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopWide);
+      balloon.AddChild(warning);
+      balloon.MoveChild(warning, 0);
+      // END EXAMPLE MESSAGE
     }
 
 
@@ -208,12 +219,7 @@ namespace DialogueManagerRuntime
 
       // Set up the responses
       responsesMenu.Hide();
-      var responses = new Array();
-      foreach (var response in dialogueLine.Responses)
-      {
-        responses.Add(response);
-      }
-      responsesMenu.Responses = responses;
+      responsesMenu.Responses = dialogueLine.Responses;
 
       // Type out the text
       balloon.Show();
@@ -238,7 +244,7 @@ namespace DialogueManagerRuntime
         {
           time = dialogueLine.Text.Length * 0.02f;
         }
-        await ToSignal(GetTree().CreateTimer(time), "timeout");
+        await ToSignal(GetTree().CreateTimer(time), Timer.SignalName.Timeout);
         Next(dialogueLine.NextId);
       }
       else
