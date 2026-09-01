@@ -1,12 +1,12 @@
 [gd_scene format=4 uid="uid://cns2rdsfcp16v"]
 
 [ext_resource type="Script" uid="uid://bl17a6s15bjm4" path="res://scenes/chapters/intro/intro.gd" id="1_intro_script"]
+[ext_resource type="Texture2D" uid="uid://detx1afnfnjle" path="res://img/materials/ground037/Ground037_1K-JPG_Color.jpg" id="3_kkc3u"]
 [ext_resource type="Shader" uid="uid://c5cotxt4fso8o" path="res://shaders/snow_ground.gdshader" id="3_snow_shader"]
-[ext_resource type="Texture2D" uid="uid://bcepqn3yfbt11" path="res://img/materials/snow/Snow009A_1K-JPG_Color.jpg" id="4_snow_albedo"]
-[ext_resource type="Texture2D" uid="uid://pnmbl0dx1u0s" path="res://img/materials/snow/Snow009A_1K-JPG_NormalGL.jpg" id="5_snow_normal"]
-[ext_resource type="Texture2D" uid="uid://xtgcdhqumvoq" path="res://img/materials/snow/Snow009A_1K-JPG_Roughness.jpg" id="6_snow_roughness"]
-[ext_resource type="Texture2D" uid="uid://ck5yj64evw8bq" path="res://img/materials/snow/Snow009A_1K-JPG_AmbientOcclusion.jpg" id="7_snow_ao"]
-[ext_resource type="Texture2D" uid="uid://1bq2lo0evyo1" path="res://img/materials/snow/Snow009A_1K-JPG_Displacement.jpg" id="8_snow_displacement"]
+[ext_resource type="Texture2D" uid="uid://wq8pib4bt6ef" path="res://img/materials/ground037/Ground037_1K-JPG_AmbientOcclusion.jpg" id="4_yp4mb"]
+[ext_resource type="Texture2D" uid="uid://dkyajr4yhqfup" path="res://img/materials/ground037/Ground037_1K-JPG_Displacement.jpg" id="5_gbowa"]
+[ext_resource type="Texture2D" uid="uid://b8m0kbbtveqq6" path="res://img/materials/ground037/Ground037_1K-JPG_NormalGL.jpg" id="6_41jyw"]
+[ext_resource type="Texture2D" uid="uid://cbhgf76ivjms1" path="res://img/materials/ground037/Ground037_1K-JPG_Roughness.jpg" id="7_s4hh7"]
 [ext_resource type="AudioStream" uid="uid://cr7iy360nudja" path="res://sounds/ambience/intro/waterDrippingLoop.wav" id="9_1niit"]
 [ext_resource type="Texture2D" uid="uid://cm8vso33wyytp" path="res://models/Bark1M.jpg" id="9_8ktlb"]
 [ext_resource type="AudioStream" uid="uid://drmhk4rglbr3p" path="res://music/intro1.wav" id="10_okppq"]
@@ -19,7 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://nw3eustj14uw" path="res://img/pictures/waterTap.png" id="19_water_tap"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_winter_morning"]
-sky_top_color = Color(0.75992745, 0.82859534, 0.84357315, 1)
+sky_top_color = Color(0.036409024, 0.051551282, 0.047251277, 1)
 sky_horizon_color = Color(0.72, 0.62, 0.58, 1)
 ground_bottom_color = Color(0.22, 0.24, 0.28, 1)
 
@@ -29,7 +29,6 @@ sky_material = SubResource("ProceduralSkyMaterial_winter_morning")
 [sub_resource type="Environment" id="Environment_winter_morning"]
 background_mode = 2
 sky = SubResource("Sky_winter_morning")
-ambient_light_color = Color(0.55, 0.6, 0.68, 1)
 ambient_light_energy = 0.5
 reflected_light_source = 2
 tonemap_mode = 2
@@ -38,8 +37,8 @@ glow_intensity = 0.2
 fog_light_color = Color(0.65, 0.64, 0.66, 1)
 fog_density = 0.02
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.01
-volumetric_fog_emission = Color(0.90794146, 0.90794176, 0.9079416, 1)
+volumetric_fog_density = 0.115
+volumetric_fog_albedo = Color(0.74978, 0.74978, 0.74977994, 1)
 
 [sub_resource type="GDScript" id="GDScript_kkc3u"]
 script/source = "extends Camera3D
@@ -130,11 +129,11 @@ subdivide_depth = 64
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_snow_ground"]
 render_priority = 0
 shader = ExtResource("3_snow_shader")
-shader_parameter/albedo_texture = ExtResource("4_snow_albedo")
-shader_parameter/normal_texture = ExtResource("5_snow_normal")
-shader_parameter/roughness_texture = ExtResource("6_snow_roughness")
-shader_parameter/ao_texture = ExtResource("7_snow_ao")
-shader_parameter/height_texture = ExtResource("8_snow_displacement")
+shader_parameter/albedo_texture = ExtResource("3_kkc3u")
+shader_parameter/normal_texture = ExtResource("6_41jyw")
+shader_parameter/roughness_texture = ExtResource("7_s4hh7")
+shader_parameter/ao_texture = ExtResource("4_yp4mb")
+shader_parameter/height_texture = ExtResource("5_gbowa")
 shader_parameter/tiling = 100.0
 shader_parameter/randomize_rotation = 1.0
 shader_parameter/normal_scale = 1.0
@@ -394,6 +393,13 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_q7j67")
 
+[sub_resource type="Curve3D" id="Curve3D_kkc3u"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 1.1928921, 0, 1.1007351, 3.0965452, 0, 0.77577597, -3.0965452, 0, -0.77577597, -10.326843, 0, 1.3231021, 2.3869781, 0, -0.92515707, -2.3869781, 0, 0.92515707, -18.42136, 0, 2.317869, 4.8603725, 0, 0.41563058, -4.8603725, 0, -0.41563058, -28.527603, 0, 4.1888022, 3.1746407, 0, -0.76450944, -3.1746407, 0, 0.76450944, -40.868603, 0, 3.351507, 4.8053474, 0, -0.98291063, -4.8053474, 0, 0.98291063, -54.84961, 0, 3.5399373, 5.3984985, 0, 0.5943308, -5.3984985, 0, -0.5943308, -68.15787, 0, 2.9900773, 4.393036, 0, -2.7186575, -4.393036, 0, 2.7186575, -86.83374, 0, 7.5656257, 6.8453674, 0, 0.33636475, -6.8453674, 0, -0.33636475, -102.07878, 0, 16.590591, 0, 0, 0, 0, 0, 0, -122.229004, 0, 10.140175, 0, 0, 0, 0, 0, 0, -145.63676, 0, 1.0728111, 28.499588, 0, -3.3645382, -28.499588, 0, 3.3645382, -203.62482, 0, -3.757658, 19.989304, 0, -2.9687119, -19.989304, 0, 2.9687119, -256.6657, 0, 4.752634, 14.843536, 0, 3.1666183, -14.843536, 0, -3.1666183, -306.56778, 0, -3.352581, 21.176788, 0, -5.739501, -21.176788, 0, 5.739501, -357.8339, 0, 0.9400444, 0, 0, 0, 0, 0, 0, -422.3538, 0, -0.7858677),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 16
+
 [node name="Intro" type="Node3D" unique_id=1010101]
 script = ExtResource("1_intro_script")
 
@@ -403,7 +409,6 @@ environment = SubResource("Environment_winter_morning")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1010104]
 transform = Transform3D(0.86602527, -0.28123382, 0.41340995, 0, 0.8268195, 0.5624674, -0.50000024, -0.48711097, 0.7160466, 0, 10, 0)
 light_color = Color(0.92, 0.82, 0.72, 1)
-light_energy = 0.65
 shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1010105]
@@ -418,6 +423,7 @@ max_roll = 0.1
 
 [node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=1010106]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, -0.001)
+visible = false
 mesh = SubResource("PlaneMesh_ground")
 surface_material_override/0 = SubResource("ShaderMaterial_snow_ground")
 metadata/_edit_lock_ = true
@@ -576,7 +582,7 @@ transform = Transform3D(30, 0, 0, 0, -1.3113416e-06, 30, 0, -30, -1.3113416e-06,
 mesh = SubResource("ArrayMesh_gckum")
 
 [node name="Tree1M" type="MeshInstance3D" parent="Trees" unique_id=986107020]
-transform = Transform3D(-1.9670124e-06, -45, -1.9670124e-06, 0, -1.9670124e-06, 45, -45, 1.9670124e-06, 8.5980844e-14, -5.0705495, 0.044304073, -5.7240257)
+transform = Transform3D(-1.9670124e-06, -45, -1.9670124e-06, 0, -1.9670124e-06, 45, -45, 1.9670124e-06, 8.5980844e-14, -37.26349, 0.044304073, 8.39134)
 mesh = SubResource("ArrayMesh_uxgid")
 
 [node name="Tree3m" type="MeshInstance3D" parent="Trees" unique_id=824892515]
@@ -584,7 +590,7 @@ transform = Transform3D(30, 0, 0, 0, -1.3113416e-06, 30, 0, -30, -1.3113416e-06,
 mesh = SubResource("ArrayMesh_rlcjn")
 
 [node name="Tree3m2" type="MeshInstance3D" parent="Trees" unique_id=1368790715]
-transform = Transform3D(7.9558477, -28.925842, -1.2643887e-06, 0, -1.3113415e-06, 29.999998, -28.925842, -7.9558477, -3.4776113e-07, -7.1386786, 0.26609308, -0.094836235)
+transform = Transform3D(7.9558477, -28.925842, -1.2643887e-06, 0, -1.3113415e-06, 29.999998, -28.925842, -7.9558477, -3.4776113e-07, -32.294563, 0.26609308, 11.297097)
 mesh = SubResource("ArrayMesh_rlcjn")
 
 [node name="Tree3m3" type="MeshInstance3D" parent="Trees" unique_id=261627839]
@@ -599,16 +605,12 @@ mesh = SubResource("ArrayMesh_rlcjn")
 transform = Transform3D(30, 0, 0, 0, -1.3113416e-06, 30, 0, -30, -1.3113416e-06, 7.130679, 0.26649886, 7.2287254)
 mesh = SubResource("ArrayMesh_sv22c")
 
-[node name="Tree5" type="MeshInstance3D" parent="Trees" unique_id=1347524399]
-transform = Transform3D(-23.91472, 17.971016, -2.264625, -2.5436223, 0.3816465, 29.889534, 17.933651, 24.018673, 1.2194831, -2.5256386, 0.26649886, 2.5449827)
-mesh = SubResource("ArrayMesh_sv22c")
-
 [node name="Tree 1" type="MeshInstance3D" parent="Trees" unique_id=232074279]
-transform = Transform3D(-47.301994, 8.156061, 3.5651277e-07, -1.0164395e-20, -2.0981465e-06, 48, 8.156061, 47.301994, 2.0676357e-06, -3.1308918, -0.10992712, -2.5576243)
+transform = Transform3D(-47.301994, 8.156061, 3.5651277e-07, -1.0164395e-20, -2.0981465e-06, 48, 8.156061, 47.301994, 2.0676357e-06, 14.23519, -0.10992712, -5.3672366)
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree 2" type="MeshInstance3D" parent="Trees" unique_id=1375542892]
-transform = Transform3D(-2.0981465e-06, -48, -2.0981465e-06, 0, -2.0981465e-06, 48, -48, 2.0981465e-06, 9.1712906e-14, -7.826329, -0.10992712, 7.2258906)
+transform = Transform3D(-2.0981465e-06, -48, -2.0981465e-06, 0, -2.0981465e-06, 48, -48, 2.0981465e-06, 9.1712906e-14, 8.27843, -0.10992712, 13.280781)
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree 3" type="MeshInstance3D" parent="Trees" unique_id=616791910]
@@ -624,19 +626,15 @@ transform = Transform3D(-43.659714, 19.945648, 8.718521e-07, -7.4436754e-14, -2.
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree2m4" type="MeshInstance3D" parent="Trees" unique_id=1776981517]
-transform = Transform3D(26.632587, 13.809605, 6.0363703e-07, -4.2972384e-14, -1.3113415e-06, 29.999998, 13.809605, -26.632587, -1.1641473e-06, 6.832052, 0.3436594, 0.4184127)
+transform = Transform3D(26.632587, 13.809605, 6.0363703e-07, -4.2972384e-14, -1.3113415e-06, 29.999998, 13.809605, -26.632587, -1.1641473e-06, 6.832052, 0.3436594, -7.9059033)
 mesh = SubResource("ArrayMesh_gckum")
 
 [node name="Tree 5" type="MeshInstance3D" parent="Trees" unique_id=1613827906]
-transform = Transform3D(22.842335, 42.216434, 1.8453393e-06, -7.4436754e-14, -2.0981465e-06, 48, 42.216434, -22.842335, -9.984701e-07, 3.740263, -0.15257639, 3.814018)
+transform = Transform3D(22.842335, 42.216434, 1.8453393e-06, -7.4436754e-14, -2.0981465e-06, 48, 42.216434, -22.842335, -9.984701e-07, -38.259132, -0.15257639, -5.2000027)
 mesh = SubResource("ArrayMesh_ierph")
 
-[node name="Tree8" type="MeshInstance3D" parent="Trees" unique_id=747661]
-transform = Transform3D(16.540874, -25.02797, -1.0940073e-06, 0, -1.3113415e-06, 29.999998, -25.02797, -16.540874, -7.2302464e-07, -5.7260485, 0.20561379, 4.152892)
-mesh = SubResource("ArrayMesh_sv22c")
-
 [node name="Tree2m5" type="MeshInstance3D" parent="Trees" unique_id=1265446188]
-transform = Transform3D(26.205091, -14.604555, -6.3838536e-07, 6.0891877e-15, -1.3113416e-06, 29.999998, -14.604555, -26.205091, -1.1454608e-06, -10.004411, 0.38630962, 1.1987388)
+transform = Transform3D(26.205091, -14.604555, -6.3838536e-07, 6.0891877e-15, -1.3113416e-06, 29.999998, -14.604555, -26.205091, -1.1454608e-06, -30.65113, 0.38630962, -4.970915)
 mesh = SubResource("ArrayMesh_gckum")
 
 [node name="Tree3m5" type="MeshInstance3D" parent="Trees" unique_id=1700803018]
@@ -664,7 +662,7 @@ transform = Transform3D(13.296543, -46.121597, -2.0160392e-06, -1.1487885e-13, -
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree 10" type="MeshInstance3D" parent="Trees" unique_id=2142575020]
-transform = Transform3D(43.19159, 20.940071, 9.153195e-07, -1.0164395e-20, -2.0981465e-06, 48, 20.940071, -43.19159, -1.8879641e-06, -4.4266186, -0.10992807, -22.301186)
+transform = Transform3D(43.19159, 20.940071, 9.153195e-07, -1.0164395e-20, -2.0981465e-06, 48, 20.940071, -43.19159, -1.8879641e-06, -48.29216, -0.10992807, -6.1295586)
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree2m8" type="MeshInstance3D" parent="Trees" unique_id=2044713937]
@@ -676,15 +674,15 @@ transform = Transform3D(28.06437, -10.601473, -4.6340523e-07, 1.0553383e-13, -1.
 mesh = SubResource("ArrayMesh_rlcjn")
 
 [node name="Tree 11" type="MeshInstance3D" parent="Trees" unique_id=1453365464]
-transform = Transform3D(-27.213575, 39.540127, 1.7283542e-06, -6.2757484e-14, -2.0981474e-06, 48.000015, 39.540127, 27.213575, 1.1895432e-06, -14.34033, -0.109929025, 2.9828215)
+transform = Transform3D(-27.213575, 39.540127, 1.7283542e-06, -6.2757484e-14, -2.0981474e-06, 48.000015, 39.540127, 27.213575, 1.1895432e-06, -27.074324, -0.109929025, 9.958908)
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree 12" type="MeshInstance3D" parent="Trees" unique_id=397022425]
-transform = Transform3D(3.1729145, -47.89502, -2.0935577e-06, 6.738479e-14, -2.0981465e-06, 48, -47.89502, -3.1729145, -1.3869249e-07, -18.63848, -0.109929025, 12.612715)
+transform = Transform3D(27.129208, -39.598053, -1.7308861e-06, 5.6112335e-14, -2.0981463e-06, 48, -39.598053, -27.129208, -1.1858551e-06, -16.390789, -0.109929025, 11.569144)
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree2m9" type="MeshInstance3D" parent="Trees" unique_id=1193742806]
-transform = Transform3D(27.113167, -12.840391, -5.612711e-07, -2.219674e-13, -1.3113416e-06, 29.999994, -12.840391, -27.113167, -1.1851545e-06, -20.413387, 0.38630772, 6.4547725)
+transform = Transform3D(27.113167, -12.840391, -5.612711e-07, -2.219674e-13, -1.3113416e-06, 29.999994, -12.840391, -27.113167, -1.1851545e-06, -21.354412, 0.38630772, 8.435876)
 mesh = SubResource("ArrayMesh_gckum")
 
 [node name="Tree3m8" type="MeshInstance3D" parent="Trees" unique_id=1565625924]
@@ -700,11 +698,11 @@ transform = Transform3D(47.47148, -7.1034355, -3.1050115e-07, 9.5465695e-15, -2.
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree 14" type="MeshInstance3D" parent="Trees" unique_id=1279084396]
-transform = Transform3D(-35.788864, -31.986826, -1.3981886e-06, 5.6112335e-14, -2.0981463e-06, 48, -31.986826, 35.788864, 1.5643808e-06, -18.71868, -0.109929025, -0.06136751)
+transform = Transform3D(-35.788864, -31.986826, -1.3981886e-06, 5.6112335e-14, -2.0981463e-06, 48, -31.986826, 35.788864, 1.5643808e-06, -19.909576, -0.109929025, -2.5113895)
 mesh = SubResource("ArrayMesh_ierph")
 
 [node name="Tree2m10" type="MeshInstance3D" parent="Trees" unique_id=1449515651]
-transform = Transform3D(6.5736923, -29.270908, -1.2794721e-06, -2.2196742e-13, -1.3113417e-06, 29.999998, -29.270908, -6.5736923, -2.873455e-07, -25.10353, 0.38630772, -3.5515003)
+transform = Transform3D(6.5736923, -29.270908, -1.2794721e-06, -2.2196742e-13, -1.3113417e-06, 29.999998, -29.270908, -6.5736923, -2.873455e-07, -26.008646, 0.38630772, -3.5515003)
 mesh = SubResource("ArrayMesh_gckum")
 
 [node name="Tree2m6" type="MeshInstance3D" parent="Trees" unique_id=728267733]
@@ -730,3 +728,7 @@ mesh = SubResource("ArrayMesh_ovi4o")
 [node name="Tree6" type="MeshInstance3D" parent="Trees" unique_id=1016145994]
 transform = Transform3D(-8.037111, -28.903368, -1.2634064e-06, 1.499814e-13, -1.3113415e-06, 29.999998, -28.903368, 8.037111, 3.5131347e-07, 3.4995885, 0.34981894, -7.912636)
 mesh = SubResource("ArrayMesh_ovi4o")
+
+[node name="Path3D" type="Path3D" parent="." unique_id=666170113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.860546, 0, 0)
+curve = SubResource("Curve3D_kkc3u")

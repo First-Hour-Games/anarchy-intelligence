@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1bq2lo0evyo1"
-path.s3tc="res://.godot/imported/Snow009A_1K-JPG_Displacement.jpg-f1dc104d7d30796f633cc23eb5d077ef.s3tc.ctex"
+uid="uid://b8m0kbbtveqq6"
+path.s3tc="res://.godot/imported/Ground037_1K-JPG_NormalGL.jpg-3c95b69d2e65883d80204c8e8a0e9002.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://img/materials/snow/Snow009A_1K-JPG_Displacement.jpg"
-dest_files=["res://.godot/imported/Snow009A_1K-JPG_Displacement.jpg-f1dc104d7d30796f633cc23eb5d077ef.s3tc.ctex"]
+source_file="res://img/materials/ground037/Ground037_1K-JPG_NormalGL.jpg"
+dest_files=["res://.godot/imported/Ground037_1K-JPG_NormalGL.jpg-3c95b69d2e65883d80204c8e8a0e9002.s3tc.ctex"]
 
 [params]
 
@@ -22,7 +22,7 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1

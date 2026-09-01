@@ -2,17 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcepqn3yfbt11"
-path.s3tc="res://.godot/imported/Snow009A_1K-JPG_Color.jpg-a3a459501509d7535bcc579adcac381e.s3tc.ctex"
+uid="uid://dmrowtkhuvt1f"
+path.s3tc="res://.godot/imported/bush_test_0.png-7c146abfddc94a66c79eca6765c818d6.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
+generator_parameters={
+"md5": "35b4c515f4a18a28f07b17a587f56359"
+}
 
 [deps]
 
-source_file="res://img/materials/snow/Snow009A_1K-JPG_Color.jpg"
-dest_files=["res://.godot/imported/Snow009A_1K-JPG_Color.jpg-a3a459501509d7535bcc579adcac381e.s3tc.ctex"]
+source_file="res://assets/local_licensed/sketchfab/bush_test_0.png"
+dest_files=["res://.godot/imported/bush_test_0.png-7c146abfddc94a66c79eca6765c818d6.s3tc.ctex"]
 
 [params]
 
