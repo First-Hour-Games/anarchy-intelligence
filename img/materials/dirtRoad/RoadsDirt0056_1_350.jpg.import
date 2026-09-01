@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ck5yj64evw8bq"
-path.s3tc="res://.godot/imported/Snow009A_1K-JPG_AmbientOcclusion.jpg-6f5eb6b09e01bd39cec7b3063e8e9d2d.s3tc.ctex"
+uid="uid://chgn8de4u20ii"
+path.s3tc="res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://img/materials/snow/Snow009A_1K-JPG_AmbientOcclusion.jpg"
-dest_files=["res://.godot/imported/Snow009A_1K-JPG_AmbientOcclusion.jpg-6f5eb6b09e01bd39cec7b3063e8e9d2d.s3tc.ctex"]
+source_file="res://img/materials/dirtRoad/RoadsDirt0056_1_350.jpg"
+dest_files=["res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.s3tc.ctex"]
 
 [params]
 

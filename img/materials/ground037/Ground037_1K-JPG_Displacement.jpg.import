@@ -2,20 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8fdhyfyxutpc"
-path.s3tc="res://.godot/imported/tree_rt_2_1_tree_bark_rt_b_1.png-c644a0882da6c1a76ef921188960046b.s3tc.ctex"
+uid="uid://dkyajr4yhqfup"
+path.s3tc="res://.godot/imported/Ground037_1K-JPG_Displacement.jpg-d9cce6d7561162c9a44d4a278e08e9b6.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
-generator_parameters={
-"md5": "addb49383932171b5c6c398c0b712eb4"
-}
 
 [deps]
 
-source_file="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_2_1_tree_bark_rt_b_1.png"
-dest_files=["res://.godot/imported/tree_rt_2_1_tree_bark_rt_b_1.png-c644a0882da6c1a76ef921188960046b.s3tc.ctex"]
+source_file="res://img/materials/ground037/Ground037_1K-JPG_Displacement.jpg"
+dest_files=["res://.godot/imported/Ground037_1K-JPG_Displacement.jpg-d9cce6d7561162c9a44d4a278e08e9b6.s3tc.ctex"]
 
 [params]
 
