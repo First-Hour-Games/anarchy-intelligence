@@ -16,29 +16,21 @@
 [ext_resource type="Shader" uid="uid://c304gga0hm2bv" path="res://shaders/blur.gdshader" id="15_blur_shader"]
 [ext_resource type="AudioStream" uid="uid://ibitrhhh8a5x" path="res://sounds/ambience/intro/turnTv.mp3" id="17_turn_tv"]
 [ext_resource type="AudioStream" uid="uid://71j10r0d3ewn" path="res://sounds/ambience/intro/tvStaticLoop.wav" id="18_static_tv"]
+[ext_resource type="Texture2D" uid="uid://chgn8de4u20ii" path="res://img/materials/dirtRoad/RoadsDirt0056_1_350.jpg" id="18_wnkph"]
+[ext_resource type="Texture2D" uid="uid://dkpqrsk3ra4w1" path="res://img/materials/dirtRoad/dry_mud_field_001_ao_1k.jpg" id="19_u1hkk"]
 [ext_resource type="Texture2D" uid="uid://nw3eustj14uw" path="res://img/pictures/waterTap.png" id="19_water_tap"]
+[ext_resource type="Texture2D" uid="uid://dirs2hebpcmt6" path="res://img/materials/dirtRoad/dry_mud_field_001_disp_1k.jpg" id="20_wqpi7"]
+[ext_resource type="Texture2D" uid="uid://dpceq8d7fga0o" path="res://img/materials/dirtRoad/dry_mud_field_001_nor_gl_1k.jpg" id="21_vsps1"]
+[ext_resource type="Texture2D" uid="uid://b0lxt8glwi8no" path="res://img/materials/dirtRoad/dry_mud_field_001_rough_1k.jpg" id="22_p4ahc"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_winter_morning"]
-sky_top_color = Color(0.036409024, 0.051551282, 0.047251277, 1)
-sky_horizon_color = Color(0.72, 0.62, 0.58, 1)
-ground_bottom_color = Color(0.22, 0.24, 0.28, 1)
-
-[sub_resource type="Sky" id="Sky_winter_morning"]
-sky_material = SubResource("ProceduralSkyMaterial_winter_morning")
-
-[sub_resource type="Environment" id="Environment_winter_morning"]
-background_mode = 2
-sky = SubResource("Sky_winter_morning")
-ambient_light_energy = 0.5
-reflected_light_source = 2
-tonemap_mode = 2
-glow_enabled = true
-glow_intensity = 0.2
-fog_light_color = Color(0.65, 0.64, 0.66, 1)
-fog_density = 0.02
+[sub_resource type="Environment" id="Environment_wnkph"]
+background_mode = 1
+background_color = Color(0.0253638, 0.0253638, 0.025363795, 1)
+background_energy_multiplier = 0.35
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.115
-volumetric_fog_albedo = Color(0.74978, 0.74978, 0.74977994, 1)
+volumetric_fog_density = 0.0896
+volumetric_fog_albedo = Color(0.2888107, 0.35548314, 0.2732978, 1)
+volumetric_fog_length = 11.35
 
 [sub_resource type="GDScript" id="GDScript_kkc3u"]
 script/source = "extends Camera3D
@@ -146,6 +138,24 @@ shader_parameter/pixel_size = 4.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
 shader = ExtResource("15_blur_shader")
 shader_parameter/lod = 0.0
+
+[sub_resource type="Curve3D" id="Curve3D_kkc3u"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 1.1928921, 0, 1.1007351, 3.0965452, 0, 0.77577597, -3.0965452, 0, -0.77577597, -10.326843, 0, 1.3231021, 2.3869781, 0, -0.92515707, -2.3869781, 0, 0.92515707, -18.42136, 0, 2.317869, 4.8603725, 0, 0.41563058, -4.8603725, 0, -0.41563058, -28.527603, 0, 4.1888022, 3.1746407, 0, -0.76450944, -3.1746407, 0, 0.76450944, -40.868603, 0, 3.351507, 4.8053474, 0, -0.98291063, -4.8053474, 0, 0.98291063, -54.84961, 0, 3.5399373, 5.3984985, 0, 0.5943308, -5.3984985, 0, -0.5943308, -68.15787, 0, 2.9900773, 4.393036, 0, -2.7186575, -4.393036, 0, 2.7186575, -86.83374, 0, 7.5656257, 6.8453674, 0, 0.33636475, -6.8453674, 0, -0.33636475, -102.07878, 0, 16.590591, 0, 0, 0, 0, 0, 0, -122.229004, 0, 10.140175, 0, 0, 0, 0, 0, 0, -145.63676, 0, 1.0728111, 28.499588, 0, -3.3645382, -28.499588, 0, 3.3645382, -203.62482, 0, -3.757658, 19.989304, 0, -2.9687119, -19.989304, 0, 2.9687119, -256.6657, 0, 4.752634, 14.843536, 0, 3.1666183, -14.843536, 0, -3.1666183, -306.56778, 0, -3.352581, 21.176788, 0, -5.739501, -21.176788, 0, 5.739501, -357.8339, 0, 0.9400444, 0, 0, 0, 0, 0, 0, -422.3538, 0, -0.7858677),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kkc3u"]
+albedo_texture = ExtResource("18_wnkph")
+roughness_texture = ExtResource("22_p4ahc")
+normal_enabled = true
+normal_texture = ExtResource("21_vsps1")
+ao_enabled = true
+ao_texture = ExtResource("19_u1hkk")
+heightmap_enabled = true
+heightmap_texture = ExtResource("20_wqpi7")
+uv1_scale = Vector3(1, 20, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ykrfo"]
 resource_name = "Material.006"
@@ -393,23 +403,11 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_q7j67")
 
-[sub_resource type="Curve3D" id="Curve3D_kkc3u"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 1.1928921, 0, 1.1007351, 3.0965452, 0, 0.77577597, -3.0965452, 0, -0.77577597, -10.326843, 0, 1.3231021, 2.3869781, 0, -0.92515707, -2.3869781, 0, 0.92515707, -18.42136, 0, 2.317869, 4.8603725, 0, 0.41563058, -4.8603725, 0, -0.41563058, -28.527603, 0, 4.1888022, 3.1746407, 0, -0.76450944, -3.1746407, 0, 0.76450944, -40.868603, 0, 3.351507, 4.8053474, 0, -0.98291063, -4.8053474, 0, 0.98291063, -54.84961, 0, 3.5399373, 5.3984985, 0, 0.5943308, -5.3984985, 0, -0.5943308, -68.15787, 0, 2.9900773, 4.393036, 0, -2.7186575, -4.393036, 0, 2.7186575, -86.83374, 0, 7.5656257, 6.8453674, 0, 0.33636475, -6.8453674, 0, -0.33636475, -102.07878, 0, 16.590591, 0, 0, 0, 0, 0, 0, -122.229004, 0, 10.140175, 0, 0, 0, 0, 0, 0, -145.63676, 0, 1.0728111, 28.499588, 0, -3.3645382, -28.499588, 0, 3.3645382, -203.62482, 0, -3.757658, 19.989304, 0, -2.9687119, -19.989304, 0, 2.9687119, -256.6657, 0, 4.752634, 14.843536, 0, 3.1666183, -14.843536, 0, -3.1666183, -306.56778, 0, -3.352581, 21.176788, 0, -5.739501, -21.176788, 0, 5.739501, -357.8339, 0, 0.9400444, 0, 0, 0, 0, 0, 0, -422.3538, 0, -0.7858677),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-}
-point_count = 16
-
 [node name="Intro" type="Node3D" unique_id=1010101]
 script = ExtResource("1_intro_script")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1010103]
-environment = SubResource("Environment_winter_morning")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1010104]
-transform = Transform3D(0.86602527, -0.28123382, 0.41340995, 0, 0.8268195, 0.5624674, -0.50000024, -0.48711097, 0.7160466, 0, 10, 0)
-light_color = Color(0.92, 0.82, 0.72, 1)
-shadow_enabled = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=413095969]
+environment = SubResource("Environment_wnkph")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1010105]
 transform = Transform3D(0.19508709, 0.008559377, 0.98074853, 0, 0.9999619, -0.00872706, -0.9807859, 0.0017025367, 0.19507965, 5.01832, 0.7216594, 3.6240711)
@@ -423,7 +421,6 @@ max_roll = 0.1
 
 [node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=1010106]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, -0.001)
-visible = false
 mesh = SubResource("PlaneMesh_ground")
 surface_material_override/0 = SubResource("ShaderMaterial_snow_ground")
 metadata/_edit_lock_ = true
@@ -570,6 +567,26 @@ offset_bottom = 4000.0
 grow_horizontal = 2
 grow_vertical = 0
 color = Color(0, 0, 0, 1)
+
+[node name="Path3D" type="Path3D" parent="." unique_id=666170113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.860546, 0, 0)
+curve = SubResource("Curve3D_kkc3u")
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=2003496889]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05979383, 0)
+material_override = SubResource("StandardMaterial3D_kkc3u")
+polygon = PackedVector2Array(0, 0, 0, 0.1, 3.2, 0.1, 3.2, 0)
+mode = 2
+path_node = NodePath("../Path3D")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
 
 [node name="Trees" type="Node3D" parent="." unique_id=1916871486]
 
@@ -729,6 +746,14 @@ mesh = SubResource("ArrayMesh_ovi4o")
 transform = Transform3D(-8.037111, -28.903368, -1.2634064e-06, 1.499814e-13, -1.3113415e-06, 29.999998, -28.903368, 8.037111, 3.5131347e-07, 3.4995885, 0.34981894, -7.912636)
 mesh = SubResource("ArrayMesh_ovi4o")
 
-[node name="Path3D" type="Path3D" parent="." unique_id=666170113]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.860546, 0, 0)
-curve = SubResource("Curve3D_kkc3u")
+[node name="CarLights" type="Node3D" parent="." unique_id=31267430]
+
+[node name="SpotLight3D" type="SpotLight3D" parent="CarLights" unique_id=365068569]
+transform = Transform3D(-2.9802319e-08, 0, 1, 0, 1, 0, -1, 0, -2.9802319e-08, 11.338442, 0.73942643, 0.46764618)
+spot_range = 120.0
+spot_angle = 55.25
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="CarLights" unique_id=1524187538]
+transform = Transform3D(-2.9802319e-08, 0, 1, 0, 1, 0, -1, 0, -2.9802319e-08, 11.338442, 0.73942643, -0.3534131)
+spot_range = 120.0
+spot_angle = 55.25
