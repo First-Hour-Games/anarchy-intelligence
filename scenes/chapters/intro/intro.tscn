@@ -111,6 +111,11 @@ func _idle_sway() -> void:
 func _input(event: InputEvent) -> void:
 	if InputMap.has_action(\"shake\") and event.is_action_pressed(\"shake\"):
 		add_trauma(0.6)
+
+func set_driving_view(pos: Vector3, look_at_target: Vector3) -> void:
+	global_position = pos
+	look_at(look_at_target, Vector3.UP)
+	initial_rotation = rotation
 "
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
@@ -410,7 +415,7 @@ script = ExtResource("1_intro_script")
 environment = SubResource("Environment_wnkph")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1010105]
-transform = Transform3D(0.19508709, 0.008559377, 0.98074853, 0, 0.9999619, -0.00872706, -0.9807859, 0.0017025367, 0.19507965, 5.01832, 0.7216594, 3.6240711)
+transform = Transform3D(-0.0193003, 0, 0.9998137, 0, 1, 0, -0.9998137, 0, -0.0193003, 16.0843, 1.15, -0.499)
 current = true
 fov = 50.0
 script = SubResource("GDScript_kkc3u")
@@ -418,6 +423,19 @@ decay = 0.01
 amplitude = 0.15
 max_offset = Vector2(-0.17, 0.3)
 max_roll = 0.1
+
+[node name="CarLights" type="Node3D" parent="Camera3D" unique_id=31267430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, -1)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Camera3D/CarLights" unique_id=365068569]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
+spot_range = 120.0
+spot_angle = 55.25
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Camera3D/CarLights" unique_id=1524187538]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
+spot_range = 120.0
+spot_angle = 55.25
 
 [node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=1010106]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, -0.001)
@@ -745,15 +763,3 @@ mesh = SubResource("ArrayMesh_ovi4o")
 [node name="Tree6" type="MeshInstance3D" parent="Trees" unique_id=1016145994]
 transform = Transform3D(-8.037111, -28.903368, -1.2634064e-06, 1.499814e-13, -1.3113415e-06, 29.999998, -28.903368, 8.037111, 3.5131347e-07, 3.4995885, 0.34981894, -7.912636)
 mesh = SubResource("ArrayMesh_ovi4o")
-
-[node name="CarLights" type="Node3D" parent="." unique_id=31267430]
-
-[node name="SpotLight3D" type="SpotLight3D" parent="CarLights" unique_id=365068569]
-transform = Transform3D(-2.9802319e-08, 0, 1, 0, 1, 0, -1, 0, -2.9802319e-08, 11.338442, 0.73942643, 0.46764618)
-spot_range = 120.0
-spot_angle = 55.25
-
-[node name="SpotLight3D2" type="SpotLight3D" parent="CarLights" unique_id=1524187538]
-transform = Transform3D(-2.9802319e-08, 0, 1, 0, 1, 0, -1, 0, -2.9802319e-08, 11.338442, 0.73942643, -0.3534131)
-spot_range = 120.0
-spot_angle = 55.25
