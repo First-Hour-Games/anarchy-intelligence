@@ -65,17 +65,33 @@ _data = {
 }
 point_count = 16
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_shake"]
+noise_type = 3
+frequency = 0.03
+fractal_octaves = 3
+
 [sub_resource type="GDScript" id="GDScript_kkc3u"]
 script/source = "extends Camera3D
 
-@onready var noise: FastNoiseLite = FastNoiseLite.new()
+@export_group(\"Noise Settings\")
+## The FastNoiseLite resource driving the camera motion. Click this in the Inspector to edit its texture preview, frequency, fractals, etc.
+@export var noise: FastNoiseLite
+## Optional: You can also assign a NoiseTexture2D here and its noise will be used.
+@export var noise_texture: NoiseTexture2D
+## How fast time scrubs through the noise texture (lower = slower, calmer motion)
+@export var noise_speed: float = 2.0
 
-@export_group(\"Slow Handheld Bob\")
-@export var bob_speed: float = 1.0 ## Speed of the gentle up-and-down cycle (lower = slower and calmer)
-@export var bob_height: float = 0.045 ## Up-and-down movement distance in meters (vertical breathing)
-@export var max_pitch_deg: float = 0.8 ## Very gentle pitch tilt following the vertical motion (degrees)
-@export var max_yaw_deg: float = 0.5 ## Very subtle, calm horizontal drift (degrees)
-@export var max_roll_deg: float = 0.3 ## Minimal subtle tilt (degrees)
+@export_group(\"Shake Amplitudes\")
+## Up-and-down movement distance in meters (vertical bob)
+@export var vertical_amplitude: float = 0.045
+## Left-to-right drift distance in meters
+@export var horizontal_amplitude: float = 0.015
+## Maximum pitch tilt in degrees
+@export var max_pitch_deg: float = 0.8
+## Maximum yaw drift in degrees
+@export var max_yaw_deg: float = 0.6
+## Maximum roll tilt in degrees
+@export var max_roll_deg: float = 0.4
 
 @export_group(\"Trauma / Impact\")
 @export var decay: float = 0.8
@@ -83,54 +99,60 @@ var trauma: float = 0.0
 var trauma_power: float = 2.0
 
 var _time: float = 0.0
-var seed_offset: float = 0.0
-
 @onready var initial_rotation: Vector3 = rotation
 
 func _ready() -> void:
-	randomize()
-	seed_offset = float(randi() % 10000)
-	noise.seed = int(seed_offset)
-	noise.noise_type = FastNoiseLite.TYPE_PERLIN
-	noise.frequency = 0.25
+	if not noise:
+		if noise_texture and noise_texture.noise is FastNoiseLite:
+			noise = noise_texture.noise
+		else:
+			noise = FastNoiseLite.new()
+			noise.seed = randi() % 10000
+			noise.noise_type = FastNoiseLite.TYPE_PERLIN
+			noise.frequency = 0.03
+			noise.fractal_octaves = 3
 	initial_rotation = rotation
 
 func _physics_process(delta: float) -> void:
-	_time += bob_speed * delta
+	_time += noise_speed * delta
 	
 	if trauma > 0.0:
 		trauma = max(trauma - decay * delta, 0.0)
 	
-	_apply_slow_handheld_bob()
+	_apply_noise_shake()
 
 func add_trauma(amount: float) -> void:
 	trauma = min(trauma + amount, 1.0)
 
-func _apply_slow_handheld_bob() -> void:
-	# 1. Very slow and steady vertical wave with gentle organic drift
-	var primary_wave: float = sin(_time)
-	var noise_drift: float = noise.get_noise_2d(seed_offset + 10.0, _time * 0.4)
-	var smooth_vertical: float = primary_wave * 0.8 + noise_drift * 0.2
+func _apply_noise_shake() -> void:
+	var active_noise: FastNoiseLite = noise
+	if not active_noise and noise_texture and noise_texture.noise is FastNoiseLite:
+		active_noise = noise_texture.noise
+	if not active_noise:
+		return
 	
-	# 2. Subtle pitch nod synchronized with the vertical bob (tilts slightly down as it drops, up as it rises)
-	var pitch_drift: float = cos(_time) * 0.75 + noise.get_noise_2d(seed_offset + 25.0, _time * 0.4) * 0.25
-	var yaw_drift: float = noise.get_noise_2d(seed_offset + 40.0, _time * 0.3)
-	var roll_drift: float = noise.get_noise_2d(seed_offset + 55.0, _time * 0.25)
+	# Sample FastNoiseLite at different coordinates to get distinct curves for each axis
+	var ny: float = _time
+	var n_vert: float = active_noise.get_noise_2d(0.0, ny)
+	var n_horiz: float = active_noise.get_noise_2d(200.0, ny)
+	var n_pitch: float = active_noise.get_noise_2d(400.0, ny)
+	var n_yaw: float = active_noise.get_noise_2d(600.0, ny)
+	var n_roll: float = active_noise.get_noise_2d(800.0, ny)
 	
-	# Trauma multiplier for impacts
+	# Trauma multiplier for bumps/impacts
 	var impact_boost: float = 1.0 + pow(trauma, trauma_power) * 3.0
 	
-	# Steady smooth rotations without any fast jitter
-	var rot_x: float = initial_rotation.x + deg_to_rad(max_pitch_deg) * pitch_drift * impact_boost
-	var rot_y: float = initial_rotation.y + deg_to_rad(max_yaw_deg) * yaw_drift * impact_boost
-	var rot_z: float = initial_rotation.z + deg_to_rad(max_roll_deg) * roll_drift * impact_boost
+	# Rotations driven directly by the FastNoiseLite texture
+	var rot_x: float = initial_rotation.x + deg_to_rad(max_pitch_deg) * n_pitch * impact_boost
+	var rot_y: float = initial_rotation.y + deg_to_rad(max_yaw_deg) * n_yaw * impact_boost
+	var rot_z: float = initial_rotation.z + deg_to_rad(max_roll_deg) * n_roll * impact_boost
 	
 	if is_finite(rot_x) and is_finite(rot_y) and is_finite(rot_z):
 		quaternion = Quaternion.from_euler(Vector3(rot_x, rot_y, rot_z))
 	
-	# Smooth, steady up-and-down vertical offset
-	v_offset = bob_height * smooth_vertical * impact_boost
-	h_offset = (bob_height * 0.2) * yaw_drift * impact_boost
+	# Position offsets driven directly by the FastNoiseLite texture
+	v_offset = vertical_amplitude * n_vert * impact_boost
+	h_offset = horizontal_amplitude * n_horiz * impact_boost
 
 func _input(event: InputEvent) -> void:
 	if InputMap.has_action(\"shake\") and event.is_action_pressed(\"shake\"):
@@ -569,6 +591,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 current = true
 fov = 50.0
 script = SubResource("GDScript_kkc3u")
+noise = SubResource("FastNoiseLite_shake")
 
 [node name="CarLights" type="Node3D" parent="Path3D/PathFollow3D/Camera3D" unique_id=31267430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, -1)
