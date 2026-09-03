@@ -587,11 +587,16 @@ cubic_interp = false
 loop = false
 
 [node name="Camera3D" type="Camera3D" parent="Path3D/PathFollow3D" unique_id=1010105]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 1.2, 0)
 current = true
 fov = 50.0
 script = SubResource("GDScript_kkc3u")
 noise = SubResource("FastNoiseLite_shake")
+vertical_amplitude = 1.0
+horizontal_amplitude = 0.5
+max_pitch_deg = 8.0
+max_yaw_deg = 6.0
+max_roll_deg = 4.0
 
 [node name="CarLights" type="Node3D" parent="Path3D/PathFollow3D/Camera3D" unique_id=31267430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, -1)
