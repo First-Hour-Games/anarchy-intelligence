@@ -32,6 +32,39 @@ volumetric_fog_density = 0.0896
 volumetric_fog_albedo = Color(0.2888107, 0.35548314, 0.2732978, 1)
 volumetric_fog_length = 11.35
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(40, 40)
+subdivide_width = 64
+subdivide_depth = 64
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_snow_ground"]
+render_priority = 0
+shader = ExtResource("3_snow_shader")
+shader_parameter/albedo_texture = ExtResource("3_kkc3u")
+shader_parameter/normal_texture = ExtResource("6_41jyw")
+shader_parameter/roughness_texture = ExtResource("7_s4hh7")
+shader_parameter/ao_texture = ExtResource("4_yp4mb")
+shader_parameter/height_texture = ExtResource("5_gbowa")
+shader_parameter/tiling = 100.0
+shader_parameter/randomize_rotation = 1.0
+shader_parameter/normal_scale = 1.0
+shader_parameter/height_scale = 0.15
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pixelation"]
+shader = ExtResource("11_pixelation_shader")
+shader_parameter/pixel_size = 4.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
+shader = ExtResource("15_blur_shader")
+shader_parameter/lod = 0.0
+
+[sub_resource type="Curve3D" id="Curve3D_kkc3u"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 1.1928921, 0, 1.1007351, 3.0965452, 0, 0.77577597, -3.0965452, 0, -0.77577597, -10.326843, 0, 1.3231021, 2.3869781, 0, -0.92515707, -2.3869781, 0, 0.92515707, -18.42136, 0, 2.317869, 4.8603725, 0, 0.41563058, -4.8603725, 0, -0.41563058, -28.527603, 0, 4.1888022, 3.1746407, 0, -0.76450944, -3.1746407, 0, 0.76450944, -40.868603, 0, 3.351507, 4.8053474, 0, -0.98291063, -4.8053474, 0, 0.98291063, -54.84961, 0, 3.5399373, 5.3984985, 0, 0.5943308, -5.3984985, 0, -0.5943308, -68.15787, 0, 2.9900773, 4.393036, 0, -2.7186575, -4.393036, 0, 2.7186575, -86.83374, 0, 7.5656257, 6.8453674, 0, 0.33636475, -6.8453674, 0, -0.33636475, -102.07878, 0, 16.590591, 0, 0, 0, 0, 0, 0, -122.229004, 0, 10.140175, 0, 0, 0, 0, 0, 0, -145.63676, 0, 1.0728111, 28.499588, 0, -3.3645382, -28.499588, 0, 3.3645382, -203.62482, 0, -3.757658, 19.989304, 0, -2.9687119, -19.989304, 0, 2.9687119, -256.6657, 0, 4.752634, 14.843536, 0, 3.1666183, -14.843536, 0, -3.1666183, -306.56778, 0, -3.352581, 21.176788, 0, -5.739501, -21.176788, 0, 5.739501, -357.8339, 0, 0.9400444, 0, 0, 0, 0, 0, 0, -422.3538, 0, -0.7858677),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 16
+
 [sub_resource type="GDScript" id="GDScript_kkc3u"]
 script/source = "extends Camera3D
 
@@ -117,39 +150,6 @@ func set_driving_view(pos: Vector3, look_at_target: Vector3) -> void:
 	look_at(look_at_target, Vector3.UP)
 	initial_rotation = rotation
 "
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
-size = Vector2(40, 40)
-subdivide_width = 64
-subdivide_depth = 64
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_snow_ground"]
-render_priority = 0
-shader = ExtResource("3_snow_shader")
-shader_parameter/albedo_texture = ExtResource("3_kkc3u")
-shader_parameter/normal_texture = ExtResource("6_41jyw")
-shader_parameter/roughness_texture = ExtResource("7_s4hh7")
-shader_parameter/ao_texture = ExtResource("4_yp4mb")
-shader_parameter/height_texture = ExtResource("5_gbowa")
-shader_parameter/tiling = 100.0
-shader_parameter/randomize_rotation = 1.0
-shader_parameter/normal_scale = 1.0
-shader_parameter/height_scale = 0.15
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pixelation"]
-shader = ExtResource("11_pixelation_shader")
-shader_parameter/pixel_size = 4.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
-shader = ExtResource("15_blur_shader")
-shader_parameter/lod = 0.0
-
-[sub_resource type="Curve3D" id="Curve3D_kkc3u"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 1.1928921, 0, 1.1007351, 3.0965452, 0, 0.77577597, -3.0965452, 0, -0.77577597, -10.326843, 0, 1.3231021, 2.3869781, 0, -0.92515707, -2.3869781, 0, 0.92515707, -18.42136, 0, 2.317869, 4.8603725, 0, 0.41563058, -4.8603725, 0, -0.41563058, -28.527603, 0, 4.1888022, 3.1746407, 0, -0.76450944, -3.1746407, 0, 0.76450944, -40.868603, 0, 3.351507, 4.8053474, 0, -0.98291063, -4.8053474, 0, 0.98291063, -54.84961, 0, 3.5399373, 5.3984985, 0, 0.5943308, -5.3984985, 0, -0.5943308, -68.15787, 0, 2.9900773, 4.393036, 0, -2.7186575, -4.393036, 0, 2.7186575, -86.83374, 0, 7.5656257, 6.8453674, 0, 0.33636475, -6.8453674, 0, -0.33636475, -102.07878, 0, 16.590591, 0, 0, 0, 0, 0, 0, -122.229004, 0, 10.140175, 0, 0, 0, 0, 0, 0, -145.63676, 0, 1.0728111, 28.499588, 0, -3.3645382, -28.499588, 0, 3.3645382, -203.62482, 0, -3.757658, 19.989304, 0, -2.9687119, -19.989304, 0, 2.9687119, -256.6657, 0, 4.752634, 14.843536, 0, 3.1666183, -14.843536, 0, -3.1666183, -306.56778, 0, -3.352581, 21.176788, 0, -5.739501, -21.176788, 0, 5.739501, -357.8339, 0, 0.9400444, 0, 0, 0, 0, 0, 0, -422.3538, 0, -0.7858677),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-}
-point_count = 16
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kkc3u"]
 albedo_texture = ExtResource("18_wnkph")
@@ -414,29 +414,6 @@ script = ExtResource("1_intro_script")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=413095969]
 environment = SubResource("Environment_wnkph")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1010105]
-transform = Transform3D(-0.0193003, 0, 0.9998137, 0, 1, 0, -0.9998137, 0, -0.0193003, 16.0843, 1.15, -0.499)
-current = true
-fov = 50.0
-script = SubResource("GDScript_kkc3u")
-decay = 0.01
-amplitude = 0.15
-max_offset = Vector2(-0.17, 0.3)
-max_roll = 0.1
-
-[node name="CarLights" type="Node3D" parent="Camera3D" unique_id=31267430]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, -1)
-
-[node name="SpotLight3D" type="SpotLight3D" parent="Camera3D/CarLights" unique_id=365068569]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
-spot_range = 120.0
-spot_angle = 55.25
-
-[node name="SpotLight3D2" type="SpotLight3D" parent="Camera3D/CarLights" unique_id=1524187538]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
-spot_range = 120.0
-spot_angle = 55.25
-
 [node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=1010106]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, -0.001)
 mesh = SubResource("PlaneMesh_ground")
@@ -589,6 +566,32 @@ color = Color(0, 0, 0, 1)
 [node name="Path3D" type="Path3D" parent="." unique_id=666170113]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.860546, 0, 0)
 curve = SubResource("Curve3D_kkc3u")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=1805941518]
+transform = Transform3D(-0.11767611, 0, 0.99305195, 0, 1, 0, -0.99305195, 0, -0.11767611, 1.1928921, 0, 1.1007351)
+
+[node name="Camera3D" type="Camera3D" parent="Path3D/PathFollow3D" unique_id=1010105]
+transform = Transform3D(0.99513835, 0, -0.098488, 0, 1, 0, 0.098488, 0, 0.99513835, 1.5849888, 1.15, 0.21889591)
+current = true
+fov = 50.0
+script = SubResource("GDScript_kkc3u")
+decay = 0.01
+amplitude = 0.15
+max_offset = Vector2(-0.17, 0.3)
+max_roll = 0.1
+
+[node name="CarLights" type="Node3D" parent="Path3D/PathFollow3D/Camera3D" unique_id=31267430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, -1)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Path3D/PathFollow3D/Camera3D/CarLights" unique_id=365068569]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
+spot_range = 120.0
+spot_angle = 55.25
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Path3D/PathFollow3D/Camera3D/CarLights" unique_id=1524187538]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
+spot_range = 120.0
+spot_angle = 55.25
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=2003496889]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05979383, 0)

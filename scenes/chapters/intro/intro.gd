@@ -8,8 +8,9 @@ extends Node3D
 @onready var cutscene_picture: TextureRect = %CutscenePicture if has_node("%CutscenePicture") else null
 @onready var static_rect: TextureRect = %Static if has_node("%Static") else null
 @onready var intro_overlay: ColorRect = $IntroCanvasLayer/IntroBlackOverlay if has_node("IntroCanvasLayer/IntroBlackOverlay") else null
-@onready var camera: Camera3D = $Camera3D if has_node("Camera3D") else null
+@onready var camera: Camera3D = $Path3D/PathFollow3D/Camera3D if has_node("Path3D/PathFollow3D/Camera3D") else ($Camera3D if has_node("Camera3D") else null)
 @onready var path: Path3D = $Path3D if has_node("Path3D") else null
+@onready var path_follow: PathFollow3D = $Path3D/PathFollow3D if has_node("Path3D/PathFollow3D") else null
 
 const INTRO_DIALOGUE: Resource = preload("res://scenes/chapters/intro/intro.dialogue")
 const CUSTOM_BALLOON: PackedScene = preload("res://scenes/ui/balloon/balloon.tscn")
@@ -19,11 +20,17 @@ var static_textures: Array[Texture2D] = []
 var static_timer: float = 0.0
 const STATIC_INTERVAL: float = 0.24
 
+func _input(event: InputEvent) -> void:
+	if OS.has_feature("editor") and event.is_action_pressed("ui_cancel"): # Escape key
+		if is_instance_valid(active_balloon):
+			active_balloon.queue_free()
+			active_balloon = null
+		_on_dialogue_ended(null)
+
 func _ready() -> void:
 	print("Intro scene loaded: Starting 5-second dropping ambience fade-in...")
 	if camera:
 		camera.fov = 40
-	_setup_driving_camera()
 	
 	# Load all 20 static frames
 	for i in range(1, 21):
@@ -153,6 +160,16 @@ func _setup_driving_camera() -> void:
 		camera.look_at(look_target, Vector3.UP)
 		if "initial_rotation" in camera:
 			camera.initial_rotation = camera.rotation
+
+	if path_follow:
+		path_follow.loop = false
+		var total_length: float = curve.get_baked_length()
+		var speed: float = 8.0 # meters per second
+		var duration: float = total_length / speed
+		
+		path_follow.progress = 0.0
+		var tween = create_tween()
+		tween.tween_property(path_follow, "progress", total_length, duration)
 
 func _on_dialogue_ended(_resource: Resource) -> void:
 	_setup_driving_camera()
