@@ -559,13 +559,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.860546, 0, 0)
 curve = SubResource("Curve3D_kkc3u")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=1805941518]
-transform = Transform3D(-0.11767612, 0, 0.993052, 0, 1, 0, -0.993052, 0, -0.11767612, 1.1928921, 0, 1.1007351)
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 1.1928921, 0, 1.1007351)
 rotation_mode = 0
 cubic_interp = false
 loop = false
 
 [node name="Camera3D" type="Camera3D" parent="Path3D/PathFollow3D" unique_id=1010105]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 current = true
 fov = 50.0
 script = SubResource("GDScript_kkc3u")
@@ -575,13 +575,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, -1)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Path3D/PathFollow3D/Camera3D/CarLights" unique_id=365068569]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
-spot_range = 120.0
-spot_angle = 55.25
+light_color = Color(0.94764113, 1, 0.9333369, 1)
+light_energy = 0.7
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 60.0
+spot_angle = 37.76
+spot_angle_attenuation = 1.3660421
 
 [node name="SpotLight3D2" type="SpotLight3D" parent="Path3D/PathFollow3D/Camera3D/CarLights" unique_id=1524187538]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
-spot_range = 120.0
-spot_angle = 55.25
+light_color = Color(0.94764113, 1, 0.9333369, 1)
+light_energy = 0.7
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 60.0
+spot_angle = 37.76
+spot_angle_attenuation = 1.3660421
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=2003496889]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05979383, 0)

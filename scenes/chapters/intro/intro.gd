@@ -26,8 +26,8 @@ var current_speed: float = 0.0
 var current_yaw: float = 0.0
 
 @export_group("Driving Controller")
-@export var max_speed: float = 4.0 ## Maximum speed on straight roads (m/s)
-@export var min_speed: float = 2.5 ## Speed when negotiating sharp corners (m/s)
+@export var max_speed: float = 3.5 ## Maximum speed on straight roads (m/s)
+@export var min_speed: float = 3 ## Speed when negotiating sharp corners (m/s)
 @export var acceleration: float = 5.0 ## Rate of acceleration on straightaways (m/s²)
 @export var braking: float = 1.0 ## Rate of deceleration when approaching corners (m/s²)
 @export var steering_smoothness: float = 4.0 ## Steering interpolation speed (lower = smoother tweening into turns)
@@ -42,7 +42,7 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 	print("Intro scene loaded: Starting 5-second dropping ambience fade-in...")
 	if camera:
-		camera.fov = 40
+		camera.fov = 50
 	
 	# Load all 20 static frames
 	for i in range(1, 21):
