@@ -20,6 +20,18 @@ var static_textures: Array[Texture2D] = []
 var static_timer: float = 0.0
 const STATIC_INTERVAL: float = 0.24
 
+# Driving simulation controller
+var is_driving: bool = false
+var current_speed: float = 0.0
+var current_yaw: float = 0.0
+
+@export_group("Driving Controller")
+@export var max_speed: float = 4.0 ## Maximum speed on straight roads (m/s)
+@export var min_speed: float = 2.5 ## Speed when negotiating sharp corners (m/s)
+@export var acceleration: float = 5.0 ## Rate of acceleration on straightaways (m/s²)
+@export var braking: float = 1.0 ## Rate of deceleration when approaching corners (m/s²)
+@export var steering_smoothness: float = 4.0 ## Steering interpolation speed (lower = smoother tweening into turns)
+
 func _input(event: InputEvent) -> void:
 	if OS.has_feature("editor") and event.is_action_pressed("ui_cancel"): # Escape key
 		if is_instance_valid(active_balloon):
@@ -73,6 +85,9 @@ func _process(delta: float) -> void:
 		if static_timer >= STATIC_INTERVAL:
 			static_timer = 0.0
 			_pick_random_static_frame()
+	
+	if is_driving:
+		_update_driving(delta)
 
 func _pick_random_static_frame() -> void:
 	if static_rect and static_textures.size() > 0:
@@ -115,61 +130,81 @@ func tap_water_scene() -> void:
 		active_balloon.show()
 
 func _setup_driving_camera() -> void:
-	if not camera or not path or not path.curve or path.curve.point_count == 0:
+	if not path or not path.curve or path.curve.point_count == 0 or not path_follow:
+		return
+	
+	path_follow.loop = false
+	path_follow.cubic_interp = false
+	path_follow.rotation_mode = PathFollow3D.ROTATION_NONE
+	path_follow.progress = 0.0
+	
+	# Align initial heading directly forward down the road
+	var curve: Curve3D = path.curve
+	var initial_target: Vector3 = path.to_global(curve.sample_baked(min(8.0, curve.get_baked_length())))
+	initial_target.y = path_follow.global_position.y
+	if path_follow.global_position.distance_squared_to(initial_target) > 0.01:
+		var init_transform: Transform3D = path_follow.global_transform.looking_at(initial_target, Vector3.UP)
+		current_yaw = init_transform.basis.get_euler().y
+		path_follow.rotation = Vector3(0.0, current_yaw, 0.0)
+	
+	current_speed = 2.0 # Smooth start roll
+	is_driving = true
+
+func _update_driving(delta: float) -> void:
+	if not is_driving or not path or not path.curve or not path_follow:
 		return
 	
 	var curve: Curve3D = path.curve
-	var start_pos: Vector3 = path.to_global(curve.get_point_position(0))
+	var total_length: float = curve.get_baked_length()
+	var current_prog: float = path_follow.progress
 	
-	# Determine forward and lateral road vectors at the start of the path
-	var sample_step: float = min(5.0, curve.get_baked_length())
-	var next_sample: Vector3 = path.to_global(curve.sample_baked(sample_step))
-	var forward_dir: Vector3 = (next_sample - start_pos).normalized()
-	if forward_dir.is_zero_approx():
-		forward_dir = Vector3(-1.0, 0.0, 0.0)
+	# Gently bring vehicle to a stop at the end of the road
+	if current_prog >= total_length - 0.5:
+		current_speed = move_toward(current_speed, 0.0, braking * delta)
+		if current_speed <= 0.05:
+			is_driving = false
+			return
 	
-	var lateral_dir: Vector3 = forward_dir.cross(Vector3.UP).normalized()
+	# 1. Sample upcoming road geometry to evaluate curvature
+	var sample_cur: Vector3 = curve.sample_baked(current_prog)
+	var sample_mid: Vector3 = curve.sample_baked(min(current_prog + 5.0, total_length))
+	var sample_ahead: Vector3 = curve.sample_baked(min(current_prog + 16.0, total_length))
 	
-	# The road mesh (CSGPolygon3D) has a width of 3.2m extruded laterally;
-	# offset by 1.6m to align right in the middle of the road/path.
-	var road_center_offset: Vector3 = lateral_dir * 1.6
+	var dir_now: Vector3 = sample_mid - sample_cur
+	dir_now.y = 0.0
+	dir_now = dir_now.normalized() if not dir_now.is_zero_approx() else Vector3.FORWARD
 	
-	# Eye-level height for car driving POV (slightly up from ground/path level)
-	var eye_height: float = 1.15
-	var cam_pos: Vector3 = start_pos + road_center_offset + Vector3(0.0, eye_height, 0.0)
+	var dir_ahead: Vector3 = sample_ahead - sample_mid
+	dir_ahead.y = 0.0
+	dir_ahead = dir_ahead.normalized() if not dir_ahead.is_zero_approx() else dir_now
 	
-	# Target to look at down the middle of the path
-	var look_target: Vector3
-	if curve.point_count > 1:
-		var target_sample_dist: float = min(15.0, curve.get_baked_length())
-		if target_sample_dist > 0.0:
-			var target_curve_pos: Vector3 = path.to_global(curve.sample_baked(target_sample_dist))
-			var sample_ahead: Vector3 = path.to_global(curve.sample_baked(min(target_sample_dist + 1.0, curve.get_baked_length())))
-			var target_forward: Vector3 = (sample_ahead - target_curve_pos).normalized()
-			var target_lateral: Vector3 = target_forward.cross(Vector3.UP).normalized() if not target_forward.is_zero_approx() else lateral_dir
-			look_target = target_curve_pos + target_lateral * 1.6 + Vector3(0.0, eye_height, 0.0)
-		else:
-			look_target = path.to_global(curve.get_point_position(1)) + road_center_offset + Vector3(0.0, eye_height, 0.0)
-	else:
-		look_target = cam_pos + forward_dir * 10.0
+	# Corner sharpness in radians (0.0 on straights, ~0.4+ on tight turns)
+	var corner_angle: float = dir_now.angle_to(dir_ahead)
+	var turn_intensity: float = clampf(corner_angle / 0.45, 0.0, 1.0)
 	
-	if camera.has_method("set_driving_view"):
-		camera.set_driving_view(cam_pos, look_target)
-	else:
-		camera.global_position = cam_pos
-		camera.look_at(look_target, Vector3.UP)
-		if "initial_rotation" in camera:
-			camera.initial_rotation = camera.rotation
-
-	if path_follow:
-		path_follow.loop = false
-		var total_length: float = curve.get_baked_length()
-		var speed: float = 8.0 # meters per second
-		var duration: float = total_length / speed
+	# 2. Dynamic realistic speed: slow down into corners, accelerate on straightaways
+	var target_speed: float = lerpf(max_speed, min_speed, turn_intensity)
+	var accel_rate: float = acceleration if target_speed > current_speed else braking
+	current_speed = move_toward(current_speed, target_speed, accel_rate * delta)
+	
+	# Advance progress along the road
+	path_follow.progress += current_speed * delta
+	
+	# 3. Smooth car steering: look ahead down the road and smoothly tween rotation (eliminates sudden flicks)
+	var look_dist: float = clampf(current_speed * 1.5, 7.0, 14.0)
+	var target_pos: Vector3 = path.to_global(curve.sample_baked(min(path_follow.progress + look_dist, total_length)))
+	target_pos.y = path_follow.global_position.y
+	
+	if path_follow.global_position.distance_squared_to(target_pos) > 0.01:
+		var target_transform: Transform3D = path_follow.global_transform.looking_at(target_pos, Vector3.UP)
+		var target_yaw: float = target_transform.basis.get_euler().y
+		current_yaw = lerp_angle(current_yaw, target_yaw, steering_smoothness * delta)
+		path_follow.rotation.y = current_yaw
 		
-		path_follow.progress = 0.0
-		var tween = create_tween()
-		tween.tween_property(path_follow, "progress", total_length, duration)
+		# Subtle chassis roll/lean into turns for realistic driving feel
+		var steer_diff: float = wrapf(target_yaw - current_yaw, -PI, PI)
+		var target_roll: float = clampf(steer_diff * 0.08, -0.025, 0.025)
+		path_follow.rotation.z = lerpf(path_follow.rotation.z, target_roll, 4.0 * delta)
 
 func _on_dialogue_ended(_resource: Resource) -> void:
 	_setup_driving_camera()
