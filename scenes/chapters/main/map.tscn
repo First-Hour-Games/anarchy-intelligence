@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://cqo2xesft8j2l"]
+
+[ext_resource type="Shader" uid="uid://c5cotxt4fso8o" path="res://shaders/snow_ground.gdshader" id="1_3xbcl"]
+[ext_resource type="Texture2D" uid="uid://detx1afnfnjle" path="res://img/materials/ground037/Ground037_1K-JPG_Color.jpg" id="2_k4xfn"]
+[ext_resource type="Texture2D" uid="uid://wq8pib4bt6ef" path="res://img/materials/ground037/Ground037_1K-JPG_AmbientOcclusion.jpg" id="3_t5cxf"]
+[ext_resource type="Texture2D" uid="uid://dkyajr4yhqfup" path="res://img/materials/ground037/Ground037_1K-JPG_Displacement.jpg" id="4_b5llx"]
+[ext_resource type="Texture2D" uid="uid://b8m0kbbtveqq6" path="res://img/materials/ground037/Ground037_1K-JPG_NormalGL.jpg" id="5_bn0oo"]
+[ext_resource type="Texture2D" uid="uid://cbhgf76ivjms1" path="res://img/materials/ground037/Ground037_1K-JPG_Roughness.jpg" id="6_o0c01"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0aesx"]
+size = Vector2(40, 40)
+subdivide_width = 64
+subdivide_depth = 64
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37yvy"]
+render_priority = 0
+shader = ExtResource("1_3xbcl")
+shader_parameter/albedo_texture = ExtResource("2_k4xfn")
+shader_parameter/normal_texture = ExtResource("5_bn0oo")
+shader_parameter/roughness_texture = ExtResource("6_o0c01")
+shader_parameter/ao_texture = ExtResource("3_t5cxf")
+shader_parameter/height_texture = ExtResource("4_b5llx")
+shader_parameter/tiling = 100.0
+shader_parameter/randomize_rotation = 1.0
+shader_parameter/normal_scale = 1.0
+shader_parameter/height_scale = 0.15
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jpyye"]
+
+[node name="Map" type="Node3D" unique_id=611636141]
+
+[node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=205084173]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 40, 0, 0, -0.001)
+mesh = SubResource("PlaneMesh_0aesx")
+surface_material_override/0 = SubResource("ShaderMaterial_37yvy")
+metadata/_edit_lock_ = true
+
+[node name="Roads" type="Node3D" parent="." unique_id=581013829]
+
+[node name="Road1" type="MeshInstance3D" parent="Roads" unique_id=27431853]
+transform = Transform3D(707.969, 0, 0, 0, 1, 0, 0, 0, 30, 47.40396, 0.05, 485.33475)
+mesh = SubResource("PlaneMesh_jpyye")
+
+[node name="Road2" type="MeshInstance3D" parent="Roads" unique_id=822071568]
+transform = Transform3D(380, 0, 0, 0, 1, 0, 0, 0, 30, -66.55356, 0.05, -321.95657)
+mesh = SubResource("PlaneMesh_jpyye")
+
+[node name="Road3" type="MeshInstance3D" parent="Roads" unique_id=394468731]
+transform = Transform3D(200, 0, 0, 0, 1, 0, 0, 0, 30, 117.508545, 0.05, 81.68025)
+mesh = SubResource("PlaneMesh_jpyye")
+
+[node name="Road4" type="MeshInstance3D" parent="Roads" unique_id=190111206]
+transform = Transform3D(-2.4102299e-05, 0, -30, 0, 1, 0, 551.39636, 0, -1.3113416e-06, -103.216, 0.05, -94.32584)
+mesh = SubResource("PlaneMesh_jpyye")
