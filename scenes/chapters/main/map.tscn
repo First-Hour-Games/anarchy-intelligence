@@ -38,17 +38,17 @@ metadata/_edit_lock_ = true
 [node name="Roads" type="Node3D" parent="." unique_id=581013829]
 
 [node name="Road1" type="MeshInstance3D" parent="Roads" unique_id=27431853]
-transform = Transform3D(707.969, 0, 0, 0, 1, 0, 0, 0, 15.511, 47.40396, 0.05, 370.78476)
+transform = Transform3D(707.969, 0, 0, 0, 1, 0, 0, 0, 30, 47.40396, 0.05, 485.33475)
 mesh = SubResource("PlaneMesh_jpyye")
 
 [node name="Road2" type="MeshInstance3D" parent="Roads" unique_id=822071568]
-transform = Transform3D(380, 0, 0, 0, 1, 0, 0, 0, 15.511, -66.55356, 0.05, -200.34103)
+transform = Transform3D(380, 0, 0, 0, 1, 0, 0, 0, 30, -66.55356, 0.05, -321.95657)
 mesh = SubResource("PlaneMesh_jpyye")
 
 [node name="Road3" type="MeshInstance3D" parent="Roads" unique_id=394468731]
-transform = Transform3D(200, 0, 0, 0, 1, 0, 0, 0, 15.511, 111.8302, 0.05, 81.68025)
+transform = Transform3D(200, 0, 0, 0, 1, 0, 0, 0, 30, 117.508545, 0.05, 81.68025)
 mesh = SubResource("PlaneMesh_jpyye")
 
 [node name="Road4" type="MeshInstance3D" parent="Roads" unique_id=190111206]
-transform = Transform3D(-1.7596105e-05, 0, -15.511318, 0, 1, 0, 402.55197, 0, -6.7802125e-07, -103.216, 0.05, -47.04499)
+transform = Transform3D(-2.4102299e-05, 0, -30, 0, 1, 0, 551.39636, 0, -1.3113416e-06, -103.216, 0.05, -94.32584)
 mesh = SubResource("PlaneMesh_jpyye")
