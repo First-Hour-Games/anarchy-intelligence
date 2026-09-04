@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://buj41sa7uvqmm"
-path.s3tc="res://.godot/imported/snowy_car_4.jpg-dc387538130a774fff8103566fabfea3.s3tc.ctex"
+uid="uid://buuxhn28u558j"
+path.s3tc="res://.godot/imported/grass1_Image_2.png-70924cbcd30cb2b39b0f0952135b7e21.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "c27e8e2bf57b970fc4382a2388d69ae2"
+"md5": "7e8a098eb340a2d4519b1f9e56147bab"
 }
 
 [deps]
 
-source_file="res://models/snowy_car_4.jpg"
-dest_files=["res://.godot/imported/snowy_car_4.jpg-dc387538130a774fff8103566fabfea3.s3tc.ctex"]
+source_file="res://models/foliage/grass1_Image_2.png"
+dest_files=["res://.godot/imported/grass1_Image_2.png-70924cbcd30cb2b39b0f0952135b7e21.s3tc.ctex"]
 
 [params]
 
@@ -25,12 +25,12 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=0
-roughness/src_normal=""
+roughness/mode=1
+roughness/src_normal="res://models/foliage/grass1_Image_2.png"
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
