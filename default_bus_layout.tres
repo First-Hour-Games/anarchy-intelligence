@@ -14,6 +14,14 @@ damping = 0.52
 dry = 0.9
 wet = 0.46
 
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_reverb_bus"]
+resource_name = "Reverb"
+room_size = 0.35
+damping = 0.38
+spread = 0.7
+dry = 0.77
+wet = 0.37
+
 [resource]
 bus/1/name = &"Music"
 bus/1/solo = false
@@ -33,3 +41,11 @@ bus/2/effect/1/effect = SubResource("AudioEffectFilter_j3pel")
 bus/2/effect/1/enabled = false
 bus/2/effect/2/effect = SubResource("AudioEffectReverb_j3pel")
 bus/2/effect/2/enabled = true
+bus/3/name = &"Reverb"
+bus/3/solo = false
+bus/3/mute = false
+bus/3/bypass_fx = false
+bus/3/volume_db = 0.0
+bus/3/send = &"Master"
+bus/3/effect/0/effect = SubResource("AudioEffectReverb_reverb_bus")
+bus/3/effect/0/enabled = true
