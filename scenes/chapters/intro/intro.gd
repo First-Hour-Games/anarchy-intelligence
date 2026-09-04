@@ -15,12 +15,16 @@ extends Node3D
 @onready var path: Path3D = $Path3D if has_node("Path3D") else null
 @onready var path_follow: PathFollow3D = $Path3D/PathFollow3D if has_node("Path3D/PathFollow3D") else null
 
-@onready var grass_multimesh: MultiMeshInstance3D = $Grass/MultiMeshInstance3D if has_node("Grass/MultiMeshInstance3D") else null
+@onready var low_grass_multi: MultiMeshInstance3D = $Grass/lowGrassMulti if has_node("Grass/lowGrassMulti") else null
+@onready var tall_grass_1_multi: MultiMeshInstance3D = $Grass/tallGrass1Multi if has_node("Grass/tallGrass1Multi") else null
+@onready var subtitle_label: RichTextLabel = %SubtitleLabel if has_node("%SubtitleLabel") else (get_node_or_null("AspectRatioCanvasLayer/AspectRatioContainer/Control/SubtitleLabel") as RichTextLabel)
 
+const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf")
 const INTRO_DIALOGUE: Resource = preload("res://scenes/chapters/intro/intro.dialogue")
 const CUSTOM_BALLOON: PackedScene = preload("res://scenes/ui/balloon/balloon.tscn")
 const INTRO_CUTSCENE_MUSIC: AudioStream = preload("res://sounds/ambience/intro/introCutscene.ogg")
 const TV_DONE_AUDIO: AudioStream = preload("res://sounds/ambience/intro/tvDone.mp3")
+const DRIVING_DIRT_AUDIO: AudioStream = preload("res://sounds/ambience/intro/drivingOnDirt.mp3")
 
 var active_balloon: Node = null
 var static_textures: Array[Texture2D] = []
@@ -43,6 +47,33 @@ var headlight_yaw: float = 0.0
 @export var steering_smoothness: float = 3 ## Steering interpolation speed (lower = smoother tweening into turns)
 @export var headlight_turn_smoothness: float = 1.5 ## Speed at which headlights turn to follow the camera (lower = slower, more noticeable turning lag)
 @export var headlight_max_lag_deg: float = 14.0 ## Maximum degrees the headlights can lag behind the camera in sharp turns
+
+@export_group("Audio")
+@export var driving_ambient_volume_db: float = -9.0 ## Driving dirt ambient volume in dB (quieter than music at -5.0 dB)
+
+@export_group("Environment Clearance")
+@export var grass_clear_radius: float = 2.4 ## Distance (in meters) from road centerline to clear grass
+
+@export_group("Cutscene Subtitles")
+## Subtitles synchronized with introCutscene.ogg audio during driving.
+## Text stays on screen until the next cue's "start" time arrives.
+## Optional: Set "duration": X if you want a line to disappear early before the next cue.
+@export var cutscene_subtitles: Array[Dictionary] = [
+		{ "start": 0.032, "text": "first hour games\n[font_size=24]presents[/font_size]" },
+	{ "start": 4.862, "text": "anarchy intelligence" },
+	{ "start": 8.425, "text": "" },
+	{ "start": 9.668, "text": "[font_size=24]lead programmer[/font_size]\nhenry nguyen\nnarcisco gonzales" },
+	{ "start": 14.474, "text": "[font_size=24]art director[/font_size]\nhenry nguyen" },
+	{ "start": 18.08, "text": "" },
+	{ "start": 19.263, "text": "[font_size=24]lead 3d modeller[/font_size]\nirvin" },
+	{ "start": 24.08, "text": "[font_size=24]writer[/font_size]\nhenry nguyen" },
+	{ "start": 28.89, "text": "[font_size=24]sound & music designer[/font_size]\nhenry nguyen" },
+	{ "start": 33.686, "text": "[font_size=24]level designer[/font_size]\nnarcisco gonzalesn\nirvin" },
+	{ "start": 38.514, "text": "" },
+]
+@export var subtitle_line_spacing: int = 16 ## Vertical spacing (in pixels) between lines of text
+
+var _current_subtitle_text: String = ""
 
 func _input(event: InputEvent) -> void:
 	if OS.has_feature("editor") and event.is_action_pressed("ui_cancel"): # Escape key
@@ -75,6 +106,11 @@ func _ready() -> void:
 
 	if blur_rect:
 		blur_rect.visible = false
+
+	if subtitle_label:
+		subtitle_label.add_theme_font_override("normal_font", SUBTITLE_FONT)
+		subtitle_label.add_theme_constant_override("line_separation", subtitle_line_spacing)
+		subtitle_label.modulate.a = 0.0
 
 	if intro_overlay:
 		intro_overlay.color = Color(0, 0, 0, 1)
@@ -109,6 +145,11 @@ func _process(delta: float) -> void:
 
 	if is_driving:
 		_update_driving(delta)
+		if music_player and music_player.playing:
+			var audio_pos: float = music_player.get_playback_position() + AudioServer.get_time_since_last_mix()
+			_update_subtitles(audio_pos)
+	elif _current_subtitle_text != "":
+		_clear_subtitle()
 
 func _pick_random_static_frame() -> void:
 	if static_rect and static_textures.size() > 0:
@@ -175,14 +216,19 @@ func _init_camera_at_start() -> void:
 			car_lights.rotation = Vector3.ZERO
 
 func _setup_driving_camera() -> void:
-	if ambience_player and ambience_player.playing:
-		ambience_player.stop()
-
 	if music_player:
 		if music_player.stream != INTRO_CUTSCENE_MUSIC:
 			music_player.stream = INTRO_CUTSCENE_MUSIC
-			
 		music_player.play()
+
+	# Start driving ambient dirt audio (quieter than music)
+	if ambience_player:
+		if ambience_player.playing:
+			ambience_player.stop()
+		ambience_player.stream = DRIVING_DIRT_AUDIO
+		DRIVING_DIRT_AUDIO.set("loop", true)
+		ambience_player.volume_db = driving_ambient_volume_db
+		ambience_player.play()
 
 	if crt_shader:
 		crt_shader.visible = true
@@ -204,6 +250,10 @@ func _update_driving(delta: float) -> void:
 		current_speed = move_toward(current_speed, 0.0, braking * delta)
 		if current_speed <= 0.05:
 			is_driving = false
+			if ambience_player and ambience_player.playing:
+				var t := create_tween()
+				t.tween_property(ambience_player, "volume_db", -80.0, 1.5)
+				t.tween_callback(ambience_player.stop)
 			return
 
 	# 1. Sample upcoming road geometry to evaluate curvature
@@ -305,26 +355,85 @@ func _on_dialogue_ended(_resource: Resource) -> void:
 		intro_overlay.hide()
 		
 
-func _clear_grass_along_road(clear_radius: float = 2.4) -> void:
-	if not grass_multimesh or not grass_multimesh.multimesh or not path or not path.curve:
+func _clear_grass_along_road(clear_radius: float = -1.0) -> void:
+	if not path or not path.curve:
 		return
-	
-	var mm: MultiMesh = grass_multimesh.multimesh
+
+	var radius: float = grass_clear_radius if clear_radius <= 0.0 else clear_radius
+	var targets: Array[MultiMeshInstance3D] = []
+
+	if low_grass_multi:
+		targets.append(low_grass_multi)
+	if tall_grass_1_multi:
+		targets.append(tall_grass_1_multi)
+
+	# Also include any other MultiMeshInstance3D nodes under Grass if added
+	var grass_parent: Node = get_node_or_null("Grass")
+	if grass_parent:
+		for child in grass_parent.get_children():
+			if child is MultiMeshInstance3D and not targets.has(child):
+				targets.append(child)
+
+	for mmi in targets:
+		_clear_multimesh_from_road(mmi, radius)
+
+func _clear_multimesh_from_road(mmi: MultiMeshInstance3D, radius: float) -> void:
+	if not mmi or not mmi.multimesh or not path or not path.curve:
+		return
+
+	var mm: MultiMesh = mmi.multimesh
 	for i in range(mm.instance_count):
 		var t: Transform3D = mm.get_instance_transform(i)
-		
-		# Convert grass position to Path3D's local coordinate space
-		var world_pos: Vector3 = grass_multimesh.to_global(t.origin)
+
+		# Convert grass position to global space, then to Path3D's local coordinate space
+		var world_pos: Vector3 = mmi.to_global(t.origin)
 		var local_on_path: Vector3 = path.to_local(world_pos)
-		
+
 		# Find the nearest point along the road curve
 		var closest_pt: Vector3 = path.curve.get_closest_point(local_on_path)
-		
+
 		# Measure horizontal distance (X/Z) to path center
 		var horizontal_dist: float = Vector2(local_on_path.x - closest_pt.x, local_on_path.z - closest_pt.z).length()
-		
-		if horizontal_dist < clear_radius:
+
+		if horizontal_dist < radius:
 			# Hide this grass instance by scaling to zero and dropping underground
 			t.basis = Basis().scaled(Vector3.ZERO)
 			t.origin.y = -1000.0
 			mm.set_instance_transform(i, t)
+
+func _update_subtitles(playback_pos: float) -> void:
+	if not subtitle_label:
+		return
+
+	var active_text: String = ""
+	for i in range(cutscene_subtitles.size()):
+		var cue: Dictionary = cutscene_subtitles[i]
+		var start: float = float(cue.get("start", 0.0))
+		var duration: float = float(cue.get("duration", -1.0))
+
+		if playback_pos >= start:
+			# If an explicit duration was specified and has expired, skip
+			if duration > 0.0 and playback_pos >= (start + duration):
+				continue
+			# If a subsequent cue has already started, skip to it
+			if i + 1 < cutscene_subtitles.size():
+				var next_start: float = float(cutscene_subtitles[i + 1].get("start", 0.0))
+				if playback_pos >= next_start:
+					continue
+			active_text = str(cue.get("text", ""))
+
+	if active_text != _current_subtitle_text:
+		_current_subtitle_text = active_text
+		if active_text != "":
+			var formatted_text: String = active_text.replace("\\n", "\n")
+			subtitle_label.text = "[center]" + formatted_text + "[/center]"
+			subtitle_label.modulate.a = 1.0
+		else:
+			subtitle_label.text = ""
+			subtitle_label.modulate.a = 0.0
+
+func _clear_subtitle() -> void:
+	_current_subtitle_text = ""
+	if subtitle_label:
+		subtitle_label.text = ""
+		subtitle_label.modulate.a = 0.0
