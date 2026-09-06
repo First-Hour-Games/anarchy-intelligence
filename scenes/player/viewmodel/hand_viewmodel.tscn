@@ -1,6 +1,9 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scenes/player/viewmodel/hand_viewmodel.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/player/viewmodel/heartbeat.gd" id="23_heartbeat"]
+[ext_resource type="Script" path="res://scenes/player/viewmodel/ecg_grid.gd" id="24_ecg_grid"]
+[ext_resource type="Texture2D" uid="uid://c065wy0r0doa5" path="res://img/player/hpFaces.png" id="22_hp_faces"]
 [ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_00.png" id="2_idle_00"]
 [ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_01.png" id="3_idle_01"]
 [ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_02.png" id="4_idle_02"]
@@ -21,6 +24,14 @@
 [ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_05.png" id="19_sprint_05"]
 [ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_06.png" id="20_sprint_06"]
 [ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_07.png" id="21_sprint_07"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_frame"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hands"]
 animations = [{
@@ -118,3 +129,60 @@ position = Vector2(0, -443.5)
 sprite_frames = SubResource("SpriteFrames_hands")
 animation = &"idle"
 autoplay = "idle"
+
+[node name="HPFrame" type="Panel" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 200.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
+
+[node name="HPFace" type="Sprite2D" parent="."]
+position = Vector2(30, 30)
+scale = Vector2(2, 2)
+texture = ExtResource("22_hp_faces")
+centered = false
+hframes = 2
+vframes = 6
+
+[node name="ECGFrame" type="Panel" parent="."]
+clip_contents = true
+offset_left = 216.0
+offset_top = 20.0
+offset_right = 466.0
+offset_bottom = 200.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
+
+[node name="ECGGrid" type="Control" parent="ECGFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("24_ecg_grid")
+horizontal_lines = 5
+vertical_lines = 5
+grid_color = Color(0.12, 0.45, 0.22, 0.35)
+line_width = 1.0
+
+[node name="Heartbeat" type="Line2D" parent="ECGFrame"]
+position = Vector2(15, 90)
+width = 2.5
+default_color = Color(0.2, 1, 0.45, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+script = ExtResource("23_heartbeat")
+spacing = 3.5
+speed = 1.4
+amp = 28.0
+cycles = 1
+point_count = 65
+pause_time = 0.4
+
+
+
+
+
