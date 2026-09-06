@@ -2,14 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b46qqv3hdy07a"
+uid="uid://blby1kx0wyrx3"
 path.s3tc="res://.godot/imported/snowy_car_1.jpg-bd515467fb26859e2830d3ac8b108094.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
-}
-generator_parameters={
-"md5": "11dcbd6915e8e407a8281a2cf85c99f3"
 }
 
 [deps]
