@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bilgjixjni7fo"
-path.s3tc="res://.godot/imported/snowy_car_2.jpg-101b89dcdb16df3913262e69f746f4c8.s3tc.ctex"
+uid="uid://buj41sa7uvqmm"
+path.s3tc="res://.godot/imported/snowy_car_4.jpg-3b0c78d2ebd0ca879030d3609456a14c.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "61c083da23fd11cdb0a8479bb09a55cc"
+"md5": "c27e8e2bf57b970fc4382a2388d69ae2"
 }
 
 [deps]
 
-source_file="res://models/snowy_car_2.jpg"
-dest_files=["res://.godot/imported/snowy_car_2.jpg-101b89dcdb16df3913262e69f746f4c8.s3tc.ctex"]
+source_file="res://models/unused/snowy_car_4.jpg"
+dest_files=["res://.godot/imported/snowy_car_4.jpg-3b0c78d2ebd0ca879030d3609456a14c.s3tc.ctex"]
 
 [params]
 

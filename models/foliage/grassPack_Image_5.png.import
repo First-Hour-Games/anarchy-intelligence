@@ -2,17 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cm8vso33wyytp"
-path.s3tc="res://.godot/imported/Bark1M.jpg-b2356e36d7cce143b152d97074868d04.s3tc.ctex"
+uid="uid://g2qlxgrahdqm"
+path.s3tc="res://.godot/imported/grassPack_Image_5.png-92c44040888e2ba7b7fce34e1b482a2a.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
+generator_parameters={
+"md5": "f0d5c0f0104419b90102e8c379adc397"
+}
 
 [deps]
 
-source_file="res://models/Bark1M.jpg"
-dest_files=["res://.godot/imported/Bark1M.jpg-b2356e36d7cce143b152d97074868d04.s3tc.ctex"]
+source_file="res://models/foliage/grassPack_Image_5.png"
+dest_files=["res://.godot/imported/grassPack_Image_5.png-92c44040888e2ba7b7fce34e1b482a2a.s3tc.ctex"]
 
 [params]
 
@@ -22,12 +25,12 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=0
-roughness/src_normal=""
+roughness/mode=1
+roughness/src_normal="res://models/foliage/grassPack_Image_5.png"
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2

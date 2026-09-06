@@ -2,17 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c0o1i3drq2aie"
-path.s3tc="res://.godot/imported/Bark1C.jpg-91af8fa61d7748062badefa69e554725.s3tc.ctex"
+uid="uid://byk75dcxbk5p0"
+path.s3tc="res://.godot/imported/snowy_car_8.jpg-25084076e887a380631378da4ce42040.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
+generator_parameters={
+"md5": "9011a4a66bd28f35adab3a028e9ac0c7"
+}
 
 [deps]
 
-source_file="res://models/Bark1C.jpg"
-dest_files=["res://.godot/imported/Bark1C.jpg-91af8fa61d7748062badefa69e554725.s3tc.ctex"]
+source_file="res://models/unused/snowy_car_8.jpg"
+dest_files=["res://.godot/imported/snowy_car_8.jpg-25084076e887a380631378da4ce42040.s3tc.ctex"]
 
 [params]
 
