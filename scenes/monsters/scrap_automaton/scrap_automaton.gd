@@ -22,6 +22,7 @@ class_name ScrapAutomaton extends CharacterBody3D
 
 @onready var visual_pivot: Node3D = $VisualPivot
 @onready var directional_sprite: AnimatedSprite3D = $VisualPivot/DirectionalSprite
+@onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 
 var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 var player: Node3D
@@ -58,7 +59,7 @@ func _physics_process(delta: float) -> void:
 		)
 
 		if (normal_pursuit_active or unseen_stalker_active) and distance_to_player > 0.001:
-			var pursuit_direction := to_player / distance_to_player
+			var pursuit_direction := _pursuit_direction_toward(player.global_position, to_player, distance_to_player)
 			_turn_toward(pursuit_direction, delta)
 			if distance_to_player > stopping_distance:
 				var active_speed := movement_speed if normal_pursuit_active else unseen_movement_speed
@@ -70,6 +71,24 @@ func _physics_process(delta: float) -> void:
 
 	_update_movement_bob(delta)
 	_update_direction_frame()
+
+
+## Routes pursuit through the baked navmesh when one covers this position (the
+## main map, so the automaton walks around houses instead of through them),
+## and falls back to a straight line when no navmesh is available (e.g. the
+## playground test scene), matching the previous behavior there.
+func _pursuit_direction_toward(target_position: Vector3, direct_offset: Vector3, direct_distance: float) -> Vector3:
+	var direct_direction := direct_offset / direct_distance
+	nav_agent.target_position = target_position
+	if not nav_agent.is_target_reachable():
+		return direct_direction
+
+	var next_point := nav_agent.get_next_path_position()
+	var to_next := next_point - global_position
+	to_next.y = 0.0
+	if to_next.is_zero_approx():
+		return direct_direction
+	return to_next.normalized()
 
 
 func _find_player() -> void:
