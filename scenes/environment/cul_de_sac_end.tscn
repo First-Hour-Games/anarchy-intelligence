@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/environment/cul_de_sac_end.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/local_licensed/city_kit_roads/Models/road-end-round.glb" id="2_road"]
+
+[node name="CulDeSacEnd" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="RoadModel" parent="." instance=ExtResource("2_road")]
+transform = Transform3D(16, 0, 0, 0, 16, 0, 0, 0, 16, 0, 0, 0)

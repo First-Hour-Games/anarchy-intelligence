@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/local_licensed/trees_v1/meshes/tree_002_tree_002.res" id="1_gav6f"]
+
+[node name="tree_002" type="MeshInstance3D" unique_id=388577984]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.56324196, 0)
+mesh = ExtResource("1_gav6f")
