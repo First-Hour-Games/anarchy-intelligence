@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/environment/abandoned_house_from_pack.gd" id="1_house_builder"]
+
+[node name="AbandonedHouse" type="Node3D"]
+script = ExtResource("1_house_builder")

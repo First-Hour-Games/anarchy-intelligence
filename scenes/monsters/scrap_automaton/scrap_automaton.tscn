@@ -55,6 +55,12 @@ script = ExtResource("1_script")
 position = Vector3(0, 1.325, 0)
 shape = SubResource("CapsuleShape3D_automaton")
 
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+path_max_distance = 3.0
+avoidance_enabled = false
+
 [node name="VisualPivot" type="Node3D" parent="."]
 
 [node name="DirectionalSprite" type="AnimatedSprite3D" parent="VisualPivot"]

@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/local_licensed/trees_v1/meshes/tree_004_tree_004.res" id="1_r506a"]
+[ext_resource type="ArrayMesh" path="res://assets/local_licensed/trees_v1/meshes/tree_004_leaves_002.res" id="2_2l76f"]
+
+[node name="tree_004" type="MeshInstance3D" unique_id=76654208]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0035342574, 0)
+mesh = ExtResource("1_r506a")
+
+[node name="leaves_002" type="MeshInstance3D" parent="." unique_id=1080876846]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12560081, -0.09700692, 0.9628284)
+mesh = ExtResource("2_2l76f")

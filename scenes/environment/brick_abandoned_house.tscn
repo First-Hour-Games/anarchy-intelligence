@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/environment/brick_abandoned_house.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/local_licensed/abandoned_house_pack/Abandoned_House.glb" id="2_house"]
+
+[node name="BrickAbandonedHouse" type="Node3D"]
+script = ExtResource("1_script")
+metadata/skip_neighborhood_decoration = true
+
+[node name="Source" parent="." instance=ExtResource("2_house")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.22, 0.19, 127.79)
+
+[node name="Entrance" type="Marker3D" parent="."]
+position = Vector3(11.75, 1.0, 10.25)
+
+[node name="EntranceGlow" type="OmniLight3D" parent="."]
+position = Vector3(10.5, 2.25, 7.25)
+light_color = Color(0.92, 0.68, 0.42, 1)
+light_energy = 0.32
+omni_range = 7.0
+shadow_enabled = false
+
+[node name="InteriorGlow" type="OmniLight3D" parent="."]
+position = Vector3(1.0, 2.0, 0.0)
+light_color = Color(0.42, 0.52, 0.68, 1)
+light_energy = 0.18
+omni_range = 9.0
+shadow_enabled = false
