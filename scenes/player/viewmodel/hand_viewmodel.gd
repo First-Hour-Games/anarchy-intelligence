@@ -26,20 +26,39 @@ const SOURCE_SIZE := Vector2(1774.0, 887.0)
 @export var look_lag_limit: float = 10.0
 @export var look_lag_return_speed: float = 12.0
 
+@export_category("HP Face")
+@export var hp_face_frame_time: float = 0.7
+@export_range(0, 5, 1) var hp_face_row: int = 0:
+	set(value):
+		hp_face_row = clampi(value, 0, 5)
+		hp_face_column = 0
+		hp_face_timer = 0.0
+		_update_hp_face()
+		_update_heartbeat()
+
 @onready var hand_pivot: Node2D = $HandPivot
 @onready var hands: AnimatedSprite2D = $HandPivot/Hands
+@onready var hp_frame: Panel = $HPFrame
+@onready var hp_face: Sprite2D = $HPFace
+@onready var ecg_frame: Panel = $ECGFrame
+@onready var ecg_grid: ECGGrid = $ECGFrame/ECGGrid
+@onready var heartbeat: Heartbeat = $ECGFrame/Heartbeat
 @onready var player: CharacterBody3D = get_parent() as CharacterBody3D
 
 var base_position: Vector2 = Vector2.ZERO
 var movement_phase: float = 0.0
 var idle_phase: float = 0.0
 var look_lag: Vector2 = Vector2.ZERO
+var hp_face_column: int = 0
+var hp_face_timer: float = 0.0
 
 
 func _ready() -> void:
 	get_viewport().size_changed.connect(_update_layout)
 	_update_layout()
 	hands.play(&"idle")
+	_update_hp_face()
+	_update_heartbeat()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -48,8 +67,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		look_lag.x = clampf(look_lag.x, -look_lag_limit, look_lag_limit)
 		look_lag.y = clampf(look_lag.y, -look_lag_limit, look_lag_limit)
 
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_DOWN or event.keycode == KEY_RIGHT:
+			hp_face_row = (hp_face_row + 1) % 6
+		elif event.keycode == KEY_UP or event.keycode == KEY_LEFT:
+			hp_face_row = (hp_face_row - 1 + 6) % 6
+
 
 func _process(delta: float) -> void:
+	_update_hp_face_animation(delta)
+
 	if not is_instance_valid(player):
 		return
 
@@ -104,3 +131,53 @@ func _update_layout() -> void:
 	hand_pivot.scale = Vector2.ONE * final_scale
 	base_position = Vector2(viewport_size.x * 0.5, viewport_size.y + bottom_offset)
 	hand_pivot.position = base_position
+
+
+func set_hp_stage(stage: int) -> void:
+	hp_face_row = stage
+
+
+func _update_hp_face_animation(delta: float) -> void:
+	if not is_instance_valid(hp_face) or hp_face_frame_time <= 0.0:
+		return
+	hp_face_timer += delta
+	if hp_face_timer >= hp_face_frame_time:
+		hp_face_timer = fmod(hp_face_timer, hp_face_frame_time)
+		hp_face_column = 1 - hp_face_column
+		_update_hp_face()
+
+
+func _update_hp_face() -> void:
+	if is_instance_valid(hp_face):
+		hp_face.frame_coords = Vector2i(hp_face_column, hp_face_row)
+
+
+func _update_heartbeat() -> void:
+	if not is_instance_valid(heartbeat):
+		return
+	var c := Color(0.2, 1.0, 0.45, 1.0)
+	match hp_face_row:
+		0:
+			heartbeat.set_params(3.5, 1.4, 28.0, 1, 0.40)
+			c = Color(0.2, 1.0, 0.45, 1.0)
+		1:
+			heartbeat.set_params(3.5, 1.7, 32.0, 1, 0.30)
+			c = Color(0.4, 0.95, 0.35, 1.0)
+		2:
+			heartbeat.set_params(3.5, 2.0, 36.0, 1, 0.20)
+			c = Color(0.9, 0.85, 0.2, 1.0)
+		3:
+			heartbeat.set_params(3.5, 2.4, 40.0, 2, 0.12)
+			c = Color(1.0, 0.6, 0.15, 1.0)
+		4:
+			heartbeat.set_params(3.5, 3.0, 45.0, 2, 0.04)
+			c = Color(1.0, 0.25, 0.2, 1.0)
+		5:
+			heartbeat.set_params(3.5, 0.6, 5.0, 1, 0.90)
+			c = Color(0.7, 0.15, 0.15, 0.85)
+
+	heartbeat.set_color(c)
+	if is_instance_valid(ecg_grid):
+		ecg_grid.set_color(c)
+
+

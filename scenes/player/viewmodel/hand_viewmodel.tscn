@@ -1,26 +1,29 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene format=3 uid="uid://dqhht7rdhtra7"]
 
-[ext_resource type="Script" path="res://scenes/player/viewmodel/hand_viewmodel.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_00.png" id="2_idle_00"]
-[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_01.png" id="3_idle_01"]
-[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_02.png" id="4_idle_02"]
-[ext_resource type="Texture2D" path="res://img/player/hands/idle/hands_idle_03.png" id="5_idle_03"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_00.png" id="6_walk_00"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_01.png" id="7_walk_01"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_02.png" id="8_walk_02"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_03.png" id="9_walk_03"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_04.png" id="10_walk_04"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_05.png" id="11_walk_05"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_06.png" id="12_walk_06"]
-[ext_resource type="Texture2D" path="res://img/player/hands/walk/hands_walk_07.png" id="13_walk_07"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_00.png" id="14_sprint_00"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_01.png" id="15_sprint_01"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_02.png" id="16_sprint_02"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_03.png" id="17_sprint_03"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_04.png" id="18_sprint_04"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_05.png" id="19_sprint_05"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_06.png" id="20_sprint_06"]
-[ext_resource type="Texture2D" path="res://img/player/hands/sprint/hands_sprint_07.png" id="21_sprint_07"]
+[ext_resource type="Script" uid="uid://cxrbxadsu5dnv" path="res://scenes/player/viewmodel/hand_viewmodel.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ptnqixk72fbh" path="res://img/player/hands/idle/hands_idle_00.png" id="2_idle_00"]
+[ext_resource type="Texture2D" uid="uid://kh815hl6u1dd" path="res://img/player/hands/idle/hands_idle_01.png" id="3_idle_01"]
+[ext_resource type="Texture2D" uid="uid://c3kr5p56dqj4s" path="res://img/player/hands/idle/hands_idle_02.png" id="4_idle_02"]
+[ext_resource type="Texture2D" uid="uid://bnwik4660t4rt" path="res://img/player/hands/idle/hands_idle_03.png" id="5_idle_03"]
+[ext_resource type="Texture2D" uid="uid://dvc785jo0pjr0" path="res://img/player/hands/walk/hands_walk_00.png" id="6_walk_00"]
+[ext_resource type="Texture2D" uid="uid://b2jhl5748jygh" path="res://img/player/hands/walk/hands_walk_01.png" id="7_walk_01"]
+[ext_resource type="Texture2D" uid="uid://1wsd1o1va30q" path="res://img/player/hands/walk/hands_walk_02.png" id="8_walk_02"]
+[ext_resource type="Texture2D" uid="uid://cvq23846ug3eg" path="res://img/player/hands/walk/hands_walk_03.png" id="9_walk_03"]
+[ext_resource type="Texture2D" uid="uid://v4ax3ydr5dch" path="res://img/player/hands/walk/hands_walk_04.png" id="10_walk_04"]
+[ext_resource type="Texture2D" uid="uid://badyhfrlgno8p" path="res://img/player/hands/walk/hands_walk_05.png" id="11_walk_05"]
+[ext_resource type="Texture2D" uid="uid://dmnw4q8mcmkgw" path="res://img/player/hands/walk/hands_walk_06.png" id="12_walk_06"]
+[ext_resource type="Texture2D" uid="uid://bsku4xk17budu" path="res://img/player/hands/walk/hands_walk_07.png" id="13_walk_07"]
+[ext_resource type="Texture2D" uid="uid://bqvff2ttrvmoq" path="res://img/player/hands/sprint/hands_sprint_00.png" id="14_sprint_00"]
+[ext_resource type="Texture2D" uid="uid://bo128ub56pmu6" path="res://img/player/hands/sprint/hands_sprint_01.png" id="15_sprint_01"]
+[ext_resource type="Texture2D" uid="uid://cpuu5decjajlt" path="res://img/player/hands/sprint/hands_sprint_02.png" id="16_sprint_02"]
+[ext_resource type="Texture2D" uid="uid://vltktxrkaei5" path="res://img/player/hands/sprint/hands_sprint_03.png" id="17_sprint_03"]
+[ext_resource type="Texture2D" uid="uid://b0l7dc0ykb6v7" path="res://img/player/hands/sprint/hands_sprint_04.png" id="18_sprint_04"]
+[ext_resource type="Texture2D" uid="uid://dmhd0g23by3b0" path="res://img/player/hands/sprint/hands_sprint_05.png" id="19_sprint_05"]
+[ext_resource type="Texture2D" uid="uid://e2iulxxosqgd" path="res://img/player/hands/sprint/hands_sprint_06.png" id="20_sprint_06"]
+[ext_resource type="Texture2D" uid="uid://cklf14smh07f2" path="res://img/player/hands/sprint/hands_sprint_07.png" id="21_sprint_07"]
+[ext_resource type="Texture2D" uid="uid://c065wy0r0doa5" path="res://img/player/hpFaces.png" id="22_hp_faces"]
+[ext_resource type="Script" uid="uid://dmyj3ieok2xb1" path="res://scenes/player/viewmodel/heartbeat.gd" id="23_heartbeat"]
+[ext_resource type="Script" uid="uid://b6wb7mmlbmqia" path="res://scenes/player/viewmodel/ecg_grid.gd" id="24_ecg_grid"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hands"]
 animations = [{
@@ -43,7 +46,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("3_idle_01")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 2.5
 }, {
@@ -72,7 +75,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("21_sprint_07")
 }],
-"loop": true,
+"loop": 1,
 "name": &"sprint",
 "speed": 6.0
 }, {
@@ -101,20 +104,79 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("13_walk_07")
 }],
-"loop": true,
+"loop": 1,
 "name": &"walk",
 "speed": 8.0
 }]
 
-[node name="HandViewmodel" type="CanvasLayer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_frame"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Gradient" id="Gradient_y4epv"]
+offsets = PackedFloat32Array(0, 0.2, 0.88, 1)
+colors = PackedColorArray(0.2, 1, 0.45, 0, 0.2, 1, 0.45, 1, 0.2, 1, 0.45, 1, 0.2, 1, 0.45, 0)
+
+[node name="HandViewmodel" type="CanvasLayer" unique_id=821727808]
 layer = 20
 script = ExtResource("1_script")
 
-[node name="HandPivot" type="Node2D" parent="."]
+[node name="HandPivot" type="Node2D" parent="." unique_id=2026765645]
+visible = false
 
-[node name="Hands" type="AnimatedSprite2D" parent="HandPivot"]
+[node name="Hands" type="AnimatedSprite2D" parent="HandPivot" unique_id=1826401777]
+visible = false
 texture_filter = 2
 position = Vector2(0, -443.5)
 sprite_frames = SubResource("SpriteFrames_hands")
 animation = &"idle"
 autoplay = "idle"
+
+[node name="HPFrame" type="Panel" parent="." unique_id=2031434389]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 200.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
+
+[node name="HPFace" type="Sprite2D" parent="." unique_id=1549974591]
+position = Vector2(30, 30)
+scale = Vector2(2, 2)
+texture = ExtResource("22_hp_faces")
+centered = false
+hframes = 2
+vframes = 6
+
+[node name="ECGFrame" type="Panel" parent="." unique_id=1432821295]
+clip_contents = true
+offset_left = 216.0
+offset_top = 20.0
+offset_right = 466.0
+offset_bottom = 140.99974
+theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
+
+[node name="ECGGrid" type="Control" parent="ECGFrame" unique_id=1563400804]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("24_ecg_grid")
+vertical_lines = 0
+
+[node name="Heartbeat" type="Line2D" parent="ECGFrame" unique_id=382365529]
+position = Vector2(15, 75)
+width = 2.5
+default_color = Color(0.2, 1, 0.45, 1)
+gradient = SubResource("Gradient_y4epv")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+script = ExtResource("23_heartbeat")
+pause_time = 0.4
