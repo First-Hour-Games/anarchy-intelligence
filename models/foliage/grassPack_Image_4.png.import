@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://0e4u0jo7pges"
 path.s3tc="res://.godot/imported/grassPack_Image_4.png-dfd32899e89647b74a49ac8f86f52975.s3tc.ctex"
+path.etc2="res://.godot/imported/grassPack_Image_4.png-dfd32899e89647b74a49ac8f86f52975.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://models/foliage/grassPack_Image_4.png"
-dest_files=["res://.godot/imported/grassPack_Image_4.png-dfd32899e89647b74a49ac8f86f52975.s3tc.ctex"]
+dest_files=["res://.godot/imported/grassPack_Image_4.png-dfd32899e89647b74a49ac8f86f52975.s3tc.ctex", "res://.godot/imported/grassPack_Image_4.png-dfd32899e89647b74a49ac8f86f52975.etc2.ctex"]
 
 [params]
 

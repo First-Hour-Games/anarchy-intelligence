@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0g4lpr1rfoja"
 path.s3tc="res://.godot/imported/snowy_car_0.jpg-ceaf14e088ff9ba27a6cf7a8994c6ef0.s3tc.ctex"
+path.etc2="res://.godot/imported/snowy_car_0.jpg-ceaf14e088ff9ba27a6cf7a8994c6ef0.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://models/unused/snowy_car_0.jpg"
-dest_files=["res://.godot/imported/snowy_car_0.jpg-ceaf14e088ff9ba27a6cf7a8994c6ef0.s3tc.ctex"]
+dest_files=["res://.godot/imported/snowy_car_0.jpg-ceaf14e088ff9ba27a6cf7a8994c6ef0.s3tc.ctex", "res://.godot/imported/snowy_car_0.jpg-ceaf14e088ff9ba27a6cf7a8994c6ef0.etc2.ctex"]
 
 [params]
 

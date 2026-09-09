@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://chgn8de4u20ii"
 path.s3tc="res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.s3tc.ctex"
+path.etc2="res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://img/materials/dirtRoad/RoadsDirt0056_1_350.jpg"
-dest_files=["res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.s3tc.ctex"]
+dest_files=["res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.s3tc.ctex", "res://.godot/imported/RoadsDirt0056_1_350.jpg-6c91e0c794a0ad8c1e11b7d7da4e0342.etc2.ctex"]
 
 [params]
 
