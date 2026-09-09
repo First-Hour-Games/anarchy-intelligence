@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpceq8d7fga0o"
 path.s3tc="res://.godot/imported/dry_mud_field_001_nor_gl_1k.jpg-d4f46fc7d970007697c57bcceddb5e22.s3tc.ctex"
+path.etc2="res://.godot/imported/dry_mud_field_001_nor_gl_1k.jpg-d4f46fc7d970007697c57bcceddb5e22.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://img/materials/dirtRoad/dry_mud_field_001_nor_gl_1k.jpg"
-dest_files=["res://.godot/imported/dry_mud_field_001_nor_gl_1k.jpg-d4f46fc7d970007697c57bcceddb5e22.s3tc.ctex"]
+dest_files=["res://.godot/imported/dry_mud_field_001_nor_gl_1k.jpg-d4f46fc7d970007697c57bcceddb5e22.s3tc.ctex", "res://.godot/imported/dry_mud_field_001_nor_gl_1k.jpg-d4f46fc7d970007697c57bcceddb5e22.etc2.ctex"]
 
 [params]
 
