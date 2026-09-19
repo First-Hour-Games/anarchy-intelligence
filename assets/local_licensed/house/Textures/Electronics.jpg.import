@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bajk40knch4dj"
-path.s3tc="res://.godot/imported/Electronics.jpg-40fa5b4b7551726ef42fef924b068fb9.s3tc.ctex"
+path.s3tc="res://.godot/imported/Electronics.jpg-7fc805f9604cc1ad463cbbdc8d244231.s3tc.ctex"
+path.etc2="res://.godot/imported/Electronics.jpg-7fc805f9604cc1ad463cbbdc8d244231.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Electronics.jpg"
-dest_files=["res://.godot/imported/Electronics.jpg-40fa5b4b7551726ef42fef924b068fb9.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Electronics.jpg"
+dest_files=["res://.godot/imported/Electronics.jpg-7fc805f9604cc1ad463cbbdc8d244231.s3tc.ctex", "res://.godot/imported/Electronics.jpg-7fc805f9604cc1ad463cbbdc8d244231.etc2.ctex"]
 
 [params]
 

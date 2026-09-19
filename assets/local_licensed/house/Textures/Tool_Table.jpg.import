@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3ia50njhpyiu"
-path.s3tc="res://.godot/imported/Tool_Table.jpg-0eca43bf4124702127c6f8acf6eeb320.s3tc.ctex"
+path.s3tc="res://.godot/imported/Tool_Table.jpg-358fddfeb81c99d5c7b18e5c33fb3884.s3tc.ctex"
+path.etc2="res://.godot/imported/Tool_Table.jpg-358fddfeb81c99d5c7b18e5c33fb3884.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Tool_Table.jpg"
-dest_files=["res://.godot/imported/Tool_Table.jpg-0eca43bf4124702127c6f8acf6eeb320.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Tool_Table.jpg"
+dest_files=["res://.godot/imported/Tool_Table.jpg-358fddfeb81c99d5c7b18e5c33fb3884.s3tc.ctex", "res://.godot/imported/Tool_Table.jpg-358fddfeb81c99d5c7b18e5c33fb3884.etc2.ctex"]
 
 [params]
 

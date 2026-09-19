@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnph3wkt8wm62"
-path.s3tc="res://.godot/imported/Mop.png-5308370961613c9354bde9792083b024.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mop.png-275658b77646e9d4c5bbdcefb3780b2e.s3tc.ctex"
+path.etc2="res://.godot/imported/Mop.png-275658b77646e9d4c5bbdcefb3780b2e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Mop.png"
-dest_files=["res://.godot/imported/Mop.png-5308370961613c9354bde9792083b024.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Mop.png"
+dest_files=["res://.godot/imported/Mop.png-275658b77646e9d4c5bbdcefb3780b2e.s3tc.ctex", "res://.godot/imported/Mop.png-275658b77646e9d4c5bbdcefb3780b2e.etc2.ctex"]
 
 [params]
 

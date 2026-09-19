@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://budecesknvl8g"
-path.s3tc="res://.godot/imported/Cigars.png-109bbe9a83ec0765d563303aded638c5.s3tc.ctex"
+path.s3tc="res://.godot/imported/Cigars.png-84fd7af60cdf5048c8ad2ca182cc76b2.s3tc.ctex"
+path.etc2="res://.godot/imported/Cigars.png-84fd7af60cdf5048c8ad2ca182cc76b2.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Cigars.png"
-dest_files=["res://.godot/imported/Cigars.png-109bbe9a83ec0765d563303aded638c5.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Cigars.png"
+dest_files=["res://.godot/imported/Cigars.png-84fd7af60cdf5048c8ad2ca182cc76b2.s3tc.ctex", "res://.godot/imported/Cigars.png-84fd7af60cdf5048c8ad2ca182cc76b2.etc2.ctex"]
 
 [params]
 

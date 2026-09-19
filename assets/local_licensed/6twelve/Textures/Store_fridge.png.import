@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f4npe2e22jhw"
-path.s3tc="res://.godot/imported/Store_fridge.png-5623c1bad9453beef7dba38ffbbbd165.s3tc.ctex"
+path.s3tc="res://.godot/imported/Store_fridge.png-33a2dbb8ae0d1d9ce2b7aa08e940f3eb.s3tc.ctex"
+path.etc2="res://.godot/imported/Store_fridge.png-33a2dbb8ae0d1d9ce2b7aa08e940f3eb.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Store_fridge.png"
-dest_files=["res://.godot/imported/Store_fridge.png-5623c1bad9453beef7dba38ffbbbd165.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Store_fridge.png"
+dest_files=["res://.godot/imported/Store_fridge.png-33a2dbb8ae0d1d9ce2b7aa08e940f3eb.s3tc.ctex", "res://.godot/imported/Store_fridge.png-33a2dbb8ae0d1d9ce2b7aa08e940f3eb.etc2.ctex"]
 
 [params]
 

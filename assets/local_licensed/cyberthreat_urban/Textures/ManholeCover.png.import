@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://yu8xsva047il"
 path.s3tc="res://.godot/imported/ManholeCover.png-120aafc61d5bebc06a3b50780e065fed.s3tc.ctex"
+path.etc2="res://.godot/imported/ManholeCover.png-120aafc61d5bebc06a3b50780e065fed.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/cyberthreat_urban/Textures/ManholeCover.png"
-dest_files=["res://.godot/imported/ManholeCover.png-120aafc61d5bebc06a3b50780e065fed.s3tc.ctex"]
+dest_files=["res://.godot/imported/ManholeCover.png-120aafc61d5bebc06a3b50780e065fed.s3tc.ctex", "res://.godot/imported/ManholeCover.png-120aafc61d5bebc06a3b50780e065fed.etc2.ctex"]
 
 [params]
 

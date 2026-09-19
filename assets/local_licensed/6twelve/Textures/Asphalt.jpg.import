@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq6qtlp6047oc"
-path.s3tc="res://.godot/imported/Asphalt.jpg-28c49cf54af84f40d6d7160b9b5acd5a.s3tc.ctex"
+path.s3tc="res://.godot/imported/Asphalt.jpg-b597eccf6e9f1a95e5363dacd664959e.s3tc.ctex"
+path.etc2="res://.godot/imported/Asphalt.jpg-b597eccf6e9f1a95e5363dacd664959e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Asphalt.jpg"
-dest_files=["res://.godot/imported/Asphalt.jpg-28c49cf54af84f40d6d7160b9b5acd5a.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Asphalt.jpg"
+dest_files=["res://.godot/imported/Asphalt.jpg-b597eccf6e9f1a95e5363dacd664959e.s3tc.ctex", "res://.godot/imported/Asphalt.jpg-b597eccf6e9f1a95e5363dacd664959e.etc2.ctex"]
 
 [params]
 

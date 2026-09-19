@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c037q12brcn7q"
-path.s3tc="res://.godot/imported/Flower_Table.png-a1c1c398944555809e653050be96ec9f.s3tc.ctex"
+path.s3tc="res://.godot/imported/Flower_Table.png-60a6dc06b9bd8e6f245d97ac90bb8648.s3tc.ctex"
+path.etc2="res://.godot/imported/Flower_Table.png-60a6dc06b9bd8e6f245d97ac90bb8648.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Flower_Table.png"
-dest_files=["res://.godot/imported/Flower_Table.png-a1c1c398944555809e653050be96ec9f.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Flower_Table.png"
+dest_files=["res://.godot/imported/Flower_Table.png-60a6dc06b9bd8e6f245d97ac90bb8648.s3tc.ctex", "res://.godot/imported/Flower_Table.png-60a6dc06b9bd8e6f245d97ac90bb8648.etc2.ctex"]
 
 [params]
 

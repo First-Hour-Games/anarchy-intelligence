@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4bjfmhw223fs"
 path.s3tc="res://.godot/imported/StandingBillboard.png-b3cd5d919cf36cb753f56295062b309c.s3tc.ctex"
+path.etc2="res://.godot/imported/StandingBillboard.png-b3cd5d919cf36cb753f56295062b309c.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/cyberthreat_urban/Textures Pack3/StandingBillboard.png"
-dest_files=["res://.godot/imported/StandingBillboard.png-b3cd5d919cf36cb753f56295062b309c.s3tc.ctex"]
+dest_files=["res://.godot/imported/StandingBillboard.png-b3cd5d919cf36cb753f56295062b309c.s3tc.ctex", "res://.godot/imported/StandingBillboard.png-b3cd5d919cf36cb753f56295062b309c.etc2.ctex"]
 
 [params]
 

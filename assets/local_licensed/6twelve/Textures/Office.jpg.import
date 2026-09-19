@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gdjtnh1wu4jw"
-path.s3tc="res://.godot/imported/Office.jpg-9489199aa5516a6379b40d85aadddb20.s3tc.ctex"
+path.s3tc="res://.godot/imported/Office.jpg-cfe84ccf503b67d9b52da3903fccc5dc.s3tc.ctex"
+path.etc2="res://.godot/imported/Office.jpg-cfe84ccf503b67d9b52da3903fccc5dc.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Office.jpg"
-dest_files=["res://.godot/imported/Office.jpg-9489199aa5516a6379b40d85aadddb20.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Office.jpg"
+dest_files=["res://.godot/imported/Office.jpg-cfe84ccf503b67d9b52da3903fccc5dc.s3tc.ctex", "res://.godot/imported/Office.jpg-cfe84ccf503b67d9b52da3903fccc5dc.etc2.ctex"]
 
 [params]
 

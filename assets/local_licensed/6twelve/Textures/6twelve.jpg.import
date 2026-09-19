@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcchyp22xmj32"
-path.s3tc="res://.godot/imported/6twelve.jpg-566f7a2ebd8ac0dd1998235429bea76b.s3tc.ctex"
+path.s3tc="res://.godot/imported/6twelve.jpg-c6b16a78e3065f6ddac1eb01aafd851e.s3tc.ctex"
+path.etc2="res://.godot/imported/6twelve.jpg-c6b16a78e3065f6ddac1eb01aafd851e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/6twelve.jpg"
-dest_files=["res://.godot/imported/6twelve.jpg-566f7a2ebd8ac0dd1998235429bea76b.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/6twelve.jpg"
+dest_files=["res://.godot/imported/6twelve.jpg-c6b16a78e3065f6ddac1eb01aafd851e.s3tc.ctex", "res://.godot/imported/6twelve.jpg-c6b16a78e3065f6ddac1eb01aafd851e.etc2.ctex"]
 
 [params]
 

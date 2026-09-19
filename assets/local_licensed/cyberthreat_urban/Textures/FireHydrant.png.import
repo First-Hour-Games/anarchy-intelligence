@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bri4ldsxw5lo8"
 path.s3tc="res://.godot/imported/FireHydrant.png-a2e2c1ac28efdb5d77f7d41af54955ac.s3tc.ctex"
+path.etc2="res://.godot/imported/FireHydrant.png-a2e2c1ac28efdb5d77f7d41af54955ac.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/cyberthreat_urban/Textures/FireHydrant.png"
-dest_files=["res://.godot/imported/FireHydrant.png-a2e2c1ac28efdb5d77f7d41af54955ac.s3tc.ctex"]
+dest_files=["res://.godot/imported/FireHydrant.png-a2e2c1ac28efdb5d77f7d41af54955ac.s3tc.ctex", "res://.godot/imported/FireHydrant.png-a2e2c1ac28efdb5d77f7d41af54955ac.etc2.ctex"]
 
 [params]
 

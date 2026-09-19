@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7qntmiunktgi"
-path.s3tc="res://.godot/imported/Can.png-c0974e96b7d494331fe057b30362e72f.s3tc.ctex"
+path.s3tc="res://.godot/imported/Can.png-4e62cf779249e8bd3b1dc1fc2d748322.s3tc.ctex"
+path.etc2="res://.godot/imported/Can.png-4e62cf779249e8bd3b1dc1fc2d748322.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Can.png"
-dest_files=["res://.godot/imported/Can.png-c0974e96b7d494331fe057b30362e72f.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Can.png"
+dest_files=["res://.godot/imported/Can.png-4e62cf779249e8bd3b1dc1fc2d748322.s3tc.ctex", "res://.godot/imported/Can.png-4e62cf779249e8bd3b1dc1fc2d748322.etc2.ctex"]
 
 [params]
 

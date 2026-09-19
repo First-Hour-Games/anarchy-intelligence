@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5nplecxktpdr"
-path.s3tc="res://.godot/imported/Branches.png-9775b216c132e0b8a22d77a8fa3a4c91.s3tc.ctex"
+path.s3tc="res://.godot/imported/Branches.png-432b4364245e4f8ae399db7010045189.s3tc.ctex"
+path.etc2="res://.godot/imported/Branches.png-432b4364245e4f8ae399db7010045189.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Branches.png"
-dest_files=["res://.godot/imported/Branches.png-9775b216c132e0b8a22d77a8fa3a4c91.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Branches.png"
+dest_files=["res://.godot/imported/Branches.png-432b4364245e4f8ae399db7010045189.s3tc.ctex", "res://.godot/imported/Branches.png-432b4364245e4f8ae399db7010045189.etc2.ctex"]
 
 [params]
 

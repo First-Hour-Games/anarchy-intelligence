@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmudnsu7o86km"
-path.s3tc="res://.godot/imported/CardboardPlain.jpg-35b3284691215dff115fe1c3ecf3bf9e.s3tc.ctex"
+path.s3tc="res://.godot/imported/CardboardPlain.jpg-ee2ba560efa8dcf79891b5cd2707e416.s3tc.ctex"
+path.etc2="res://.godot/imported/CardboardPlain.jpg-ee2ba560efa8dcf79891b5cd2707e416.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/CardboardPlain.jpg"
-dest_files=["res://.godot/imported/CardboardPlain.jpg-35b3284691215dff115fe1c3ecf3bf9e.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/CardboardPlain.jpg"
+dest_files=["res://.godot/imported/CardboardPlain.jpg-ee2ba560efa8dcf79891b5cd2707e416.s3tc.ctex", "res://.godot/imported/CardboardPlain.jpg-ee2ba560efa8dcf79891b5cd2707e416.etc2.ctex"]
 
 [params]
 

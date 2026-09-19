@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0drvjgvdbi0v"
-path.s3tc="res://.godot/imported/Sign_01.png-07ae1b742476f104d6e02b25a93994d3.s3tc.ctex"
+path.s3tc="res://.godot/imported/Sign_01.png-75de6e2ee809dfa505a6d7f900f64cc3.s3tc.ctex"
+path.etc2="res://.godot/imported/Sign_01.png-75de6e2ee809dfa505a6d7f900f64cc3.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Sign_01.png"
-dest_files=["res://.godot/imported/Sign_01.png-07ae1b742476f104d6e02b25a93994d3.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Sign_01.png"
+dest_files=["res://.godot/imported/Sign_01.png-75de6e2ee809dfa505a6d7f900f64cc3.s3tc.ctex", "res://.godot/imported/Sign_01.png-75de6e2ee809dfa505a6d7f900f64cc3.etc2.ctex"]
 
 [params]
 

@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://po770y1kui71"
-path.s3tc="res://.godot/imported/Trees_Background.png-ea603278a3af059d8a1490556d73cbb6.s3tc.ctex"
+path.s3tc="res://.godot/imported/Trees_Background.png-1d60408eb3aab910d3b330b181a308f7.s3tc.ctex"
+path.etc2="res://.godot/imported/Trees_Background.png-1d60408eb3aab910d3b330b181a308f7.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Trees_Background.png"
-dest_files=["res://.godot/imported/Trees_Background.png-ea603278a3af059d8a1490556d73cbb6.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Trees_Background.png"
+dest_files=["res://.godot/imported/Trees_Background.png-1d60408eb3aab910d3b330b181a308f7.s3tc.ctex", "res://.godot/imported/Trees_Background.png-1d60408eb3aab910d3b330b181a308f7.etc2.ctex"]
 
 [params]
 

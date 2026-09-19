@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://by4kr7e2hfiuf"
-path.s3tc="res://.godot/imported/Trash_01.jpg-af28dda7ba6a80aec942d7925677fe0f.s3tc.ctex"
+path.s3tc="res://.godot/imported/Trash_01.jpg-27f3f48cb044c60f2387111ee36640a9.s3tc.ctex"
+path.etc2="res://.godot/imported/Trash_01.jpg-27f3f48cb044c60f2387111ee36640a9.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Trash_01.jpg"
-dest_files=["res://.godot/imported/Trash_01.jpg-af28dda7ba6a80aec942d7925677fe0f.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Trash_01.jpg"
+dest_files=["res://.godot/imported/Trash_01.jpg-27f3f48cb044c60f2387111ee36640a9.s3tc.ctex", "res://.godot/imported/Trash_01.jpg-27f3f48cb044c60f2387111ee36640a9.etc2.ctex"]
 
 [params]
 

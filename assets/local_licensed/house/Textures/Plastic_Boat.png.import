@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bamladvrxist8"
-path.s3tc="res://.godot/imported/Plastic_Boat.png-817ba85eb3eb197065720d396896158d.s3tc.ctex"
+path.s3tc="res://.godot/imported/Plastic_Boat.png-a4d6ad6dfe5d8abed0d010b31c4bf6ab.s3tc.ctex"
+path.etc2="res://.godot/imported/Plastic_Boat.png-a4d6ad6dfe5d8abed0d010b31c4bf6ab.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Plastic_Boat.png"
-dest_files=["res://.godot/imported/Plastic_Boat.png-817ba85eb3eb197065720d396896158d.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Plastic_Boat.png"
+dest_files=["res://.godot/imported/Plastic_Boat.png-a4d6ad6dfe5d8abed0d010b31c4bf6ab.s3tc.ctex", "res://.godot/imported/Plastic_Boat.png-a4d6ad6dfe5d8abed0d010b31c4bf6ab.etc2.ctex"]
 
 [params]
 

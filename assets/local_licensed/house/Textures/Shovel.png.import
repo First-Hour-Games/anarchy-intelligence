@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dui5e3rmglmun"
-path.s3tc="res://.godot/imported/Shovel.png-8c11357ed8e1cbed7da3233b3a68cf4c.s3tc.ctex"
+path.s3tc="res://.godot/imported/Shovel.png-31db5a8e8aa40fe9262acc4108e350d4.s3tc.ctex"
+path.etc2="res://.godot/imported/Shovel.png-31db5a8e8aa40fe9262acc4108e350d4.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Shovel.png"
-dest_files=["res://.godot/imported/Shovel.png-8c11357ed8e1cbed7da3233b3a68cf4c.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Shovel.png"
+dest_files=["res://.godot/imported/Shovel.png-31db5a8e8aa40fe9262acc4108e350d4.s3tc.ctex", "res://.godot/imported/Shovel.png-31db5a8e8aa40fe9262acc4108e350d4.etc2.ctex"]
 
 [params]
 

@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfug4kjn7c82i"
-path.s3tc="res://.godot/imported/RoadMarkings.png-3b8a06d961f429a3cd77a5154ebe8189.s3tc.ctex"
+path.s3tc="res://.godot/imported/RoadMarkings.png-6be1e5756d9e545e0e4ae65bf06fbfe3.s3tc.ctex"
+path.etc2="res://.godot/imported/RoadMarkings.png-6be1e5756d9e545e0e4ae65bf06fbfe3.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/RoadMarkings.png"
-dest_files=["res://.godot/imported/RoadMarkings.png-3b8a06d961f429a3cd77a5154ebe8189.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/RoadMarkings.png"
+dest_files=["res://.godot/imported/RoadMarkings.png-6be1e5756d9e545e0e4ae65bf06fbfe3.s3tc.ctex", "res://.godot/imported/RoadMarkings.png-6be1e5756d9e545e0e4ae65bf06fbfe3.etc2.ctex"]
 
 [params]
 

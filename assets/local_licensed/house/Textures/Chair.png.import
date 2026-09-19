@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7hbqwlalh38i"
-path.s3tc="res://.godot/imported/Chair.png-18db2de7aa4b102dc3227379f9556bc6.s3tc.ctex"
+path.s3tc="res://.godot/imported/Chair.png-441468f72b71e761c93390c9b115bb87.s3tc.ctex"
+path.etc2="res://.godot/imported/Chair.png-441468f72b71e761c93390c9b115bb87.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Chair.png"
-dest_files=["res://.godot/imported/Chair.png-18db2de7aa4b102dc3227379f9556bc6.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Chair.png"
+dest_files=["res://.godot/imported/Chair.png-441468f72b71e761c93390c9b115bb87.s3tc.ctex", "res://.godot/imported/Chair.png-441468f72b71e761c93390c9b115bb87.etc2.ctex"]
 
 [params]
 

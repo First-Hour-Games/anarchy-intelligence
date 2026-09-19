@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5n01w0531dnb"
-path.s3tc="res://.godot/imported/Petrol_Can_01.png-a75f9c51e58def02b81b8daa1939548f.s3tc.ctex"
+path.s3tc="res://.godot/imported/Petrol_Can_01.png-208aca75e01f517ee5d8726129592681.s3tc.ctex"
+path.etc2="res://.godot/imported/Petrol_Can_01.png-208aca75e01f517ee5d8726129592681.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Petrol_Can_01.png"
-dest_files=["res://.godot/imported/Petrol_Can_01.png-a75f9c51e58def02b81b8daa1939548f.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Petrol_Can_01.png"
+dest_files=["res://.godot/imported/Petrol_Can_01.png-208aca75e01f517ee5d8726129592681.s3tc.ctex", "res://.godot/imported/Petrol_Can_01.png-208aca75e01f517ee5d8726129592681.etc2.ctex"]
 
 [params]
 

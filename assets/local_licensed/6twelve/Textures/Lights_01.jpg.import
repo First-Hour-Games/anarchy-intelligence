@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhp3tcuep2x0u"
-path.s3tc="res://.godot/imported/Lights_01.jpg-6161a6c94ec524e7092b352327201fcc.s3tc.ctex"
+path.s3tc="res://.godot/imported/Lights_01.jpg-e205cc7fa0c02bfca8a256d72e298e3a.s3tc.ctex"
+path.etc2="res://.godot/imported/Lights_01.jpg-e205cc7fa0c02bfca8a256d72e298e3a.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Lights_01.jpg"
-dest_files=["res://.godot/imported/Lights_01.jpg-6161a6c94ec524e7092b352327201fcc.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Lights_01.jpg"
+dest_files=["res://.godot/imported/Lights_01.jpg-e205cc7fa0c02bfca8a256d72e298e3a.s3tc.ctex", "res://.godot/imported/Lights_01.jpg-e205cc7fa0c02bfca8a256d72e298e3a.etc2.ctex"]
 
 [params]
 

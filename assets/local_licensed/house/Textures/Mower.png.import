@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5xk72kl3xsj"
-path.s3tc="res://.godot/imported/Mower.png-26a433f650aad050df0e163210794551.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mower.png-d7502e23d927f7f9a13215fc516e7192.s3tc.ctex"
+path.etc2="res://.godot/imported/Mower.png-d7502e23d927f7f9a13215fc516e7192.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Mower.png"
-dest_files=["res://.godot/imported/Mower.png-26a433f650aad050df0e163210794551.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Mower.png"
+dest_files=["res://.godot/imported/Mower.png-d7502e23d927f7f9a13215fc516e7192.s3tc.ctex", "res://.godot/imported/Mower.png-d7502e23d927f7f9a13215fc516e7192.etc2.ctex"]
 
 [params]
 

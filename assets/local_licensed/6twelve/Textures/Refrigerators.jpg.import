@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmlwbwy2k78xb"
-path.s3tc="res://.godot/imported/Refrigerators.jpg-6d7acde13cd5c21fa9bb495931c344b9.s3tc.ctex"
+path.s3tc="res://.godot/imported/Refrigerators.jpg-c6521714c918381225ce9ddb93c3122a.s3tc.ctex"
+path.etc2="res://.godot/imported/Refrigerators.jpg-c6521714c918381225ce9ddb93c3122a.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Refrigerators.jpg"
-dest_files=["res://.godot/imported/Refrigerators.jpg-6d7acde13cd5c21fa9bb495931c344b9.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Refrigerators.jpg"
+dest_files=["res://.godot/imported/Refrigerators.jpg-c6521714c918381225ce9ddb93c3122a.s3tc.ctex", "res://.godot/imported/Refrigerators.jpg-c6521714c918381225ce9ddb93c3122a.etc2.ctex"]
 
 [params]
 

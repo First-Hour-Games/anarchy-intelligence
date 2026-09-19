@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1xu8uorrea02"
-path.s3tc="res://.godot/imported/Phone_01.png-2e3cd8c7ec20f5641f94972d62c51049.s3tc.ctex"
+path.s3tc="res://.godot/imported/Phone_01.png-b44b01ad3dfafcf9b23de599f64df441.s3tc.ctex"
+path.etc2="res://.godot/imported/Phone_01.png-b44b01ad3dfafcf9b23de599f64df441.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Phone_01.png"
-dest_files=["res://.godot/imported/Phone_01.png-2e3cd8c7ec20f5641f94972d62c51049.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Phone_01.png"
+dest_files=["res://.godot/imported/Phone_01.png-b44b01ad3dfafcf9b23de599f64df441.s3tc.ctex", "res://.godot/imported/Phone_01.png-b44b01ad3dfafcf9b23de599f64df441.etc2.ctex"]
 
 [params]
 

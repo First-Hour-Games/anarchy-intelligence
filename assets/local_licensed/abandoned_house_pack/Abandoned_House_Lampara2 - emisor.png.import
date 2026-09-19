@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://d271cl3vdql64"
 path.s3tc="res://.godot/imported/Abandoned_House_Lampara2 - emisor.png-0383577ed1ae3aa3a9bc9a08b691180c.s3tc.ctex"
+path.etc2="res://.godot/imported/Abandoned_House_Lampara2 - emisor.png-0383577ed1ae3aa3a9bc9a08b691180c.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/local_licensed/abandoned_house_pack/Abandoned_House_Lampara2 - emisor.png"
-dest_files=["res://.godot/imported/Abandoned_House_Lampara2 - emisor.png-0383577ed1ae3aa3a9bc9a08b691180c.s3tc.ctex"]
+dest_files=["res://.godot/imported/Abandoned_House_Lampara2 - emisor.png-0383577ed1ae3aa3a9bc9a08b691180c.s3tc.ctex", "res://.godot/imported/Abandoned_House_Lampara2 - emisor.png-0383577ed1ae3aa3a9bc9a08b691180c.etc2.ctex"]
 
 [params]
 
