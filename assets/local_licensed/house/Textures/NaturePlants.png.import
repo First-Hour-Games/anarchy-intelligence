@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://w6t2o65twt1j"
-path.s3tc="res://.godot/imported/NaturePlants.png-4dbf929ef771f8e97e760e056bf31752.s3tc.ctex"
+path.s3tc="res://.godot/imported/NaturePlants.png-1ff83abf5e50ba7353f25b6893748d10.s3tc.ctex"
+path.etc2="res://.godot/imported/NaturePlants.png-1ff83abf5e50ba7353f25b6893748d10.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/NaturePlants.png"
-dest_files=["res://.godot/imported/NaturePlants.png-4dbf929ef771f8e97e760e056bf31752.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/NaturePlants.png"
+dest_files=["res://.godot/imported/NaturePlants.png-1ff83abf5e50ba7353f25b6893748d10.s3tc.ctex", "res://.godot/imported/NaturePlants.png-1ff83abf5e50ba7353f25b6893748d10.etc2.ctex"]
 
 [params]
 

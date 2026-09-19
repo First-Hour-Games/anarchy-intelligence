@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bortghtt6h4vg"
-path.s3tc="res://.godot/imported/Background.png-18f5c74c0205550ee8c29b6bb3a47d86.s3tc.ctex"
+path.s3tc="res://.godot/imported/Background.png-065631b78b15b6890387bb86a856a637.s3tc.ctex"
+path.etc2="res://.godot/imported/Background.png-065631b78b15b6890387bb86a856a637.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Background.png"
-dest_files=["res://.godot/imported/Background.png-18f5c74c0205550ee8c29b6bb3a47d86.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Background.png"
+dest_files=["res://.godot/imported/Background.png-065631b78b15b6890387bb86a856a637.s3tc.ctex", "res://.godot/imported/Background.png-065631b78b15b6890387bb86a856a637.etc2.ctex"]
 
 [params]
 

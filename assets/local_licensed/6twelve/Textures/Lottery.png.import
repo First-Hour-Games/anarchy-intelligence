@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://su08avwmvq64"
-path.s3tc="res://.godot/imported/Lottery.png-ae82309b622cf452d06881ec6f0a5e77.s3tc.ctex"
+path.s3tc="res://.godot/imported/Lottery.png-877d6a58126f94c5f80a825e9234413f.s3tc.ctex"
+path.etc2="res://.godot/imported/Lottery.png-877d6a58126f94c5f80a825e9234413f.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Lottery.png"
-dest_files=["res://.godot/imported/Lottery.png-ae82309b622cf452d06881ec6f0a5e77.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Lottery.png"
+dest_files=["res://.godot/imported/Lottery.png-877d6a58126f94c5f80a825e9234413f.s3tc.ctex", "res://.godot/imported/Lottery.png-877d6a58126f94c5f80a825e9234413f.etc2.ctex"]
 
 [params]
 

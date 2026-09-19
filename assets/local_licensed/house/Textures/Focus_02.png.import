@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dd3xhn4wsguhq"
-path.s3tc="res://.godot/imported/Focus_02.png-e61b34ee6a5e785eb3ca452dc92735a3.s3tc.ctex"
+path.s3tc="res://.godot/imported/Focus_02.png-9d7ae8daab6332df44f9b71a8afc703e.s3tc.ctex"
+path.etc2="res://.godot/imported/Focus_02.png-9d7ae8daab6332df44f9b71a8afc703e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Focus_02.png"
-dest_files=["res://.godot/imported/Focus_02.png-e61b34ee6a5e785eb3ca452dc92735a3.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Focus_02.png"
+dest_files=["res://.godot/imported/Focus_02.png-9d7ae8daab6332df44f9b71a8afc703e.s3tc.ctex", "res://.godot/imported/Focus_02.png-9d7ae8daab6332df44f9b71a8afc703e.etc2.ctex"]
 
 [params]
 

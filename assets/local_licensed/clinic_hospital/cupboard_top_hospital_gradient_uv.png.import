@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://2nii2q6aibox"
 path.s3tc="res://.godot/imported/cupboard_top_hospital_gradient_uv.png-d9f5c1668929540ea07d0f6ed53e9616.s3tc.ctex"
+path.etc2="res://.godot/imported/cupboard_top_hospital_gradient_uv.png-d9f5c1668929540ea07d0f6ed53e9616.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/local_licensed/clinic_hospital/cupboard_top_hospital_gradient_uv.png"
-dest_files=["res://.godot/imported/cupboard_top_hospital_gradient_uv.png-d9f5c1668929540ea07d0f6ed53e9616.s3tc.ctex"]
+dest_files=["res://.godot/imported/cupboard_top_hospital_gradient_uv.png-d9f5c1668929540ea07d0f6ed53e9616.s3tc.ctex", "res://.godot/imported/cupboard_top_hospital_gradient_uv.png-d9f5c1668929540ea07d0f6ed53e9616.etc2.ctex"]
 
 [params]
 

@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f11cahaby51p"
-path.s3tc="res://.godot/imported/PlasterWhite.jpg-09a6a44daa04efc781d84cc259a96220.s3tc.ctex"
+path.s3tc="res://.godot/imported/PlasterWhite.jpg-b807bd48aaca83f98823d92404a2677e.s3tc.ctex"
+path.etc2="res://.godot/imported/PlasterWhite.jpg-b807bd48aaca83f98823d92404a2677e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/PlasterWhite.jpg"
-dest_files=["res://.godot/imported/PlasterWhite.jpg-09a6a44daa04efc781d84cc259a96220.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/PlasterWhite.jpg"
+dest_files=["res://.godot/imported/PlasterWhite.jpg-b807bd48aaca83f98823d92404a2677e.s3tc.ctex", "res://.godot/imported/PlasterWhite.jpg-b807bd48aaca83f98823d92404a2677e.etc2.ctex"]
 
 [params]
 

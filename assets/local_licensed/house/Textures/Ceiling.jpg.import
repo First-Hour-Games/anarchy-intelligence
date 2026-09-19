@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7pt7g4g1yxve"
-path.s3tc="res://.godot/imported/Ceiling.jpg-0e2a071f8d331149b7020fa3b25efcaf.s3tc.ctex"
+path.s3tc="res://.godot/imported/Ceiling.jpg-b972a6172fb1550565e3dab98fc14908.s3tc.ctex"
+path.etc2="res://.godot/imported/Ceiling.jpg-b972a6172fb1550565e3dab98fc14908.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Ceiling.jpg"
-dest_files=["res://.godot/imported/Ceiling.jpg-0e2a071f8d331149b7020fa3b25efcaf.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Ceiling.jpg"
+dest_files=["res://.godot/imported/Ceiling.jpg-b972a6172fb1550565e3dab98fc14908.s3tc.ctex", "res://.godot/imported/Ceiling.jpg-b972a6172fb1550565e3dab98fc14908.etc2.ctex"]
 
 [params]
 

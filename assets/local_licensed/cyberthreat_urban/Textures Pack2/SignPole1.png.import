@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdayurp55wgbq"
 path.s3tc="res://.godot/imported/SignPole1.png-f49f37d0946d51ca1a83b3ae3f595d12.s3tc.ctex"
+path.etc2="res://.godot/imported/SignPole1.png-f49f37d0946d51ca1a83b3ae3f595d12.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/cyberthreat_urban/Textures Pack2/SignPole1.png"
-dest_files=["res://.godot/imported/SignPole1.png-f49f37d0946d51ca1a83b3ae3f595d12.s3tc.ctex"]
+dest_files=["res://.godot/imported/SignPole1.png-f49f37d0946d51ca1a83b3ae3f595d12.s3tc.ctex", "res://.godot/imported/SignPole1.png-f49f37d0946d51ca1a83b3ae3f595d12.etc2.ctex"]
 
 [params]
 

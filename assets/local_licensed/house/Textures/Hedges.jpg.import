@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df4upyvo7fksv"
-path.s3tc="res://.godot/imported/Hedges.jpg-a902013d7afa1ff5e3a602ae6a91ceb3.s3tc.ctex"
+path.s3tc="res://.godot/imported/Hedges.jpg-618a3c0f11f3c236144c03c5d54f80f2.s3tc.ctex"
+path.etc2="res://.godot/imported/Hedges.jpg-618a3c0f11f3c236144c03c5d54f80f2.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Hedges.jpg"
-dest_files=["res://.godot/imported/Hedges.jpg-a902013d7afa1ff5e3a602ae6a91ceb3.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Hedges.jpg"
+dest_files=["res://.godot/imported/Hedges.jpg-618a3c0f11f3c236144c03c5d54f80f2.s3tc.ctex", "res://.godot/imported/Hedges.jpg-618a3c0f11f3c236144c03c5d54f80f2.etc2.ctex"]
 
 [params]
 

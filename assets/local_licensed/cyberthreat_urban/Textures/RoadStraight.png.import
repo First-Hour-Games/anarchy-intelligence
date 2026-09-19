@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctfnnxxi0818g"
 path.s3tc="res://.godot/imported/RoadStraight.png-a9c53290f91d2d67ef246edf4e1edbd2.s3tc.ctex"
+path.etc2="res://.godot/imported/RoadStraight.png-a9c53290f91d2d67ef246edf4e1edbd2.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/cyberthreat_urban/Textures/RoadStraight.png"
-dest_files=["res://.godot/imported/RoadStraight.png-a9c53290f91d2d67ef246edf4e1edbd2.s3tc.ctex"]
+dest_files=["res://.godot/imported/RoadStraight.png-a9c53290f91d2d67ef246edf4e1edbd2.s3tc.ctex", "res://.godot/imported/RoadStraight.png-a9c53290f91d2d67ef246edf4e1edbd2.etc2.ctex"]
 
 [params]
 

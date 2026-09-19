@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhbt8ueo2sn02"
 path.s3tc="res://.godot/imported/Abandoned_House_P.jpg-ea0c2480b850c65e2b0b6449765c033c.s3tc.ctex"
+path.etc2="res://.godot/imported/Abandoned_House_P.jpg-ea0c2480b850c65e2b0b6449765c033c.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/local_licensed/abandoned_house_pack/Abandoned_House_P.jpg"
-dest_files=["res://.godot/imported/Abandoned_House_P.jpg-ea0c2480b850c65e2b0b6449765c033c.s3tc.ctex"]
+dest_files=["res://.godot/imported/Abandoned_House_P.jpg-ea0c2480b850c65e2b0b6449765c033c.s3tc.ctex", "res://.godot/imported/Abandoned_House_P.jpg-ea0c2480b850c65e2b0b6449765c033c.etc2.ctex"]
 
 [params]
 

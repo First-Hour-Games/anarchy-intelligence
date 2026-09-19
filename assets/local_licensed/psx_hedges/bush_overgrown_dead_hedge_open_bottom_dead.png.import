@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ca7thx0mnwd1t"
 path.s3tc="res://.godot/imported/bush_overgrown_dead_hedge_open_bottom_dead.png-de84a5e84c168023f78e270e0b895b94.s3tc.ctex"
+path.etc2="res://.godot/imported/bush_overgrown_dead_hedge_open_bottom_dead.png-de84a5e84c168023f78e270e0b895b94.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/local_licensed/psx_hedges/bush_overgrown_dead_hedge_open_bottom_dead.png"
-dest_files=["res://.godot/imported/bush_overgrown_dead_hedge_open_bottom_dead.png-de84a5e84c168023f78e270e0b895b94.s3tc.ctex"]
+dest_files=["res://.godot/imported/bush_overgrown_dead_hedge_open_bottom_dead.png-de84a5e84c168023f78e270e0b895b94.s3tc.ctex", "res://.godot/imported/bush_overgrown_dead_hedge_open_bottom_dead.png-de84a5e84c168023f78e270e0b895b94.etc2.ctex"]
 
 [params]
 

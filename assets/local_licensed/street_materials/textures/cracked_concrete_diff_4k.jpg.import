@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfmjse8evyf3r"
 path.s3tc="res://.godot/imported/cracked_concrete_diff_4k.jpg-6f7ef35f7e4c8844a56b774d23ffcc78.s3tc.ctex"
+path.etc2="res://.godot/imported/cracked_concrete_diff_4k.jpg-6f7ef35f7e4c8844a56b774d23ffcc78.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/street_materials/textures/cracked_concrete_diff_4k.jpg"
-dest_files=["res://.godot/imported/cracked_concrete_diff_4k.jpg-6f7ef35f7e4c8844a56b774d23ffcc78.s3tc.ctex"]
+dest_files=["res://.godot/imported/cracked_concrete_diff_4k.jpg-6f7ef35f7e4c8844a56b774d23ffcc78.s3tc.ctex", "res://.godot/imported/cracked_concrete_diff_4k.jpg-6f7ef35f7e4c8844a56b774d23ffcc78.etc2.ctex"]
 
 [params]
 

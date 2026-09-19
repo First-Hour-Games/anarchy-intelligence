@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dy2xm1hkvjmt5"
 path.s3tc="res://.godot/imported/EMF_Detector.png-b1c018c0a0edadf33d100b08dd54ed57.s3tc.ctex"
+path.etc2="res://.godot/imported/EMF_Detector.png-b1c018c0a0edadf33d100b08dd54ed57.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/exploration_objects/EMF_Detector/EMF_Detector.png"
-dest_files=["res://.godot/imported/EMF_Detector.png-b1c018c0a0edadf33d100b08dd54ed57.s3tc.ctex"]
+dest_files=["res://.godot/imported/EMF_Detector.png-b1c018c0a0edadf33d100b08dd54ed57.s3tc.ctex", "res://.godot/imported/EMF_Detector.png-b1c018c0a0edadf33d100b08dd54ed57.etc2.ctex"]
 
 [params]
 

@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://igsobftta2gc"
-path.s3tc="res://.godot/imported/Tree_05.png-53e49c57dc247b9ea9df536696eac299.s3tc.ctex"
+path.s3tc="res://.godot/imported/Tree_05.png-35af3971b6a06f4e3b5011385b5b4a29.s3tc.ctex"
+path.etc2="res://.godot/imported/Tree_05.png-35af3971b6a06f4e3b5011385b5b4a29.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Tree_05.png"
-dest_files=["res://.godot/imported/Tree_05.png-53e49c57dc247b9ea9df536696eac299.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Tree_05.png"
+dest_files=["res://.godot/imported/Tree_05.png-35af3971b6a06f4e3b5011385b5b4a29.s3tc.ctex", "res://.godot/imported/Tree_05.png-35af3971b6a06f4e3b5011385b5b4a29.etc2.ctex"]
 
 [params]
 

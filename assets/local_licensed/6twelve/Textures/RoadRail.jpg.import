@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://djlb457ymokf"
-path.s3tc="res://.godot/imported/RoadRail.jpg-1bd516275120dfadfc7de513245ed6d8.s3tc.ctex"
+path.s3tc="res://.godot/imported/RoadRail.jpg-7bab42f2a812d0af3096ccab1eef3b12.s3tc.ctex"
+path.etc2="res://.godot/imported/RoadRail.jpg-7bab42f2a812d0af3096ccab1eef3b12.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/RoadRail.jpg"
-dest_files=["res://.godot/imported/RoadRail.jpg-1bd516275120dfadfc7de513245ed6d8.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/RoadRail.jpg"
+dest_files=["res://.godot/imported/RoadRail.jpg-7bab42f2a812d0af3096ccab1eef3b12.s3tc.ctex", "res://.godot/imported/RoadRail.jpg-7bab42f2a812d0af3096ccab1eef3b12.etc2.ctex"]
 
 [params]
 

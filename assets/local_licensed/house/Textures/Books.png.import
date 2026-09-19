@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjprp1megwloy"
-path.s3tc="res://.godot/imported/Books.png-bd8a5411bed37fe73e525783f646090d.s3tc.ctex"
+path.s3tc="res://.godot/imported/Books.png-206e4c3fede280824ae906111ab27eeb.s3tc.ctex"
+path.etc2="res://.godot/imported/Books.png-206e4c3fede280824ae906111ab27eeb.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Books.png"
-dest_files=["res://.godot/imported/Books.png-bd8a5411bed37fe73e525783f646090d.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Books.png"
+dest_files=["res://.godot/imported/Books.png-206e4c3fede280824ae906111ab27eeb.s3tc.ctex", "res://.godot/imported/Books.png-206e4c3fede280824ae906111ab27eeb.etc2.ctex"]
 
 [params]
 

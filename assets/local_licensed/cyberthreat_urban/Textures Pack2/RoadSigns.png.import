@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://smymt50rmkgt"
 path.s3tc="res://.godot/imported/RoadSigns.png-278c0520e972c7ea4d7b71586f74d097.s3tc.ctex"
+path.etc2="res://.godot/imported/RoadSigns.png-278c0520e972c7ea4d7b71586f74d097.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/local_licensed/cyberthreat_urban/Textures Pack2/RoadSigns.png"
-dest_files=["res://.godot/imported/RoadSigns.png-278c0520e972c7ea4d7b71586f74d097.s3tc.ctex"]
+dest_files=["res://.godot/imported/RoadSigns.png-278c0520e972c7ea4d7b71586f74d097.s3tc.ctex", "res://.godot/imported/RoadSigns.png-278c0520e972c7ea4d7b71586f74d097.etc2.ctex"]
 
 [params]
 

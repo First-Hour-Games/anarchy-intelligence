@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bn4e0ifmvwia2"
-path.s3tc="res://.godot/imported/Scattered.png-ce938db4b7da0f5295732f182fad40a1.s3tc.ctex"
+path.s3tc="res://.godot/imported/Scattered.png-0d0feeb792349ec7ccf4657a47986577.s3tc.ctex"
+path.etc2="res://.godot/imported/Scattered.png-0d0feeb792349ec7ccf4657a47986577.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/6twelve/textures/Scattered.png"
-dest_files=["res://.godot/imported/Scattered.png-ce938db4b7da0f5295732f182fad40a1.s3tc.ctex"]
+source_file="res://assets/local_licensed/6twelve/Textures/Scattered.png"
+dest_files=["res://.godot/imported/Scattered.png-0d0feeb792349ec7ccf4657a47986577.s3tc.ctex", "res://.godot/imported/Scattered.png-0d0feeb792349ec7ccf4657a47986577.etc2.ctex"]
 
 [params]
 

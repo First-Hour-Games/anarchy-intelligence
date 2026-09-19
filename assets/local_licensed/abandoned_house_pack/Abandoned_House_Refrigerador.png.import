@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bycxx505p8n4t"
 path.s3tc="res://.godot/imported/Abandoned_House_Refrigerador.png-a919072bf8e69bc3e1c62dbe7608d636.s3tc.ctex"
+path.etc2="res://.godot/imported/Abandoned_House_Refrigerador.png-a919072bf8e69bc3e1c62dbe7608d636.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/local_licensed/abandoned_house_pack/Abandoned_House_Refrigerador.png"
-dest_files=["res://.godot/imported/Abandoned_House_Refrigerador.png-a919072bf8e69bc3e1c62dbe7608d636.s3tc.ctex"]
+dest_files=["res://.godot/imported/Abandoned_House_Refrigerador.png-a919072bf8e69bc3e1c62dbe7608d636.s3tc.ctex", "res://.godot/imported/Abandoned_House_Refrigerador.png-a919072bf8e69bc3e1c62dbe7608d636.etc2.ctex"]
 
 [params]
 

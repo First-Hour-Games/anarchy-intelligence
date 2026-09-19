@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlrf1xq7b17j6"
-path.s3tc="res://.godot/imported/Lights_01_Emissor.png-1b5a1ed665ee5f02e51882a8937a4503.s3tc.ctex"
+path.s3tc="res://.godot/imported/Lights_01_Emissor.png-a2476d5965d0a31e8db4c77b1172a307.s3tc.ctex"
+path.etc2="res://.godot/imported/Lights_01_Emissor.png-a2476d5965d0a31e8db4c77b1172a307.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Lights_01_Emissor.png"
-dest_files=["res://.godot/imported/Lights_01_Emissor.png-1b5a1ed665ee5f02e51882a8937a4503.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Lights_01_Emissor.png"
+dest_files=["res://.godot/imported/Lights_01_Emissor.png-a2476d5965d0a31e8db4c77b1172a307.s3tc.ctex", "res://.godot/imported/Lights_01_Emissor.png-a2476d5965d0a31e8db4c77b1172a307.etc2.ctex"]
 
 [params]
 

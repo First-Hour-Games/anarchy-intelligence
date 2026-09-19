@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpp6mv0f8u8sb"
-path.s3tc="res://.godot/imported/Rake_01.png-98ff324cd079a8517d6e1f39e76f0f5a.s3tc.ctex"
+path.s3tc="res://.godot/imported/Rake_01.png-f7f78f126a090e48ec3d7cced1a5a38e.s3tc.ctex"
+path.etc2="res://.godot/imported/Rake_01.png-f7f78f126a090e48ec3d7cced1a5a38e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Rake_01.png"
-dest_files=["res://.godot/imported/Rake_01.png-98ff324cd079a8517d6e1f39e76f0f5a.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Rake_01.png"
+dest_files=["res://.godot/imported/Rake_01.png-f7f78f126a090e48ec3d7cced1a5a38e.s3tc.ctex", "res://.godot/imported/Rake_01.png-f7f78f126a090e48ec3d7cced1a5a38e.etc2.ctex"]
 
 [params]
 

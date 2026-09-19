@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3aoyv36cq3ks"
-path.s3tc="res://.godot/imported/Bottle.png-6ad4c329b8308c19e06b960912986fce.s3tc.ctex"
+path.s3tc="res://.godot/imported/Bottle.png-725a78830c512b339a2a350f0f163731.s3tc.ctex"
+path.etc2="res://.godot/imported/Bottle.png-725a78830c512b339a2a350f0f163731.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/Bottle.png"
-dest_files=["res://.godot/imported/Bottle.png-6ad4c329b8308c19e06b960912986fce.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/Bottle.png"
+dest_files=["res://.godot/imported/Bottle.png-725a78830c512b339a2a350f0f163731.s3tc.ctex", "res://.godot/imported/Bottle.png-725a78830c512b339a2a350f0f163731.etc2.ctex"]
 
 [params]
 

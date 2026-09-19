@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bsxdk0aq42q28"
-path.s3tc="res://.godot/imported/TilesSmall.png-dc006fbc21f34a11ee03c7fb7bf5c3f8.s3tc.ctex"
+path.s3tc="res://.godot/imported/TilesSmall.png-901e3173305155a8495e2efa2869c18e.s3tc.ctex"
+path.etc2="res://.godot/imported/TilesSmall.png-901e3173305155a8495e2efa2869c18e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://assets/local_licensed/house/textures/TilesSmall.png"
-dest_files=["res://.godot/imported/TilesSmall.png-dc006fbc21f34a11ee03c7fb7bf5c3f8.s3tc.ctex"]
+source_file="res://assets/local_licensed/house/Textures/TilesSmall.png"
+dest_files=["res://.godot/imported/TilesSmall.png-901e3173305155a8495e2efa2869c18e.s3tc.ctex", "res://.godot/imported/TilesSmall.png-901e3173305155a8495e2efa2869c18e.etc2.ctex"]
 
 [params]
 

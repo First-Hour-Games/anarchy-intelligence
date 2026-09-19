@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cm8vso33wyytp" path="res://models/trees/Bark1M.jpg" id="9_8ktlb"]
 [ext_resource type="AudioStream" uid="uid://dmx4rrljhox06" path="res://sounds/ambience/intro/introCutscene.ogg" id="10_okppq"]
 [ext_resource type="Texture2D" uid="uid://c0o1i3drq2aie" path="res://models/trees/Bark1C.jpg" id="10_uemwo"]
-[ext_resource type="Shader" uid="uid://cpjp27paj1pso" path="res://shaders/crt.gdshader" id="14_p4ahc"]
+[ext_resource type="Shader" uid="uid://c5t7wtls5mxk4" path="res://shaders/crt.gdshader" id="14_p4ahc"]
 [ext_resource type="Texture2D" uid="uid://1ym0vhjwg8o8" path="res://img/static/01.png" id="14_yp4mb"]
 [ext_resource type="Shader" uid="uid://c304gga0hm2bv" path="res://shaders/blur.gdshader" id="15_blur_shader"]
 [ext_resource type="AudioStream" uid="uid://ibitrhhh8a5x" path="res://sounds/ambience/intro/turnTv.mp3" id="17_turn_tv"]
@@ -27,7 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://d0miv45ng48qd" path="res://models/foliage/grass1_Image_0.png" id="23_vsps1"]
 [ext_resource type="Texture2D" uid="uid://1mlnwcw6jv7v" path="res://models/foliage/grass1_Image_1.png" id="24_p4ahc"]
 [ext_resource type="Texture2D" uid="uid://buuxhn28u558j" path="res://models/foliage/grass1_Image_2.png" id="25_nbiha"]
-[ext_resource type="ArrayMesh" uid="uid://bvrcw5bayjqpl" path="res://models/foliage/tallgrass1.tres" id="28_jokqi"]
+[ext_resource type="ArrayMesh" uid="uid://6juh4mefv3m1" path="res://models/foliage/tallgrass1.tres" id="28_jokqi"]
 
 [sub_resource type="Environment" id="Environment_wnkph"]
 background_mode = 1
@@ -55,6 +55,11 @@ shader_parameter/tiling = 100.0
 shader_parameter/randomize_rotation = 1.0
 shader_parameter/normal_scale = 1.0
 shader_parameter/height_scale = 0.15
+shader_parameter/detail_world_scale = 3.5
+shader_parameter/detail_patch_scale = 18.0
+shader_parameter/detail_strength = 0.32
+shader_parameter/ground_tint = Color(1, 1, 1, 1)
+shader_parameter/ground_saturation = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pixelation"]
 shader = ExtResource("14_p4ahc")
@@ -667,7 +672,7 @@ anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -2000.0
-offset_right = 4000.0
+offset_right = 4000.0002
 offset_bottom = 2000.0
 grow_horizontal = 0
 grow_vertical = 2
@@ -699,9 +704,10 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -4000.0
-offset_right = 4000.0
-offset_bottom = 4000.0
+offset_left = -4032.001
+offset_top = -6.0
+offset_right = 3967.9993
+offset_bottom = 3994.0
 grow_horizontal = 2
 grow_vertical = 0
 color = Color(0, 0, 0, 1)
