@@ -125,10 +125,23 @@ colors = PackedColorArray(0.2, 1, 0.45, 0, 0.2, 1, 0.45, 1, 0.2, 1, 0.45, 1, 0.2
 layer = 20
 script = ExtResource("1_script")
 
-[node name="HandPivot" type="Node2D" parent="." unique_id=2026765645]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.33333
+
+[node name="Content" type="Control" parent="AspectRatioContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HandPivot" type="Node2D" parent="AspectRatioContainer/Content" unique_id=2026765645]
 visible = false
 
-[node name="Hands" type="AnimatedSprite2D" parent="HandPivot" unique_id=1826401777]
+[node name="Hands" type="AnimatedSprite2D" parent="AspectRatioContainer/Content/HandPivot" unique_id=1826401777]
 visible = false
 texture_filter = 2
 position = Vector2(0, -443.5)
@@ -136,14 +149,14 @@ sprite_frames = SubResource("SpriteFrames_hands")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="HPFrame" type="Panel" parent="." unique_id=2031434389]
+[node name="HPFrame" type="Panel" parent="AspectRatioContainer/Content" unique_id=2031434389]
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 200.0
 offset_bottom = 200.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
 
-[node name="HPFace" type="Sprite2D" parent="." unique_id=1549974591]
+[node name="HPFace" type="Sprite2D" parent="AspectRatioContainer/Content" unique_id=1549974591]
 position = Vector2(30, 30)
 scale = Vector2(2, 2)
 texture = ExtResource("22_hp_faces")
@@ -151,7 +164,7 @@ centered = false
 hframes = 2
 vframes = 6
 
-[node name="ECGFrame" type="Panel" parent="." unique_id=1432821295]
+[node name="ECGFrame" type="Panel" parent="AspectRatioContainer/Content" unique_id=1432821295]
 clip_contents = true
 offset_left = 216.0
 offset_top = 20.0
@@ -159,7 +172,7 @@ offset_right = 466.0
 offset_bottom = 140.99974
 theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
 
-[node name="ECGGrid" type="Control" parent="ECGFrame" unique_id=1563400804]
+[node name="ECGGrid" type="Control" parent="AspectRatioContainer/Content/ECGFrame" unique_id=1563400804]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,7 +182,7 @@ grow_vertical = 2
 script = ExtResource("24_ecg_grid")
 vertical_lines = 0
 
-[node name="Heartbeat" type="Line2D" parent="ECGFrame" unique_id=382365529]
+[node name="Heartbeat" type="Line2D" parent="AspectRatioContainer/Content/ECGFrame" unique_id=382365529]
 position = Vector2(15, 75)
 width = 2.5
 default_color = Color(0.2, 1, 0.45, 1)

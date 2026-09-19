@@ -36,13 +36,14 @@ const SOURCE_SIZE := Vector2(1774.0, 887.0)
 		_update_hp_face()
 		_update_heartbeat()
 
-@onready var hand_pivot: Node2D = $HandPivot
-@onready var hands: AnimatedSprite2D = $HandPivot/Hands
-@onready var hp_frame: Panel = $HPFrame
-@onready var hp_face: Sprite2D = $HPFace
-@onready var ecg_frame: Panel = $ECGFrame
-@onready var ecg_grid: ECGGrid = $ECGFrame/ECGGrid
-@onready var heartbeat: Heartbeat = $ECGFrame/Heartbeat
+@onready var content: Control = $AspectRatioContainer/Content
+@onready var hand_pivot: Node2D = $AspectRatioContainer/Content/HandPivot
+@onready var hands: AnimatedSprite2D = $AspectRatioContainer/Content/HandPivot/Hands
+@onready var hp_frame: Panel = $AspectRatioContainer/Content/HPFrame
+@onready var hp_face: Sprite2D = $AspectRatioContainer/Content/HPFace
+@onready var ecg_frame: Panel = $AspectRatioContainer/Content/ECGFrame
+@onready var ecg_grid: ECGGrid = $AspectRatioContainer/Content/ECGFrame/ECGGrid
+@onready var heartbeat: Heartbeat = $AspectRatioContainer/Content/ECGFrame/Heartbeat
 @onready var player: CharacterBody3D = get_parent() as CharacterBody3D
 
 var base_position: Vector2 = Vector2.ZERO
@@ -125,11 +126,11 @@ func _set_animation(next_animation: StringName) -> void:
 
 
 func _update_layout() -> void:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	var fit_scale: float = minf(viewport_size.x / SOURCE_SIZE.x, viewport_size.y / SOURCE_SIZE.y)
+	var content_size: Vector2 = content.size
+	var fit_scale: float = minf(content_size.x / SOURCE_SIZE.x, content_size.y / SOURCE_SIZE.y)
 	var final_scale: float = fit_scale * viewmodel_scale
 	hand_pivot.scale = Vector2.ONE * final_scale
-	base_position = Vector2(viewport_size.x * 0.5, viewport_size.y + bottom_offset)
+	base_position = Vector2(content_size.x * 0.5, content_size.y + bottom_offset)
 	hand_pivot.position = base_position
 
 
@@ -179,5 +180,4 @@ func _update_heartbeat() -> void:
 	heartbeat.set_color(c)
 	if is_instance_valid(ecg_grid):
 		ecg_grid.set_color(c)
-
 
