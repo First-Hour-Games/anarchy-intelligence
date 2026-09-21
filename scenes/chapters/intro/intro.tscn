@@ -68,6 +68,9 @@ shader_parameter/crt_scan_line_color = 0.06400000304
 shader_parameter/aperture_grille_rate = 0.250000011875
 shader_parameter/rf_switch_esque_blur = 1.0
 shader_parameter/white_noise_rate = 0.0390000018525
+shader_parameter/color_saturation = 1.0
+shader_parameter/color_brightness = 1.0
+shader_parameter/color_contrast = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
 shader = ExtResource("15_blur_shader")

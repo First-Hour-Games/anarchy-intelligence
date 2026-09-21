@@ -20,6 +20,7 @@ class_name Heartbeat
 
 var r_amp: float = 28.0
 var progress: float = 0.0
+@onready var glow_line: Line2D = get_node_or_null("Glow") as Line2D
 
 
 func _ready() -> void:
@@ -57,6 +58,8 @@ func _physics_process(delta: float) -> void:
 		# In pause interval between heartbeats
 		if not points.is_empty():
 			points = PackedVector2Array()
+			if is_instance_valid(glow_line):
+				glow_line.points = PackedVector2Array()
 		return
 
 	var h_x := h_u * total_w
@@ -74,6 +77,8 @@ func _physics_process(delta: float) -> void:
 
 	pts.append(Vector2(h_x, _get_ecg_y(h_u)))
 	points = pts
+	if is_instance_valid(glow_line):
+		glow_line.points = pts
 
 
 func _get_ecg_y(u: float) -> float:

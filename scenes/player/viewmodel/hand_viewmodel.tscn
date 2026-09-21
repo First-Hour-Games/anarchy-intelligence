@@ -24,6 +24,13 @@
 [ext_resource type="Texture2D" uid="uid://c065wy0r0doa5" path="res://img/player/hpFaces.png" id="22_hp_faces"]
 [ext_resource type="Script" uid="uid://dmyj3ieok2xb1" path="res://scenes/player/viewmodel/heartbeat.gd" id="23_heartbeat"]
 [ext_resource type="Script" uid="uid://b6wb7mmlbmqia" path="res://scenes/player/viewmodel/ecg_grid.gd" id="24_ecg_grid"]
+[ext_resource type="Texture2D" uid="uid://ctjjdkro61py2" path="res://img/player/playerIconFrame.png" id="25_player_icon_frame"]
+[ext_resource type="Texture2D" uid="uid://d3nj4prydj7ao" path="res://img/player/hpECG.png" id="26_aslbw"]
+[ext_resource type="Shader" uid="uid://ctgt4b7usrufd" path="res://shaders/ui_white_glow.gdshader" id="27_ui_glow"]
+[ext_resource type="Texture2D" uid="uid://ke4johtf0ald" path="res://img/player/staminaBarFrame.png" id="28_stamina_frame"]
+[ext_resource type="Texture2D" uid="uid://cyl2y2i4bb7b6" path="res://img/player/staminaBarFill.png" id="29_stamina_fill"]
+[ext_resource type="FontFile" uid="uid://bdwif6p4e64ir" path="res://fonts/JainiPurva.ttf" id="30_stamina_font"]
+[ext_resource type="Texture2D" uid="uid://bl70rl8l08unw" path="res://img/player/InteractLabel.png" id="31_interact_label"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hands"]
 animations = [{
@@ -109,6 +116,11 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_face_glow"]
+shader = ExtResource("27_ui_glow")
+shader_parameter/glow_strength = 0.658000031255
+shader_parameter/glow_radius = 2.60000009975
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_frame"]
 bg_color = Color(0, 0, 0, 1)
 border_width_left = 3
@@ -117,15 +129,22 @@ border_width_right = 3
 border_width_bottom = 3
 border_color = Color(1, 1, 1, 1)
 
-[sub_resource type="Gradient" id="Gradient_y4epv"]
+[sub_resource type="Gradient" id="Gradient_ytjg4"]
 offsets = PackedFloat32Array(0, 0.2, 0.88, 1)
 colors = PackedColorArray(0.2, 1, 0.45, 0, 0.2, 1, 0.45, 1, 0.2, 1, 0.45, 1, 0.2, 1, 0.45, 0)
+
+[sub_resource type="Gradient" id="Gradient_ecg_glow"]
+offsets = PackedFloat32Array(0, 0.2, 0.88, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.55, 1, 1, 1, 0.55, 1, 1, 1, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jpyye"]
+font = ExtResource("30_stamina_font")
 
 [node name="HandViewmodel" type="CanvasLayer" unique_id=821727808]
 layer = 20
 script = ExtResource("1_script")
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=1304359970]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -134,7 +153,7 @@ grow_vertical = 2
 mouse_filter = 2
 ratio = 1.33333
 
-[node name="Content" type="Control" parent="AspectRatioContainer"]
+[node name="Content" type="Control" parent="AspectRatioContainer" unique_id=1051459455]
 layout_mode = 2
 mouse_filter = 2
 
@@ -149,16 +168,30 @@ sprite_frames = SubResource("SpriteFrames_hands")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="HPFrame" type="Panel" parent="AspectRatioContainer/Content" unique_id=2031434389]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 200.0
-offset_bottom = 200.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
+[node name="HPFrame" type="TextureRect" parent="AspectRatioContainer/Content" unique_id=2031434389]
+texture_filter = 1
+layout_mode = 0
+offset_left = 8.001068
+offset_top = 8.001068
+offset_right = 211.99893
+offset_bottom = 211.99893
+texture = ExtResource("25_player_icon_frame")
+expand_mode = 1
 
 [node name="HPFace" type="Sprite2D" parent="AspectRatioContainer/Content" unique_id=1549974591]
-position = Vector2(30, 30)
-scale = Vector2(2, 2)
+z_index = 2
+position = Vector2(55.99894, 58.999992)
+scale = Vector2(1.3499731, 1.3499731)
+texture = ExtResource("22_hp_faces")
+centered = false
+hframes = 2
+vframes = 6
+
+[node name="HPFaceGlow" type="Sprite2D" parent="AspectRatioContainer/Content" unique_id=1774419569]
+z_index = 1
+material = SubResource("ShaderMaterial_face_glow")
+position = Vector2(55.99894, 58.999992)
+scale = Vector2(1.3499731, 1.3499731)
 texture = ExtResource("22_hp_faces")
 centered = false
 hframes = 2
@@ -166,10 +199,12 @@ vframes = 6
 
 [node name="ECGFrame" type="Panel" parent="AspectRatioContainer/Content" unique_id=1432821295]
 clip_contents = true
-offset_left = 216.0
-offset_top = 20.0
-offset_right = 466.0
-offset_bottom = 140.99974
+layout_mode = 0
+offset_left = 227.725
+offset_top = 48.83
+offset_right = 477.72693
+offset_bottom = 169.8299
+scale = Vector2(0.5, 0.69)
 theme_override_styles/panel = SubResource("StyleBoxFlat_hp_frame")
 
 [node name="ECGGrid" type="Control" parent="AspectRatioContainer/Content/ECGFrame" unique_id=1563400804]
@@ -177,6 +212,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 0.54785156
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("24_ecg_grid")
@@ -184,12 +220,104 @@ vertical_lines = 0
 
 [node name="Heartbeat" type="Line2D" parent="AspectRatioContainer/Content/ECGFrame" unique_id=382365529]
 position = Vector2(15, 75)
-width = 2.5
+points = PackedVector2Array(166.50667, 0, 168, 0, 171.5, 0, 175, 0, 178.5, 0, 182, 0, 185.5, 0, 189, 0, 192.5, 0, 196, 0, 199.5, 0, 203, 0, 206.5, 0, 210, 0, 213.5, 0, 217, 0, 220.5, 0, 224, 0, 224, 0)
+width = 5.0
 default_color = Color(0.2, 1, 0.45, 1)
-gradient = SubResource("Gradient_y4epv")
+gradient = SubResource("Gradient_ytjg4")
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 script = ExtResource("23_heartbeat")
 pause_time = 0.4
+
+[node name="Glow" type="Line2D" parent="AspectRatioContainer/Content/ECGFrame/Heartbeat" unique_id=1908894488]
+show_behind_parent = true
+points = PackedVector2Array(166.50667, 0, 168, 0, 171.5, 0, 175, 0, 178.5, 0, 182, 0, 185.5, 0, 189, 0, 192.5, 0, 196, 0, 199.5, 0, 203, 0, 206.5, 0, 210, 0, 213.5, 0, 217, 0, 220.5, 0, 224, 0, 224, 0)
+default_color = Color(0.5573358, 1, 0.29951698, 1)
+gradient = SubResource("Gradient_ecg_glow")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HpEcg" type="Sprite2D" parent="AspectRatioContainer/Content" unique_id=565576202]
+position = Vector2(321.99893, 86)
+scale = Vector2(0.7189349, 0.7189349)
+texture = ExtResource("26_aslbw")
+
+[node name="StaminaHUD" type="Control" parent="AspectRatioContainer/Content" unique_id=1047632854]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -104.0
+offset_right = 180.0
+offset_bottom = -19.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.655, 0.655)
+pivot_offset = Vector2(180, 0)
+mouse_filter = 2
+
+[node name="StaminaLabel" type="Label" parent="AspectRatioContainer/Content/StaminaHUD" unique_id=1287300888]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -24.0
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("30_stamina_font")
+theme_override_font_sizes/font_size = 43
+text = "stamina"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StaminaBar" type="TextureProgressBar" parent="AspectRatioContainer/Content/StaminaHUD" unique_id=1917450215]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -76.0
+offset_top = -55.0
+offset_right = 76.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(256, 0)
+mouse_filter = 2
+value = 100.0
+texture_under = ExtResource("28_stamina_frame")
+texture_progress = ExtResource("29_stamina_fill")
+
+[node name="InteractPrompt" type="TextureRect" parent="." unique_id=1345998698]
+modulate = Color(1, 1, 1, 0)
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("31_interact_label")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="InteractPrompt" unique_id=141224721]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -30.5
+offset_top = -15.73
+offset_right = 30.5
+offset_bottom = 7.2700005
+grow_horizontal = 2
+text = "interact"
+label_settings = SubResource("LabelSettings_jpyye")
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -160,10 +160,10 @@ size = Vector2(5, 5)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
 shader = ExtResource("shader_crt")
 shader_parameter/crt_curve = 0.0450000021375
-shader_parameter/crt_scan_line_color = 0.1670000079325
-shader_parameter/aperture_grille_rate = 0.2950000140125
-shader_parameter/rf_switch_esque_blur = 0.3390000161025
-shader_parameter/white_noise_rate = 0.10000000475
+shader_parameter/crt_scan_line_color = 0.05600000266
+shader_parameter/aperture_grille_rate = 0.4
+shader_parameter/rf_switch_esque_blur = 0.1170000055575
+shader_parameter/white_noise_rate = 0.070000003325
 
 [node name="Map" type="Node3D" unique_id=611636141]
 
@@ -743,7 +743,7 @@ transform = Transform3D(-1, 0, 8.742e-08, 0, 1, 0, -8.742e-08, 0, -1, 178.20125,
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1251182820]
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HUD"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HUD" unique_id=323568842]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -752,11 +752,12 @@ grow_vertical = 2
 mouse_filter = 2
 ratio = 1.33333
 
-[node name="Content" type="Control" parent="HUD/AspectRatioContainer"]
+[node name="Content" type="Control" parent="HUD/AspectRatioContainer" unique_id=1277635315]
 layout_mode = 2
 mouse_filter = 2
 
 [node name="Instructions" type="Label" parent="HUD/AspectRatioContainer/Content" unique_id=1733978921]
+layout_mode = 0
 offset_left = 24.0
 offset_top = 20.0
 offset_right = 520.0
@@ -838,7 +839,7 @@ color = Color(0, 0, 0, 1)
 [node name="CRTOverlay" type="CanvasLayer" parent="." unique_id=50731884]
 layer = 100
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="CRTOverlay"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="CRTOverlay" unique_id=1243588839]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -847,7 +848,7 @@ grow_vertical = 2
 mouse_filter = 2
 ratio = 1.33333
 
-[node name="Content" type="Control" parent="CRTOverlay/AspectRatioContainer"]
+[node name="Content" type="Control" parent="CRTOverlay/AspectRatioContainer" unique_id=362680829]
 layout_mode = 2
 mouse_filter = 2
 

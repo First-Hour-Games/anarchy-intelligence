@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ke4johtf0ald"
-path="res://.godot/imported/stamina_system_nerv_b_150.png-2eef37616597f299be17d1afef7c74a5.ctex"
+uid="uid://d3bgdu2q00d2x"
+path="res://.godot/imported/Mouse.png-fa322f23589d86f965ee71c91142ab5f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://img/player/stamina_system_nerv_b_150.png"
-dest_files=["res://.godot/imported/stamina_system_nerv_b_150.png-2eef37616597f299be17d1afef7c74a5.ctex"]
+source_file="res://img/tutorial/Mouse.png"
+dest_files=["res://.godot/imported/Mouse.png-fa322f23589d86f965ee71c91142ab5f.ctex"]
 
 [params]
 

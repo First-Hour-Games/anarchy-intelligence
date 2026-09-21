@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyl2y2i4bb7b6"
-path="res://.godot/imported/stamina_system_nerv_g_150.png-6ee4081651119c01005a97b6021b0a1a.ctex"
+uid="uid://kl3eek3lp76r"
+path="res://.godot/imported/MovementLabel.png-608fcb15cb1943ad64ed5cb45bf977aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://img/player/stamina_system_nerv_g_150.png"
-dest_files=["res://.godot/imported/stamina_system_nerv_g_150.png-6ee4081651119c01005a97b6021b0a1a.ctex"]
+source_file="res://img/tutorial/MovementLabel.png"
+dest_files=["res://.godot/imported/MovementLabel.png-608fcb15cb1943ad64ed5cb45bf977aa.ctex"]
 
 [params]
 
