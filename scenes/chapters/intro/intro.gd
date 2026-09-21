@@ -65,7 +65,7 @@ var headlight_yaw: float = 0.0
 	{ "start": 9.668, "text": "[font_size=24]lead programmer[/font_size]\nhenry nguyen\nnarcisco gonzales" },
 	{ "start": 14.474, "text": "[font_size=24]art director[/font_size]\nhenry nguyen" },
 	{ "start": 18.08, "text": "" },
-	{ "start": 19.263, "text": "[font_size=24]lead 3d modeller[/font_size]\nirvin" },
+	{ "start": 19.263, "text": "[font_size=24]lead 3d modeller[/font_size]\nirvin soto" },
 	{ "start": 24.08, "text": "[font_size=24]writer[/font_size]\nhenry nguyen" },
 	{ "start": 28.89, "text": "[font_size=24]sound & music designer[/font_size]\nhenry nguyen" },
 	{ "start": 33.686, "text": "[font_size=24]level designer[/font_size]\nnarcisco gonzalesn\nirvin" },

@@ -36,6 +36,7 @@
 [ext_resource type="Script" uid="uid://pyaobef6w36c" path="res://scenes/environment/map_preview_environment.gd" id="map_preview_environment"]
 [ext_resource type="Script" uid="uid://danxddn8njkg0" path="res://scenes/environment/neighborhood_decorator.gd" id="neighborhood_decorator"]
 [ext_resource type="Script" uid="uid://jeqlbf8jnx4y" path="res://scenes/environment/remaining_street_connections.gd" id="remaining_streets"]
+[ext_resource type="Shader" uid="uid://c5t7wtls5mxk4" path="res://shaders/crt.gdshader" id="shader_crt"]
 [ext_resource type="PackedScene" uid="uid://ca7ivpkbwqeq8" path="res://assets/local_licensed/retro_tree_pack/low_res/dead_tree_rt_1.glb" id="tree_dead_tree_rt_1"]
 [ext_resource type="PackedScene" uid="uid://x6gil1qd5xie" path="res://assets/local_licensed/retro_tree_pack/low_res/dead_tree_rt_2.glb" id="tree_dead_tree_rt_2"]
 [ext_resource type="PackedScene" uid="uid://c22i8bdxsclxq" path="res://assets/local_licensed/retro_tree_pack/low_res/small_tree_rt_1.glb" id="tree_small_tree_rt_1"]
@@ -92,7 +93,7 @@ shader_parameter/ground_saturation = 0.68
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
 size = Vector3(700, 1, 500)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fbv3g"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1mepu"]
 albedo_color = Color(0.78, 0.78, 0.78, 1)
 albedo_texture = ExtResource("14_p51vl")
 roughness = 0.95
@@ -156,6 +157,14 @@ scale_max = 5.0
 [sub_resource type="QuadMesh" id="QuadMesh_fog"]
 size = Vector2(5, 5)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
+shader = ExtResource("shader_crt")
+shader_parameter/crt_curve = 0.0450000021375
+shader_parameter/crt_scan_line_color = 0.05600000266
+shader_parameter/aperture_grille_rate = 0.4
+shader_parameter/rf_switch_esque_blur = 0.1170000055575
+shader_parameter/white_noise_rate = 0.070000003325
+
 [node name="Map" type="Node3D" unique_id=611636141]
 
 [node name="ConnectedUpperStreet" type="Node3D" parent="." unique_id=1736196730]
@@ -203,25 +212,25 @@ shape = SubResource("BoxShape3D_ground")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 use_collision = true
 size = Vector3(600, 0.4, 8)
-material = SubResource("StandardMaterial3D_fbv3g")
+material = SubResource("StandardMaterial3D_1mepu")
 
 [node name="ConnectorRoad" type="CSGBox3D" parent="Roads" unique_id=822071568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -0.1, 187.5)
 use_collision = true
 size = Vector3(8, 0.4, 375)
-material = SubResource("StandardMaterial3D_fbv3g")
+material = SubResource("StandardMaterial3D_1mepu")
 
 [node name="WestStubRoad" type="CSGBox3D" parent="Roads" unique_id=394468731]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -0.1, 125)
 use_collision = true
 size = Vector3(219, 0.4, 6)
-material = SubResource("StandardMaterial3D_fbv3g")
+material = SubResource("StandardMaterial3D_1mepu")
 
 [node name="Crossroad" type="CSGBox3D" parent="Roads" unique_id=190111206]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.5, -0.1, 225)
 use_collision = true
 size = Vector3(317, 0.4, 8)
-material = SubResource("StandardMaterial3D_fbv3g")
+material = SubResource("StandardMaterial3D_1mepu")
 
 [node name="CulDeSacs" type="Node3D" parent="." unique_id=1990414914]
 
@@ -734,7 +743,21 @@ transform = Transform3D(-1, 0, 8.742e-08, 0, 1, 0, -8.742e-08, 0, -1, 178.20125,
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1251182820]
 
-[node name="Instructions" type="Label" parent="HUD" unique_id=1733978921]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HUD" unique_id=323568842]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.33333
+
+[node name="Content" type="Control" parent="HUD/AspectRatioContainer" unique_id=1277635315]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Instructions" type="Label" parent="HUD/AspectRatioContainer/Content" unique_id=1733978921]
+layout_mode = 0
 offset_left = 24.0
 offset_top = 20.0
 offset_right = 520.0
@@ -746,6 +769,98 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 18
 text = "WASD: Move    Shift + W: Sprint    Mouse: Look
 Explore the neighborhood    Escape: Release mouse"
+
+[node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=1678596168]
+layer = 19
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="AspectRatioBars" unique_id=294367306]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.33333
+
+[node name="Control" type="Control" parent="AspectRatioBars/AspectRatioContainer" unique_id=1697792091]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="RightGutter" type="ColorRect" parent="AspectRatioBars/AspectRatioContainer/Control" unique_id=2106587151]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2000.0
+offset_right = 4000.0
+offset_bottom = 2000.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="LeftGutter" type="ColorRect" parent="AspectRatioBars/AspectRatioContainer/Control" unique_id=1657929076]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -4000.0
+offset_top = -2000.0
+offset_bottom = 2000.0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TopGutter" type="ColorRect" parent="AspectRatioBars/AspectRatioContainer/Control" unique_id=1443465229]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -4000.0
+offset_top = -4000.0
+offset_right = 4000.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BottomGutter" type="ColorRect" parent="AspectRatioBars/AspectRatioContainer/Control" unique_id=577791159]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4000.0
+offset_right = 4000.0
+offset_bottom = 4000.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CRTOverlay" type="CanvasLayer" parent="." unique_id=50731884]
+layer = 100
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="CRTOverlay" unique_id=1243588839]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.33333
+
+[node name="Content" type="Control" parent="CRTOverlay/AspectRatioContainer" unique_id=362680829]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Filter" type="ColorRect" parent="CRTOverlay/AspectRatioContainer/Content" unique_id=1777453076]
+material = SubResource("ShaderMaterial_crt")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="dead_tree_rt_12" parent="." unique_id=1893873308 instance=ExtResource("tree_dead_tree_rt_1")]
 transform = Transform3D(1.1821508, 0, 0, 0, 1.7340376, 0, 0, 0, 1.3579006, 33.9782, 0.43540764, 175.34285)

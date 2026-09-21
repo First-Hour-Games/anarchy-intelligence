@@ -16,6 +16,10 @@ uniform float aperture_grille_rate : hint_range( 0.0, 1.0 ) = 0.4;
 uniform float rf_switch_esque_blur : hint_range( 0.0, 1.0 ) = 1.0;
 // 白色ノイズ
 uniform float white_noise_rate : hint_range( 0.0, 1.0 ) = 0.0;
+// Optional final color grade. Defaults preserve the original CRT appearance.
+uniform float color_saturation : hint_range( 0.0, 1.0 ) = 1.0;
+uniform float color_brightness : hint_range( 0.0, 1.5 ) = 1.0;
+uniform float color_contrast : hint_range( 0.5, 2.0 ) = 1.0;
 
 float random( vec2 pos )
 { 
@@ -84,4 +88,10 @@ void fragment( )
 	,	vec4( 0.0, 0.0, 0.0, 1.0 )
 	,	float( 0 == int( fixed_uv.y / SCREEN_PIXEL_SIZE.y ) % 2 ) * crt_scan_line_color
 	);
+
+	// Grade after the aperture grille so saturation 0.0 produces true monochrome.
+	float luminance = dot(COLOR.rgb, vec3(0.2126, 0.7152, 0.0722));
+	vec3 graded_color = mix(vec3(luminance), COLOR.rgb, color_saturation);
+	graded_color = (graded_color - vec3(0.5)) * color_contrast + vec3(0.5);
+	COLOR.rgb = clamp(graded_color * color_brightness, vec3(0.0), vec3(1.0));
 }

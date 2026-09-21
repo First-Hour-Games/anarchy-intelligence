@@ -1,0 +1,9 @@
+[gd_scene load_steps=4 format=3 uid="uid://cixneq627we6i"]
+
+[ext_resource type="PackedScene" uid="uid://brimc8m4xhngt" path="res://models/interior/door/Door2.fbx" id="1_gppeb"]
+[ext_resource type="Script" path="res://models/interior/door/interactive_door.gd" id="2_interactive"]
+[ext_resource type="AudioStream" uid="uid://cwa52v4rlg66w" path="res://sounds/chapters/tutorial/doorCreak.mp3" id="3_door_creak"]
+
+[node name="Door2" unique_id=1824854679 instance=ExtResource("1_gppeb")]
+script = ExtResource("2_interactive")
+opening_sound = ExtResource("3_door_creak")

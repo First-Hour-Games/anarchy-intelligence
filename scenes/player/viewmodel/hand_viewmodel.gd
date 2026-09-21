@@ -21,6 +21,11 @@ const SOURCE_SIZE := Vector2(1774.0, 887.0)
 @export var movement_smoothing: float = 10.0
 @export var maximum_roll_degrees: float = 0.22
 
+@export_category("Stamina HUD")
+@export_range(0.05, 2.0, 0.05) var stamina_hud_fade_in_duration: float = 0.25
+@export_range(0.0, 3.0, 0.05) var stamina_hud_full_hold_duration: float = 0.8
+@export_range(0.05, 3.0, 0.05) var stamina_hud_fade_out_duration: float = 0.6
+
 @export_category("Look Lag")
 @export var look_lag_strength: float = 0.035
 @export var look_lag_limit: float = 10.0
@@ -36,14 +41,19 @@ const SOURCE_SIZE := Vector2(1774.0, 887.0)
 		_update_hp_face()
 		_update_heartbeat()
 
-@onready var hand_pivot: Node2D = $HandPivot
-@onready var hands: AnimatedSprite2D = $HandPivot/Hands
-@onready var hp_frame: Panel = $HPFrame
-@onready var hp_face: Sprite2D = $HPFace
-@onready var ecg_frame: Panel = $ECGFrame
-@onready var ecg_grid: ECGGrid = $ECGFrame/ECGGrid
-@onready var heartbeat: Heartbeat = $ECGFrame/Heartbeat
-@onready var player: CharacterBody3D = get_parent() as CharacterBody3D
+@onready var content: Control = $AspectRatioContainer/Content
+@onready var hand_pivot: Node2D = $AspectRatioContainer/Content/HandPivot
+@onready var hands: AnimatedSprite2D = $AspectRatioContainer/Content/HandPivot/Hands
+@onready var hp_frame: TextureRect = $AspectRatioContainer/Content/HPFrame
+@onready var hp_face: Sprite2D = $AspectRatioContainer/Content/HPFace
+@onready var hp_face_glow: Sprite2D = $AspectRatioContainer/Content/HPFaceGlow
+@onready var ecg_frame: Panel = $AspectRatioContainer/Content/ECGFrame
+@onready var ecg_grid: ECGGrid = $AspectRatioContainer/Content/ECGFrame/ECGGrid
+@onready var heartbeat: Heartbeat = $AspectRatioContainer/Content/ECGFrame/Heartbeat
+@onready var stamina_hud: Control = $AspectRatioContainer/Content/StaminaHUD
+@onready var stamina_bar: TextureProgressBar = $AspectRatioContainer/Content/StaminaHUD/StaminaBar
+@onready var interaction_prompt: TextureRect = $InteractPrompt
+@onready var player: FirstPersonPlayer = get_parent() as FirstPersonPlayer
 
 var base_position: Vector2 = Vector2.ZERO
 var movement_phase: float = 0.0
@@ -51,6 +61,11 @@ var idle_phase: float = 0.0
 var look_lag: Vector2 = Vector2.ZERO
 var hp_face_column: int = 0
 var hp_face_timer: float = 0.0
+var stamina_hud_tween: Tween
+var stamina_hud_target_visible: bool = false
+var stamina_hud_was_used: bool = false
+var stamina_hud_hide_countdown: float = 0.0
+var interaction_prompt_should_show: bool = false
 
 
 func _ready() -> void:
@@ -59,6 +74,8 @@ func _ready() -> void:
 	hands.play(&"idle")
 	_update_hp_face()
 	_update_heartbeat()
+	_update_stamina_bar()
+	stamina_hud.modulate.a = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -76,6 +93,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_update_hp_face_animation(delta)
+	_update_stamina_bar()
+	_update_stamina_hud_visibility(delta)
+	_update_interaction_prompt_fade(delta)
 
 	if not is_instance_valid(player):
 		return
@@ -118,6 +138,66 @@ func _process(delta: float) -> void:
 	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, target_roll, movement_weight)
 
 
+func _update_stamina_bar() -> void:
+	if not is_instance_valid(stamina_bar) or not is_instance_valid(player):
+		return
+	stamina_bar.max_value = player.max_stamina
+	stamina_bar.value = player.stamina
+
+
+func _update_stamina_hud_visibility(delta: float) -> void:
+	if not is_instance_valid(stamina_hud) or not is_instance_valid(player):
+		return
+
+	var stamina_is_full := player.stamina >= player.max_stamina - 0.01
+	if player.is_sprinting or not stamina_is_full:
+		stamina_hud_was_used = true
+		stamina_hud_hide_countdown = stamina_hud_full_hold_duration
+		_set_stamina_hud_visible(true)
+		return
+
+	if not stamina_hud_was_used:
+		return
+
+	stamina_hud_hide_countdown = maxf(0.0, stamina_hud_hide_countdown - delta)
+	if stamina_hud_hide_countdown <= 0.0:
+		stamina_hud_was_used = false
+		_set_stamina_hud_visible(false)
+
+
+func _set_stamina_hud_visible(should_be_visible: bool) -> void:
+	if stamina_hud_target_visible == should_be_visible:
+		return
+
+	stamina_hud_target_visible = should_be_visible
+	if stamina_hud_tween and stamina_hud_tween.is_valid():
+		stamina_hud_tween.kill()
+
+	var target_alpha := 1.0 if should_be_visible else 0.0
+	var duration := stamina_hud_fade_in_duration if should_be_visible else stamina_hud_fade_out_duration
+	stamina_hud_tween = create_tween()
+	stamina_hud_tween.set_trans(Tween.TRANS_SINE)
+	stamina_hud_tween.set_ease(Tween.EASE_IN_OUT)
+	stamina_hud_tween.tween_property(stamina_hud, "modulate:a", target_alpha, duration)
+
+
+func set_interaction_prompt(should_show: bool, screen_position: Vector2 = Vector2.ZERO) -> void:
+	interaction_prompt_should_show = should_show
+	if should_show:
+		interaction_prompt.position = screen_position - interaction_prompt.size * 0.5
+		interaction_prompt.visible = true
+
+
+func _update_interaction_prompt_fade(delta: float) -> void:
+	var target_alpha := 1.0 if interaction_prompt_should_show else 0.0
+	interaction_prompt.modulate.a = move_toward(
+		interaction_prompt.modulate.a,
+		target_alpha,
+		delta * 7.0
+	)
+	interaction_prompt.visible = interaction_prompt_should_show or interaction_prompt.modulate.a > 0.01
+
+
 func _set_animation(next_animation: StringName) -> void:
 	if hands.animation == next_animation and hands.is_playing():
 		return
@@ -125,11 +205,11 @@ func _set_animation(next_animation: StringName) -> void:
 
 
 func _update_layout() -> void:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	var fit_scale: float = minf(viewport_size.x / SOURCE_SIZE.x, viewport_size.y / SOURCE_SIZE.y)
+	var content_size: Vector2 = content.size
+	var fit_scale: float = minf(content_size.x / SOURCE_SIZE.x, content_size.y / SOURCE_SIZE.y)
 	var final_scale: float = fit_scale * viewmodel_scale
 	hand_pivot.scale = Vector2.ONE * final_scale
-	base_position = Vector2(viewport_size.x * 0.5, viewport_size.y + bottom_offset)
+	base_position = Vector2(content_size.x * 0.5, content_size.y + bottom_offset)
 	hand_pivot.position = base_position
 
 
@@ -150,6 +230,8 @@ func _update_hp_face_animation(delta: float) -> void:
 func _update_hp_face() -> void:
 	if is_instance_valid(hp_face):
 		hp_face.frame_coords = Vector2i(hp_face_column, hp_face_row)
+	if is_instance_valid(hp_face_glow):
+		hp_face_glow.frame_coords = Vector2i(hp_face_column, hp_face_row)
 
 
 func _update_heartbeat() -> void:
@@ -179,5 +261,3 @@ func _update_heartbeat() -> void:
 	heartbeat.set_color(c)
 	if is_instance_valid(ecg_grid):
 		ecg_grid.set_color(c)
-
-

@@ -3,12 +3,31 @@ class_name FirstPersonPlayer extends CharacterBody3D
 ## A small, reusable first-person controller for testing level scale and movement feel.
 ## One Godot unit is treated as roughly one metre.
 
+signal stamina_changed(current: float, maximum: float)
+
+const WOOD_FOOTSTEPS := [
+	preload("res://sounds/footsteps/wood/woodFootsteps1.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps2.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps3.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps4.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps5.ogg"),
+]
+const FOOTSTEP_PHASE_OFFSET := PI * 0.75
+const FOOTSTEP_PHASE_INTERVAL := PI
+
 @export_category("Movement")
 @export var walk_speed: float = 3.2
 @export var sprint_speed: float = 4.8
 @export var ground_acceleration: float = 13.0
 @export var ground_deceleration: float = 17.0
 @export var air_acceleration: float = 3.0
+
+@export_category("Stamina")
+@export_range(1.0, 500.0, 1.0) var max_stamina: float = 100.0
+@export_range(1.0, 100.0, 1.0) var sprint_stamina_cost: float = 24.0
+@export_range(1.0, 100.0, 1.0) var stamina_regeneration_rate: float = 18.0
+@export_range(0.0, 5.0, 0.1) var stamina_regeneration_delay: float = 0.8
+@export_range(0.0, 100.0, 1.0) var exhausted_recovery_stamina: float = 20.0
 
 @export_category("Jump")
 @export var jump_velocity: float = 3.4
@@ -28,14 +47,23 @@ class_name FirstPersonPlayer extends CharacterBody3D
 @export var head_bob_horizontal_amplitude: float = 0.018
 @export var head_bob_smoothing: float = 12.0
 
+@export_category("Footsteps")
+@export_range(-40.0, 6.0, 0.5) var footstep_volume_db: float = -13.0
+@export_range(0.5, 1.5, 0.01) var footstep_pitch_min: float = 0.96
+@export_range(0.5, 1.5, 0.01) var footstep_pitch_max: float = 1.04
+
 @onready var head: Node3D = $Head
 @onready var camera: Camera3D = $Head/Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var ceiling_check: ShapeCast3D = $CeilingCheck
+@onready var interaction_detector: InteractionDetector = $InteractionDetector
+@onready var footstep_players: Array[AudioStreamPlayer] = [$FootstepPlayerA, $FootstepPlayerB]
 
 var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 var head_bob_phase: float = 0.0
 var camera_rest_position: Vector3
+var stamina: float = 100.0
+var is_sprinting: bool = false
 
 var capsule_shape: CapsuleShape3D
 var stand_capsule_height: float
@@ -45,9 +73,17 @@ var crouch_capsule_height: float
 var crouch_collision_y: float
 var crouch_head_y: float
 var is_crouching: bool = false
+var _stamina_regeneration_cooldown: float = 0.0
+var _sprint_exhausted: bool = false
+var _footstep_random := RandomNumberGenerator.new()
+var _last_footstep_index: int = -1
+var _footstep_player_index: int = 0
 
 
 func _ready() -> void:
+	_footstep_random.randomize()
+	stamina = max_stamina
+	stamina_changed.emit(stamina, max_stamina)
 	camera_rest_position = camera.position
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -64,6 +100,11 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
+		if interaction_detector.try_interact():
+			get_viewport().set_input_as_handled()
+			return
+
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		return
@@ -92,7 +133,8 @@ func _physics_process(delta: float) -> void:
 	var input_vector: Vector2 = _get_movement_input()
 	var local_direction := Vector3(input_vector.x, 0.0, input_vector.y)
 	var world_direction := (global_transform.basis * local_direction).normalized()
-	var is_sprinting := Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
+	var wants_to_sprint := Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
+	_update_stamina(delta, wants_to_sprint)
 	var target_speed := sprint_speed if is_sprinting else walk_speed
 	if is_crouching:
 		target_speed = walk_speed * crouch_speed_multiplier
@@ -107,6 +149,29 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_update_head_bob(delta)
+
+
+func _update_stamina(delta: float, wants_to_sprint: bool) -> void:
+	var previous_stamina := stamina
+
+	if _sprint_exhausted and stamina >= minf(exhausted_recovery_stamina, max_stamina):
+		_sprint_exhausted = false
+
+	is_sprinting = wants_to_sprint and not _sprint_exhausted and stamina > 0.0
+	if is_sprinting:
+		stamina = maxf(0.0, stamina - sprint_stamina_cost * delta)
+		_stamina_regeneration_cooldown = stamina_regeneration_delay
+		if stamina <= 0.0:
+			_sprint_exhausted = true
+			is_sprinting = false
+	else:
+		var regeneration_time := maxf(0.0, delta - _stamina_regeneration_cooldown)
+		_stamina_regeneration_cooldown = maxf(0.0, _stamina_regeneration_cooldown - delta)
+		if regeneration_time > 0.0:
+			stamina = minf(max_stamina, stamina + stamina_regeneration_rate * regeneration_time)
+
+	if not is_equal_approx(previous_stamina, stamina):
+		stamina_changed.emit(stamina, max_stamina)
 
 
 func _update_crouch(delta: float) -> void:
@@ -140,7 +205,9 @@ func _update_head_bob(delta: float) -> void:
 
 	if is_moving_on_floor:
 		var speed_ratio := horizontal_speed / walk_speed
+		var previous_bob_phase := head_bob_phase
 		head_bob_phase += delta * head_bob_frequency * TAU * speed_ratio
+		_play_footstep_for_phase_crossing(previous_bob_phase, head_bob_phase)
 		var amplitude_scale: float = clampf(speed_ratio, 0.65, 1.5)
 		target_offset.x = cos(head_bob_phase) * head_bob_horizontal_amplitude * amplitude_scale
 		target_offset.y = sin(head_bob_phase * 2.0) * head_bob_vertical_amplitude * amplitude_scale
@@ -150,3 +217,30 @@ func _update_head_bob(delta: float) -> void:
 	var target_position := camera_rest_position + target_offset
 	var blend_weight := 1.0 - exp(-head_bob_smoothing * delta)
 	camera.position = camera.position.lerp(target_position, blend_weight)
+
+
+func _play_footstep_for_phase_crossing(previous_phase: float, current_phase: float) -> void:
+	var previous_step := floori((previous_phase - FOOTSTEP_PHASE_OFFSET) / FOOTSTEP_PHASE_INTERVAL)
+	var current_step := floori((current_phase - FOOTSTEP_PHASE_OFFSET) / FOOTSTEP_PHASE_INTERVAL)
+	if current_step > previous_step:
+		_play_random_wood_footstep()
+
+
+func _play_random_wood_footstep() -> void:
+	if WOOD_FOOTSTEPS.is_empty() or footstep_players.is_empty():
+		return
+
+	var sound_index := _footstep_random.randi_range(0, WOOD_FOOTSTEPS.size() - 1)
+	if WOOD_FOOTSTEPS.size() > 1 and sound_index == _last_footstep_index:
+		sound_index = (sound_index + _footstep_random.randi_range(1, WOOD_FOOTSTEPS.size() - 1)) % WOOD_FOOTSTEPS.size()
+	_last_footstep_index = sound_index
+
+	var footstep_player := footstep_players[_footstep_player_index]
+	_footstep_player_index = (_footstep_player_index + 1) % footstep_players.size()
+	footstep_player.stream = WOOD_FOOTSTEPS[sound_index]
+	footstep_player.volume_db = footstep_volume_db
+	footstep_player.pitch_scale = _footstep_random.randf_range(
+		minf(footstep_pitch_min, footstep_pitch_max),
+		maxf(footstep_pitch_min, footstep_pitch_max)
+	)
+	footstep_player.play()
