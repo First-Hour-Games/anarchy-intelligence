@@ -1,6 +1,8 @@
 class_name InteractiveDoor
 extends Node3D
 
+signal opened(interactor: Node3D)
+
 @export_category("Door Motion")
 @export_range(1.0, 179.0, 1.0) var open_angle_degrees: float = 92.0
 @export_range(0.05, 5.0, 0.05) var open_duration: float = 0.8
@@ -56,6 +58,8 @@ func toggle(interactor: Node3D = null) -> void:
 		_animate_to(_closed_rotation_y, false)
 		return
 
+	if not is_open:
+		opened.emit(interactor)
 	if is_instance_valid(_opening_audio):
 		_opening_audio.play()
 	if not can_close and is_instance_valid(_interactable):

@@ -25,6 +25,13 @@
 [ext_resource type="PackedScene" uid="uid://cixneq627we6i" path="res://models/interior/door/door_2.tscn" id="21_8khbb"]
 [ext_resource type="PackedScene" uid="uid://byxvjn1d8x5na" path="res://models/tutorial/ceiling_lamp_lp.glb" id="21_qcdpd"]
 [ext_resource type="Script" uid="uid://li4r0o3513th" path="res://scenes/chapters/tutorial/flicker_light.gd" id="22_flicker_light"]
+[ext_resource type="PackedScene" uid="uid://drhdv4war5tjt" path="res://models/tutorial/table.tscn" id="27_70sur"]
+[ext_resource type="PackedScene" uid="uid://c0nocxmagwadt" path="res://models/tutorial/old_telephone.glb" id="27_yqqos"]
+[ext_resource type="Script" uid="uid://fhl63xq64yt0" path="res://scenes/interaction/interactable_3d.gd" id="28_interactable"]
+[ext_resource type="Script" uid="uid://bd12hamc4ahb" path="res://scenes/chapters/tutorial/old_phone.gd" id="29_old_phone"]
+[ext_resource type="AudioStream" uid="uid://dyany7iaad53o" path="res://sounds/chapters/tutorial/oldPhoneRinging.mp3" id="30_phone_ring"]
+[ext_resource type="AudioStream" uid="uid://dr7ufabs336qh" path="res://sounds/chapters/tutorial/lightBuzzing.mp3" id="31_light_buzz"]
+[ext_resource type="AudioStream" uid="uid://cgblq8d1sbi8a" path="res://sounds/chapters/tutorial/phonePickUp.mp3" id="32_phone_pickup"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6xd7"]
 albedo_texture = ExtResource("9_nbcrf")
@@ -491,3 +498,31 @@ spot_range = 5.895
 spot_angle = 133.65
 spot_angle_attenuation = 1.0717734
 script = ExtResource("22_flicker_light")
+
+[node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="CeilingBulb2" unique_id=1717932076]
+stream = ExtResource("31_light_buzz")
+autoplay = true
+max_distance = 20.0
+bus = &"Reverb"
+
+[node name="oldPhone" parent="." unique_id=127163723 instance=ExtResource("27_yqqos")]
+transform = Transform3D(0.017, 0, 0, 0, 0.017, 0, 0, 0, 0.017, -1.6980813, 0.4854297, -32.693474)
+script = ExtResource("29_old_phone")
+
+[node name="Interactable" type="Node3D" parent="oldPhone" unique_id=127163724]
+script = ExtResource("28_interactable")
+interaction_distance = 2.5
+interaction_message = "Interacted with old phone."
+
+[node name="RingingAudio" type="AudioStreamPlayer3D" parent="oldPhone" unique_id=127163725]
+stream = ExtResource("30_phone_ring")
+volume_db = -6.0
+max_distance = 35.0
+bus = &"Reverb"
+
+[node name="PickupAudio" type="AudioStreamPlayer" parent="oldPhone" unique_id=127163726]
+stream = ExtResource("32_phone_pickup")
+bus = &"Reverb"
+
+[node name="Sketchfab_Scene" parent="." unique_id=1592312842 instance=ExtResource("27_70sur")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -1.737, -0.478, -33)

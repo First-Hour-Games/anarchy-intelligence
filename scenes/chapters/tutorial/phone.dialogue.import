@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://crr5yqh3lsg16"
+path="res://.godot/imported/phone.dialogue-fcab4e649bcd7b06818f476cd5baca9d.tres"
+
+[deps]
+
+source_file="res://scenes/chapters/tutorial/phone.dialogue"
+dest_files=["res://.godot/imported/phone.dialogue-fcab4e649bcd7b06818f476cd5baca9d.tres"]
+
+[params]
+
+defaults=true

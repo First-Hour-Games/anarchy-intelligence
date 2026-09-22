@@ -35,6 +35,15 @@ func run_test() -> void:
 	check(flicker.visible and flicker.is_light_on(), "CeilingBulb2 spotlight starts ON")
 	check(is_equal_approx(flicker.light_energy, 1.208), "Spotlight maintains base light_energy when ON")
 
+	var buzzing := tutorial.get_node_or_null("CeilingBulb2/BuzzingAudio") as AudioStreamPlayer3D
+	check(is_instance_valid(buzzing), "CeilingBulb2 has BuzzingAudio child")
+	if is_instance_valid(buzzing):
+		check(buzzing.stream != null, "BuzzingAudio has audio stream")
+		check(buzzing.stream is AudioStreamMP3 and (buzzing.stream as AudioStreamMP3).loop, "BuzzingAudio stream loops")
+		check(buzzing.autoplay, "BuzzingAudio autoplay is true")
+		check(buzzing.bus == &"Reverb", "BuzzingAudio bus is Reverb")
+		check(is_equal_approx(buzzing.max_distance, 20.0), "BuzzingAudio max_distance is 20.0")
+
 	var mesh_node := tutorial.get_node_or_null("CeilingBulb2").find_child("defaultMaterial", true, false) as MeshInstance3D
 	check(is_instance_valid(mesh_node), "CeilingBulb2 lamp mesh exists")
 	var override_mat := mesh_node.get_surface_override_material(0) as StandardMaterial3D

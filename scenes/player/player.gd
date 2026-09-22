@@ -78,6 +78,7 @@ var _sprint_exhausted: bool = false
 var _footstep_random := RandomNumberGenerator.new()
 var _last_footstep_index: int = -1
 var _footstep_player_index: int = 0
+var is_frozen: bool = false
 
 
 func _ready() -> void:
@@ -99,7 +100,33 @@ func _ready() -> void:
 	crouch_head_y = stand_head_y - height_diff
 
 
+func freeze() -> void:
+	is_frozen = true
+	velocity = Vector3.ZERO
+	set_physics_process(false)
+	set_process_unhandled_input(false)
+	for footstep_player in footstep_players:
+		if is_instance_valid(footstep_player) and footstep_player.playing:
+			footstep_player.stop()
+	if is_instance_valid(interaction_detector):
+		interaction_detector.set_process(false)
+		var viewmodel: HandViewmodel = get_node_or_null("HandViewmodel") as HandViewmodel
+		if is_instance_valid(viewmodel):
+			viewmodel.set_interaction_prompt(false)
+
+
+func unfreeze() -> void:
+	is_frozen = false
+	set_physics_process(true)
+	set_process_unhandled_input(true)
+	if is_instance_valid(interaction_detector):
+		interaction_detector.set_process(true)
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if is_frozen:
+		return
+
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
 		if interaction_detector.try_interact():
 			get_viewport().set_input_as_handled()
@@ -121,6 +148,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_frozen:
+		return
+
 	_update_crouch(delta)
 
 	if is_on_floor():

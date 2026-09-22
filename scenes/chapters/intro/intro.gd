@@ -51,6 +51,9 @@ var headlight_yaw: float = 0.0
 @export_group("Audio")
 @export var driving_ambient_volume_db: float = -9.0 ## Driving dirt ambient volume in dB (quieter than music at -5.0 dB)
 
+@export_group("Scene Transitions")
+@export_file("*.tscn") var tutorial_scene_path: String = "res://scenes/chapters/tutorial/tutorial.tscn"
+
 @export_group("Environment Clearance")
 @export var grass_clear_radius: float = 2.4 ## Distance (in meters) from road centerline to clear grass
 
@@ -343,17 +346,23 @@ func _on_dialogue_ended(_resource: Resource) -> void:
 
 	tv_done_player.play()
 
-	# Wait for the audio to end before starting the driving
+	# Wait for tapeStop / tvDone.mp3 audio to finish playing
 	if tv_done_player.playing:
 		await tv_done_player.finished
 
-	# Start driving, music, and reveal the 3D scene with CRT shader
-	_setup_driving_camera()
-	if crt_shader:
-		crt_shader.show()
-	if intro_overlay:
-		intro_overlay.hide()
-		
+	# Another silence of 2 seconds
+	#await get_tree().create_timer(2.0).timeout
+
+	# Disconnect dialogue listener to prevent dangling signal callbacks
+	var dm = Engine.get_singleton("DialogueManager")
+	if dm and dm.dialogue_ended.is_connected(_on_dialogue_ended):
+		dm.dialogue_ended.disconnect(_on_dialogue_ended)
+
+	# Switch scene to the tutorial
+	if ResourceLoader.exists(tutorial_scene_path):
+		get_tree().change_scene_to_file(tutorial_scene_path)
+	else:
+		get_tree().change_scene_to_file("res://scenes/chapters/tutorial/tutorial.tscn")
 
 func _clear_grass_along_road(clear_radius: float = -1.0) -> void:
 	if not path or not path.curve:
