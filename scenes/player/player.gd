@@ -58,6 +58,8 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 @onready var ceiling_check: ShapeCast3D = $CeilingCheck
 @onready var interaction_detector: InteractionDetector = $InteractionDetector
 @onready var footstep_players: Array[AudioStreamPlayer] = [$FootstepPlayerA, $FootstepPlayerB]
+@onready var flashlight: PlayerFlashlight = $Head/Camera3D/Flashlight
+@onready var inventory: PlayerInventory = $InventoryHUD
 
 var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 var head_bob_phase: float = 0.0
@@ -98,6 +100,7 @@ func _ready() -> void:
 	crouch_capsule_height = stand_capsule_height - height_diff
 	crouch_collision_y = stand_collision_y - height_diff * 0.5
 	crouch_head_y = stand_head_y - height_diff
+	inventory.selection_changed.connect(_on_inventory_selection_changed)
 
 
 func freeze() -> void:
@@ -127,6 +130,32 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_frozen:
 		return
 
+	if event.is_action_pressed(&"inventory_slot_1") and not event.is_echo():
+		inventory.select_slot(0)
+		get_viewport().set_input_as_handled()
+		return
+
+	if event.is_action_pressed(&"inventory_slot_2") and not event.is_echo():
+		inventory.select_slot(1)
+		get_viewport().set_input_as_handled()
+		return
+
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			inventory.select_relative(-1)
+			get_viewport().set_input_as_handled()
+			return
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			inventory.select_relative(1)
+			get_viewport().set_input_as_handled()
+			return
+
+	if event.is_action_pressed(&"flashlight_toggle") and not event.is_echo():
+		if inventory.get_selected_item() == PlayerInventory.FLASHLIGHT_ITEM:
+			flashlight.toggle()
+			get_viewport().set_input_as_handled()
+			return
+
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
 		if interaction_detector.try_interact():
 			get_viewport().set_input_as_handled()
@@ -141,10 +170,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		flashlight.add_look_impulse(event.relative)
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		var look_limit: float = deg_to_rad(vertical_look_limit_degrees)
 		head.rotation.x = clamp(head.rotation.x, -look_limit, look_limit)
+
+
+func _on_inventory_selection_changed(_slot_index: int, item_id: StringName) -> void:
+	if item_id != PlayerInventory.FLASHLIGHT_ITEM:
+		flashlight.set_enabled(false)
 
 
 func _physics_process(delta: float) -> void:

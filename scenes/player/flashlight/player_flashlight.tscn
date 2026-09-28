@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/player/flashlight/player_flashlight.gd" id="1_flashlight"]
+[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="2_model"]
+
+[node name="Flashlight" type="Node3D"]
+script = ExtResource("1_flashlight")
+
+[node name="ModelPivot" type="Node3D" parent="."]
+visible = false
+position = Vector3(0.34, -0.52, -0.43)
+rotation_degrees = Vector3(10, -8, -8)
+
+[node name="Model" parent="ModelPivot" instance=ExtResource("2_model")]
+
+[node name="Beam" type="SpotLight3D" parent="."]
+visible = false
+position = Vector3(0.04, -0.04, -0.12)
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 5.2
+light_indirect_energy = 0.0
+shadow_enabled = true
+shadow_bias = 0.035
+distance_fade_enabled = true
+distance_fade_begin = 27.0
+distance_fade_shadow = 19.0
+spot_range = 34.0
+spot_attenuation = 0.62
+spot_angle = 27.0
+cull_mask = 1
+
+[node name="Spill" type="OmniLight3D" parent="."]
+visible = false
+position = Vector3(0.0, -0.05, -0.35)
+light_color = Color(0.67, 0.78, 0.92, 1)
+light_energy = 0.4
+light_indirect_energy = 0.0
+omni_range = 2.4
+distance_fade_enabled = true
+distance_fade_begin = 1.8
+cull_mask = 1
+

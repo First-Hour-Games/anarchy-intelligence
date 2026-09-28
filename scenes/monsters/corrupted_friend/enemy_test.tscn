@@ -1,0 +1,55 @@
+[gd_scene load_steps=10 format=3]
+[ext_resource type="PackedScene" path="res://scenes/monsters/corrupted_friend/corrupted_friend.tscn" id="enemy"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="Script" path="res://scenes/player/combat_health.gd" id="health"]
+[ext_resource type="Script" path="res://scenes/monsters/corrupted_friend/enemy_test.gd" id="test"]
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.08, 0.11, 0.15, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.6, 0.7, 0.8, 1)
+ambient_light_energy = 0.7
+[sub_resource type="BoxMesh" id="floor_mesh"]
+size = Vector3(30, 0.5, 30)
+[sub_resource type="BoxShape3D" id="floor_shape"]
+size = Vector3(30, 0.5, 30)
+[sub_resource type="BoxMesh" id="wall_mesh"]
+size = Vector3(4, 3, 0.5)
+[sub_resource type="BoxShape3D" id="wall_shape"]
+size = Vector3(4, 3, 0.5)
+[node name="CorruptedFriendTest" type="Node3D"]
+script = ExtResource("test")
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+[node name="Light" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -30, 0)
+light_energy = 0.8
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.25, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("floor_mesh")
+[node name="Collision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("floor_shape")
+[node name="SightBlocker" type="StaticBody3D" parent="."]
+position = Vector3(4, 1.5, -3)
+[node name="Mesh" type="MeshInstance3D" parent="SightBlocker"]
+mesh = SubResource("wall_mesh")
+[node name="Collision" type="CollisionShape3D" parent="SightBlocker"]
+shape = SubResource("wall_shape")
+[node name="Player" parent="." instance=ExtResource("player")]
+position = Vector3(0, 0.1, 2)
+[node name="CombatHealth" type="Node" parent="Player"]
+script = ExtResource("health")
+[node name="CorruptedFriend" parent="." instance=ExtResource("enemy")]
+position = Vector3(0, 0, -7)
+[node name="PreviewUI" type="CanvasLayer" parent="."]
+[node name="Status" type="Label" parent="PreviewUI"]
+offset_left = 24.0
+offset_top = 22.0
+offset_right = 930.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.78, 1, 0.84, 1)
+theme_override_colors/font_outline_color = Color(0.01, 0.02, 0.015, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 18
+text = "PASSIVE STALKER    |    IT FOLLOWS SLOWLY, STOPS NEARBY, AND NEVER ATTACKS"

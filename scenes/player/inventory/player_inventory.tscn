@@ -1,0 +1,193 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/player/inventory/player_inventory.gd" id="1_inventory"]
+[ext_resource type="FontFile" uid="uid://bdwif6p4e64ir" path="res://fonts/JainiPurva.ttf" id="2_font"]
+[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="3_flashlight"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_selected"]
+bg_color = Color(0.025, 0.04, 0.035, 0.46)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.69, 0.91, 0.70, 0.82)
+shadow_color = Color(0.18, 0.75, 0.36, 0.17)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_unselected"]
+bg_color = Color(0.018, 0.024, 0.023, 0.26)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.50, 0.44, 0.55)
+
+[sub_resource type="Environment" id="Environment_preview"]
+background_mode = 1
+background_color = Color(0, 0, 0, 0)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.82, 0.9, 1)
+ambient_light_energy = 1.15
+
+[node name="InventoryHUD" type="CanvasLayer"]
+layer = 22
+script = ExtResource("1_inventory")
+selected_style = SubResource("StyleBoxFlat_selected")
+unselected_style = SubResource("StyleBoxFlat_unselected")
+
+[node name="ItemPreview" type="SubViewport" parent="."]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(128, 96)
+render_target_update_mode = 1
+
+[node name="Environment" type="WorldEnvironment" parent="ItemPreview"]
+environment = SubResource("Environment_preview")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="ItemPreview"]
+rotation_degrees = Vector3(-42, -32, 0)
+light_color = Color(0.86, 0.93, 1, 1)
+light_energy = 1.55
+shadow_enabled = false
+
+[node name="ModelPivot" type="Node3D" parent="ItemPreview"]
+rotation_degrees = Vector3(-15, 55, -20)
+scale = Vector3(2, 2, 2)
+
+[node name="Flashlight" parent="ItemPreview/ModelPivot" instance=ExtResource("3_flashlight")]
+
+[node name="Camera" type="Camera3D" parent="ItemPreview"]
+position = Vector3(0, 0.025, 0.58)
+current = true
+fov = 30.0
+near = 0.05
+far = 4.0
+
+[node name="InventoryBar" type="MarginContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -98.0
+offset_right = 112.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Slots" type="HBoxContainer" parent="InventoryBar"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slot1" type="PanelContainer" parent="InventoryBar/Slots"]
+custom_minimum_size = Vector2(108, 76)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_selected")
+
+[node name="Margin" type="MarginContainer" parent="InventoryBar/Slots/Slot1"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 5
+
+[node name="Content" type="VBoxContainer" parent="InventoryBar/Slots/Slot1/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Header" type="HBoxContainer" parent="InventoryBar/Slots/Slot1/Margin/Content"]
+layout_mode = 2
+
+[node name="Number" type="Label" parent="InventoryBar/Slots/Slot1/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.86, 0.78, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+text = "[1]"
+
+[node name="Spacer" type="Control" parent="InventoryBar/Slots/Slot1/Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Active" type="Label" parent="InventoryBar/Slots/Slot1/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.49, 1, 0.59, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "ACTIVE"
+
+[node name="Preview" type="TextureRect" parent="InventoryBar/Slots/Slot1/Margin/Content"]
+visible = false
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemName" type="Label" parent="InventoryBar/Slots/Slot1/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.90, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+text = "EMPTY"
+horizontal_alignment = 1
+
+[node name="Slot2" type="PanelContainer" parent="InventoryBar/Slots"]
+custom_minimum_size = Vector2(108, 76)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_unselected")
+
+[node name="Margin" type="MarginContainer" parent="InventoryBar/Slots/Slot2"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 5
+
+[node name="Content" type="VBoxContainer" parent="InventoryBar/Slots/Slot2/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Header" type="HBoxContainer" parent="InventoryBar/Slots/Slot2/Margin/Content"]
+layout_mode = 2
+
+[node name="Number" type="Label" parent="InventoryBar/Slots/Slot2/Margin/Content/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.86, 0.78, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+text = "[2]"
+
+[node name="Spacer" type="Control" parent="InventoryBar/Slots/Slot2/Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Active" type="Label" parent="InventoryBar/Slots/Slot2/Margin/Content/Header"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.49, 1, 0.59, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "ACTIVE"
+
+[node name="Preview" type="TextureRect" parent="InventoryBar/Slots/Slot2/Margin/Content"]
+visible = false
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemName" type="Label" parent="InventoryBar/Slots/Slot2/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.90, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+text = "EMPTY"
+horizontal_alignment = 1
+

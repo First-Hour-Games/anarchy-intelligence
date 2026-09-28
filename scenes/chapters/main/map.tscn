@@ -23,14 +23,15 @@
 [ext_resource type="PackedScene" uid="uid://ch8gdio75ffb" path="res://assets/local_licensed/buildings_pack/Buildings.glb" id="asset_buildings_pack"]
 [ext_resource type="PackedScene" path="res://scenes/environment/cul_de_sac_end.tscn" id="asset_cul_de_sac_end"]
 [ext_resource type="PackedScene" uid="uid://bedumgvevjm6u" path="res://assets/local_licensed/exploration_objects/EMF_Detector/EMF_Detector.fbx" id="asset_emf_detector"]
-[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="asset_flashlight"]
+[ext_resource type="PackedScene" path="res://scenes/items/flashlight_pickup.tscn" id="asset_flashlight"]
 [ext_resource type="PackedScene" uid="uid://bsedcsaf1dxbd" path="res://assets/local_licensed/psx_hedges/bush_long_overgrown_dead.glb" id="asset_hedge_dead"]
 [ext_resource type="PackedScene" path="res://scenes/environment/neighborhood_clinic.tscn" id="asset_neighborhood_clinic"]
-[ext_resource type="PackedScene" path="res://scenes/monsters/robot_kid/robot_kid.tscn" id="asset_robot_kid"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/corrupted_friend/corrupted_friend.tscn" id="asset_robot_kid"]
 [ext_resource type="Script" uid="uid://baiyq2t3cq3lm" path="res://scenes/environment/visibility_filter.gd" id="asset_visibility_filter"]
 [ext_resource type="Script" uid="uid://d3t4m0fkccvtr" path="res://scenes/environment/civic_finishing.gd" id="civic_finishing"]
 [ext_resource type="Script" uid="uid://dg3by3espxhxe" path="res://scenes/environment/civic_frontage.gd" id="civic_frontage"]
 [ext_resource type="Script" uid="uid://btxa0qh00lb5r" path="res://scenes/environment/connected_street.gd" id="connected_street"]
+[ext_resource type="Script" uid="uid://bpbwqfmbu5c1x" path="res://scenes/player/combat_health.gd" id="friend_health"]
 [ext_resource type="Script" uid="uid://bwrghcpspdjcm" path="res://scenes/environment/gas_station_layout.gd" id="gas_station_layout"]
 [ext_resource type="Script" uid="uid://bgomilsj7a7dg" path="res://scenes/environment/map_navigation_baker.gd" id="map_navigation_baker"]
 [ext_resource type="Script" uid="uid://pyaobef6w36c" path="res://scenes/environment/map_preview_environment.gd" id="map_preview_environment"]
@@ -45,6 +46,7 @@
 [ext_resource type="PackedScene" uid="uid://cx0rmlxuie8t" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_2_1.glb" id="tree_tree_rt_2_1"]
 [ext_resource type="PackedScene" uid="uid://dyw2u7dtlk7o6" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_3.glb" id="tree_tree_rt_3"]
 [ext_resource type="PackedScene" uid="uid://b6hh34861ubu5" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_4.glb" id="tree_tree_rt_4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="world_map_overlay"]
 
 [sub_resource type="Environment" id="Environment_editor_preview"]
 background_mode = 1
@@ -93,7 +95,7 @@ shader_parameter/ground_saturation = 0.68
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
 size = Vector3(700, 1, 500)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1mepu"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02hho"]
 albedo_color = Color(0.78, 0.78, 0.78, 1)
 albedo_texture = ExtResource("14_p51vl")
 roughness = 0.95
@@ -164,6 +166,9 @@ shader_parameter/crt_scan_line_color = 0.05600000266
 shader_parameter/aperture_grille_rate = 0.4
 shader_parameter/rf_switch_esque_blur = 0.1170000055575
 shader_parameter/white_noise_rate = 0.070000003325
+shader_parameter/color_saturation = 1.0
+shader_parameter/color_brightness = 1.0
+shader_parameter/color_contrast = 1.0
 
 [node name="Map" type="Node3D" unique_id=611636141]
 
@@ -212,25 +217,25 @@ shape = SubResource("BoxShape3D_ground")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 use_collision = true
 size = Vector3(600, 0.4, 8)
-material = SubResource("StandardMaterial3D_1mepu")
+material = SubResource("StandardMaterial3D_02hho")
 
 [node name="ConnectorRoad" type="CSGBox3D" parent="Roads" unique_id=822071568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -0.1, 187.5)
 use_collision = true
 size = Vector3(8, 0.4, 375)
-material = SubResource("StandardMaterial3D_1mepu")
+material = SubResource("StandardMaterial3D_02hho")
 
 [node name="WestStubRoad" type="CSGBox3D" parent="Roads" unique_id=394468731]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -0.1, 125)
 use_collision = true
 size = Vector3(219, 0.4, 6)
-material = SubResource("StandardMaterial3D_1mepu")
+material = SubResource("StandardMaterial3D_02hho")
 
 [node name="Crossroad" type="CSGBox3D" parent="Roads" unique_id=190111206]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.5, -0.1, 225)
 use_collision = true
 size = Vector3(317, 0.4, 8)
-material = SubResource("StandardMaterial3D_1mepu")
+material = SubResource("StandardMaterial3D_02hho")
 
 [node name="CulDeSacs" type="Node3D" parent="." unique_id=1990414914]
 
@@ -736,10 +741,13 @@ script = ExtResource("neighborhood_decorator")
 script = ExtResource("map_navigation_baker")
 
 [node name="RobotKid" parent="." unique_id=1976250959 instance=ExtResource("asset_robot_kid")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 0, 221)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130.33403, 3.5264802, 116.16704)
 
 [node name="Player" parent="." unique_id=1348455789 instance=ExtResource("7_k4xfn")]
-transform = Transform3D(-1, 0, 8.742e-08, 0, 1, 0, -8.742e-08, 0, -1, 178.20125, 5.643734, 222.5599)
+transform = Transform3D(-1, 0, 8.742e-08, 0, 1, 0, -8.742e-08, 0, -1, 124.6559, 3.4264803, 0.7056122)
+
+[node name="CombatHealth" type="Node" parent="Player" unique_id=509986477]
+script = ExtResource("friend_health")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1251182820]
 
@@ -758,17 +766,25 @@ mouse_filter = 2
 
 [node name="Instructions" type="Label" parent="HUD/AspectRatioContainer/Content" unique_id=1733978921]
 layout_mode = 0
-offset_left = 24.0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -434.0
 offset_top = 20.0
-offset_right = 520.0
-offset_bottom = 76.0
+offset_right = -24.0
+offset_bottom = 94.0
+grow_horizontal = 0
 theme_override_colors/font_color = Color(0.92, 0.95, 1, 0.9)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/line_spacing = 2
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 18
-text = "WASD: Move    Shift + W: Sprint    Mouse: Look
-Explore the neighborhood    Escape: Release mouse"
+theme_override_font_sizes/font_size = 15
+text = "WASD  MOVE     SHIFT  SPRINT     MOUSE  LOOK
+E  INTERACT     1 / 2 / WHEEL  ITEMS     F  FLASHLIGHT
+M  MAP     ESC  RELEASE MOUSE"
+horizontal_alignment = 2
+
+[node name="WorldMap" parent="." unique_id=862421941 instance=ExtResource("world_map_overlay")]
 
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=1678596168]
 layer = 19
@@ -1056,9 +1072,6 @@ transform = Transform3D(1.2808939, 0, 0, 0, 1.2808939, 0, 0, 0, 1.2808939, 143.1
 
 [node name="dead_tree_rt_59" parent="." unique_id=1885216924 instance=ExtResource("tree_dead_tree_rt_1")]
 transform = Transform3D(1.1821508, 0, 0, 0, 1.7296091, 0.09698481, 0, -0.1238495, 1.3544327, 138.27133, -0.44608212, 100.380646)
-
-[node name="dead_tree_rt_12" parent="dead_tree_rt_59" unique_id=1397519990 instance=ExtResource("tree_dead_tree_rt_1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.331993, -1.5258789e-05, 175.7522)
 
 [node name="dead_tree_rt_60" parent="." unique_id=857329485 instance=ExtResource("tree_dead_tree_rt_1")]
 transform = Transform3D(1.2808939, 0, 0, 0, 1.2808939, 0, 0, 0, 1.2808939, 146.16727, 0.3960762, 101.119995)
@@ -2463,3 +2476,6 @@ transform = Transform3D(-17.118753, 0.057663314, -5.3511567, 0.456581, 7.1652493
 
 [node name="tree17" parent="." unique_id=385178950 instance=ExtResource("42_fbv3g")]
 transform = Transform3D(-17.118753, 0.057663314, -5.3511567, 0.456581, 7.1652493, -0.45268777, 7.6666827, -0.29796404, -11.921525, -206.73056, -0.22197628, 103.067795)
+
+[node name="CorruptedFriend" parent="." unique_id=1230653272 instance=ExtResource("asset_robot_kid")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.09223, -2.2554169, -1.7590485)
