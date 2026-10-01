@@ -164,6 +164,9 @@ shader_parameter/crt_scan_line_color = 0.05600000266
 shader_parameter/aperture_grille_rate = 0.4
 shader_parameter/rf_switch_esque_blur = 0.1170000055575
 shader_parameter/white_noise_rate = 0.070000003325
+shader_parameter/color_saturation = 1.0
+shader_parameter/color_brightness = 1.0
+shader_parameter/color_contrast = 1.0
 
 [node name="Map" type="Node3D" unique_id=611636141]
 
@@ -739,7 +742,7 @@ script = ExtResource("map_navigation_baker")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 0, 221)
 
 [node name="Player" parent="." unique_id=1348455789 instance=ExtResource("7_k4xfn")]
-transform = Transform3D(-1, 0, 8.742e-08, 0, 1, 0, -8.742e-08, 0, -1, 178.20125, 5.643734, 222.5599)
+transform = Transform3D(-1, 0, 8.742e-08, 0, 1, 0, -8.742e-08, 0, -1, -156.50755, 0.21511996, -2.3377204)
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1251182820]
 
@@ -1058,7 +1061,7 @@ transform = Transform3D(1.2808939, 0, 0, 0, 1.2808939, 0, 0, 0, 1.2808939, 143.1
 transform = Transform3D(1.1821508, 0, 0, 0, 1.7296091, 0.09698481, 0, -0.1238495, 1.3544327, 138.27133, -0.44608212, 100.380646)
 
 [node name="dead_tree_rt_12" parent="dead_tree_rt_59" unique_id=1397519990 instance=ExtResource("tree_dead_tree_rt_1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.331993, -1.5258789e-05, 175.7522)
+transform = Transform3D(1, 0, 0, 0, 0.9999999, 0, 0, 0, 1, 35.331985, -9.5585575, 174.87817)
 
 [node name="dead_tree_rt_60" parent="." unique_id=857329485 instance=ExtResource("tree_dead_tree_rt_1")]
 transform = Transform3D(1.2808939, 0, 0, 0, 1.2808939, 0, 0, 0, 1.2808939, 146.16727, 0.3960762, 101.119995)

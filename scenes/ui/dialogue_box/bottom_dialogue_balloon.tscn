@@ -1,0 +1,163 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/dialogue_box/bottom_dialogue_balloon.gd" id="1_balloon_script"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
+[ext_resource type="Texture2D" uid="uid://raph57ebfdo" path="res://img/ui/dialogue_portrait_placeholder.png" id="4_placeholder_portrait"]
+[ext_resource type="FontFile" uid="uid://b2i55e65n0tsr" path="res://fonts/ReceiptionalReceipt.ttf" id="6_receipt_font"]
+[ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="7_teletext_font"]
+[ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="8_move_sfx"]
+[ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="9_click_sfx"]
+[ext_resource type="AudioStream" uid="uid://cj8odkb3mkay6" path="res://sounds/dialogue/narrator.mp3" id="10_narrator_sfx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_balloon_panel"]
+bg_color = Color(0.04, 0.05, 0.07, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.85, 0.9, 0.95)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_portrait_frame"]
+bg_color = Color(0.08, 0.09, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.65, 0.72, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="BottomDialogueBalloon" type="CanvasLayer" unique_id=9100001]
+layer = 25
+script = ExtResource("1_balloon_script")
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=9100002]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.33333
+
+[node name="Control" type="Control" parent="AspectRatioContainer" unique_id=9100003]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Balloon" type="PanelContainer" parent="AspectRatioContainer/Control" unique_id=9100004]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -180.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_balloon_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="AspectRatioContainer/Control/Balloon" unique_id=9100005]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer" unique_id=9100006]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PortraitPanel" type="PanelContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer" unique_id=9100007]
+custom_minimum_size = Vector2(108, 108)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait_frame")
+
+[node name="PortraitIcon" type="TextureRect" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/PortraitPanel" unique_id=9100008]
+unique_name_in_owner = true
+layout_mode = 2
+texture = ExtResource("4_placeholder_portrait")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextVBox" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer" unique_id=9100009]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="CharacterLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/TextVBox" unique_id=9100010]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.82, 0.86, 0.94, 0.95)
+theme_override_fonts/normal_font = ExtResource("7_teletext_font")
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "CHARACTER NAME"
+fit_content = true
+scroll_active = false
+
+[node name="DialogueLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/TextVBox" unique_id=9100011]
+unique_name_in_owner = true
+clip_contents = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("6_receipt_font")
+theme_override_font_sizes/normal_font_size = 22
+theme_override_constants/line_separation = 6
+bbcode_enabled = true
+text = "Dialogue message text goes here..."
+fit_content = true
+scroll_active = false
+script = ExtResource("2_dialogue_label")
+seconds_per_step = 0.035
+seconds_per_pause_step = 0.3
+
+[node name="ResponsesMenu" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/TextVBox" unique_id=9100012]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+script = ExtResource("3_responses_menu")
+
+[node name="ProgressIndicator" type="Label" parent="AspectRatioContainer/Control/Balloon" unique_id=9100013]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.75, 0.75, 0.8, 0.85)
+theme_override_fonts/font = ExtResource("7_teletext_font")
+theme_override_font_sizes/font_size = 14
+text = "[ ENTER ]"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="MoveSfx" type="AudioStreamPlayer" parent="." unique_id=9100014]
+unique_name_in_owner = true
+stream = ExtResource("8_move_sfx")
+volume_db = -18.0
+
+[node name="ClickSfx" type="AudioStreamPlayer" parent="." unique_id=9100015]
+unique_name_in_owner = true
+stream = ExtResource("9_click_sfx")
+volume_db = -18.0
+
+[node name="TalkSfx" type="AudioStreamPlayer" parent="." unique_id=9100016]
+unique_name_in_owner = true
+stream = ExtResource("10_narrator_sfx")
+volume_db = -18.0

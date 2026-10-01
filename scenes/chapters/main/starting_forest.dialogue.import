@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://cojogwthiwlq8"
+path="res://.godot/imported/starting_forest.dialogue-a1c5dd0e091005666b45e870006a0ffe.tres"
+
+[deps]
+
+source_file="res://scenes/chapters/main/starting_forest.dialogue"
+dest_files=["res://.godot/imported/starting_forest.dialogue-a1c5dd0e091005666b45e870006a0ffe.tres"]
+
+[params]
+
+defaults=true
