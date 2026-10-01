@@ -1,8 +1,8 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scenes/ui/dialogue_box/bottom_dialogue_balloon.gd" id="1_balloon_script"]
-[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
-[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
+[ext_resource type="Script" uid="uid://d1uhdx5w06thy" path="res://scenes/ui/dialogue_box/bottom_dialogue_balloon.gd" id="1_balloon_script"]
+[ext_resource type="Script" uid="uid://g32um0mltv5d" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
+[ext_resource type="Script" uid="uid://bb52rsfwhkxbn" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
 [ext_resource type="Texture2D" uid="uid://raph57ebfdo" path="res://img/ui/dialogue_portrait_placeholder.png" id="4_placeholder_portrait"]
 [ext_resource type="FontFile" uid="uid://b2i55e65n0tsr" path="res://fonts/ReceiptionalReceipt.ttf" id="6_receipt_font"]
 [ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="7_teletext_font"]

@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dkyajr4yhqfup" path="res://img/materials/ground037/Ground037_1K-JPG_Displacement.jpg" id="4_b5llx"]
 [ext_resource type="Texture2D" uid="uid://b8m0kbbtveqq6" path="res://img/materials/ground037/Ground037_1K-JPG_NormalGL.jpg" id="5_bn0oo"]
 [ext_resource type="Texture2D" uid="uid://cbhgf76ivjms1" path="res://img/materials/ground037/Ground037_1K-JPG_Roughness.jpg" id="6_o0c01"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="7_k4xfn"]
+[ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="7_k4xfn"]
 [ext_resource type="Texture2D" uid="uid://hkp05sbuor5v" path="res://img/materials/asphalt/CleanAsphalt_1K-JPG_AmbientOcclusion.jpg" id="11_road_ao"]
 [ext_resource type="Texture2D" uid="uid://dxijsahkh7tst" path="res://assets/local_licensed/street_materials/textures/asphalt_02_diff_4k.jpg" id="14_p51vl"]
 [ext_resource type="Texture2D" uid="uid://hs1kaxan3hmh" path="res://img/materials/winter_leaves/winter_leaves_diff_4k.jpg" id="15_ground_detail"]

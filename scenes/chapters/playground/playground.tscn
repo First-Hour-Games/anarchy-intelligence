@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bi7ao1ifa0v2a"]
 
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/monsters/scrap_automaton/scrap_automaton.tscn" id="2_automaton"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_test"]

@@ -36,6 +36,17 @@ window/stretch/aspect="expand"
 
 enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://img/": "yellow",
+"res://models/": "red",
+"res://music/": "orange",
+"res://scenes/": "green",
+"res://shaders/": "purple",
+"res://sounds/": "blue"
+}
+
 [internationalization]
 
 locale/translations_pot_files=PackedStringArray("res://scenes/chapters/intro/intro.dialogue", "res://scenes/chapters/tutorial/phone.dialogue", "res://scenes/chapters/main/starting_forest.dialogue")
