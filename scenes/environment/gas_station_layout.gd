@@ -77,8 +77,10 @@ func build() -> void:
 	for x: float in [166, 169, 172, 175]:
 		_box("ParkingStripe", Vector3(x, 0.097, 29), Vector3(0.08, 0.01, 5), white, false)
 	# Preserve the source shop's stocked aisles and register; make the story item visible inside.
-	var flashlight := get_node("../AtmosphereProps/DroppedFlashlight") as Node3D
-	flashlight.global_position = store.to_global(Vector3(-13.0, 1.63, -12.7))
+	# Restoring a save removes collected pickups before this deferred build.
+	var flashlight := get_node_or_null("../AtmosphereProps/DroppedFlashlight") as Node3D
+	if is_instance_valid(flashlight) and not flashlight.is_queued_for_deletion():
+		flashlight.global_position = store.to_global(Vector3(-13.0, 1.63, -12.7))
 	for point: Vector3 in [Vector3(-6, 3, -10), Vector3(-6, 3, -16), Vector3(-13, 3, -13)]:
 		var light := OmniLight3D.new()
 		add_child(light)

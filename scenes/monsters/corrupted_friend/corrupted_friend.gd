@@ -11,6 +11,7 @@ enum State { DORMANT, ACTIVATING, PURSUIT, SEARCH, WINDUP, RECOVERY, HIT, DEAD }
 @export var watch_turn_speed: float = 2.2
 @export var watch_follow_speed: float = 0.85
 @export var watch_stop_distance: float = 3.25
+@export var watch_retreat_distance: float = 0.0
 @export var watch_acceleration: float = 3.0
 @export var detection_distance: float = 14.0
 @export var walk_speed: float = 1.15
@@ -23,6 +24,7 @@ enum State { DORMANT, ACTIVATING, PURSUIT, SEARCH, WINDUP, RECOVERY, HIT, DEAD }
 @export var recovery_seconds: float = 1.2
 @export var memory_seconds: float = 4.0
 @export var max_health: float = 100.0
+@export var max_step_height: float = 0.3
 @onready var visual: Node3D = $Visual
 @onready var agent: NavigationAgent3D = $NavigationAgent3D
 var state: State = State.DORMANT
@@ -117,7 +119,7 @@ func _physics_process(delta: float) -> void:
 				if damage_enabled and visible_target and distance <= attack_range:
 					var receiver := target.get_node_or_null("CombatHealth")
 					if receiver and receiver.has_method("take_damage"):
-						receiver.take_damage(attack_damage)
+						receiver.take_damage(attack_damage, self)
 					elif target.has_method("take_damage"):
 						target.take_damage(attack_damage)
 					attack_landed.emit(target)
@@ -135,6 +137,7 @@ func _physics_process(delta: float) -> void:
 		facing = target.global_position - global_position
 	if Vector2(facing.x, facing.z).length() > 0.01:
 		rotation.y = lerp_angle(rotation.y, atan2(-facing.x, -facing.z), 1.0 - exp(-turn_speed * delta))
+	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 
 func _physics_process_watcher(delta: float) -> void:
@@ -150,8 +153,14 @@ func _physics_process_watcher(delta: float) -> void:
 	if watching_player:
 		var facing := target.global_position - global_position
 		facing.y = 0.0
-		if facing.length() > watch_stop_distance:
+		var distance_to_target := facing.length()
+		if distance_to_target > watch_stop_distance:
 			motion = _path_direction(target.global_position) * watch_follow_speed
+		elif watch_retreat_distance > 0.0 and distance_to_target < watch_retreat_distance and distance_to_target > 0.01:
+			# Back away to hold a standoff radius instead of letting the player
+			# walk right up to it. Still faces the player (below), so it reads
+			# as backing off while continuing to watch, not fleeing.
+			motion = -facing.normalized() * watch_follow_speed
 		if facing.length_squared() > 0.0001:
 			rotation.y = lerp_angle(
 				rotation.y,
@@ -163,6 +172,7 @@ func _physics_process_watcher(delta: float) -> void:
 		visual.play("dormant")
 	velocity.x = move_toward(velocity.x, motion.x, delta * watch_acceleration)
 	velocity.z = move_toward(velocity.z, motion.z, delta * watch_acceleration)
+	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 
 func _can_see_target() -> bool:

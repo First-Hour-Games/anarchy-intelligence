@@ -61,6 +61,7 @@ var _previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_CAPTURED
 
 
 func _ready() -> void:
+	add_to_group("world_map")
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_player = get_node_or_null(player_path) as Node3D
 	_map_viewport = get_node_or_null("../MapViewport") as SubViewport
@@ -91,6 +92,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event.is_action_pressed(toggle_action):
+		var story := get_tree().get_first_node_in_group("opening_story")
+		if story != null and bool(story.get("document_open")):
+			return
 		set_map_open(not _is_open)
 		get_viewport().set_input_as_handled()
 	elif _is_open and event.is_action_pressed(&"ui_cancel"):
@@ -269,9 +273,15 @@ func _draw_houses() -> void:
 
 
 func _draw_landmarks() -> void:
+	_draw_landmark(Vector2(70, -14), "WELCOME CENTER", COLOR_LANDMARK)
+	_draw_landmark(Vector2(-166, 125), "CARRIE'S HOUSE", COLOR_LANDMARK)
+	var story := get_tree().get_first_node_in_group("opening_story")
+	if story != null and int(story.get("stage")) < 5:
+		var target: Vector3 = story.get("target_position")
+		_draw_landmark(Vector2(target.x, target.z), "SEARCH HERE", COLOR_PLAYER)
 	_draw_landmark(Vector2(145.0, 26.0), "GAS STATION", Color(0.88, 0.70, 0.30, 1.0))
 	_draw_landmark(Vector2(160.0, 285.0), "CIVIC BLOCK", COLOR_LANDMARK)
-	_draw_landmark(Vector2(245.0, 251.0), "CLINIC", Color(0.42, 0.72, 0.76, 1.0))
+	_draw_landmark(Vector2(245.0, 251.0), "HOSPITAL", Color(0.42, 0.72, 0.76, 1.0))
 
 
 func _draw_landmark(world_position: Vector2, label: String, color: Color) -> void:

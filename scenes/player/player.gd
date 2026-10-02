@@ -14,6 +14,8 @@ const WOOD_FOOTSTEPS := [
 ]
 const FOOTSTEP_PHASE_OFFSET := PI * 0.75
 const FOOTSTEP_PHASE_INTERVAL := PI
+const SURFACES := preload("res://scenes/player/footstep_surfaces.gd")
+var current_footstep_surface: StringName = &"dirt"
 
 @export_category("Movement")
 @export var walk_speed: float = 3.2
@@ -23,7 +25,7 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 @export var air_acceleration: float = 3.0
 
 @export_category("Stamina")
-@export_range(1.0, 500.0, 1.0) var max_stamina: float = 100.0
+@export_range(1.0, 500.0, 1.0) var max_stamina: float = 200.0
 @export_range(1.0, 100.0, 1.0) var sprint_stamina_cost: float = 24.0
 @export_range(1.0, 100.0, 1.0) var stamina_regeneration_rate: float = 18.0
 @export_range(0.0, 5.0, 0.1) var stamina_regeneration_delay: float = 0.8
@@ -31,6 +33,9 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 
 @export_category("Jump")
 @export var jump_velocity: float = 3.4
+
+@export_category("Stair Stepping")
+@export var max_step_height: float = 0.3
 
 @export_category("Crouch")
 @export_range(0.3, 0.9, 0.01) var crouch_height_scale: float = 0.55
@@ -130,40 +135,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_frozen:
 		return
 
-	if event.is_action_pressed(&"inventory_slot_1") and not event.is_echo():
-		inventory.select_slot(0)
-		get_viewport().set_input_as_handled()
-		return
-
-	if event.is_action_pressed(&"inventory_slot_2") and not event.is_echo():
-		inventory.select_slot(1)
-		get_viewport().set_input_as_handled()
-		return
-
-	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			inventory.select_relative(-1)
-			get_viewport().set_input_as_handled()
-			return
-		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			inventory.select_relative(1)
-			get_viewport().set_input_as_handled()
-			return
-
 	if event.is_action_pressed(&"flashlight_toggle") and not event.is_echo():
-		if inventory.get_selected_item() == PlayerInventory.FLASHLIGHT_ITEM:
+		if inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
 			flashlight.toggle()
 			get_viewport().set_input_as_handled()
 			return
 
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
+	if event.is_action_pressed(&"interact") and not event.is_echo():
 		if interaction_detector.try_interact():
 			get_viewport().set_input_as_handled()
 			return
-
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		return
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -178,8 +159,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_inventory_selection_changed(_slot_index: int, item_id: StringName) -> void:
-	if item_id != PlayerInventory.FLASHLIGHT_ITEM:
-		flashlight.set_enabled(false)
+	pass
 
 
 func _physics_process(delta: float) -> void:
@@ -212,6 +192,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, target_velocity.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_velocity.z, acceleration * delta)
 
+	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 	_update_head_bob(delta)
 
@@ -288,22 +269,30 @@ func _play_footstep_for_phase_crossing(previous_phase: float, current_phase: flo
 	var previous_step := floori((previous_phase - FOOTSTEP_PHASE_OFFSET) / FOOTSTEP_PHASE_INTERVAL)
 	var current_step := floori((current_phase - FOOTSTEP_PHASE_OFFSET) / FOOTSTEP_PHASE_INTERVAL)
 	if current_step > previous_step:
-		_play_random_wood_footstep()
+		_play_surface_footstep()
 
 
-func _play_random_wood_footstep() -> void:
-	if WOOD_FOOTSTEPS.is_empty() or footstep_players.is_empty():
+func get_footstep_surface() -> StringName:
+	var ray := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.4, global_position - Vector3.UP * 1.0)
+	ray.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+	return SURFACES.classify(hit.collider as Node) if not hit.is_empty() else &"dirt"
+
+func _play_surface_footstep() -> void:
+	current_footstep_surface = get_footstep_surface()
+	var bank: Array = WOOD_FOOTSTEPS
+	if bank.is_empty() or footstep_players.is_empty():
 		return
 
-	var sound_index := _footstep_random.randi_range(0, WOOD_FOOTSTEPS.size() - 1)
-	if WOOD_FOOTSTEPS.size() > 1 and sound_index == _last_footstep_index:
-		sound_index = (sound_index + _footstep_random.randi_range(1, WOOD_FOOTSTEPS.size() - 1)) % WOOD_FOOTSTEPS.size()
+	var sound_index := _footstep_random.randi_range(0, bank.size() - 1)
+	if bank.size() > 1 and sound_index == _last_footstep_index:
+		sound_index = (sound_index + _footstep_random.randi_range(1, bank.size() - 1)) % bank.size()
 	_last_footstep_index = sound_index
 
 	var footstep_player := footstep_players[_footstep_player_index]
 	_footstep_player_index = (_footstep_player_index + 1) % footstep_players.size()
-	footstep_player.stream = WOOD_FOOTSTEPS[sound_index]
-	footstep_player.volume_db = footstep_volume_db
+	footstep_player.stream = bank[sound_index]
+	footstep_player.volume_db = footstep_volume_db + (-7.0 if is_crouching else 2.0 if is_sprinting else 0.0)
 	footstep_player.pitch_scale = _footstep_random.randf_range(
 		minf(footstep_pitch_min, footstep_pitch_max),
 		maxf(footstep_pitch_min, footstep_pitch_max)

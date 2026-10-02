@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="Script" path="res://scenes/environment/story_building.gd" id="1"]
+[ext_resource type="PackedScene" path="res://models/buildings/welcome_center/welcome_center.glb" id="2"]
+[node name="WelcomeCenter" type="Node3D"]
+script = ExtResource("1")
+building_kind = 1
+[node name="Source" parent="." instance=ExtResource("2")]

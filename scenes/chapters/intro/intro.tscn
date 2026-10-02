@@ -523,6 +523,7 @@ buffer = PackedFloat32Array(2.7264897e-09, 2.4802294, 1.08379986e-07, -147.74576
 
 [node name="Intro" type="Node3D" unique_id=1010101]
 script = ExtResource("1_intro_script")
+tutorial_scene_path = "res://scenes/chapters/main/map.tscn"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=413095969]
 environment = SubResource("Environment_wnkph")

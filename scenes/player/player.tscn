@@ -46,8 +46,8 @@ script = ExtResource("3_interaction_detector")
 
 [node name="FootstepPlayerA" type="AudioStreamPlayer" parent="."]
 volume_db = -13.0
-bus = &"Reverb"
+bus = &"Footsteps"
 
 [node name="FootstepPlayerB" type="AudioStreamPlayer" parent="."]
 volume_db = -13.0
-bus = &"Reverb"
+bus = &"Footsteps"

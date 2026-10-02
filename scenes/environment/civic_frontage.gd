@@ -33,32 +33,47 @@ func _ready() -> void:
 		# Consistent ground-floor shopfronts keep the reused upper stories grounded.
 		var glazing := _material(Color(0.10, 0.17, 0.18))
 		for offset: float in [-6.0, 6.0]:
-			_box("DisplayFrame", Vector3(center + offset, 1.55, -48.2), Vector3(4.6, 2.4, 0.18), metal)
-			_box("DisplayWindow", Vector3(center + offset, 1.55, -48.31), Vector3(4.35, 2.15, 0.04), glazing)
-			_box("DisplayMullion", Vector3(center + offset, 1.55, -48.35), Vector3(0.08, 2.2, 0.05), pavement)
-		_box("ClosedShopDoor", Vector3(center, 1.2, -48.2), Vector3(1.4, 2.4, 0.18), metal)
-		_box("DoorGlass", Vector3(center, 1.55, -48.31), Vector3(1.15, 1.35, 0.04), glazing)
-		_box("ShopApron", Vector3(center, 0.06, -49.45), Vector3(widths[index] + 1, 0.12, 2.9), pavement)
+			var window_z := _facade_depth(building, center + offset, 1.55)
+			_box("DisplayFrame", Vector3(center + offset, 1.55, window_z - 0.09), Vector3(4.6, 2.4, 0.18), metal)
+			_box("DisplayWindow", Vector3(center + offset, 1.55, window_z - 0.2), Vector3(4.35, 2.15, 0.04), glazing)
+			_box("DisplayMullion", Vector3(center + offset, 1.55, window_z - 0.24), Vector3(0.08, 2.2, 0.05), pavement)
+		var door_z := _facade_depth(building, center, 1.32)
+		_box("ClosedShopDoor", Vector3(center, 1.32, door_z - 0.09), Vector3(1.4, 2.4, 0.18), metal)
+		_box("DoorGlass", Vector3(center, 1.55, door_z - 0.2), Vector3(1.15, 1.35, 0.04), glazing)
+		var canopy_z := _facade_depth(building, center, 2.75)
+		var apron_back := maxf(door_z, canopy_z) + 0.15
+		_box("ShopApron", Vector3(center, 0.06, (apron_back - 50.9) * 0.5), Vector3(widths[index] + 1, 0.12, apron_back + 50.9), pavement)
 		_mount_sign(building, center, minf(widths[index] * 0.72, 14.0), titles[index], metal)
-		_box("ShopCanopy", Vector3(center, 2.75, -49), Vector3(6, 0.12, 2), metal)
+		_box("ShopCanopy", Vector3(center, 2.75, canopy_z - 1), Vector3(6, 0.12, 2), metal)
 		for x: float in [center - 3, center + 3]:
-			_box("CanopyPost", Vector3(x, 1.35, -49.8), Vector3(0.09, 2.7, 0.09), metal)
+			_box("CanopyPost", Vector3(x, 1.405, canopy_z - 1.85), Vector3(0.09, 2.57, 0.09), metal)
 		if index == 2:
 			for y: float in [0.9, 1.35, 1.8]:
-				_box("BoardedWindow", Vector3(center - 5, y, -48.3), Vector3(2.8, 0.2, 0.08), wood)
+				_box("BoardedWindow", Vector3(center - 5, y, _facade_depth(building, center - 5, y) - 0.05), Vector3(2.8, 0.2, 0.08), wood)
 		var lamp := OmniLight3D.new()
 		add_child(lamp)
-		lamp.position = Vector3(center, 2.6, -50)
+		lamp.position = Vector3(center, 2.6, canopy_z - 1.3)
 		lamp.light_color = Color(0.85, 0.69, 0.43)
 		lamp.light_energy = 0.45
 		lamp.omni_range = 6
 		lamp.shadow_enabled = true
-		_box("WallLamp", Vector3(center, 2.55, -48.4), Vector3(0.3, 0.35, 0.2), pavement)
+		_box("WallLamp", Vector3(center, 2.55, _facade_depth(building, center, 2.55) - 0.1), Vector3(0.3, 0.35, 0.2), pavement)
 	# Shared pedestrian apron connects to the clinic's existing frontage sidewalk.
 	_box("SharedPromenade", Vector3(13, 0.06, -52), Vector3(134, 0.12, 2.2), pavement)
 	_box("RearServiceLane", Vector3(12, 0.04, -15), Vector3(136, 0.08, 5), asphalt)
 	for x: float in [-21, 9, 41]:
 		_box("ServicePassage", Vector3(x, 0.04, -33), Vector3(3, 0.08, 31), asphalt)
+
+func _facade_depth(building: MeshInstance3D, x: float, y: float) -> float:
+	var front := Vector3(x, y, -70)
+	var back := Vector3(x, y, 0)
+	var nearest := INF
+	var faces := building.mesh.get_faces()
+	for i in range(0, faces.size(), 3):
+		var hit: Variant = Geometry3D.segment_intersects_triangle(front, back, building.transform * faces[i], building.transform * faces[i + 1], building.transform * faces[i + 2])
+		if hit != null:
+			nearest = minf(nearest, (hit as Vector3).z)
+	return nearest if nearest < INF else -48.0
 
 func _material(color: Color, path: String = "") -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

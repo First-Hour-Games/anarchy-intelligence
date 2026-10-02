@@ -8,6 +8,8 @@ var immunity: float = 0.0
 var spawn: Transform3D
 var status: Label
 var retry: Button
+var death_scare: CanvasLayer
+const DEATH_SCARE := preload("res://scenes/ui/death_scare.gd")
 
 func _ready() -> void:
 	health = max_health
@@ -55,7 +57,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	immunity = maxf(0.0, immunity - delta)
 
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, attacker: Node3D = null) -> void:
 	if is_dead or immunity > 0.0 or amount <= 0.0:
 		return
 	health = maxf(0.0, health - amount)
@@ -66,10 +68,22 @@ func take_damage(amount: float) -> void:
 		is_dead = true
 		get_parent().set_physics_process(false)
 		get_parent().set_process_unhandled_input(false)
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		retry.show()
+		get_parent().freeze()
+		if is_instance_valid(attacker) and attacker.has_node("Visual"):
+			death_scare = DEATH_SCARE.new()
+			add_child(death_scare)
+			death_scare.finished.connect(respawn)
+			death_scare.start(attacker)
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			retry.show()
 
 func respawn() -> void:
+	if not is_dead:
+		return
+	if is_instance_valid(death_scare):
+		death_scare.restore_world()
+		death_scare = null
 	get_parent().global_transform = spawn
 	get_parent().velocity = Vector3.ZERO
 	health = max_health
@@ -77,6 +91,7 @@ func respawn() -> void:
 	immunity = 1.0
 	get_parent().set_physics_process(true)
 	get_parent().set_process_unhandled_input(true)
+	get_parent().unfreeze()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	retry.hide()
 	get_tree().call_group("corrupted_friend", "reset_enemy")
