@@ -58,6 +58,9 @@ signal triggered(interactor: Node3D)
 @export_range(1.0, 50.0, 0.5) var sound_max_distance: float = 15.0
 @export var sound_bus: StringName = &"SFX"
 
+@export_category("Inspection")
+@export var inspection_view: Node = null
+
 @export_category("Actions")
 @export var target_node: Node = null
 @export var target_method: StringName = &""
@@ -131,6 +134,18 @@ func interact(interactor: Node3D) -> void:
 	# Sound
 	_play_sound()
 
+	# Inspection View
+	var view := _get_inspection_view()
+	if is_instance_valid(view) and view.has_method(&"start_inspection"):
+		var player := interactor as FirstPersonPlayer
+		if player == null:
+			player = get_tree().get_first_node_in_group(&"player") as FirstPersonPlayer
+		if is_instance_valid(player):
+			view.call(&"start_inspection", player)
+			if trigger_once:
+				disable()
+			return
+
 	# Custom invocation
 	_invoke_target(interactor)
 	if custom_callback.is_valid():
@@ -156,6 +171,14 @@ func enable() -> void:
 	is_enabled = true
 	if not is_in_group(&"interactable"):
 		add_to_group(&"interactable")
+
+
+func _get_inspection_view() -> Node:
+	if is_instance_valid(inspection_view):
+		return inspection_view
+	if has_node("InspectableView"):
+		return get_node("InspectableView")
+	return null
 
 
 func _play_sound() -> void:

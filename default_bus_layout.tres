@@ -27,10 +27,10 @@ resource_name = "LowShelfFilter"
 
 [sub_resource type="AudioEffectReverb" id="AudioEffectReverb_g28q7"]
 resource_name = "Reverb"
-room_size = 0.15
-damping = 0.3
-spread = 0.4
-wet = 0.45
+room_size = 0.1
+damping = 0.7
+hipass = 0.3
+wet = 0.15
 
 [resource]
 bus/1/name = &"Music"
@@ -63,9 +63,15 @@ bus/4/name = &"Footsteps"
 bus/4/solo = false
 bus/4/mute = false
 bus/4/bypass_fx = false
-bus/4/volume_db = -4.247226
+bus/4/volume_db = -4.2500257
 bus/4/send = &"Master"
 bus/4/effect/0/effect = SubResource("AudioEffectLowShelfFilter_j3pel")
 bus/4/effect/0/enabled = true
 bus/4/effect/1/effect = SubResource("AudioEffectReverb_g28q7")
 bus/4/effect/1/enabled = true
+bus/5/name = &"Outside"
+bus/5/solo = false
+bus/5/mute = false
+bus/5/bypass_fx = false
+bus/5/volume_db = 0.0
+bus/5/send = &"Master"

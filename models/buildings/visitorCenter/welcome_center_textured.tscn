@@ -56,6 +56,6 @@ metadata/surface = ""
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.03001678, 7.0030184)
 material_override = SubResource("StandardMaterial3D_43khc")
 use_collision = true
-polygon = PackedVector2Array(-6, 0, -6, 7, 17, 8, 17, 3, 6, 3, 6, 0)
+polygon = PackedVector2Array(-6, 0, -6, 8, 17, 8, 17, 3, 6, 3, 6, 0)
 depth = 0.2
 metadata/surface = "concrete"

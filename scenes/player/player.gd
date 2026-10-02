@@ -26,7 +26,7 @@ var current_footstep_surface: StringName = &"dirt"
 
 @export_category("Stamina")
 @export_range(1.0, 500.0, 1.0) var max_stamina: float = 200.0
-@export_range(1.0, 100.0, 1.0) var sprint_stamina_cost: float = 24.0
+@export_range(1.0, 100.0, 0.1) var sprint_stamina_cost: float = 40.8
 @export_range(1.0, 100.0, 1.0) var stamina_regeneration_rate: float = 18.0
 @export_range(0.0, 5.0, 0.1) var stamina_regeneration_delay: float = 0.8
 @export_range(0.0, 100.0, 1.0) var exhausted_recovery_stamina: float = 20.0
@@ -97,6 +97,8 @@ var current_footstep_surface: StringName = &"dirt"
 @onready var floor_detector: RayCast3D = $FloorDetector
 @onready var interaction_detector: InteractionDetector = $InteractionDetector
 @onready var footstep_players: Array[AudioStreamPlayer] = [$FootstepPlayerA, $FootstepPlayerB]
+@onready var flashlight: PlayerFlashlight = get_node_or_null("Head/Camera3D/Flashlight") as PlayerFlashlight
+@onready var inventory: PlayerInventory = (get_node_or_null("InventoryHUD") as PlayerInventory) if has_node("InventoryHUD") else (get_node_or_null("Inventory") as PlayerInventory)
 
 var forced_surface: StringName = &""
 
@@ -140,8 +142,8 @@ func _ready() -> void:
 	var height_diff := stand_capsule_height * (1.0 - crouch_height_scale)
 	crouch_capsule_height = stand_capsule_height - height_diff
 	crouch_collision_y = stand_collision_y - height_diff * 0.5
-	crouch_head_y = stand_head_y - height_diff
-	inventory.selection_changed.connect(_on_inventory_selection_changed)
+	if is_instance_valid(inventory):
+		inventory.selection_changed.connect(_on_inventory_selection_changed)
 
 
 func freeze() -> void:
@@ -172,12 +174,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event.is_action_pressed(&"flashlight_toggle") and not event.is_echo():
-		if inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+		if is_instance_valid(inventory) and is_instance_valid(flashlight) and inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
 			flashlight.toggle()
 			get_viewport().set_input_as_handled()
 			return
 
-	if event.is_action_pressed(&"interact") and not event.is_echo():
+	var is_interact_pressed: bool = event.is_action_pressed(&"interact") or (event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E)
+	if is_interact_pressed and not event.is_echo():
 		if interaction_detector.try_interact():
 			get_viewport().set_input_as_handled()
 			return
@@ -187,7 +190,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		flashlight.add_look_impulse(event.relative)
+		if is_instance_valid(flashlight):
+			flashlight.add_look_impulse(event.relative)
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		var look_limit: float = deg_to_rad(vertical_look_limit_degrees)
