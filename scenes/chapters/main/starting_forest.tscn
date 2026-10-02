@@ -677,8 +677,8 @@ omni_range = 66.767
 transform = Transform3D(0.99207705, 0, 2.9802322e-08, 0, 0.992077, 0, -2.9802322e-08, 0, 0.99207705, 0.019456863, 0.98797876, 1.9599304)
 stream = ExtResource("28_engine_loop")
 volume_db = -4.0
-max_distance = 45.0
 autoplay = true
+max_distance = 45.0
 
 [node name="InteractableBlock" parent="." unique_id=1589471968 instance=ExtResource("27_interactable_block")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270.82925, 1.4131358, -8.528726)
