@@ -31,8 +31,8 @@ func run() -> void:
 	var house := map.get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
 	var doc := house.get_node("CarrieDocument") as Node3D
 	var door_note := house.get_node("EntranceNote") as Node3D
-	check(door_note != null and "notebook inside" in str(door_note.get("body")), "Entrance note directs player to notebook inside")
-	check(bool(door_note.get_meta("wall_mounted", false)) and not house.has_node("EntranceNotePost") and "attic" in str(door_note.get("body")), "Entrance note is wall mounted and directs player upstairs")
+	check(door_note != null and str(door_note.get("body")) == "My notebook is on the second floor, under something...\n\n- Carrie", "Entrance note directs player to notebook inside")
+	check(bool(door_note.get_meta("wall_mounted", false)) and not house.has_node("EntranceNotePost") and "second floor" in str(door_note.get("body")), "Entrance note is wall mounted and directs player upstairs")
 	check(doc.position.y > 3.9 and house.has_node("AtticNotebookCrate"), "Notebook is hidden on an attic crate")
 	check(doc.has_node("CarrieNotebook/Pages") and doc.has_node("CarrieNotebook/Bookmark"), "Notebook has a distinct reusable 3D asset")
 	player.global_position = door_note.global_position + door_note.global_basis.z * 1.4

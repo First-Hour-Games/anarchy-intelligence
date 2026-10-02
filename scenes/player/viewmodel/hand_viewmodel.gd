@@ -66,6 +66,7 @@ var stamina_hud_target_visible: bool = false
 var stamina_hud_was_used: bool = false
 var stamina_hud_hide_countdown: float = 0.0
 var interaction_prompt_should_show: bool = false
+var combat_health: Node
 
 
 func _ready() -> void:
@@ -76,6 +77,20 @@ func _ready() -> void:
 	_update_heartbeat()
 	_update_stamina_bar()
 	stamina_hud.modulate.a = 0.0
+	_bind_health.call_deferred()
+
+func _bind_health() -> void:
+	combat_health = player.get_node_or_null("CombatHealth") if is_instance_valid(player) else null
+	if combat_health != null:
+		combat_health.health_changed.connect(_on_health_changed)
+		_on_health_changed(float(combat_health.get("health")))
+
+func _on_health_changed(value: float) -> void:
+	var maximum := maxf(float(combat_health.get("max_health")), 0.01)
+	var ratio := clampf(value / maximum, 0.0, 1.0)
+	var row := 5 if value <= 0.0 else 0 if ratio >= 0.8 else 1 if ratio >= 0.6 else 2 if ratio >= 0.4 else 3 if ratio >= 0.2 else 4
+	if hp_face_row != row:
+		hp_face_row = row
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -83,13 +98,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		look_lag -= event.relative * look_lag_strength
 		look_lag.x = clampf(look_lag.x, -look_lag_limit, look_lag_limit)
 		look_lag.y = clampf(look_lag.y, -look_lag_limit, look_lag_limit)
-
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_DOWN or event.keycode == KEY_RIGHT:
-			hp_face_row = (hp_face_row + 1) % 6
-		elif event.keycode == KEY_UP or event.keycode == KEY_LEFT:
-			hp_face_row = (hp_face_row - 1 + 6) % 6
-
 
 func _process(delta: float) -> void:
 	_update_hp_face_animation(delta)

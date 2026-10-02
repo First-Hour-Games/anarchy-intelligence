@@ -7,7 +7,7 @@ const SAVE_PATH := "user://opening_story_v1.json"
 @export var progress_save_path: String = SAVE_PATH
 const OBJECTIVES: Array[String] = [
 	"Search the gas station for someone who can help.",
-	"Search the corner-house attic for Carrie's notebook.",
+	"Find Carrie's notebook on the second floor.",
 	"Reach the hospital. Carrie believed it was safe.",
 	"Search the hospital registration book for Carrie.",
 	"Find the evacuation notice in staff records.",
@@ -112,7 +112,7 @@ func _build_hud() -> void:
 
 func _build_documents() -> void:
 	var house := get_parent().get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
-	_document(house, Vector3(10.5, 1.45, 12.55), &"door_note", "A note at Carrie's door", "If you're looking for me, find my notebook inside the house. I hid it upstairs in the attic, on a low wooden crate in the far corner.\n\nPlease read it.\n\n- Carrie", Color(0.76, 0.7, 0.53))
+	_document(house, Vector3(10.5, 1.45, 12.55), &"door_note", "A note at Carrie's door", "My notebook is on the second floor, under something...\n\n- Carrie", Color(0.76, 0.7, 0.53))
 	_mount_entrance_note.call_deferred(house)
 	# Hide the notebook in the upstairs storage corner.
 	_document(house, Vector3(14.0, 3.9952, 7.0), &"carrie", "Carrie's notebook", "They are telling everyone to go to the hospital. They say it is safe there. I can't stay in this house any longer.\n\nIf anyone comes looking for me, that's where I've gone.\n\n— Carrie", Color(0.31, 0.18, 0.12))
@@ -178,7 +178,7 @@ func _document(parent: Node3D, point: Vector3, id: StringName, title: String, wo
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.position.y = 0.22
 	if id == &"door_note":
-		label.text = "FIND MY\nNOTEBOOK\nIN THE ATTIC\n- Carrie"
+		label.text = "NOTEBOOK ON\nSECOND FLOOR\nUNDER SOMETHING...\n- Carrie"
 		label.font_size = 26
 		label.pixel_size = 0.0007
 		label.billboard = BaseMaterial3D.BILLBOARD_DISABLED
