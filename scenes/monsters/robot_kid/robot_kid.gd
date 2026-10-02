@@ -18,6 +18,9 @@ const AUTOMATON_SCENE_PATH := "res://scenes/monsters/scrap_automaton/scrap_autom
 @export var reach_trigger_distance: float = 2.2
 @export var movement_acceleration: float = 6.0
 
+@export_category("Stair Stepping")
+@export var max_step_height: float = 0.3
+
 @onready var visual_pivot: Node3D = $VisualPivot
 @onready var directional_sprite: AnimatedSprite3D = $VisualPivot/DirectionalSprite
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
@@ -82,6 +85,7 @@ func _physics_process(delta: float) -> void:
 
 	velocity.x = move_toward(velocity.x, desired_velocity.x, movement_acceleration * delta)
 	velocity.z = move_toward(velocity.z, desired_velocity.z, movement_acceleration * delta)
+	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 
 

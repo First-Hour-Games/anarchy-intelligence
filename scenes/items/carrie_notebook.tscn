@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3]
+[sub_resource type="StandardMaterial3D" id="cover"]
+albedo_color = Color(0.24, 0.12, 0.075, 1)
+roughness = 0.92
+[sub_resource type="StandardMaterial3D" id="paper"]
+albedo_color = Color(0.72, 0.66, 0.48, 1)
+roughness = 1.0
+[sub_resource type="StandardMaterial3D" id="ribbon"]
+albedo_color = Color(0.34, 0.08, 0.055, 1)
+[sub_resource type="BoxMesh" id="cover_mesh"]
+material = SubResource("cover")
+size = Vector3(0.32, 0.008, 0.24)
+[sub_resource type="BoxMesh" id="pages_mesh"]
+material = SubResource("paper")
+size = Vector3(0.295, 0.032, 0.215)
+[sub_resource type="BoxMesh" id="spine_mesh"]
+material = SubResource("cover")
+size = Vector3(0.018, 0.048, 0.24)
+[sub_resource type="BoxMesh" id="ribbon_mesh"]
+material = SubResource("ribbon")
+size = Vector3(0.022, 0.003, 0.08)
+[node name="CarrieNotebook" type="Node3D"]
+[node name="Pages" type="MeshInstance3D" parent="."]
+mesh = SubResource("pages_mesh")
+[node name="FrontCover" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, 0)
+mesh = SubResource("cover_mesh")
+[node name="BackCover" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.02, 0)
+mesh = SubResource("cover_mesh")
+[node name="Spine" type="MeshInstance3D" parent="."]
+position = Vector3(-0.151, 0, 0)
+mesh = SubResource("spine_mesh")
+[node name="Bookmark" type="MeshInstance3D" parent="."]
+position = Vector3(0.07, -0.01, 0.14)
+mesh = SubResource("ribbon_mesh")
+[node name="Handwriting" type="Label3D" parent="."]
+position = Vector3(0.01, 0.026, -0.025)
+rotation = Vector3(-1.5707963, 0, 0)
+text = "CARRIE\nNOTEBOOK"
+font_size = 28
+pixel_size = 0.00065
+modulate = Color(0.83, 0.75, 0.53, 1)
+outline_size = 0

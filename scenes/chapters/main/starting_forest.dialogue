@@ -1,0 +1,28 @@
+~ start
+
+Thomas: Atlas, home sweet Cicely.
+Thomas: The town that sleeps and whispers with the woods.
+Thomas: It was long forgotten at the back of my head...
+Thomas: But... why did the phone tell me to return back here?
+Thomas: My "destiny"? What could they mean?
+Thomas: Could it be from someone I know?
+Thomas: I need to keep searching...
+
+=> END
+
+~ visitor_center_locked
+
+Thomas: The doors are locked.
+Thomas: I guess the town doesn't welcome new visitors anymore.
+Thomas: And maybe also the returning ones...
+
+=> END
+
+~ visitor_center_map
+
+Welcome Board: Welcome to Cicely, South Dakota!
+Welcome Board: A quiet town surrounded by open landscapes, peaceful neighborhoods, and a close-knit community.
+Welcome Board: Whether you're visiting or just passing through,
+Welcome Board: we hope you enjoy your stay and feel at home in Cicely.
+
+=> END

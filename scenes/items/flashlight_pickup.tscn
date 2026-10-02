@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/items/flashlight_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="2_model"]
+
+[node name="FlashlightPickup" type="Node3D"]
+script = ExtResource("1_pickup")
+interaction_distance = 3.0
+visual_target_path = NodePath("Visual")
+interaction_message = "Picked up flashlight."
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Model" parent="Visual" instance=ExtResource("2_model")]
+

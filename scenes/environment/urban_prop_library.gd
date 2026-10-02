@@ -44,4 +44,5 @@ static func place(parent: Node3D, pack: int, names: Array[String], point: Vector
 	holder.scale = Vector3.ONE * factor
 	holder.rotation.y = yaw
 	holder.position = point
+	holder.add_to_group("grounded_urban_prop")
 	return holder

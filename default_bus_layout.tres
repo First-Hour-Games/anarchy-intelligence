@@ -22,6 +22,16 @@ spread = 0.7
 dry = 0.77
 wet = 0.37
 
+[sub_resource type="AudioEffectLowShelfFilter" id="AudioEffectLowShelfFilter_j3pel"]
+resource_name = "LowShelfFilter"
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_g28q7"]
+resource_name = "Reverb"
+room_size = 0.1
+damping = 0.7
+hipass = 0.3
+wet = 0.15
+
 [resource]
 bus/1/name = &"Music"
 bus/1/solo = false
@@ -33,7 +43,7 @@ bus/2/name = &"InGameFootage"
 bus/2/solo = false
 bus/2/mute = false
 bus/2/bypass_fx = false
-bus/2/volume_db = 0.0694828
+bus/2/volume_db = -0.5260134
 bus/2/send = &"Master"
 bus/2/effect/0/effect = SubResource("AudioEffectLowPassFilter_j3pel")
 bus/2/effect/0/enabled = false
@@ -45,7 +55,23 @@ bus/3/name = &"Reverb"
 bus/3/solo = false
 bus/3/mute = false
 bus/3/bypass_fx = false
-bus/3/volume_db = 0.0
+bus/3/volume_db = -1.519247
 bus/3/send = &"Master"
 bus/3/effect/0/effect = SubResource("AudioEffectReverb_reverb_bus")
 bus/3/effect/0/enabled = true
+bus/4/name = &"Footsteps"
+bus/4/solo = false
+bus/4/mute = false
+bus/4/bypass_fx = false
+bus/4/volume_db = -4.2500257
+bus/4/send = &"Master"
+bus/4/effect/0/effect = SubResource("AudioEffectLowShelfFilter_j3pel")
+bus/4/effect/0/enabled = true
+bus/4/effect/1/effect = SubResource("AudioEffectReverb_g28q7")
+bus/4/effect/1/enabled = true
+bus/5/name = &"Outside"
+bus/5/solo = false
+bus/5/mute = false
+bus/5/bypass_fx = false
+bus/5/volume_db = 0.0
+bus/5/send = &"Master"

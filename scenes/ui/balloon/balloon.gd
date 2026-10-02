@@ -131,9 +131,11 @@ func apply_dialogue_line() -> void:
 	balloon.focus_mode = Control.FOCUS_ALL
 	balloon.grab_focus()
 
-	character_label.visible = not dialogue_line.character.is_empty()
-	if not dialogue_line.character.is_empty():
-		character_label.text = tr(dialogue_line.character, "dialogue").to_upper()
+	var char_name := dialogue_line.character.strip_edges()
+	var is_thomas: bool = char_name.to_lower() == "thomas"
+	character_label.visible = not char_name.is_empty() and not is_thomas
+	if character_label.visible:
+		character_label.text = tr(char_name, "dialogue").to_upper()
 
 	dialogue_label.hide()
 

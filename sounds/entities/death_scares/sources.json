@@ -1,0 +1,32 @@
+[
+  {
+    "file": "wrapper_source.mp3",
+    "title": "Ghost Monster Scream",
+    "creator": "NachtmahrTV",
+    "source": "https://freesound.org/people/NachtmahrTV/sounds/556701/",
+    "download": "https://cdn.freesound.org/previews/556/556701_5620304-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "7184579daac33482e6332be7ed6cf946f48037c20a8a3c71eb91c38d50e9d3e6",
+    "bytes": 300433
+  },
+  {
+    "file": "clawman_source.mp3",
+    "title": "monster sound 2.wav",
+    "creator": "ZyryTSounds",
+    "source": "https://freesound.org/people/ZyryTSounds/sounds/237986/",
+    "download": "https://cdn.freesound.org/previews/237/237986_4082826-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "ad1ae76d9a65ef6583bc95801f1a5043c0c223753b8ff254b11457d92a0341a3",
+    "bytes": 121574
+  },
+  {
+    "file": "ridgeback_source.mp3",
+    "title": "growl 2",
+    "creator": "balloonhead",
+    "source": "https://freesound.org/people/balloonhead/sounds/362331/",
+    "download": "https://cdn.freesound.org/previews/362/362331_2188-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "905b76f77753f520503dc3c55cebd2b61b651b5f5b27b918669796ba2ec4f905",
+    "bytes": 32247
+  }
+]

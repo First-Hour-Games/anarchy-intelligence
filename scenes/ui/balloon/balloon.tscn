@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://customdialogueballoon01"]
+[gd_scene format=3 uid="uid://c0t322viy3i7q"]
 
-[ext_resource type="Script" path="res://scenes/ui/balloon/balloon.gd" id="1_balloon_script"]
-[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
-[ext_resource type="Script" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
+[ext_resource type="Script" uid="uid://d2n7yc4neui68" path="res://scenes/ui/balloon/balloon.gd" id="1_balloon_script"]
+[ext_resource type="Script" uid="uid://g32um0mltv5d" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
+[ext_resource type="Script" uid="uid://bb52rsfwhkxbn" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
 [ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
 [ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
 [ext_resource type="FontFile" uid="uid://b2i55e65n0tsr" path="res://fonts/ReceiptionalReceipt.ttf" id="6_receipt_font"]

@@ -16,6 +16,12 @@ var selected_index: int = 0
 var is_in_options_menu: bool = false
 var master_volume_percent: int = 80
 var music_volume_percent: int = 80
+var is_starting: bool = false
+var input_ready_at: int = 0
+var can_continue: bool = false
+@export var progress_save_path: String = "user://opening_story_v1.json"
+var reset_label: Label
+var reset_warning: ConfirmationDialog
 
 const SELECTED_FONT_SIZE: int = 36
 const UNSELECTED_FONT_SIZE: int = 24
@@ -23,6 +29,13 @@ const SELECTED_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
 const UNSELECTED_COLOR: Color = Color(0.65, 0.65, 0.65, 0.65)
 
 func _ready() -> void:
+	get_tree().paused = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	input_ready_at = Time.get_ticks_msec() + 250
+	can_continue = PauseMenu.has_started_chapter or FileAccess.file_exists(progress_save_path)
+	_build_reset_option()
+	master_volume_percent = roundi((PauseMenu.sliders["Master"] as HSlider).value * 100)
+	music_volume_percent = roundi((PauseMenu.sliders["Music"] as HSlider).value * 100)
 	# Set initial Master and Music Audio Bus volumes
 	_apply_master_volume()
 	_apply_music_volume()
@@ -30,6 +43,7 @@ func _ready() -> void:
 	main_options = [
 		{"label": start_label, "action": _start_game},
 		{"label": options_label, "action": _open_options},
+		{"label": reset_label, "action": _ask_reset_progress},
 		{"label": quit_label, "action": _quit_game}
 	]
 	
@@ -55,12 +69,16 @@ func _setup_mouse_listeners() -> void:
 		var lbl: Label = active_list[i]["label"]
 		lbl.mouse_filter = Control.MOUSE_FILTER_STOP
 		
-		# Disconnect previous connections safely before reconnecting
-		if lbl.gui_input.is_connected(_on_label_gui_input.bind(idx)):
-			lbl.gui_input.disconnect(_on_label_gui_input.bind(idx))
+		# Quit occupies a different row in Options; remove every previous index.
+		for old_index in range(main_options.size()):
+			var callback := _on_label_gui_input.bind(old_index)
+			if lbl.gui_input.is_connected(callback):
+				lbl.gui_input.disconnect(callback)
 		lbl.gui_input.connect(_on_label_gui_input.bind(idx))
 
 func _on_label_gui_input(event: InputEvent, idx: int) -> void:
+	if is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		selected_index = idx
 		_update_menu_display(false)
@@ -82,6 +100,8 @@ func _mark_input_handled() -> void:
 		get_viewport().set_input_as_handled()
 
 func _input(event: InputEvent) -> void:
+	if is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
+		return
 	if not event.is_pressed() or event.is_echo():
 		return
 		
@@ -136,6 +156,7 @@ func _input(event: InputEvent) -> void:
 		_mark_input_handled()
 
 func _update_menu_display(play_sound: bool = true) -> void:
+	reset_label.visible = not is_in_options_menu
 	if is_in_options_menu:
 		start_label.show()
 		options_label.show()
@@ -153,13 +174,14 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		options_label.show()
 		quit_label.show()
 		
-		start_label.text = "Start Game"
+		start_label.text = "Continue Game" if can_continue else "Start Game"
 		options_label.text = "Options"
 		quit_label.text = "Quit"
 		
 		_apply_label_style(start_label, selected_index == 0)
 		_apply_label_style(options_label, selected_index == 1)
-		_apply_label_style(quit_label, selected_index == 2)
+		_apply_label_style(reset_label, selected_index == 2)
+		_apply_label_style(quit_label, selected_index == 3)
 
 	if play_sound and move_sfx_player:
 		move_sfx_player.play()
@@ -173,6 +195,7 @@ func _apply_label_style(lbl: Label, is_selected: bool) -> void:
 		lbl.modulate = UNSELECTED_COLOR
 
 func _apply_master_volume() -> void:
+	(PauseMenu.sliders["Master"] as HSlider).value = float(master_volume_percent) / 100.0
 	var linear_val: float = float(master_volume_percent) / 100.0
 	var bus_idx: int = AudioServer.get_bus_index("Master")
 	if bus_idx != -1:
@@ -183,6 +206,7 @@ func _apply_master_volume() -> void:
 			AudioServer.set_bus_volume_db(bus_idx, linear_to_db(linear_val))
 
 func _apply_music_volume() -> void:
+	(PauseMenu.sliders["Music"] as HSlider).value = float(music_volume_percent) / 100.0
 	var linear_val: float = float(music_volume_percent) / 100.0
 	var bus_idx: int = AudioServer.get_bus_index("Music")
 	if bus_idx != -1:
@@ -193,12 +217,26 @@ func _apply_music_volume() -> void:
 			AudioServer.set_bus_volume_db(bus_idx, linear_to_db(linear_val))
 
 func _trigger_option_action() -> void:
+	if reset_warning.visible or is_starting:
+		return
 	if click_sfx_player:
 		click_sfx_player.play()
 	var active_list = sub_options if is_in_options_menu else main_options
 	active_list[selected_index]["action"].call()
 
 func _start_game() -> void:
+	if is_starting or reset_warning.visible:
+		return
+	is_starting = true
+	# A GUI signal must finish before its menu controls are removed.
+	_begin_start_game.call_deferred()
+
+func _begin_start_game() -> void:
+	PauseMenu._save_settings()
+	get_tree().paused = false
+	if can_continue:
+		get_tree().change_scene_to_file("res://scenes/chapters/main/map.tscn")
+		return
 	print("Start Game selected!")
 	
 	if OS.has_feature("editor"):
@@ -246,6 +284,43 @@ func _close_options() -> void:
 	is_in_options_menu = false
 	selected_index = 1
 	_setup_mouse_listeners()
+	_update_menu_display(false)
+
+func _build_reset_option() -> void:
+	reset_label = quit_label.duplicate() as Label
+	reset_label.name = "ResetProgressLabel"
+	reset_label.text = "Reset Progress"
+	quit_label.get_parent().add_child(reset_label)
+	quit_label.get_parent().move_child(reset_label, quit_label.get_index())
+	reset_warning = ConfirmationDialog.new()
+	reset_warning.title = "Reset all game progress?"
+	reset_warning.dialog_text = "This permanently deletes your saved checkpoint, collected items, journal and story progress.\n\nYour next game will begin with the intro. Sound settings will be kept.\n\nThis cannot be undone."
+	reset_warning.ok_button_text = "DELETE PROGRESS"
+	reset_warning.cancel_button_text = "KEEP MY SAVE"
+	add_child(reset_warning)
+	reset_warning.confirmed.connect(_reset_progress)
+
+func _ask_reset_progress() -> void:
+	if is_starting:
+		return
+	reset_warning.popup_centered(Vector2i(520, 240))
+	# Enter initially cancels rather than deleting the save accidentally.
+	reset_warning.get_cancel_button().grab_focus()
+
+func _reset_progress() -> void:
+	if FileAccess.file_exists(progress_save_path):
+		var result := DirAccess.remove_absolute(progress_save_path)
+		if result != OK:
+			var error := AcceptDialog.new()
+			error.title = "Could not reset progress"
+			error.dialog_text = "Your save could not be deleted. Your progress has been kept."
+			add_child(error)
+			error.popup_centered()
+			return
+	PauseMenu.has_started_chapter = false
+	can_continue = false
+	selected_index = 0
+	reset_warning.hide()
 	_update_menu_display(false)
 
 func _quit_game() -> void:

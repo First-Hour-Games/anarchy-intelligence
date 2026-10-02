@@ -1,0 +1,45 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://2kqrpebrs6tr"
+path.s3tc="res://.godot/imported/welcomeCenterTextured_Bark014_1K-JPG_NormalGL.jpg-04d2f3a9bd0a20a18ef99399c7a5ab24.s3tc.ctex"
+path.etc2="res://.godot/imported/welcomeCenterTextured_Bark014_1K-JPG_NormalGL.jpg-04d2f3a9bd0a20a18ef99399c7a5ab24.etc2.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "fb7eaf55b4d2fc57f548db656534600b"
+}
+
+[deps]
+
+source_file="res://models/buildings/visitorCenter/welcomeCenterTextured_Bark014_1K-JPG_NormalGL.jpg"
+dest_files=["res://.godot/imported/welcomeCenterTextured_Bark014_1K-JPG_NormalGL.jpg-04d2f3a9bd0a20a18ef99399c7a5ab24.s3tc.ctex", "res://.godot/imported/welcomeCenterTextured_Bark014_1K-JPG_NormalGL.jpg-04d2f3a9bd0a20a18ef99399c7a5ab24.etc2.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/normal_map=1
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=1
+roughness/src_normal="res://scenes/chapters/intro/welcomeCenterTextured_Bark014_1K-JPG_NormalGL.jpg"
+process/channel_remap/red=0
+process/channel_remap/green=1
+process/channel_remap/blue=2
+process/channel_remap/alpha=3
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

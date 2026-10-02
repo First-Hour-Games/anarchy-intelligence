@@ -14,6 +14,8 @@ const WOOD_FOOTSTEPS := [
 ]
 const FOOTSTEP_PHASE_OFFSET := PI * 0.75
 const FOOTSTEP_PHASE_INTERVAL := PI
+const SURFACES := preload("res://scenes/player/footstep_surfaces.gd")
+var current_footstep_surface: StringName = &"dirt"
 
 @export_category("Movement")
 @export var walk_speed: float = 3.2
@@ -23,14 +25,17 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 @export var air_acceleration: float = 3.0
 
 @export_category("Stamina")
-@export_range(1.0, 500.0, 1.0) var max_stamina: float = 100.0
-@export_range(1.0, 100.0, 1.0) var sprint_stamina_cost: float = 24.0
+@export_range(1.0, 500.0, 1.0) var max_stamina: float = 200.0
+@export_range(1.0, 100.0, 0.1) var sprint_stamina_cost: float = 40.8
 @export_range(1.0, 100.0, 1.0) var stamina_regeneration_rate: float = 18.0
 @export_range(0.0, 5.0, 0.1) var stamina_regeneration_delay: float = 0.8
 @export_range(0.0, 100.0, 1.0) var exhausted_recovery_stamina: float = 20.0
 
 @export_category("Jump")
 @export var jump_velocity: float = 3.4
+
+@export_category("Stair Stepping")
+@export var max_step_height: float = 0.3
 
 @export_category("Crouch")
 @export_range(0.3, 0.9, 0.01) var crouch_height_scale: float = 0.55
@@ -42,7 +47,7 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 @export_range(45.0, 89.0, 1.0) var vertical_look_limit_degrees: float = 85.0
 
 @export_category("Head Bob")
-@export var head_bob_frequency: float = 1.8
+@export var head_bob_frequency: float = 0.95
 @export var head_bob_vertical_amplitude: float = 0.035
 @export var head_bob_horizontal_amplitude: float = 0.018
 @export var head_bob_smoothing: float = 12.0
@@ -51,13 +56,51 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 @export_range(-40.0, 6.0, 0.5) var footstep_volume_db: float = -13.0
 @export_range(0.5, 1.5, 0.01) var footstep_pitch_min: float = 0.96
 @export_range(0.5, 1.5, 0.01) var footstep_pitch_max: float = 1.04
+@export var default_surface: StringName = &"wood"
+
+@export_group("Surface Sounds")
+@export var wood_footsteps: Array[AudioStream] = [
+	preload("res://sounds/footsteps/wood/woodFootsteps1.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps2.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps3.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps4.ogg"),
+	preload("res://sounds/footsteps/wood/woodFootsteps5.ogg"),
+]
+@export var concrete_footsteps: Array[AudioStream] = [
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 1.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 2.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 3.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 4.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 5.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 6.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 7.ogg"),
+	preload("res://sounds/footsteps/concrete/Concrete footsteps 8.ogg"),
+]
+@export var dirt_footsteps: Array[AudioStream] = []
+@export var grass_footsteps: Array[AudioStream] = [
+	preload("res://sounds/footsteps/grass/Grass-footsteps-1.ogg"),
+	preload("res://sounds/footsteps/grass/Grass-footsteps-2.ogg"),
+	preload("res://sounds/footsteps/grass/Grass-footsteps-3.ogg"),
+	preload("res://sounds/footsteps/grass/Grass-footsteps-4.ogg"),
+	preload("res://sounds/footsteps/grass/Grass-footsteps-5.ogg"),
+	preload("res://sounds/footsteps/grass/Grass-footsteps-6.ogg"),
+	preload("res://sounds/footsteps/grass/Grass-footsteps-7.ogg"),
+]
+@export var snow_footsteps: Array[AudioStream] = []
+@export var metal_footsteps: Array[AudioStream] = []
+@export var custom_surface_sounds: Dictionary = {}
 
 @onready var head: Node3D = $Head
 @onready var camera: Camera3D = $Head/Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var ceiling_check: ShapeCast3D = $CeilingCheck
+@onready var floor_detector: RayCast3D = $FloorDetector
 @onready var interaction_detector: InteractionDetector = $InteractionDetector
 @onready var footstep_players: Array[AudioStreamPlayer] = [$FootstepPlayerA, $FootstepPlayerB]
+@onready var flashlight: PlayerFlashlight = get_node_or_null("Head/Camera3D/Flashlight") as PlayerFlashlight
+@onready var inventory: PlayerInventory = (get_node_or_null("InventoryHUD") as PlayerInventory) if has_node("InventoryHUD") else (get_node_or_null("Inventory") as PlayerInventory)
+
+var forced_surface: StringName = &""
 
 var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8))
 var head_bob_phase: float = 0.0
@@ -82,6 +125,8 @@ var is_frozen: bool = false
 
 
 func _ready() -> void:
+	if is_instance_valid(floor_detector):
+		floor_detector.add_exception(self)
 	_footstep_random.randomize()
 	stamina = max_stamina
 	stamina_changed.emit(stamina, max_stamina)
@@ -97,7 +142,8 @@ func _ready() -> void:
 	var height_diff := stand_capsule_height * (1.0 - crouch_height_scale)
 	crouch_capsule_height = stand_capsule_height - height_diff
 	crouch_collision_y = stand_collision_y - height_diff * 0.5
-	crouch_head_y = stand_head_y - height_diff
+	if is_instance_valid(inventory):
+		inventory.selection_changed.connect(_on_inventory_selection_changed)
 
 
 func freeze() -> void:
@@ -127,24 +173,33 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_frozen:
 		return
 
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
-		if interaction_detector.try_interact():
+	if event.is_action_pressed(&"flashlight_toggle") and not event.is_echo():
+		if is_instance_valid(inventory) and is_instance_valid(flashlight) and inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+			flashlight.toggle()
 			get_viewport().set_input_as_handled()
 			return
 
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		return
+	var is_interact_pressed: bool = event.is_action_pressed(&"interact") or (event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E)
+	if is_interact_pressed and not event.is_echo():
+		if interaction_detector.try_interact():
+			get_viewport().set_input_as_handled()
+			return
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
 
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if is_instance_valid(flashlight):
+			flashlight.add_look_impulse(event.relative)
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		var look_limit: float = deg_to_rad(vertical_look_limit_degrees)
 		head.rotation.x = clamp(head.rotation.x, -look_limit, look_limit)
+
+
+func _on_inventory_selection_changed(_slot_index: int, item_id: StringName) -> void:
+	pass
 
 
 func _physics_process(delta: float) -> void:
@@ -177,6 +232,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, target_velocity.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_velocity.z, acceleration * delta)
 
+	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 	_update_head_bob(delta)
 
@@ -253,21 +309,154 @@ func _play_footstep_for_phase_crossing(previous_phase: float, current_phase: flo
 	var previous_step := floori((previous_phase - FOOTSTEP_PHASE_OFFSET) / FOOTSTEP_PHASE_INTERVAL)
 	var current_step := floori((current_phase - FOOTSTEP_PHASE_OFFSET) / FOOTSTEP_PHASE_INTERVAL)
 	if current_step > previous_step:
-		_play_random_wood_footstep()
+		_play_footstep_sound()
+
+
+func _detect_ground_surface() -> StringName:
+	if not forced_surface.is_empty():
+		return forced_surface
+
+	var collider: Object = null
+	if is_instance_valid(floor_detector):
+		floor_detector.force_raycast_update()
+		if floor_detector.is_colliding():
+			collider = floor_detector.get_collider()
+
+	if not is_instance_valid(collider) and get_slide_collision_count() > 0:
+		for i in range(get_slide_collision_count()):
+			var collision := get_slide_collision(i)
+			if collision != null and collision.get_normal().y > 0.5:
+				collider = collision.get_collider()
+				break
+
+	if not is_instance_valid(collider) and is_on_floor():
+		var last_collision := get_last_slide_collision()
+		if last_collision != null:
+			collider = last_collision.get_collider()
+
+	if not is_instance_valid(collider):
+		return default_surface
+
+	# 1. Check collider itself
+	var surface := _check_node_surface(collider as Node)
+	if not surface.is_empty():
+		return surface
+
+	# 2. Check collision shape children and specific hit shape
+	if collider is CollisionObject3D:
+		var col_obj := collider as CollisionObject3D
+		if is_instance_valid(floor_detector) and floor_detector.is_colliding() and floor_detector.get_collider() == collider:
+			var shape_idx := floor_detector.get_collider_shape()
+			if shape_idx >= 0:
+				var owner_id := col_obj.shape_find_owner(shape_idx)
+				var shape_node := col_obj.shape_owner_get_owner(owner_id)
+				surface = _check_node_surface(shape_node)
+				if not surface.is_empty():
+					return surface
+
+		for child in col_obj.get_children():
+			surface = _check_node_surface(child)
+			if not surface.is_empty():
+				return surface
+
+	# 3. Check siblings (e.g. GroundPlane MeshInstance3D next to StaticBody3D)
+	var parent := (collider as Node).get_parent()
+	if is_instance_valid(parent):
+		for sibling in parent.get_children():
+			if sibling != collider and (sibling is MeshInstance3D or sibling.name.to_lower().contains("ground") or sibling.name.to_lower().contains("floor")):
+				surface = _check_node_surface(sibling)
+				if not surface.is_empty():
+					return surface
+
+	# 4. Check ancestors up the tree
+	var ancestor := parent
+	var depth := 0
+	while is_instance_valid(ancestor) and depth < 3:
+		surface = _check_node_surface(ancestor)
+		if not surface.is_empty():
+			return surface
+		ancestor = ancestor.get_parent()
+		depth += 1
+
+	return default_surface
+
+
+func _check_node_surface(node: Node) -> StringName:
+	if not is_instance_valid(node):
+		return &""
+	if node.has_meta("surface"):
+		return StringName(str(node.get_meta("surface")).to_lower())
+	if node.has_meta("surface_type"):
+		return StringName(str(node.get_meta("surface_type")).to_lower())
+	if node.has_meta("footstep"):
+		return StringName(str(node.get_meta("footstep")).to_lower())
+
+	var surface_prop = node.get("surface_type")
+	if surface_prop != null and not str(surface_prop).is_empty():
+		return StringName(str(surface_prop).to_lower())
+
+	for group in node.get_groups():
+		var g_str := str(group).to_lower()
+		if g_str.begins_with("surface_"):
+			return StringName(g_str.substr(8))
+		if g_str in [&"wood", &"concrete", &"asphalt", &"stone", &"road", &"dirt", &"mud", &"ground", &"grass", &"snow", &"ice", &"metal", &"carpet", &"water", &"gravel"]:
+			return StringName(g_str)
+
+	return &""
+
+
+func _get_sounds_for_surface(surface: StringName) -> Array[AudioStream]:
+	match surface:
+		&"wood":
+			return wood_footsteps
+		&"concrete", &"asphalt", &"stone", &"road":
+			return concrete_footsteps
+		&"dirt", &"mud", &"ground":
+			return dirt_footsteps
+		&"grass", &"foliage":
+			return grass_footsteps
+		&"snow", &"ice":
+			return snow_footsteps
+		&"metal":
+			return metal_footsteps
+		_:
+			if custom_surface_sounds.has(surface):
+				var custom_list = custom_surface_sounds[surface]
+				if custom_list is Array:
+					var cast_array: Array[AudioStream] = []
+					for item in custom_list:
+						if item is AudioStream:
+							cast_array.append(item)
+					return cast_array
+			return []
 
 
 func _play_random_wood_footstep() -> void:
-	if WOOD_FOOTSTEPS.is_empty() or footstep_players.is_empty():
+	_play_footstep_sound()
+
+
+func _play_footstep_sound() -> void:
+	if footstep_players.is_empty():
 		return
 
-	var sound_index := _footstep_random.randi_range(0, WOOD_FOOTSTEPS.size() - 1)
-	if WOOD_FOOTSTEPS.size() > 1 and sound_index == _last_footstep_index:
-		sound_index = (sound_index + _footstep_random.randi_range(1, WOOD_FOOTSTEPS.size() - 1)) % WOOD_FOOTSTEPS.size()
+	var surface := _detect_ground_surface()
+	var sound_list := _get_sounds_for_surface(surface)
+
+	if sound_list.is_empty() and surface != default_surface:
+		sound_list = _get_sounds_for_surface(default_surface)
+	if sound_list.is_empty():
+		sound_list = wood_footsteps
+	if sound_list.is_empty():
+		return
+
+	var sound_index := _footstep_random.randi_range(0, sound_list.size() - 1)
+	if sound_list.size() > 1 and sound_index == _last_footstep_index:
+		sound_index = (sound_index + _footstep_random.randi_range(1, sound_list.size() - 1)) % sound_list.size()
 	_last_footstep_index = sound_index
 
 	var footstep_player := footstep_players[_footstep_player_index]
 	_footstep_player_index = (_footstep_player_index + 1) % footstep_players.size()
-	footstep_player.stream = WOOD_FOOTSTEPS[sound_index]
+	footstep_player.stream = sound_list[sound_index]
 	footstep_player.volume_db = footstep_volume_db
 	footstep_player.pitch_scale = _footstep_random.randf_range(
 		minf(footstep_pitch_min, footstep_pitch_max),

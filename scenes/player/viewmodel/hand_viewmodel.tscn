@@ -139,6 +139,9 @@ colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.55, 1, 1, 1, 0.55, 1, 1, 1, 0)
 
 [sub_resource type="LabelSettings" id="LabelSettings_jpyye"]
 font = ExtResource("30_stamina_font")
+font_size = 24
+outline_size = 3
+outline_color = Color(0, 0, 0, 0.9)
 
 [node name="HandViewmodel" type="CanvasLayer" unique_id=821727808]
 layer = 20
