@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bjvf4h0ht82pd"
+path="res://.godot/imported/Concrete footsteps 5.ogg-310a3b24e9e6176ef61c44c04fa96c4a.oggvorbisstr"
+
+[deps]
+
+source_file="res://sounds/footsteps/concrete/Concrete footsteps 5.ogg"
+dest_files=["res://.godot/imported/Concrete footsteps 5.ogg-310a3b24e9e6176ef61c44c04fa96c4a.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

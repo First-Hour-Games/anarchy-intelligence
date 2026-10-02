@@ -22,6 +22,9 @@
 [ext_resource type="PackedScene" path="res://assets/local_licensed/trees_v1/trees_v1_tree.tscn" id="17_7ds25"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box/bottom_dialogue_balloon.tscn" id="17_dialogue_balloon"]
 [ext_resource type="Resource" uid="uid://cojogwthiwlq8" path="res://scenes/chapters/main/starting_forest.dialogue" id="18_forest_dialogue"]
+[ext_resource type="AudioStream" uid="uid://b8wwcc67fwdg5" path="res://sounds/ambience/forest/nightAmbience.mp3" id="19_ambience"]
+[ext_resource type="AudioStream" uid="uid://2gr2qmijragi" path="res://music/theVisitor.mp3" id="22_the_visitor"]
+[ext_resource type="PackedScene" path="res://assets/local_licensed/trees_v1/trees_v1_tree_003.tscn" id="25_7ds25"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -47,8 +50,7 @@ background_energy_multiplier = 0.6
 sky = SubResource("Sky_bernf")
 ambient_light_source = 3
 ambient_light_color = Color(0.15487596, 0.154876, 0.15487596, 1)
-ambient_light_sky_contribution = 0.95
-ambient_light_energy = 7.72
+ambient_light_energy = 1.19
 ssao_radius = 7.15
 ssao_intensity = 6.78
 ssao_detail = 0.7
@@ -63,12 +65,16 @@ fog_depth_curve = 1.7411014
 fog_depth_begin = 0.0
 fog_depth_end = 148.6
 volumetric_fog_enabled = true
+volumetric_fog_density = 0.0472
 volumetric_fog_albedo = Color(0.2888107, 0.35548314, 0.2732978, 1)
-volumetric_fog_emission = Color(0.23031491, 0.23031494, 0.23031494, 1)
-volumetric_fog_length = 383.95
+volumetric_fog_emission = Color(0.14044744, 0.14044744, 0.14044744, 1)
+volumetric_fog_emission_energy = 2.99
+volumetric_fog_gi_inject = 1.39
+volumetric_fog_anisotropy = -0.12
+volumetric_fog_length = 649.56
 volumetric_fog_detail_spread = 1.1892072
 volumetric_fog_ambient_inject = 1.75
-volumetric_fog_sky_affect = 0.88
+volumetric_fog_temporal_reprojection_amount = 0.937
 adjustment_enabled = true
 adjustment_saturation = 0.85
 
@@ -296,12 +302,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, 180)
 mesh = SubResource("PlaneMesh_6q7tk")
 surface_material_override/0 = SubResource("ShaderMaterial_rrvih")
 metadata/_edit_lock_ = true
+metadata/surface = "grass"
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1066228494]
+metadata/surface = "grass"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=684814405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, 180)
 shape = SubResource("ConcavePolygonShape3D_n1tha")
+metadata/surface = "grass"
 
 [node name="Foliage" type="Node3D" parent="." unique_id=1216576536]
 
@@ -349,14 +358,14 @@ spot_range = 8.471206
 spot_angle = 56.532692
 
 [node name="dead_tree_rt_155" parent="." unique_id=1490817319 instance=ExtResource("14_bernf")]
-transform = Transform3D(1.2056148, 0, 0, 0, 1.3621228, 0, 0, 0, 1.1674359, -261.7948, -0.0060327053, -3.27358)
+transform = Transform3D(1.2056148, 0, 0, 0, 1.2707283, 0, 0, 0, 1.1674359, -261.7948, -0.0060327053, -2.0260053)
 
 [node name="tree15" parent="." unique_id=731075023 instance=ExtResource("17_7ds25")]
 transform = Transform3D(-2.5950494, 0, 2.3302517, 0, 2.8631406, 0, -2.5334663, 0, -2.5090108, -323.37567, -0.29157487, -19.682322)
 visible = false
 
 [node name="dead_tree_rt_156" parent="." unique_id=1550499089 instance=ExtResource("14_bernf")]
-transform = Transform3D(0.4217959, 0, -1.0626497, 0, 1.3282919, 0, 1.0974017, 0, 0.40843865, -256.62506, -0.0060327053, -1.9525349)
+transform = Transform3D(1.1761626, 0, -0.0058787647, 0, 1.3772252, 0, 0.0055686734, 0, 1.2416424, -255.98997, 0.0053265095, 1.2443604)
 
 [node name="Player" parent="." unique_id=1484211140 instance=ExtResource("13_bernf")]
 transform = Transform3D(0.605752, 0, -0.7956535, 0, 1, 0, 0.7956535, 0, 0.605752, -279.6729, 0.21511996, 8.065367)
@@ -461,6 +470,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -0.1, 8.179955)
 use_collision = true
 size = Vector3(600, 0.4, 8)
 material = SubResource("StandardMaterial3D_avnp4")
+metadata/surface = "concrete"
 
 [node name="MainRoad_CenterLine" type="CSGBox3D" parent="Streets" unique_id=1758345466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.105, 8.179955)
@@ -468,8 +478,13 @@ size = Vector3(600, 0.01, 0.15)
 material = SubResource("StandardMaterial3D_blglh")
 
 [node name="MainRoad_EdgeLine_North" type="CSGBox3D" parent="Streets" unique_id=2086719259]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.105, 4.5799546)
-size = Vector3(600, 0.01, 0.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.105, 4.5799546)
+size = Vector3(515, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_vbdqn")
+
+[node name="MainRoad_EdgeLine_North2" type="CSGBox3D" parent="Streets" unique_id=1618208740]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.26782, 0.105, 4.5799546)
+size = Vector3(61.4, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_vbdqn")
 
 [node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="Streets" unique_id=1907099981]
@@ -478,18 +493,21 @@ size = Vector3(600, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_vbdqn")
 
 [node name="ParkingLot" type="Node3D" parent="." unique_id=612701265]
+metadata/surface = "concrete"
 
 [node name="MainRoad" type="CSGBox3D" parent="ParkingLot" unique_id=812442863]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -277.5, -0.1, 2.5947547)
 use_collision = true
 size = Vector3(25, 0.4, 8)
 material = SubResource("StandardMaterial3D_avnp4")
+metadata/surface = "concrete"
 
 [node name="MainRoad2" type="CSGBox3D" parent="ParkingLot" unique_id=2077443011]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -283, -0.1, -11.905245)
 use_collision = true
 size = Vector3(14, 0.4, 21)
 material = SubResource("StandardMaterial3D_avnp4")
+metadata/surface = "concrete"
 
 [node name="BottomDialogueBalloon" parent="." unique_id=2140000001 instance=ExtResource("17_dialogue_balloon")]
 dialogue_resource = ExtResource("18_forest_dialogue")
@@ -498,3 +516,20 @@ auto_start = true
 [node name="dead_tree_rt_1" type="MeshInstance3D" parent="." unique_id=588081984]
 transform = Transform3D(2.1928873, 0, 0, 0, 0, -2.1928873, 0, 2.1928873, 0, 0, 0, 0)
 mesh = SubResource("ArrayMesh_11s4a")
+
+[node name="NightAmbience" type="AudioStreamPlayer" parent="." unique_id=1816400782]
+stream = ExtResource("19_ambience")
+volume_db = -4.0
+autoplay = true
+
+[node name="VisitorBGM" type="AudioStreamPlayer" parent="." unique_id=151678305]
+stream = ExtResource("22_the_visitor")
+volume_db = -6.0
+bus = &"Music"
+
+[node name="tree_004" parent="." unique_id=1896254311 instance=ExtResource("25_7ds25")]
+transform = Transform3D(0.24680898, 0, -0.98089147, 0, 1.0114657, 0, 0.98089147, 0, 0.24680898, -247.9456, -0.22229062, -0.080916405)
+
+[connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
+[connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]
+[connection signal="finished" from="VisitorBGM" to="VisitorBGM" method="play"]
