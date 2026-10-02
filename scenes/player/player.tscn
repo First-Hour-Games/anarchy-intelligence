@@ -1,8 +1,10 @@
-[gd_scene format=3 uid="uid://c1yrt156ikqol"]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="Script" uid="uid://cfmuug7p0nv5l" path="res://scenes/player/player.gd" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://dqhht7rdhtra7" path="res://scenes/player/viewmodel/hand_viewmodel.tscn" id="2_viewmodel"]
-[ext_resource type="Script" uid="uid://csgctl1134gpg" path="res://scenes/interaction/interaction_detector.gd" id="3_interaction_detector"]
+[ext_resource type="Script" path="res://scenes/player/player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/player/viewmodel/hand_viewmodel.tscn" id="2_viewmodel"]
+[ext_resource type="Script" path="res://scenes/interaction/interaction_detector.gd" id="3_interaction_detector"]
+[ext_resource type="PackedScene" path="res://scenes/player/flashlight/player_flashlight.tscn" id="4_flashlight"]
+[ext_resource type="PackedScene" path="res://scenes/player/inventory/player_inventory.tscn" id="5_inventory"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.35
@@ -35,9 +37,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 current = true
 fov = 74.0
 
-[node name="HandViewmodel" parent="." unique_id=1490281528 instance=ExtResource("2_viewmodel")]
+[node name="Flashlight" parent="Head/Camera3D" instance=ExtResource("4_flashlight")]
 
-[node name="InteractionDetector" type="Node" parent="." unique_id=1035506450]
+[node name="HandViewmodel" parent="." instance=ExtResource("2_viewmodel")]
+
+[node name="InventoryHUD" parent="." instance=ExtResource("5_inventory")]
+
+[node name="InteractionDetector" type="Node" parent="."]
 script = ExtResource("3_interaction_detector")
 
 [node name="FootstepPlayerA" type="AudioStreamPlayer" parent="." unique_id=65252252]

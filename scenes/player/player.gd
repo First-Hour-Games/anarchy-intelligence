@@ -14,6 +14,8 @@ const WOOD_FOOTSTEPS := [
 ]
 const FOOTSTEP_PHASE_OFFSET := PI * 0.75
 const FOOTSTEP_PHASE_INTERVAL := PI
+const SURFACES := preload("res://scenes/player/footstep_surfaces.gd")
+var current_footstep_surface: StringName = &"dirt"
 
 @export_category("Movement")
 @export var walk_speed: float = 3.2
@@ -23,7 +25,7 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 @export var air_acceleration: float = 3.0
 
 @export_category("Stamina")
-@export_range(1.0, 500.0, 1.0) var max_stamina: float = 100.0
+@export_range(1.0, 500.0, 1.0) var max_stamina: float = 200.0
 @export_range(1.0, 100.0, 1.0) var sprint_stamina_cost: float = 24.0
 @export_range(1.0, 100.0, 1.0) var stamina_regeneration_rate: float = 18.0
 @export_range(0.0, 5.0, 0.1) var stamina_regeneration_delay: float = 0.8
@@ -31,6 +33,9 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 
 @export_category("Jump")
 @export var jump_velocity: float = 3.4
+
+@export_category("Stair Stepping")
+@export var max_step_height: float = 0.3
 
 @export_category("Crouch")
 @export_range(0.3, 0.9, 0.01) var crouch_height_scale: float = 0.55
@@ -136,6 +141,7 @@ func _ready() -> void:
 	crouch_capsule_height = stand_capsule_height - height_diff
 	crouch_collision_y = stand_collision_y - height_diff * 0.5
 	crouch_head_y = stand_head_y - height_diff
+	inventory.selection_changed.connect(_on_inventory_selection_changed)
 
 
 func freeze() -> void:
@@ -165,24 +171,31 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_frozen:
 		return
 
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
-		if interaction_detector.try_interact():
+	if event.is_action_pressed(&"flashlight_toggle") and not event.is_echo():
+		if inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+			flashlight.toggle()
 			get_viewport().set_input_as_handled()
 			return
 
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		return
+	if event.is_action_pressed(&"interact") and not event.is_echo():
+		if interaction_detector.try_interact():
+			get_viewport().set_input_as_handled()
+			return
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
 
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		flashlight.add_look_impulse(event.relative)
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		var look_limit: float = deg_to_rad(vertical_look_limit_degrees)
 		head.rotation.x = clamp(head.rotation.x, -look_limit, look_limit)
+
+
+func _on_inventory_selection_changed(_slot_index: int, item_id: StringName) -> void:
+	pass
 
 
 func _physics_process(delta: float) -> void:
@@ -215,6 +228,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, target_velocity.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_velocity.z, acceleration * delta)
 
+	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 	_update_head_bob(delta)
 

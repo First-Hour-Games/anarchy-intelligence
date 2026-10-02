@@ -13,13 +13,23 @@ extends WorldEnvironment
 @export var editor_environment: Environment
 @export_node_path("DirectionalLight3D") var preview_light_path: NodePath
 
+var _runtime_overhead_preview_active: bool = false
+
 
 func _ready() -> void:
 	_apply_environment()
 
 
+func set_runtime_overhead_preview_active(is_active: bool) -> void:
+	_runtime_overhead_preview_active = is_active
+	_apply_environment()
+
+
 func _apply_environment() -> void:
-	var use_editor_preview := Engine.is_editor_hint() and preview_active_in_editor
+	var use_editor_preview := (
+		(Engine.is_editor_hint() and preview_active_in_editor)
+		or _runtime_overhead_preview_active
+	)
 	if use_editor_preview and editor_environment:
 		environment = editor_environment
 	elif gameplay_environment:

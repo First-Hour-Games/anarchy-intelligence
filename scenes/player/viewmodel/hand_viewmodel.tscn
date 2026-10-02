@@ -139,6 +139,9 @@ colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.55, 1, 1, 1, 0.55, 1, 1, 1, 0)
 
 [sub_resource type="LabelSettings" id="LabelSettings_jpyye"]
 font = ExtResource("30_stamina_font")
+font_size = 24
+outline_size = 3
+outline_color = Color(0, 0, 0, 0.9)
 
 [node name="HandViewmodel" type="CanvasLayer" unique_id=821727808]
 layer = 20
@@ -255,12 +258,12 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -180.0
-offset_top = -104.0
+offset_top = -158.0
 offset_right = 180.0
-offset_bottom = -19.0
+offset_bottom = -73.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(0.655, 0.655)
+scale = Vector2(0.55, 0.55)
 pivot_offset = Vector2(180, 0)
 mouse_filter = 2
 
@@ -277,7 +280,7 @@ theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("30_stamina_font")
 theme_override_font_sizes/font_size = 43
-text = "stamina"
+text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -304,7 +307,7 @@ modulate = Color(1, 1, 1, 0)
 offset_right = 64.0
 offset_bottom = 64.0
 mouse_filter = 2
-texture = ExtResource("31_interact_label")
+texture = null
 expand_mode = 1
 
 [node name="Label" type="Label" parent="InteractPrompt" unique_id=141224721]
@@ -312,12 +315,12 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -30.5
+offset_left = -60.0
 offset_top = -15.73
-offset_right = 30.5
+offset_right = 60.0
 offset_bottom = 7.2700005
 grow_horizontal = 2
-text = "interact"
+text = "R  EXAMINE"
 label_settings = SubResource("LabelSettings_jpyye")
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -27,7 +27,48 @@ func _ready() -> void:
 	_prepare_source(source)
 	_improve_texture_filtering(source, {})
 	if not Engine.is_editor_hint():
+		add_to_group("enemy_route_building")
 		_build_structural_collision(source)
+		var doorway := NavigationLink3D.new()
+		doorway.name = "OpenDoorwayRoute"
+		doorway.start_position = Vector3(11.75, 0.25, 12.5)
+		doorway.end_position = Vector3(11.75, 0.25, 7.5)
+		add_child(doorway)
+		var stairs := NavigationLink3D.new()
+		stairs.name = "MainStairRoute"
+		stairs.start_position = Vector3(10.85, 0.1, 1.25)
+		stairs.end_position = Vector3(5.4, 3.57, 2.8)
+		add_child(stairs)
+
+func contains_route_point(point: Vector3) -> bool:
+	var local := to_local(point)
+	return local.x > -17 and local.x < 19 and local.z > -10.5 and local.z < 9.65 and local.y > -0.3 and local.y < 7
+
+func route_transitions(from: Vector3, destination: Vector3) -> Array[Dictionary]:
+	var gates: Array[Dictionary] = []
+	var start := to_local(from)
+	var goal := to_local(destination)
+	var inside_start := contains_route_point(from)
+	var inside_goal := contains_route_point(destination)
+	if not inside_start and inside_goal:
+		gates.append({"point": to_global(Vector3(11.75, 0.1, 12.5)), "direct": false})
+		gates.append({"point": to_global(Vector3(11.75, 0.1, 9.8)), "direct": true})
+		gates.append({"point": to_global(Vector3(11.75, 0.1, 7.5)), "direct": true})
+	if inside_goal and goal.y > 2.5 and (not inside_start or start.y < 2.5):
+		gates.append({"point": to_global(Vector3(10.85, 0.1, 1.25)), "direct": false})
+		gates.append({"point": to_global(Vector3(5.65, 3.57, 1.25)), "direct": true})
+		gates.append({"point": to_global(Vector3(5.4, 3.57, 1.25)), "direct": true})
+		gates.append({"point": to_global(Vector3(5.4, 3.57, 2.8)), "direct": true})
+	elif inside_start and start.y > 2.5 and (not inside_goal or goal.y < 2.5):
+		gates.append({"point": to_global(Vector3(5.4, 3.57, 2.8)), "direct": false})
+		gates.append({"point": to_global(Vector3(5.4, 3.57, 1.25)), "direct": true})
+		gates.append({"point": to_global(Vector3(5.65, 3.57, 1.25)), "direct": true})
+		gates.append({"point": to_global(Vector3(10.85, 0.1, 1.25)), "direct": true})
+	if inside_start and not inside_goal:
+		gates.append({"point": to_global(Vector3(11.75, 0.1, 7.5)), "direct": false})
+		gates.append({"point": to_global(Vector3(11.75, 0.1, 9.8)), "direct": true})
+		gates.append({"point": to_global(Vector3(11.75, 0.1, 12.5)), "direct": true})
+	return gates
 
 
 func _prepare_source(source: Node3D) -> void:
