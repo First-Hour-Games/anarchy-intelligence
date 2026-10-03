@@ -11,11 +11,7 @@ signal dialogue_finished
 @export var next_action: StringName = &"ui_accept"
 @export var skip_action: StringName = &"ui_cancel"
 
-@export_category("Visuals")
-@export var placeholder_portrait: Texture2D = preload("res://img/ui/dialogue_portrait_placeholder.png")
-
 @onready var balloon: Control = %Balloon
-@onready var portrait_icon: TextureRect = %PortraitIcon
 @onready var character_label: RichTextLabel = %CharacterLabel
 @onready var dialogue_label: Control = %DialogueLabel
 @onready var responses_menu: Control = %ResponsesMenu
@@ -139,10 +135,6 @@ func apply_dialogue_line() -> void:
 	if character_label.visible:
 		character_label.text = tr(char_name, "dialogue").to_upper()
 
-	# Portrait placeholder / sprite icon
-	if is_instance_valid(portrait_icon):
-		portrait_icon.texture = placeholder_portrait
-		portrait_icon.visible = true
 
 	dialogue_label.hide()
 	dialogue_label.dialogue_line = dialogue_line

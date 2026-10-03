@@ -149,7 +149,6 @@ func _ready() -> void:
 func freeze() -> void:
 	is_frozen = true
 	velocity = Vector3.ZERO
-	set_physics_process(false)
 	set_process_unhandled_input(false)
 	for footstep_player in footstep_players:
 		if is_instance_valid(footstep_player) and footstep_player.playing:
@@ -163,7 +162,6 @@ func freeze() -> void:
 
 func unfreeze() -> void:
 	is_frozen = false
-	set_physics_process(true)
 	set_process_unhandled_input(true)
 	if is_instance_valid(interaction_detector):
 		interaction_detector.set_process(true)
@@ -198,12 +196,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		head.rotation.x = clamp(head.rotation.x, -look_limit, look_limit)
 
 
-func _on_inventory_selection_changed(_slot_index: int, item_id: StringName) -> void:
+func _on_inventory_selection_changed(_slot_index: int, _item_id: StringName) -> void:
 	pass
 
 
 func _physics_process(delta: float) -> void:
 	if is_frozen:
+		_update_stamina(delta, false)
 		return
 
 	_update_crouch(delta)

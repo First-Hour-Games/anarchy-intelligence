@@ -19,58 +19,209 @@ signal inspection_ended(player: FirstPersonPlayer)
 @export_category("Controls")
 @export var exit_key: Key = KEY_BACKSPACE
 @export var dialogue_balloon_scene: PackedScene = preload("res://scenes/ui/dialogue_box/bottom_dialogue_balloon.tscn")
+const ItemPickupScreenScript = preload("res://scenes/ui/item_pickup/item_pickup_screen.gd")
+
+@export_category("Blink Transition")
+@export var blink_sound: AudioStream = preload("res://sounds/player/blink.mp3")
+@export_range(-40.0, 6.0, 0.5) var blink_sound_volume_db: float = 0.0
+@export var blink_sound_bus: StringName = &"Master"
+@export var blink_close_duration: float = 0.16
+@export var blink_hold_duration: float = 0.08
+@export var blink_open_duration: float = 0.20
 
 var is_inspecting: bool = false
 var current_player: FirstPersonPlayer = null
 var _original_cam_transform: Transform3D
 var _hotspot_map: Dictionary = {} # InspectionHotspot3D -> InspectionDotButton
-var _overlay_canvas: CanvasLayer = null
+var _dots_canvas: CanvasLayer = null
+var _prompt_canvas: CanvasLayer = null
 var _dots_container: Control = null
 var _exit_prompt_label: Label = null
 var _active_dialogue_balloon: CanvasLayer = null
+var _blink_canvas: CanvasLayer = null
+var _top_eyelid: ColorRect = null
+var _bottom_eyelid: ColorRect = null
+var _blink_audio_player: AudioStreamPlayer = null
+var _is_transitioning: bool = false
 
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	if blink_sound == null:
+		blink_sound = preload("res://sounds/player/blink.mp3")
 	_build_overlay_ui()
+	_setup_audio()
 
 
 func _build_overlay_ui() -> void:
-	if is_instance_valid(_overlay_canvas):
+	if is_instance_valid(_dots_canvas):
 		return
 
-	_overlay_canvas = CanvasLayer.new()
-	_overlay_canvas.layer = 95
-	add_child(_overlay_canvas)
-
-	var root_control := Control.new()
-	root_control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_overlay_canvas.add_child(root_control)
+	# Dots canvas rendered at layer 15 (strictly behind AspectRatioBars at layer 19)
+	_dots_canvas = CanvasLayer.new()
+	_dots_canvas.layer = 15
+	add_child(_dots_canvas)
 
 	_dots_container = Control.new()
 	_dots_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_dots_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root_control.add_child(_dots_container)
+	_dots_canvas.add_child(_dots_container)
 
-	# Bottom exit prompt
+	# Prompt canvas rendered at layer 20 inside 4:3 safe area
+	_prompt_canvas = CanvasLayer.new()
+	_prompt_canvas.layer = 20
+	add_child(_prompt_canvas)
+
+	var arc := AspectRatioContainer.new()
+	arc.ratio = 1.33333
+	arc.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	arc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_prompt_canvas.add_child(arc)
+
+	var prompt_content := Control.new()
+	prompt_content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	prompt_content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	arc.add_child(prompt_content)
+
+	# Bottom exit prompt inside 4:3 safe area
 	_exit_prompt_label = Label.new()
 	_exit_prompt_label.text = "[ Backspace ] Return"
 	_exit_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_exit_prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_exit_prompt_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	_exit_prompt_label.offset_top = -65.0
-	_exit_prompt_label.offset_bottom = -25.0
+	_exit_prompt_label.offset_top = -55.0
+	_exit_prompt_label.offset_bottom = -20.0
 	_exit_prompt_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9, 0.8))
 	_exit_prompt_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
 	_exit_prompt_label.add_theme_constant_override("shadow_offset_x", 1)
 	_exit_prompt_label.add_theme_constant_override("shadow_offset_y", 1)
 	_exit_prompt_label.add_theme_font_size_override("font_size", 18)
 	_exit_prompt_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root_control.add_child(_exit_prompt_label)
+	prompt_content.add_child(_exit_prompt_label)
 
-	_overlay_canvas.visible = false
+	# Eyelid blink canvas rendered at layer 50
+	_blink_canvas = CanvasLayer.new()
+	_blink_canvas.layer = 50
+	add_child(_blink_canvas)
+
+	var blink_container := Control.new()
+	blink_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blink_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_blink_canvas.add_child(blink_container)
+
+	_top_eyelid = ColorRect.new()
+	_top_eyelid.color = Color.BLACK
+	_top_eyelid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blink_container.add_child(_top_eyelid)
+
+	_bottom_eyelid = ColorRect.new()
+	_bottom_eyelid.color = Color.BLACK
+	_bottom_eyelid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blink_container.add_child(_bottom_eyelid)
+
+	_reset_eyelids()
+
+	_dots_canvas.visible = false
+	_prompt_canvas.visible = false
+	_blink_canvas.visible = false
+
+
+func _reset_eyelids() -> void:
+	if is_instance_valid(_top_eyelid):
+		_top_eyelid.anchor_left = 0.0
+		_top_eyelid.anchor_right = 1.0
+		_top_eyelid.anchor_top = 0.0
+		_top_eyelid.anchor_bottom = 0.0
+		_top_eyelid.offset_left = 0.0
+		_top_eyelid.offset_right = 0.0
+		_top_eyelid.offset_top = 0.0
+		_top_eyelid.offset_bottom = 0.0
+	if is_instance_valid(_bottom_eyelid):
+		_bottom_eyelid.anchor_left = 0.0
+		_bottom_eyelid.anchor_right = 1.0
+		_bottom_eyelid.anchor_top = 1.0
+		_bottom_eyelid.anchor_bottom = 1.0
+		_bottom_eyelid.offset_left = 0.0
+		_bottom_eyelid.offset_right = 0.0
+		_bottom_eyelid.offset_top = 0.0
+		_bottom_eyelid.offset_bottom = 0.0
+
+
+func _setup_audio() -> void:
+	if is_instance_valid(_blink_audio_player):
+		return
+	_blink_audio_player = AudioStreamPlayer.new()
+	_blink_audio_player.name = "BlinkAudioPlayer"
+	_blink_audio_player.bus = blink_sound_bus
+	add_child(_blink_audio_player)
+
+
+func _play_blink_sound() -> void:
+	var sound: AudioStream = blink_sound
+	if sound == null:
+		sound = preload("res://sounds/player/blink.mp3")
+	if sound == null:
+		return
+	if not is_instance_valid(_blink_audio_player):
+		_setup_audio()
+	if is_instance_valid(_blink_audio_player):
+		_blink_audio_player.stream = sound
+		_blink_audio_player.volume_db = blink_sound_volume_db
+		_blink_audio_player.bus = blink_sound_bus
+		_blink_audio_player.play()
+
+
+func _play_blink_transition(on_blacked_out: Callable, on_complete: Callable = Callable()) -> void:
+	_play_blink_sound()
+
+	if not is_instance_valid(_blink_canvas) or not is_instance_valid(_top_eyelid) or not is_instance_valid(_bottom_eyelid):
+		if on_blacked_out.is_valid():
+			on_blacked_out.call()
+		if on_complete.is_valid():
+			on_complete.call()
+		return
+
+	_reset_eyelids()
+	_blink_canvas.visible = true
+
+	# 1. Close eyelids
+	var close_tween := create_tween()
+	close_tween.set_parallel(true)
+	close_tween.tween_property(_top_eyelid, "anchor_bottom", 0.505, blink_close_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	close_tween.tween_property(_bottom_eyelid, "anchor_top", 0.495, blink_close_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await close_tween.finished
+
+	if not is_inside_tree():
+		return
+
+	# 2. Hold on black for a brief moment
+	if blink_hold_duration > 0.0:
+		await get_tree().create_timer(blink_hold_duration, false).timeout
+		if not is_inside_tree():
+			return
+
+	# 3. Instant cut while fully blacked out
+	if on_blacked_out.is_valid():
+		on_blacked_out.call()
+
+	# 4. Open eyelids
+	var open_tween := create_tween()
+	open_tween.set_parallel(true)
+	open_tween.tween_property(_top_eyelid, "anchor_bottom", 0.0, blink_open_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	open_tween.tween_property(_bottom_eyelid, "anchor_top", 1.0, blink_open_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	await open_tween.finished
+
+	if not is_inside_tree():
+		return
+
+	# 5. Finish
+	_reset_eyelids()
+	if is_instance_valid(_blink_canvas):
+		_blink_canvas.visible = false
+
+	if on_complete.is_valid():
+		on_complete.call()
 
 
 func _get_camera_anchor() -> Marker3D:
@@ -83,61 +234,86 @@ func _get_camera_anchor() -> Marker3D:
 
 func start_inspection(player: FirstPersonPlayer) -> void:
 	var anchor := _get_camera_anchor()
-	if is_inspecting or not is_instance_valid(player) or not is_instance_valid(anchor):
+	if is_inspecting or _is_transitioning or not is_instance_valid(player) or not is_instance_valid(anchor):
 		return
 
+	_is_transitioning = true
 	is_inspecting = true
 	current_player = player
 
-	# Freeze player movement, input, and footsteps
+	# Freeze player movement, input, and footsteps immediately
 	current_player.freeze()
 
-	# Instant cut camera to anchor using top_level so it's fully independent of Head
-	_original_cam_transform = current_player.camera.transform
-	current_player.camera.top_level = true
-	var anchor_basis := anchor.global_basis.orthonormalized()
-	current_player.camera.global_transform = Transform3D(anchor_basis, anchor.global_position)
+	_play_blink_transition(
+		func() -> void:
+			if not is_instance_valid(current_player) or not is_instance_valid(current_player.camera):
+				return
+			var target_anchor := _get_camera_anchor()
+			if not is_instance_valid(target_anchor):
+				return
 
-	# Enable mouse cursor
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			# Instant cut camera to anchor using top_level so it's fully independent of Head
+			_original_cam_transform = current_player.camera.transform
+			current_player.camera.top_level = true
+			var anchor_basis := target_anchor.global_basis.orthonormalized()
+			current_player.camera.global_transform = Transform3D(anchor_basis, target_anchor.global_position)
 
-	# Prepare hotspots and overlay
-	_refresh_hotspots()
-	_overlay_canvas.visible = true
+			# Enable mouse cursor
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
-	inspection_started.emit(current_player)
+			# Prepare hotspots and overlay
+			_refresh_hotspots()
+			if is_instance_valid(_dots_canvas):
+				_dots_canvas.visible = true
+			if is_instance_valid(_prompt_canvas):
+				_prompt_canvas.visible = true
+
+			inspection_started.emit(current_player),
+		func() -> void:
+			_is_transitioning = false
+	)
 
 
 func exit_inspection() -> void:
-	if not is_inspecting:
+	if not is_inspecting or _is_transitioning:
 		return
 
-	is_inspecting = false
-
-	# If a dialogue balloon is open, close it
-	if is_instance_valid(_active_dialogue_balloon):
-		_active_dialogue_balloon.queue_free()
-		_active_dialogue_balloon = null
-
-	# Hide overlay
-	if is_instance_valid(_overlay_canvas):
-		_overlay_canvas.visible = false
-
-	# Instant cut camera back to player head
-	if is_instance_valid(current_player) and is_instance_valid(current_player.camera):
-		current_player.camera.top_level = false
-		current_player.camera.transform = _original_cam_transform
-		current_player.unfreeze()
-
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
+	_is_transitioning = true
 	var departing_player := current_player
-	current_player = null
-	inspection_ended.emit(departing_player)
+
+	_play_blink_transition(
+		func() -> void:
+			# If a dialogue balloon is open, close it
+			if is_instance_valid(_active_dialogue_balloon):
+				_active_dialogue_balloon.queue_free()
+				_active_dialogue_balloon = null
+
+			# Hide overlays
+			if is_instance_valid(_dots_canvas):
+				_dots_canvas.visible = false
+			if is_instance_valid(_prompt_canvas):
+				_prompt_canvas.visible = false
+
+			# Instant cut camera back to player head
+			if is_instance_valid(departing_player) and is_instance_valid(departing_player.camera):
+				departing_player.camera.top_level = false
+				departing_player.camera.transform = _original_cam_transform
+
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			is_inspecting = false
+			current_player = null,
+		func() -> void:
+			if is_instance_valid(departing_player):
+				departing_player.unfreeze()
+			_is_transitioning = false
+			inspection_ended.emit(departing_player)
+	)
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not is_inspecting:
+	if not is_inspecting or _is_transitioning:
+		return
+	if is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active:
 		return
 
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == exit_key:
@@ -147,6 +323,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if not is_inspecting or not is_instance_valid(current_player) or not is_instance_valid(current_player.camera):
+		return
+	if not current_player.camera.top_level:
+		return
+	if is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active:
 		return
 
 	_update_camera_parallax(delta)
@@ -209,11 +389,30 @@ func _find_hotspots(node: Node) -> Array[InspectionHotspot3D]:
 	return results
 
 
+func _get_gameplay_screen_rect() -> Rect2:
+	var viewport := get_viewport()
+	if viewport == null:
+		return Rect2()
+	var viewport_size := viewport.get_visible_rect().size
+	var content_size := Vector2(
+		minf(viewport_size.x, viewport_size.y * 4.0 / 3.0),
+		minf(viewport_size.y, viewport_size.x * 3.0 / 4.0)
+	)
+	return Rect2((viewport_size - content_size) * 0.5, content_size)
+
+
 func _update_hotspot_positions() -> void:
 	if not is_instance_valid(current_player) or not is_instance_valid(current_player.camera):
 		return
 
+	if is_instance_valid(_active_dialogue_balloon):
+		if is_instance_valid(_dots_canvas):
+			_dots_canvas.visible = false
+		return
+
 	var cam := current_player.camera
+	var safe_rect := _get_gameplay_screen_rect()
+
 	for hotspot in _hotspot_map.keys():
 		var btn: InspectionDotButton = _hotspot_map[hotspot]
 		if not is_instance_valid(hotspot) or not is_instance_valid(btn):
@@ -228,16 +427,57 @@ func _update_hotspot_positions() -> void:
 			continue
 
 		var screen_pos := cam.unproject_position(hotspot.global_position)
+		if not safe_rect.has_point(screen_pos):
+			btn.visible = false
+			continue
+
 		btn.position = screen_pos - btn.size * 0.5
 		btn.visible = true
 
 
 func _on_hotspot_clicked(hotspot: InspectionHotspot3D) -> void:
-	if not is_instance_valid(hotspot) or not hotspot.can_activate():
+	if _is_transitioning or is_instance_valid(_active_dialogue_balloon) or not is_instance_valid(hotspot) or not hotspot.can_activate():
 		return
 
 	hotspot.activate()
-	_play_hotspot_dialogue(hotspot)
+	var has_dialogue: bool = hotspot.dialogue_resource != null or not hotspot.single_line_dialogue.strip_edges().is_empty()
+	if has_dialogue:
+		_play_hotspot_dialogue(hotspot)
+	else:
+		var is_pickup_spot: bool = hotspot.is_pickup or not hotspot.pickup_item_id.is_empty()
+		if is_pickup_spot:
+			var item_id: StringName = hotspot.pickup_item_id
+			if item_id.is_empty():
+				item_id = StringName(hotspot.hotspot_id)
+			_trigger_hotspot_pickup(hotspot, item_id)
+
+
+func _trigger_hotspot_pickup(hotspot: InspectionHotspot3D, item_id: StringName) -> void:
+	if is_instance_valid(current_player) and is_instance_valid(current_player.inventory):
+		current_player.inventory.add_item(item_id)
+
+	if hotspot.trigger_once:
+		hotspot.has_triggered = true
+		if _hotspot_map.has(hotspot):
+			var btn: InspectionDotButton = _hotspot_map[hotspot]
+			if is_instance_valid(btn):
+				btn.visible = false
+
+	# Hide return prompt and hotspot icons while pickup screen is shown
+	if is_instance_valid(_prompt_canvas):
+		_prompt_canvas.visible = false
+	if is_instance_valid(_dots_canvas):
+		_dots_canvas.visible = false
+
+	var on_pickup_closed := func() -> void:
+		if is_inspecting and not _is_transitioning:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			if is_instance_valid(_prompt_canvas):
+				_prompt_canvas.visible = true
+			if is_instance_valid(_dots_canvas):
+				_dots_canvas.visible = true
+
+	ItemPickupScreenScript.show_pickup(item_id, on_pickup_closed)
 
 
 func _play_hotspot_dialogue(hotspot: InspectionHotspot3D) -> void:
@@ -278,14 +518,37 @@ func _play_hotspot_dialogue(hotspot: InspectionHotspot3D) -> void:
 	target_parent.add_child(balloon)
 	_active_dialogue_balloon = balloon
 
-	# When dialogue ends, DO NOT exit inspection mode! Only Backspace exits.
-	if balloon.has_signal("dialogue_finished"):
-		balloon.connect("dialogue_finished", func() -> void:
+	# Hide return prompt and hotspot icons while dialogue is active
+	if is_instance_valid(_prompt_canvas):
+		_prompt_canvas.visible = false
+	if is_instance_valid(_dots_canvas):
+		_dots_canvas.visible = false
+
+	# When dialogue ends, check if this hotspot grants an item pickup
+	var on_dialogue_done := func() -> void:
+		if _active_dialogue_balloon == balloon:
 			_active_dialogue_balloon = null
-			# Ensure mouse stays visible for further inspection
-			if is_inspecting:
-				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		)
+
+		var is_pickup_spot: bool = hotspot.is_pickup or not hotspot.pickup_item_id.is_empty()
+		if is_pickup_spot and is_inspecting and not _is_transitioning:
+			var item_id: StringName = hotspot.pickup_item_id
+			if item_id.is_empty():
+				item_id = StringName(hotspot.hotspot_id)
+			_trigger_hotspot_pickup(hotspot, item_id)
+			return
+
+		# Ensure mouse stays visible for further inspection and prompt/icons are restored
+		if is_inspecting and not _is_transitioning:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			if is_instance_valid(_prompt_canvas):
+				_prompt_canvas.visible = true
+			if is_instance_valid(_dots_canvas):
+				_dots_canvas.visible = true
+
+	if balloon.has_signal("dialogue_finished"):
+		balloon.connect("dialogue_finished", on_dialogue_done)
+	balloon.tree_exited.connect(on_dialogue_done)
 
 	if balloon.has_method("start"):
 		balloon.call("start", res_to_play, cue_to_play)
+

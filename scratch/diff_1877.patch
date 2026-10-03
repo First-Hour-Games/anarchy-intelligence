@@ -1,0 +1,164 @@
+Created At: 2026-10-03T04:42:40-05:00
+Completed At: 2026-10-03T04:42:41-05:00
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+ transform = Transform3D(0.2980171, 0, -0.2668067, 0, 0.39999998, 0, 0.2668067, 0, 0.2980171, 8.5979, 0, 11.099568)
+ size = Vector3(2.6, 2.4, 0.8)
+ inspection_view = NodePath("InspectableView")
+-interaction_distance = 5.0
++interaction_distance = 6.0
+ visual_target_path = NodePath("../../welcomeCenterTextured2")
+ interaction_message = "Map Board: Inspection opened."
+ 
+ [node name="InspectableView" type="Node3D" parent="Interactables/MapInspect" unique_id=1849204821 node_paths=PackedStringArray("camera_anchor")]
+ script = ExtResource("30_inspect_view")
+ camera_anchor = NodePath("CameraAnchor")
++max_parallax_yaw_degrees = 15.0
+ 
+ [node name="CameraAnchor" type="Marker3D" parent="Interactables/MapInspect/InspectableView" unique_id=1849204822]
+ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.8)
+@@ -425,17 +459,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.8)
+ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.3)
+ script = ExtResource("31_inspect_hotspot")
+ dialogue_resource = ExtResource("18_forest_dialogue")
+-dialogue_cue = "visitor_center_map"
++dialogue_cue = "visitor_center_map_info"
++speaker_name = "Welcome Board"
++
++[node name="BrochurePickUp" type="Marker3D" parent="Interactables/MapInspect/InspectableView" unique_id=685047204]
++transform = Transform3D(1, 0, -2.9802322e-08, 0, 0.9999995, 0, 2.9802322e-08, 0, 1, -3.0322266, -0.19652915, 0.4010315)
++script = ExtResource("31_inspect_hotspot")
++trigger_once = true
++dialogue_resource = ExtResource("18_forest_dialogue")
++dialogue_cue = "visitor_center_map_interact"
++pickup_item_id = &"map"
++is_pickup = true
+ 
+ [node name="welcomeCenterTextured2" parent="." unique_id=1194163961 instance=ExtResource("12_vbdqn")]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270.88535, 0.167431, -8.345045)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270.88535, 0.09806073, -8.345045)
+ 
+ [node name="SpotLight3D" type="SpotLight3D" parent="welcomeCenterTextured2" unique_id=1610383125]
+ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.17694092, 4.470615, 1.0085244)
+ light_energy = 4.38
+ shadow_enabled = true
+ spot_range = 8.471206
+-spot_angle = 56.532692
++spot_angle = 56.53
+ 
+ [node name="SpotLight3D4" type="SpotLight3D" parent="welcomeCenterTextured2" unique_id=566008110]
+ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 8.455261, 2.0884695, 11.317863)
+@@ -462,6 +506,12 @@ spot_angle = 56.532692
+ [node name="mapStand_V3" parent="welcomeCenterTextured2" unique_id=1387636146 instance=ExtResource("16_3olm8")]
+ transform = Transform3D(0.48619625, 0, -0.43140838, 0, 0.65, 0, 0.43140838, 0, 0.48619625, 8.814453, -0.16334403, 10.933514)
+ 
++[node name="OmniLight3D" type="OmniLight3D" parent="welcomeCenterTextured2" unique_id=1959526364]
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.52569, 2.5763173)
++light_volumetric_fog_energy = 4.13
++shadow_enabled = true
++omni_range = 10.306
++
+ [node name="dead_tree_rt_155" parent="." unique_id=1490817319 instance=ExtResource("14_bernf")]
+ transform = Transform3D(1.2056148, 0, 0, 0, 1.2707283, 0, 0, 0, 1.1674359, -261.7948, -0.0060327053, -2.0260053)
+ 
+@@ -592,6 +642,41 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.26782, 0.105, 4.5799546)
+ size = Vector3(61.4, 0.01, 0.1)
+ material = SubResource("StandardMaterial3D_vbdqn")
+ 
++[node name="MainRoad_EdgeLine_North3" type="CSGBox3D" parent="Streets" unique_id=1385295609]
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -279.71783, 0.105, -3.960422)
++size = Vector3(5.5, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
++[node name="MainRoad_EdgeLine_North4" type="CSGBox3D" parent="Streets" unique_id=825073023]
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -279.61783, 0.105, -9.9604225)
++size = Vector3(5.7000003, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
++[node name="MainRoad_EdgeLine_North6" type="CSGBox3D" parent="Streets" unique_id=768615583]
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -279.21783, 0.105, -12.9604225)
++size = Vector3(4.9, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
++[node name="MainRoad_EdgeLine_North7" type="CSGBox3D" parent="Streets" unique_id=1205073454]
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -279.21783, 0.105, -15.9604225)
++size = Vector3(4.9, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
++[node name="MainRoad_EdgeLine_North8" type="CSGBox3D" parent="Streets" unique_id=831470517]
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -279.21783, 0.105, -18.960423)
++size = Vector3(4.9, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
++[node name="MainRoad_EdgeLine_North5" type="CSGBox3D" parent="Streets" unique_id=739844669]
++transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -282.4678, 0.105, -6.9550953)
++size = Vector3(6.1, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
++[node name="MainRoad_EdgeLine_North9" type="CSGBox3D" parent="Streets" unique_id=50982128]
++transform = Transform3D(0.031068724, 0, 0.99951726, 0, 1, 0, -0.99951726, 0, 0.031068724, -276.68182, 0.105, -14.901253)
++size = Vector3(22, 0.01, 0.1)
++material = SubResource("StandardMaterial3D_vbdqn")
++
+ [node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="Streets" unique_id=1907099981]
+ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.105, 11.779955)
+ size = Vector3(600, 0.01, 0.1)
+@@ -608,12 +693,18 @@ material = SubResource("StandardMaterial3D_avnp4")
+ metadata/surface = "concrete"
+ 
+ [node name="MainRoad2" type="CSGBox3D" parent="ParkingLot" unique_id=2077443011]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -283, -0.1, -11.905245)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -282.9, -0.1, -12.855245)
+ use_collision = true
+-size = Vector3(14, 0.4, 21)
++size = Vector3(14.2, 0.4, 22.9)
+ material = SubResource("StandardMaterial3D_avnp4")
+ metadata/surface = "concrete"
+ 
++[node name="CSGPolygon3D" type="CSGPolygon3D" parent="ParkingLot" unique_id=1605238647]
++transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -274.94, 0.132, 7.173)
++material_override = SubResource("StandardMaterial3D_43khc")
++use_collision = true
++polygon = PackedVector2Array(-2, 0, -2, 1, 8.2, 1, 8.3, 8.5, 10.1, 8.5, 10, 0)
++
+ [node name="BottomDialogueBalloon" parent="." unique_id=2140000001 instance=ExtResource("17_dialogue_balloon")]
+ dialogue_resource = ExtResource("18_forest_dialogue")
+ auto_start = true
+@@ -636,7 +727,7 @@ bus = &"Music"
+ transform = Transform3D(0.24680898, 0, -0.98089147, 0, 1.0114657, 0, 0.98089147, 0, 0.24680898, -247.9456, -0.22229062, -0.080916405)
+ 
+ [node name="toyotaCrownModel2" parent="." unique_id=274795217 instance=ExtResource("29_jfmiu")]
+-transform = Transform3D(-0.19919579, 0, 0.9881081, 0, 1.0079863, 0, -0.9881081, 0, -0.19919579, -282.18265, 0.10000014, 4.0042143)
++transform = Transform3D(-0.10018166, 0, 1.0029955, 0, 1.0079862, 0, -1.0029955, 0, -0.10018166, -282.18265, 0.10000014, 4.0042143)
+ 
+ [node name="CarLights" type="Node3D" parent="toyotaCrownModel2" unique_id=1311028464]
+ unique_name_in_owner = true
+@@ -652,7 +743,6 @@ shadow_enabled = true
+ shadow_normal_bias = 2.0
+ shadow_blur = 1.571
+ spot_range = 67.691
+-spot_attenuation = 1.3
+ spot_angle = 40.0
+ spot_angle_attenuation = 1.414217
+ 
+@@ -665,7 +755,6 @@ shadow_enabled = true
+ shadow_normal_bias = 2.0
+ shadow_blur = 1.571
+ spot_range = 67.691
+-spot_attenuation = 1.3
+ spot_angle = 40.0
+ spot_angle_attenuation = 1.414217
+ 
+@@ -749,6 +838,9 @@ single_line_dialogue = "The entrance door is locked.
+ Guess the town doesn't welcome new visitors anymore.
+ "
+ 
++[node name="Sketchfab_Scene" parent="." unique_id=712065991 instance=ExtResource("37_tf0i6")]
++transform = Transform3D(22.320602, 0, 0, 0, 22.320602, 0, 0, 0, 22.320602, -258.40024, 1.6979272, 10.450777)
++
+ [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
+ [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]
+ [connection signal="finished" from="VisitorBGM" to="VisitorBGM" method="play"]
+

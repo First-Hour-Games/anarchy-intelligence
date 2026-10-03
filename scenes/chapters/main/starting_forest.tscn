@@ -29,10 +29,16 @@
 [ext_resource type="AudioStream" uid="uid://2gr2qmijragi" path="res://music/theVisitor.mp3" id="22_the_visitor"]
 [ext_resource type="PackedScene" path="res://assets/local_licensed/trees_v1/trees_v1_tree_003.tscn" id="25_7ds25"]
 [ext_resource type="PackedScene" path="res://scenes/interaction/interactable_block.tscn" id="27_interactable_block"]
+[ext_resource type="Texture2D" uid="uid://cff32daeek7vw" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Color.jpg" id="28_16o3n"]
 [ext_resource type="AudioStream" uid="uid://bkbqlv0ggdx5c" path="res://sounds/chapters/intro/engineLoop.ogg" id="28_engine_loop"]
 [ext_resource type="PackedScene" uid="uid://dsimae7dfet0v" path="res://models/props/toyota_crown_model.tscn" id="29_jfmiu"]
+[ext_resource type="Texture2D" uid="uid://8dh7hdnj5fj7" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Roughness.png" id="29_tf0i6"]
 [ext_resource type="Script" uid="uid://b7bcmthg0id31" path="res://scenes/interaction/inspection_view.gd" id="30_inspect_view"]
+[ext_resource type="Texture2D" uid="uid://u5k0wra73hcl" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_NormalGL.jpg" id="30_y0hyv"]
 [ext_resource type="Script" uid="uid://b17m6aamnacy" path="res://scenes/interaction/inspection_hotspot_3d.gd" id="31_inspect_hotspot"]
+[ext_resource type="PackedScene" uid="uid://cjyyfnh2y3h0q" path="res://models/foliage/fallen_tree_n.3_not_scanned.glb" id="37_tf0i6"]
+[ext_resource type="PackedScene" uid="uid://brtc72hgbpgst" path="res://models/barricade/barricade.glb" id="38_y0hyv"]
+[ext_resource type="Script" uid="uid://c5hpefsm7ib4s" path="res://scenes/environment/multimesh_exclusion_filter.gd" id="39_filter"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -318,6 +324,21 @@ emission_enabled = true
 emission = Color(0.85, 0.85, 0.82, 1)
 emission_energy_multiplier = 0.15
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_43khc"]
+resource_name = "Concrete047A_1K-JPG_NORMAL"
+cull_mode = 2
+albedo_texture = ExtResource("28_16o3n")
+metallic_texture = ExtResource("29_tf0i6")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("29_tf0i6")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("30_y0hyv")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.4142108
+metadata/_gltf_primary_texture_coord = 0
+
 [node name="StartingForest" type="Node3D" unique_id=1800767174]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=39496780]
@@ -366,6 +387,9 @@ mesh = SubResource("BoxMesh_jpyye")
 [node name="lowGrassMulti" type="MultiMeshInstance3D" parent="Foliage" unique_id=673317094]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.5549062, -114.05722, 0, -31.843605)
 multimesh = SubResource("MultiMesh_11s4a")
+script = ExtResource("39_filter")
+exclusion_nodes = Array[NodePath]([NodePath("../../welcomeCenterTextured2")])
+margin = 0.5
 
 [node name="treeMulti2" type="MultiMeshInstance3D" parent="Foliage" unique_id=1175776623]
 visibility_range_fade_mode = 1
@@ -402,21 +426,22 @@ dialogue_resource = ExtResource("18_forest_dialogue")
 dialogue_cue = "visitor_center_locked"
 interaction_sound = ExtResource("18_f8r3g")
 sound_bus = &"Reverb"
-interaction_distance = 5.0
+interaction_distance = 6.0
 visual_target_path = NodePath("../../welcomeCenterTextured2")
 interaction_message = "Thomas: The doors are locked."
 
-[node name="MapInspect" parent="Interactables" node_paths=PackedStringArray("inspection_view") unique_id=1184545488 instance=ExtResource("27_interactable_block")]
+[node name="MapInspect" parent="Interactables" unique_id=1184545488 node_paths=PackedStringArray("inspection_view") instance=ExtResource("27_interactable_block")]
 transform = Transform3D(0.2980171, 0, -0.2668067, 0, 0.39999998, 0, 0.2668067, 0, 0.2980171, 8.5979, 0, 11.099568)
 size = Vector3(2.6, 2.4, 0.8)
 inspection_view = NodePath("InspectableView")
-interaction_distance = 5.0
+interaction_distance = 6.0
 visual_target_path = NodePath("../../welcomeCenterTextured2")
 interaction_message = "Map Board: Inspection opened."
 
 [node name="InspectableView" type="Node3D" parent="Interactables/MapInspect" unique_id=1849204821 node_paths=PackedStringArray("camera_anchor")]
 script = ExtResource("30_inspect_view")
 camera_anchor = NodePath("CameraAnchor")
+max_parallax_yaw_degrees = 15.0
 
 [node name="CameraAnchor" type="Marker3D" parent="Interactables/MapInspect/InspectableView" unique_id=1849204822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.8)
@@ -425,20 +450,33 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3.8)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.3)
 script = ExtResource("31_inspect_hotspot")
 dialogue_resource = ExtResource("18_forest_dialogue")
-dialogue_cue = "visitor_center_map"
+dialogue_cue = "visitor_center_map_info"
+speaker_name = "Welcome Board"
+
+[node name="BrochurePickUp" type="Marker3D" parent="Interactables/MapInspect/InspectableView" unique_id=685047204]
+transform = Transform3D(1, 0, -2.9802322e-08, 0, 0.9999995, 0, 2.9802322e-08, 0, 1, -3.0322266, -0.19652915, 0.4010315)
+script = ExtResource("31_inspect_hotspot")
+trigger_once = true
+dialogue_resource = ExtResource("18_forest_dialogue")
+dialogue_cue = "visitor_center_map_interact"
+pickup_item_id = &"map"
+is_pickup = true
 
 [node name="welcomeCenterTextured2" parent="." unique_id=1194163961 instance=ExtResource("12_vbdqn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270.88535, 0.167431, -8.345045)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270.88535, 0.09806073, -8.345045)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="welcomeCenterTextured2" unique_id=1610383125]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.17694092, 4.470615, 1.0085244)
 light_energy = 4.38
+light_volumetric_fog_energy = 6.0
 shadow_enabled = true
 spot_range = 8.471206
-spot_angle = 56.532692
+spot_angle = 56.53
 
 [node name="SpotLight3D4" type="SpotLight3D" parent="welcomeCenterTextured2" unique_id=566008110]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 8.455261, 2.0884695, 11.317863)
+light_energy = 1.178
+light_volumetric_fog_energy = 6.333
 light_size = 0.115
 shadow_enabled = true
 shadow_bias = 0.545
@@ -448,6 +486,7 @@ spot_angle = 61.76
 [node name="SpotLight3D2" type="SpotLight3D" parent="welcomeCenterTextured2" unique_id=400805057]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 12.101288, 3.2210011, -0.34363365)
 light_energy = 4.38
+light_volumetric_fog_energy = 6.0
 shadow_enabled = true
 spot_range = 8.471206
 spot_angle = 56.532692
@@ -455,6 +494,7 @@ spot_angle = 56.532692
 [node name="SpotLight3D3" type="SpotLight3D" parent="welcomeCenterTextured2" unique_id=2029880634]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 8.098846, 3.2210011, -0.34363365)
 light_energy = 4.38
+light_volumetric_fog_energy = 6.0
 shadow_enabled = true
 spot_range = 8.471206
 spot_angle = 56.532692
@@ -473,7 +513,7 @@ visible = false
 transform = Transform3D(1.1761626, 0, -0.0058787647, 0, 1.3772252, 0, 0.0055686734, 0, 1.2416424, -255.98997, 0.0053265095, 1.2443604)
 
 [node name="Player" parent="." unique_id=1484211140 instance=ExtResource("13_bernf")]
-transform = Transform3D(0.41480893, 0, -0.90990865, 0, 1, 0, 0.90990865, 0, 0.41480893, -283.59167, 0.21511996, 2.6322968)
+transform = Transform3D(0.2780319, 0, -0.9605719, 0, 1, 0, 0.9605719, 0, 0.2780319, -283.1589, 0.21511996, 2.4300053)
 
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=1750905476]
 layer = 19
@@ -583,13 +623,13 @@ size = Vector3(600, 0.01, 0.15)
 material = SubResource("StandardMaterial3D_blglh")
 
 [node name="MainRoad_EdgeLine_North" type="CSGBox3D" parent="Streets" unique_id=2086719259]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.105, 4.5799546)
-size = Vector3(515, 0.01, 0.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0.105, 4.5799546)
+size = Vector3(527, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_vbdqn")
 
 [node name="MainRoad_EdgeLine_North2" type="CSGBox3D" parent="Streets" unique_id=1618208740]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.26782, 0.105, 4.5799546)
-size = Vector3(61.4, 0.01, 0.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.96783, 0.105, 4.5799546)
+size = Vector3(60, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_vbdqn")
 
 [node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="Streets" unique_id=1907099981]
@@ -608,11 +648,23 @@ material = SubResource("StandardMaterial3D_avnp4")
 metadata/surface = "concrete"
 
 [node name="MainRoad2" type="CSGBox3D" parent="ParkingLot" unique_id=2077443011]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -283, -0.1, -11.905245)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -282.9, -0.1, -12.855245)
 use_collision = true
-size = Vector3(14, 0.4, 21)
+size = Vector3(14.2, 0.4, 22.9)
 material = SubResource("StandardMaterial3D_avnp4")
 metadata/surface = "concrete"
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="ParkingLot" unique_id=1605238647]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -274.98532, 0.132, 6.7078586)
+material_override = SubResource("StandardMaterial3D_43khc")
+use_collision = true
+polygon = PackedVector2Array(-2, 0, -2, 1, 8.3, 1, 8.3, 8.1, 10.1, 8.1, 10, 0)
+
+[node name="CSGPolygon3D2" type="CSGPolygon3D" parent="ParkingLot" unique_id=2031382842]
+transform = Transform3D(-4.371139e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 1.9106855e-15, -289.8853, 0.132, 6.7078586)
+material_override = SubResource("StandardMaterial3D_43khc")
+use_collision = true
+polygon = PackedVector2Array(0, 0, 0, 2, 31, 2, 31, -14, 30, -14, 30, 0)
 
 [node name="BottomDialogueBalloon" parent="." unique_id=2140000001 instance=ExtResource("17_dialogue_balloon")]
 dialogue_resource = ExtResource("18_forest_dialogue")
@@ -636,38 +688,41 @@ bus = &"Music"
 transform = Transform3D(0.24680898, 0, -0.98089147, 0, 1.0114657, 0, 0.98089147, 0, 0.24680898, -247.9456, -0.22229062, -0.080916405)
 
 [node name="toyotaCrownModel2" parent="." unique_id=274795217 instance=ExtResource("29_jfmiu")]
-transform = Transform3D(-0.19919579, 0, 0.9881081, 0, 1.0079863, 0, -0.9881081, 0, -0.19919579, -282.18265, 0.10000014, 4.0042143)
+transform = Transform3D(0.17141232, 0, 1.0865625, 0, 1.1, 0, -1.0865625, 0, 0.17141232, -282.18265, 0.10000014, 4.0042143)
 
 [node name="CarLights" type="Node3D" parent="toyotaCrownModel2" unique_id=1311028464]
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0.036640167, 0.7091003, 2.3484192)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1608385769]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
+transform = Transform3D(0.90745586, 0, 0.054500163, 0, 0.9090908, 0, -0.054500178, 0, 0.90745586, -0.55000687, 0, 1.5258789e-05)
 light_color = Color(0.94764113, 1, 0.9333369, 1)
-light_energy = 0.852
-light_volumetric_fog_energy = 2.067
-light_size = 0.1
+light_energy = 2.731
+light_volumetric_fog_energy = 1.089
+light_size = 0.067
+light_bake_mode = 1
 shadow_enabled = true
 shadow_normal_bias = 2.0
 shadow_blur = 1.571
-spot_range = 67.691
-spot_attenuation = 1.3
-spot_angle = 40.0
-spot_angle_attenuation = 1.414217
+spot_range = 40.466
+spot_attenuation = 0.59
+spot_angle = 26.61
+spot_angle_attenuation = 1.3660432
 
 [node name="SpotLight3D2" type="SpotLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1859384945]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
+transform = Transform3D(0.9024246, 0, -0.10988982, 0, 0.9090908, 0, 0.109889805, 0, 0.9024246, 0.54999924, 0, 0)
 light_color = Color(0.94764113, 1, 0.9333369, 1)
-light_energy = 0.852
-light_volumetric_fog_energy = 2.067
+light_energy = 2.731
+light_volumetric_fog_energy = 1.089
+light_size = 0.067
+light_bake_mode = 1
 shadow_enabled = true
 shadow_normal_bias = 2.0
 shadow_blur = 1.571
-spot_range = 67.691
-spot_attenuation = 1.3
-spot_angle = 40.0
-spot_angle_attenuation = 1.414217
+spot_range = 40.466
+spot_attenuation = 0.59
+spot_angle = 26.61
+spot_angle_attenuation = 1.3660432
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="toyotaCrownModel2/CarLights" unique_id=82738257]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
@@ -696,30 +751,34 @@ spot_angle = 70.0
 spot_angle_attenuation = 1.3660438
 
 [node name="OmniLight3D" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1610292932]
-transform = Transform3D(1, 0, 1.1265125e-08, 0, 1, 0, -1.1265125e-08, 0, 1, 0.55413723, 0.1461631, -0.19897461)
+transform = Transform3D(0.9090909, 0, -1.4901161e-08, 0, 0.9090908, 0, 1.4901161e-08, 0, 0.9090909, 0.55408096, 0.06255585, -0.19935608)
 light_energy = 0.8
+light_volumetric_fog_energy = 9.0
 shadow_enabled = true
-omni_attenuation = 1.966
+omni_range = 3.0
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=2078615886]
-transform = Transform3D(1, 0, 1.1265124e-08, 0, 1, 0, -1.1265124e-08, 0, 1, -0.45920658, 0.13494992, -0.17489624)
+transform = Transform3D(0.9090909, 0, -1.4901161e-08, 0, 0.9090908, 0, 1.4901161e-08, 0, 0.9090909, -0.45925903, 0.051342726, -0.17526245)
 light_energy = 0.8
+light_volumetric_fog_energy = 9.0
 shadow_enabled = true
-omni_attenuation = 1.966
+omni_range = 3.0
 
 [node name="OmniLight3D5" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1479252427]
 transform = Transform3D(0.99207705, 0, 1.8626451e-08, 0, 0.992077, 0, -1.8626451e-08, 0, 0.99207705, -0.8305936, 0.084718764, 0.07650757)
-light_energy = 0.9
+light_energy = 0.544
+light_volumetric_fog_energy = 5.089
 shadow_enabled = true
 omni_range = 4.0
-omni_attenuation = 0.7
+omni_attenuation = 0.75
 
 [node name="OmniLight3D6" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1300296632]
 transform = Transform3D(0.99207705, 0, 2.2351742e-08, 0, 0.992077, 0, -2.2351742e-08, 0, 0.99207705, 0.8649521, 0.023569226, 0.1491394)
-light_energy = 0.9
+light_energy = 0.544
+light_volumetric_fog_energy = 5.089
 shadow_enabled = true
 omni_range = 4.0
-omni_attenuation = 0.7
+omni_attenuation = 0.75
 
 [node name="OmniLight3D3" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1761828631]
 transform = Transform3D(1, 0, 1.5020165e-08, 0, 1, 0, -1.5020165e-08, 0, 1, 0.53504276, 0.09786862, 4.7115173)
@@ -748,6 +807,18 @@ visible = false
 single_line_dialogue = "The entrance door is locked.
 Guess the town doesn't welcome new visitors anymore.
 "
+
+[node name="Sketchfab_Scene" parent="." unique_id=712065991 instance=ExtResource("37_tf0i6")]
+transform = Transform3D(7.923378, 0, -1.1045743, 0, 8, 0, 1.1045743, 0, 7.923378, -250.02612, 0.6998224, 10.553262)
+
+[node name="barricade" parent="." unique_id=1877188457 instance=ExtResource("38_y0hyv")]
+transform = Transform3D(0.04924303, 0, 0.56285, 0, 0.565, 0, -0.56285, 0, 0.04924303, -253.15143, 0.16756046, 7.873889)
+
+[node name="barricade2" parent="." unique_id=1471984963 instance=ExtResource("38_y0hyv")]
+transform = Transform3D(-0.00948317, 0, 0.56492054, 0, 0.565, 0, -0.56492054, 0, -0.00948317, -253.54268, 0.16756046, 10.443843)
+
+[node name="barricade3" parent="." unique_id=94753405 instance=ExtResource("38_y0hyv")]
+transform = Transform3D(-0.054549642, 0, 0.5623606, 0, 0.56500006, 0, -0.5623606, 0, -0.054549642, -253.13837, 0.16756046, 13.239731)
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]

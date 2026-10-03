@@ -43,13 +43,13 @@ func _ready() -> void:
 	main_options = [
 		{"label": start_label, "action": _start_game},
 		{"label": options_label, "action": _open_options},
-		{"label": reset_label, "action": _ask_reset_progress},
 		{"label": quit_label, "action": _quit_game}
 	]
 	
 	sub_options = [
 		{"label": start_label, "action": _toggle_master_volume_step},
 		{"label": options_label, "action": _toggle_music_volume_step},
+		{"label": reset_label, "action": _ask_reset_progress},
 		{"label": quit_label, "action": _close_options}
 	]
 	
@@ -63,21 +63,37 @@ func _ready() -> void:
 			music_player.play()
 
 func _setup_mouse_listeners() -> void:
+	var all_labels: Array[Label] = [start_label, options_label, quit_label]
+	if is_instance_valid(reset_label):
+		all_labels.append(reset_label)
+
+	for lbl in all_labels:
+		for conn in lbl.gui_input.get_connections():
+			lbl.gui_input.disconnect(conn.callable)
+		for conn in lbl.mouse_entered.get_connections():
+			lbl.mouse_entered.disconnect(conn.callable)
+
 	var active_list = sub_options if is_in_options_menu else main_options
 	for i in range(active_list.size()):
 		var idx = i
 		var lbl: Label = active_list[i]["label"]
 		lbl.mouse_filter = Control.MOUSE_FILTER_STOP
-		
-		# Quit occupies a different row in Options; remove every previous index.
-		for old_index in range(main_options.size()):
-			var callback := _on_label_gui_input.bind(old_index)
-			if lbl.gui_input.is_connected(callback):
-				lbl.gui_input.disconnect(callback)
+		lbl.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		lbl.gui_input.connect(_on_label_gui_input.bind(idx))
+		lbl.mouse_entered.connect(_on_label_mouse_entered.bind(idx))
+
+func _on_label_mouse_entered(idx: int) -> void:
+	if is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+		return
+	if selected_index == idx:
+		return
+	var active_list = sub_options if is_in_options_menu else main_options
+	if idx >= 0 and idx < active_list.size():
+		selected_index = idx
+		_update_menu_display(true)
 
 func _on_label_gui_input(event: InputEvent, idx: int) -> void:
-	if is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
+	if is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		selected_index = idx
@@ -156,22 +172,25 @@ func _input(event: InputEvent) -> void:
 		_mark_input_handled()
 
 func _update_menu_display(play_sound: bool = true) -> void:
-	reset_label.visible = not is_in_options_menu
 	if is_in_options_menu:
 		start_label.show()
 		options_label.show()
+		reset_label.show()
 		quit_label.show()
 		
 		start_label.text = "Master Volume: < " + str(master_volume_percent) + "% >"
 		options_label.text = "Music Volume: < " + str(music_volume_percent) + "% >"
+		reset_label.text = "Reset Progress"
 		quit_label.text = "Back"
 		
 		_apply_label_style(start_label, selected_index == 0)
 		_apply_label_style(options_label, selected_index == 1)
-		_apply_label_style(quit_label, selected_index == 2)
+		_apply_label_style(reset_label, selected_index == 2)
+		_apply_label_style(quit_label, selected_index == 3)
 	else:
 		start_label.show()
 		options_label.show()
+		reset_label.hide()
 		quit_label.show()
 		
 		start_label.text = "Continue Game" if can_continue else "Start Game"
@@ -180,8 +199,7 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		
 		_apply_label_style(start_label, selected_index == 0)
 		_apply_label_style(options_label, selected_index == 1)
-		_apply_label_style(reset_label, selected_index == 2)
-		_apply_label_style(quit_label, selected_index == 3)
+		_apply_label_style(quit_label, selected_index == 2)
 
 	if play_sound and move_sfx_player:
 		move_sfx_player.play()
@@ -290,6 +308,7 @@ func _build_reset_option() -> void:
 	reset_label = quit_label.duplicate() as Label
 	reset_label.name = "ResetProgressLabel"
 	reset_label.text = "Reset Progress"
+	reset_label.visible = false
 	quit_label.get_parent().add_child(reset_label)
 	quit_label.get_parent().move_child(reset_label, quit_label.get_index())
 	reset_warning = ConfirmationDialog.new()
@@ -319,7 +338,8 @@ func _reset_progress() -> void:
 			return
 	PauseMenu.has_started_chapter = false
 	can_continue = false
-	selected_index = 0
+	if not is_in_options_menu:
+		selected_index = 0
 	reset_warning.hide()
 	_update_menu_display(false)
 

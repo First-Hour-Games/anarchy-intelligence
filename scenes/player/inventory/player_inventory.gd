@@ -268,8 +268,16 @@ func _update_hud() -> void:
 	_preview.visible = item == FLASHLIGHT_ITEM
 	_paper_preview.visible = item != FLASHLIGHT_ITEM
 	_paper_preview.text = "CICELY TOWN\nTOURIST MAP" if item == MAP_ITEM else "CARRIE\nPERSONAL NOTES" if item == NOTEBOOK_ITEM else "—"
-	_description.text = "A working flashlight found at the abandoned gas station. Its beam makes the Ridgeback retreat. Press F anytime while exploring." if item == FLASHLIGHT_ITEM else "Collected at the welcome center. Thomas has marked places connected to Carrie's trail." if item == MAP_ITEM else "Carrie's handwriting. She left for the hospital because people said it was safe. Read this with the other clues in your journal." if item == NOTEBOOK_ITEM else "Nothing stored here."
-	_use.text = "TOGGLE FLASHLIGHT" if item == FLASHLIGHT_ITEM else "OPEN MAP" if item == MAP_ITEM else "READ NOTES" if item == NOTEBOOK_ITEM else "EMPTY"
+	if item == EMPTY_ITEM:
+		_description.text = "Nothing stored here."
+		_use.text = "EMPTY"
+	elif ItemDatabase.has_item(item):
+		var item_data := ItemDatabase.get_item(item)
+		_description.text = item_data.description
+		_use.text = item_data.use_action_text
+	else:
+		_description.text = "A working flashlight found at the abandoned gas station. Its beam makes the Ridgeback retreat. Press F anytime while exploring." if item == FLASHLIGHT_ITEM else "Collected at the welcome center. Thomas has marked places connected to Carrie's trail." if item == MAP_ITEM else "Carrie's handwriting. She left for the hospital because people said it was safe. Read this with the other clues in your journal." if item == NOTEBOOK_ITEM else "Nothing stored here."
+		_use.text = "TOGGLE FLASHLIGHT" if item == FLASHLIGHT_ITEM else "OPEN MAP" if item == MAP_ITEM else "READ NOTES" if item == NOTEBOOK_ITEM else "EMPTY"
 	_use.disabled = item == EMPTY_ITEM
 	var health := _player.get_node_or_null("CombatHealth")
 	_status.text = "CONDITION / %d%%\n\nLIGHT / %s" % [int(health.get("health")) if health != null else 100, "CARRIED" if has_item(FLASHLIGHT_ITEM) else "NOT FOUND"]

@@ -97,10 +97,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		var is_advance_key: bool = event.is_action_pressed(next_action) or (event is InputEventKey and (event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE))
 		
 		if is_click or is_advance_key:
-			if dialogue_label.is_typing or is_post_typing_delay:
+			if OS.has_feature("editor") and is_instance_valid(dialogue_label) and dialogue_label.is_typing:
+				dialogue_label.skip_typing()
+				if talk_sfx:
+					talk_sfx.stop()
+				return
+
+			if dialogue_label.is_typing or (not OS.has_feature("editor") and is_post_typing_delay):
 				# Cannot skip dialogue typing or advance during 0.5s post-typing delay
 				return
-			elif is_waiting_for_input and dialogue_line.responses.size() == 0:
+			elif (is_waiting_for_input or OS.has_feature("editor")) and dialogue_line.responses.size() == 0:
 				var is_car_revving_transition: bool = false
 				if is_instance_valid(dialogue_line) and dialogue_line.text:
 					var lower_text: String = dialogue_line.text.to_lower()
@@ -169,10 +175,11 @@ func apply_dialogue_line() -> void:
 		balloon.focus_mode = Control.FOCUS_NONE
 		responses_menu.show()
 	else:
-		# Wait 0.5 seconds after typing finishes before enabling input and showing [ ENTER ] prompt
-		is_post_typing_delay = true
-		await get_tree().create_timer(0.5).timeout
-		is_post_typing_delay = false
+		# Wait 0.5 seconds after typing finishes before enabling input and showing [ ENTER ] prompt (skips when running in Godot editor)
+		if not OS.has_feature("editor"):
+			is_post_typing_delay = true
+			await get_tree().create_timer(0.5).timeout
+			is_post_typing_delay = false
 		is_waiting_for_input = true
 		balloon.focus_mode = Control.FOCUS_ALL
 		balloon.grab_focus()

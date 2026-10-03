@@ -382,8 +382,8 @@ func _spawn_parked_car(
 
 
 func _has_connected_drive(house: Node3D) -> bool:
-	var name := String(house.name)
-	return name.begins_with("Connector") or name.begins_with("CrossroadNorth") or name.begins_with("CrossroadSouth")
+	var house_name := String(house.name)
+	return house_name.begins_with("Connector") or house_name.begins_with("CrossroadNorth") or house_name.begins_with("CrossroadSouth")
 
 func _spawn_side_fence(
 	generated_root: Node3D,

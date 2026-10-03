@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://d1uhdx5w06thy" path="res://scenes/ui/dialogue_box/bottom_dialogue_balloon.gd" id="1_balloon_script"]
 [ext_resource type="Script" uid="uid://g32um0mltv5d" path="res://addons/dialogue_manager/nodes/dialogue_label/dialogue_label.gd" id="2_dialogue_label"]
 [ext_resource type="Script" uid="uid://bb52rsfwhkxbn" path="res://addons/dialogue_manager/nodes/responses_menu/dialogue_responses_menu.gd" id="3_responses_menu"]
-[ext_resource type="Texture2D" uid="uid://raph57ebfdo" path="res://img/ui/dialogue_portrait_placeholder.png" id="4_placeholder_portrait"]
 [ext_resource type="FontFile" uid="uid://b2i55e65n0tsr" path="res://fonts/ReceiptionalReceipt.ttf" id="6_receipt_font"]
 [ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="7_teletext_font"]
 [ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="8_move_sfx"]
@@ -24,17 +23,6 @@ corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.7)
 shadow_size = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_portrait_frame"]
-bg_color = Color(0.08, 0.09, 0.12, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.65, 0.65, 0.72, 0.8)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
 
 [node name="BottomDialogueBalloon" type="CanvasLayer" unique_id=9100001]
 layer = 25
@@ -56,13 +44,14 @@ mouse_filter = 2
 [node name="Balloon" type="PanelContainer" parent="AspectRatioContainer/Control" unique_id=9100004]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 12
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -180.0
-offset_right = -24.0
+offset_left = -270.0
+offset_top = -175.0
+offset_right = 270.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -70,35 +59,19 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_balloon_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="AspectRatioContainer/Control/Balloon" unique_id=9100005]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
 
-[node name="HBoxContainer" type="HBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer" unique_id=9100006]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="PortraitPanel" type="PanelContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer" unique_id=9100007]
-custom_minimum_size = Vector2(108, 108)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_portrait_frame")
-
-[node name="PortraitIcon" type="TextureRect" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/PortraitPanel" unique_id=9100008]
-unique_name_in_owner = true
-layout_mode = 2
-texture = ExtResource("4_placeholder_portrait")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextVBox" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer" unique_id=9100009]
+[node name="TextVBox" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer" unique_id=9100009]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 6
+alignment = 1
 
-[node name="CharacterLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/TextVBox" unique_id=9100010]
+[node name="CharacterLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox" unique_id=9100010]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
@@ -109,8 +82,9 @@ bbcode_enabled = true
 text = "CHARACTER NAME"
 fit_content = true
 scroll_active = false
+horizontal_alignment = 1
 
-[node name="DialogueLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/TextVBox" unique_id=9100011]
+[node name="DialogueLabel" type="RichTextLabel" parent="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox" unique_id=9100011]
 unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(0, 48)
@@ -124,15 +98,19 @@ bbcode_enabled = true
 text = "Dialogue message text goes here..."
 fit_content = true
 scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
 script = ExtResource("2_dialogue_label")
 seconds_per_step = 0.035
 seconds_per_pause_step = 0.3
 
-[node name="ResponsesMenu" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/HBoxContainer/TextVBox" unique_id=9100012]
+[node name="ResponsesMenu" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox" unique_id=9100012]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
+alignment = 1
 script = ExtResource("3_responses_menu")
+
 
 [node name="ProgressIndicator" type="Label" parent="AspectRatioContainer/Control/Balloon" unique_id=9100013]
 unique_name_in_owner = true
