@@ -515,6 +515,7 @@ bus = &"Reverb"
 [node name="oldPhone" parent="." unique_id=127163723 instance=ExtResource("27_yqqos")]
 transform = Transform3D(0.017, 0, 0, 0, 0.017, 0, 0, 0, 0.017, -1.6980813, 0.4854297, -32.693474)
 script = ExtResource("29_old_phone")
+next_scene_path = "res://scenes/chapters/main/starting_forest.tscn"
 
 [node name="Interactable" type="Node3D" parent="oldPhone" unique_id=127163724]
 script = ExtResource("28_interactable")
