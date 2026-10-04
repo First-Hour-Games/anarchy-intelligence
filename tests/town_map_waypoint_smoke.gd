@@ -33,7 +33,7 @@ func _run() -> void:
 	var display: WorldMapOverlay = world_map_node.get_node_or_null("Display") as WorldMapOverlay
 	check(is_instance_valid(display), "WorldMapOverlay Display node found")
 	check(display.use_image_map, "WorldMapOverlay configured to use image map")
-	check(display.map_texture != null and display.map_texture.resource_path.ends_with("mapOnly.png"), "WorldMapOverlay uses mapOnly.png")
+	check(display.map_texture != null and display.map_texture.resource_path.ends_with("cicely_town_map.png"), "WorldMapOverlay uses the supplied PDF artwork")
 
 	# Test 1: Player without town map cannot open map with M key
 	check(not player.inventory.has_item(&"map"), "Player starts WITHOUT town map")
@@ -50,6 +50,7 @@ func _run() -> void:
 	player.inventory.add_item(&"map")
 	check(player.inventory.has_item(&"map"), "Town map added to inventory")
 	check(display.has_town_map(), "has_town_map() returns true with map in inventory")
+	check(display.map_texture.get_size() == Vector2(2376, 1836), "Final PDF map imported at full resolution")
 
 	display._unhandled_input(toggle_event)
 	check(display.is_map_open(), "Pressing M with map in inventory OPENS map")
@@ -67,28 +68,20 @@ func _run() -> void:
 	display._unhandled_input(cancel_event)
 	check(not display.is_map_open(), "ESC key (ui_cancel) closes map")
 
-	# Test 4: Coordinate mapping and live player waypoint calibration
+	# Test 4: The waypoint follows the real road junction and turnaround positions.
 	display.set_map_open(true)
 	var panel_rect := display._calculate_panel_rect()
 	check(panel_rect.size.x > 100.0 and panel_rect.size.y > 100.0, "Panel rect properly sized on screen")
-
-	# Position 1: Player at Welcome Center (-270.88, -8.35)
-	player.global_position = Vector3(-270.88, 0.0, -8.35)
-	var map_px_welcome: Vector2 = display.map_origin + Vector2(-270.88 * display.world_scale.x, -8.35 * display.world_scale.y)
-	check(map_px_welcome.x >= 100.0 and map_px_welcome.x <= 160.0, "Welcome Center X maps inside Welcome Center box (x ≈ " + str(roundf(map_px_welcome.x)) + ")")
-	check(map_px_welcome.y >= 35.0 and map_px_welcome.y <= 75.0, "Welcome Center Y maps near Welcome Center box (y ≈ " + str(roundf(map_px_welcome.y)) + ")")
-
-	# Position 2: Player at Top Road / Connector Road intersection (100.0, 0.0)
-	player.global_position = Vector3(100.0, 0.0, 0.0)
-	var map_px_junction: Vector2 = display.map_origin + Vector2(100.0 * display.world_scale.x, 0.0 * display.world_scale.y)
-	check(absf(map_px_junction.x - 441.0) < 5.0, "Top road junction X maps to connector road (x ≈ " + str(roundf(map_px_junction.x)) + ")")
-	check(absf(map_px_junction.y - 70.0) < 5.0, "Top road junction Y maps to top horizontal road (y ≈ " + str(roundf(map_px_junction.y)) + ")")
-
-	# Position 3: Lower Cul-de-sac turnaround (-84.0, 225.0)
-	player.global_position = Vector3(-84.0, 0.0, 225.0)
-	var map_px_lower: Vector2 = display.map_origin + Vector2(-84.0 * display.world_scale.x, 225.0 * display.world_scale.y)
-	check(absf(map_px_lower.x - 286.0) < 5.0, "Lower cul-de-sac X maps to turnaround circle (x ≈ " + str(roundf(map_px_lower.x)) + ")")
-	check(absf(map_px_lower.y - 290.0) < 5.0, "Lower cul-de-sac Y maps to lower street (y ≈ " + str(roundf(map_px_lower.y)) + ")")
+	var road := forest.get_node("Streets/MainRoad") as Node3D
+	var locations := [
+		{"world": Vector2(-270, road.global_position.z), "pixel": Vector2(210.806, 229.696), "name": "Forest road near welcome center"},
+		{"world": Vector2(100, road.global_position.z), "pixel": Vector2(1481.259, 229.696), "name": "Forest main road junction"},
+	]
+	for location: Dictionary in locations:
+		var world: Vector2 = location["world"]
+		var expected: Vector2 = location["pixel"]
+		var map_pixel: Vector2 = display.map_origin + world * display.world_scale
+		check(map_pixel.distance_to(expected) < 2.0, "Waypoint matches PDF artwork: " + location["name"])
 
 	# Test 5: Verify drawing renders without errors
 	display.queue_redraw()

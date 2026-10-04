@@ -50,9 +50,10 @@
 [ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_3.tscn" id="49_0qda2"]
 [ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_1.tscn" id="50_3pch7"]
 [ext_resource type="FontFile" uid="uid://m1rgjvehr8j3" path="res://fonts/HelveticaNeueCondensed.ttf" id="51_helvetica"]
-[ext_resource type="Texture2D" uid="uid://bunj4gjiihqte" path="res://img/textures/mapPost.png" id="52_map_post"]
+[ext_resource type="PackedScene" path="res://scenes/environment/town_map_board.tscn" id="52_map_post"]
 [ext_resource type="AudioStream" uid="uid://x0oudfd18kan" path="res://music/welcomingHike.mp3" id="53_welcoming_hike"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="54_world_map"]
+[ext_resource type="Script" path="res://scenes/interaction/brochure_pickup.gd" id="55_brochure_pickup"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -726,9 +727,11 @@ interaction_distance = 6.0
 visual_target_path = NodePath("../../welcomeCenterTextured2")
 interaction_message = "Map Board: Inspection opened."
 
-[node name="InspectableView" type="Node3D" parent="Interactables/MapInspect" unique_id=1849204821 node_paths=PackedStringArray("camera_anchor")]
+[node name="InspectableView" type="Node3D" parent="Interactables/MapInspect" unique_id=1849204821 node_paths=PackedStringArray("camera_anchor", "keyboard_pickup_hotspot")]
 script = ExtResource("30_inspect_view")
 camera_anchor = NodePath("CameraAnchor")
+keyboard_pickup_hotspot = NodePath("BrochurePickUp")
+exit_prompt_text = "[ E ] TAKE BROCHURE    [ TAB / ESC ] RETURN"
 max_parallax_yaw_degrees = 10.0
 
 [node name="CameraAnchor" type="Marker3D" parent="Interactables/MapInspect/InspectableView" unique_id=1849204822]
@@ -749,6 +752,11 @@ dialogue_resource = ExtResource("18_forest_dialogue")
 dialogue_cue = "visitor_center_map_interact"
 pickup_item_id = &"map"
 is_pickup = true
+
+[node name="DirectPickup" type="Node3D" parent="Interactables/MapInspect/InspectableView/BrochurePickUp" node_paths=PackedStringArray("brochure_visual")]
+script = ExtResource("55_brochure_pickup")
+interaction_distance = 3.0
+brochure_visual = NodePath("../../../../../welcomeCenterTextured2/mapStand_V3/TownMapBoard/BrochureMap2")
 
 [node name="welcomeCenterTextured2" parent="." unique_id=1194163961 instance=ExtResource("12_vbdqn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -270.88535, 0.09806073, -8.345045)
@@ -796,10 +804,8 @@ transform = Transform3D(0.44872105, 0, -0.43140838, 0, 0.65, 0, 0.39815614, 0, 0
 transform = Transform3D(0.99999666, 0, 4.4703484e-07, 0, 0.9999595, 0, -4.4703484e-07, 0, 0.99999666, -0.24987793, 1.8499734, 0.20022583)
 shape = SubResource("BoxShape3D_orua6")
 
-[node name="MapPostDecal" type="Decal" parent="welcomeCenterTextured2/mapStand_V3" unique_id=1387636147]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 2.23, 0.32)
-size = Vector3(3.16, 0.2, 1.4)
-texture_albedo = ExtResource("52_map_post")
+[node name="TownMapBoard" parent="welcomeCenterTextured2/mapStand_V3" unique_id=1387636147 instance=ExtResource("52_map_post")]
+position = Vector3(0, 2.23, 0.32)
 
 [node name="dead_tree_rt_155" parent="." unique_id=1490817319 instance=ExtResource("14_bernf")]
 transform = Transform3D(1.2056148, 0, 0, 0, 1.2707283, 0, 0, 0, 1.1674359, -262.24115, -0.0060327053, -2.0260053)
@@ -1000,6 +1006,9 @@ volume_db = -80.0
 bus = &"Music"
 
 [node name="WorldMap" parent="." unique_id=862421942 instance=ExtResource("54_world_map")]
+
+[node name="Display" parent="WorldMap" index="1"]
+map_origin = Vector2(1137.893, 192.951)
 
 [node name="tree_004" parent="." unique_id=1896254311 instance=ExtResource("25_7ds25")]
 transform = Transform3D(0.24680898, 0, -0.98089147, 0, 1.0114657, 0, 0.98089147, 0, 0.24680898, -247.9456, -0.22229062, -0.080916405)

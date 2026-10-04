@@ -8,10 +8,12 @@ const EMPTY_ITEM: StringName = &""
 const FLASHLIGHT_ITEM: StringName = &"flashlight"
 const MAP_ITEM: StringName = &"map"
 const NOTEBOOK_ITEM: StringName = &"notebook"
-const INK := Color(0.025, 0.037, 0.038, 0.98)
-const TEAL := Color(0.27, 0.46, 0.43)
-const GOLD := Color(0.82, 0.66, 0.35)
-const PAPER := Color(0.84, 0.85, 0.75)
+const INK := Color(0.015, 0.015, 0.015, 0.80)
+const MUTED := Color(0.50, 0.50, 0.50)
+const WHITE := Color(1.0, 1.0, 1.0)
+const PAPER := Color(0.78, 0.78, 0.78)
+const MENU_FONT: Font = preload("res://fonts/EuropeanTeletextNuevo.ttf")
+const BrochurePreview = preload("res://scenes/player/inventory/brochure_preview.gd")
 
 @export var selected_style: StyleBoxFlat
 @export var unselected_style: StyleBoxFlat
@@ -25,6 +27,8 @@ var _cards: Array[Button] = []
 var _description: Label
 var _title: Label
 var _preview: TextureRect
+var _item_image: TextureRect
+var _brochure_preview: Control
 var _paper_preview: Label
 var _use: Button
 var _status: Label
@@ -69,6 +73,8 @@ func get_selected_item() -> StringName:
 func select_slot(slot: int) -> void:
 	selected_slot_index = clampi(slot, 0, SLOT_COUNT - 1)
 	_update_hud()
+	if is_open and not _cards.is_empty():
+		_cards[selected_slot_index].grab_focus()
 	selection_changed.emit(selected_slot_index, get_selected_item())
 
 func select_relative(direction: int) -> void:
@@ -139,13 +145,13 @@ func _exit_tree() -> void:
 
 func _panel(parent: Node, header: String) -> VBoxContainer:
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _style(TEAL.darkened(0.3)))
+	panel.add_theme_stylebox_override("panel", _style(MUTED.darkened(0.55)))
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(panel)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 14)
 	panel.add_child(column)
-	var title := _label(header, 16, GOLD)
+	var title := _label(header, 14, MUTED.lightened(0.5))
 	column.add_child(title)
 	return column
 
@@ -160,17 +166,37 @@ func _style(border: Color) -> StyleBoxFlat:
 func _label(words: String, size: int = 18, color: Color = PAPER) -> Label:
 	var label := Label.new()
 	label.text = words
+	label.add_theme_font_override("font", MENU_FONT)
 	label.add_theme_font_size_override("font_size", size)
 	label.add_theme_color_override("font_color", color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return label
 
+func _style_button(button: Button) -> void:
+	button.add_theme_font_override("font", MENU_FONT)
+	button.add_theme_font_size_override("font_size", 14)
+	button.add_theme_color_override("font_color", PAPER)
+	button.add_theme_color_override("font_hover_color", WHITE)
+	button.add_theme_color_override("font_focus_color", WHITE)
+	button.add_theme_color_override("font_pressed_color", WHITE)
+	button.add_theme_color_override("font_disabled_color", MUTED.darkened(0.25))
+	button.add_theme_stylebox_override("normal", _style(MUTED.darkened(0.5)))
+	button.add_theme_stylebox_override("hover", _style(WHITE))
+	button.add_theme_stylebox_override("focus", _style(WHITE))
+	button.add_theme_stylebox_override("pressed", _style(WHITE))
+	button.add_theme_stylebox_override("disabled", _style(MUTED.darkened(0.7)))
+
 func _build_screen() -> void:
 	_overlay = Control.new()
 	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_overlay)
+	var backing := ColorRect.new()
+	backing.color = Color.BLACK
+	backing.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_overlay.add_child(backing)
 	var dim := ColorRect.new()
-	dim.color = Color(0.005, 0.009, 0.009, 0.95)
+	dim.material = preload("res://shaders/menu_background_material.tres")
+	dim.color = Color(0.005, 0.005, 0.005, 1.0)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_overlay.add_child(dim)
 	var safe := AspectRatioContainer.new()
@@ -193,11 +219,11 @@ func _build_screen() -> void:
 	margin.add_child(page)
 	var heading := HBoxContainer.new()
 	page.add_child(heading)
-	var name := _label("THOMAS / FIELD INVENTORY", 26, GOLD)
+	var name := _label("INVENTORY", 30, WHITE)
 	name.autowrap_mode = TextServer.AUTOWRAP_OFF
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(name)
-	var town := _label("CICELY TOWN", 16, TEAL.lightened(0.4))
+	var town := _label("THOMAS / CICELY", 14, MUTED.lightened(0.4))
 	town.autowrap_mode = TextServer.AUTOWRAP_OFF
 	town.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	town.custom_minimum_size.x = 160
@@ -210,8 +236,7 @@ func _build_screen() -> void:
 		card.custom_minimum_size = Vector2(0, 86)
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		card.add_theme_font_size_override("font_size", 14)
-		card.add_theme_stylebox_override("normal", _style(TEAL))
-		card.add_theme_stylebox_override("focus", _style(GOLD))
+		_style_button(card)
 		card.pressed.connect(select_slot.bind(slot))
 		row.add_child(card)
 		_cards.append(card)
@@ -231,10 +256,10 @@ func _build_screen() -> void:
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	portrait.custom_minimum_size.y = 140
 	status_column.add_child(portrait)
-	status_column.add_child(_label("THOMAS", 22, GOLD))
-	_status = _label("", 16)
+	status_column.add_child(_label("THOMAS", 18, WHITE))
+	_status = _label("", 14)
 	status_column.add_child(_status)
-	status_column.add_child(_label("Find Carrie.\nFollow what she left behind.", 15, TEAL.lightened(0.4)))
+	status_column.add_child(_label("Find Carrie.\nFollow what she left behind.", 14, MUTED.lightened(0.35)))
 	var preview_column := _panel(body, "EXAMINE ITEM")
 	preview_column.get_parent().size_flags_stretch_ratio = 1.7
 	_preview = TextureRect.new()
@@ -243,6 +268,14 @@ func _build_screen() -> void:
 	_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_preview.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	preview_column.add_child(_preview)
+	_item_image = TextureRect.new()
+	_item_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_item_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_item_image.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	preview_column.add_child(_item_image)
+	_brochure_preview = BrochurePreview.new()
+	_brochure_preview.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	preview_column.add_child(_brochure_preview)
 	_paper_preview = _label("", 30, PAPER)
 	_paper_preview.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_paper_preview.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -250,21 +283,22 @@ func _build_screen() -> void:
 	preview_column.add_child(_paper_preview)
 	var details := _panel(body, "ITEM INFORMATION")
 	details.get_parent().size_flags_stretch_ratio = 1.1
-	_title = _label("", 24, GOLD)
+	_title = _label("", 20, WHITE)
 	details.add_child(_title)
-	_description = _label("", 17)
+	_description = _label("", 15)
 	_description.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	details.add_child(_description)
 	_use = Button.new()
 	_use.custom_minimum_size.y = 44
-	_use.add_theme_stylebox_override("normal", _style(GOLD))
+	_style_button(_use)
 	_use.pressed.connect(_use_selected)
 	details.add_child(_use)
 	var close := Button.new()
 	close.text = "RETURN TO TOWN"
+	_style_button(close)
 	close.pressed.connect(set_open.bind(false))
 	details.add_child(close)
-	page.add_child(_label("E / ESC  CLOSE     ← / →  SELECT     ENTER  USE     F  FLASHLIGHT IN THE WORLD", 14, TEAL.lightened(0.45)))
+	page.add_child(_label("TAB / ESC  RETURN    LEFT / RIGHT  SELECT    ENTER  USE", 13, MUTED.lightened(0.4)))
 	_overlay.hide()
 	call_deferred("_layout_screen")
 
@@ -280,17 +314,21 @@ func _update_hud() -> void:
 		return
 	for slot in SLOT_COUNT:
 		_cards[slot].text = "%02d\n%s" % [slot + 1, _get_item_display_name(_items[slot])]
-		_cards[slot].add_theme_stylebox_override("normal", _style(GOLD if slot == selected_slot_index else TEAL.darkened(0.25)))
+		_cards[slot].add_theme_stylebox_override("normal", _style(WHITE if slot == selected_slot_index else MUTED.darkened(0.5)))
+		_cards[slot].add_theme_color_override("font_color", WHITE if slot == selected_slot_index else MUTED.lightened(0.3))
 	var item := get_selected_item()
 	_title.text = _get_item_display_name(item)
 	_preview.visible = item == FLASHLIGHT_ITEM
-	_paper_preview.visible = item != FLASHLIGHT_ITEM
+	var item_data: ItemData = ItemDatabase.get_item(item) if item != EMPTY_ITEM else null
+	_item_image.texture = item_data.image if item_data != null else null
+	_item_image.visible = item != FLASHLIGHT_ITEM and item != MAP_ITEM and _item_image.texture != null
+	_brochure_preview.visible = item == MAP_ITEM
+	_paper_preview.visible = item != FLASHLIGHT_ITEM and item != MAP_ITEM and not _item_image.visible
 	_paper_preview.text = "CICELY TOWN\nTOURIST MAP" if item == MAP_ITEM else "CARRIE\nPERSONAL NOTES" if item == NOTEBOOK_ITEM else "—"
 	if item == EMPTY_ITEM:
 		_description.text = "Nothing stored here."
 		_use.text = "EMPTY"
 	elif ItemDatabase.has_item(item):
-		var item_data := ItemDatabase.get_item(item)
 		_description.text = item_data.description
 		_use.text = item_data.use_action_text
 	else:

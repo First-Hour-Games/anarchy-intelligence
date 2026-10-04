@@ -17,6 +17,7 @@ signal inspection_ended(player: FirstPersonPlayer)
 @export var sway_smoothing: float = 8.0
 
 @export_category("Controls")
+@export var keyboard_pickup_hotspot: InspectionHotspot3D = null
 @export var exit_key: Key = KEY_ESCAPE
 @export var alternate_exit_key: Key = KEY_TAB
 @export var exit_prompt_text: String = "[ TAB / ESC ] RETURN":
@@ -322,6 +323,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not is_inspecting or _is_transitioning:
 		return
 	if is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active:
+		return
+
+	if event.is_action_pressed(&"interact") and not event.is_echo() and is_instance_valid(keyboard_pickup_hotspot):
+		_on_hotspot_clicked(keyboard_pickup_hotspot)
+		get_viewport().set_input_as_handled()
 		return
 
 	var is_exit_pressed: bool = false

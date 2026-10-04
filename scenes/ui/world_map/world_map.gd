@@ -43,14 +43,14 @@ const COLOR_TEXT := Color(0.82, 0.90, 0.82, 1.0)
 const COLOR_MUTED_TEXT := Color(0.56, 0.66, 0.59, 1.0)
 const COLOR_PLAYER := Color(0.96, 0.79, 0.32, 1.0)
 const PIXEL_STEP := 2.0
-const MAP_TEXTURE: Texture2D = preload("res://img/player/mapOnly.png")
-const MAP_TEXTURE_SIZE := Vector2(701.0, 535.0)
-
+const MAP_TEXTURE: Texture2D = preload("res://img/items/cicely_town_map.png")
+# Calibrated from the PDF's main-road junction and residential turnarounds.
+# Values are pixels in the 2376 x 1836 map texture; +Z runs down the page.
 @export_category("Town Map Image")
 @export var use_image_map: bool = true
 @export var map_texture: Texture2D = MAP_TEXTURE
-@export var map_origin: Vector2 = Vector2(356.77, 69.50)
-@export var world_scale: Vector2 = Vector2(0.8423, 0.9800)
+@export var map_origin: Vector2 = Vector2(1137.893, 229.696)
+@export var world_scale: Vector2 = Vector2(3.433656, 3.487944)
 @export var require_inventory_item: bool = true
 @export var required_item_id: StringName = &"map"
 @export var show_coordinates_footer: bool = true

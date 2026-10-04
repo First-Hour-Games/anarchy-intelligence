@@ -24,9 +24,16 @@ func run() -> void:
 	root.add_child(forest)
 	current_scene = forest
 	await process_frame
+	forest.finish_fade_immediately()
+	if is_instance_valid(forest.opening_balloon):
+		forest.opening_balloon._end_dialogue()
+	await process_frame
 
 	var player := forest.get_node_or_null("Player") as FirstPersonPlayer
 	check(is_instance_valid(player), "Player found in scene")
+	player.unfreeze()
+	var display := forest.get_node("WorldMap/Display") as WorldMapOverlay
+	check(not display.has_town_map(), "Map is unavailable before board pickup")
 
 	var inspect_view := forest.get_node_or_null("Interactables/MapInspect/InspectableView") as InspectableView3D
 	check(is_instance_valid(inspect_view), "InspectableView3D found")
@@ -35,15 +42,20 @@ func run() -> void:
 	check(is_instance_valid(brochure_hotspot), "BrochurePickUp hotspot found")
 
 	# Start inspection
-	inspect_view.start_inspection(player)
+	var board := forest.get_node("Interactables/MapInspect") as InteractableBlock3D
+	player.global_position = board.global_position + Vector3(0, 0, 1)
+	board.interact(player)
 	while inspect_view._is_transitioning:
 		await process_frame
 	await process_frame
 	check(inspect_view.is_inspecting, "Inspection mode is active")
 	check(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "Mouse is visible in inspection")
 
-	# Simulate clicking brochure hotspot
-	inspect_view._on_hotspot_clicked(brochure_hotspot)
+	# E can take the brochure while inspecting the board.
+	var take_event := InputEventAction.new()
+	take_event.action = &"interact"
+	take_event.pressed = true
+	inspect_view._unhandled_input(take_event)
 	await process_frame
 
 	# Check that active dialogue balloon exists
@@ -63,6 +75,7 @@ func run() -> void:
 	check(pickup_screen.is_active, "ItemPickupScreen is open and active")
 	check(pickup_screen.get("_prompt_label").text == "[ E ] Confirm", "Pickup screen prompt label says '[ E ] Confirm'")
 	check(player.inventory.has_item(&"map"), "Player inventory received map item")
+	check(pickup_screen._current_item.image == display.map_texture, "Pickup shows the same PDF map as the usable overlay")
 	check(brochure_hotspot.has_triggered, "BrochurePickUp hotspot has_triggered is true")
 
 	# Close pickup screen via input event (E key)
@@ -80,15 +93,30 @@ func run() -> void:
 	var brochure_btn: InspectionDotButton = inspect_view._hotspot_map.get(brochure_hotspot)
 	check(brochure_btn == null or not brochure_btn.visible, "Brochure dot button is hidden/consumed")
 
-	# Exit inspection view with exit key (Backspace)
+	# Exit inspection view with Escape.
 	var exit_event := InputEventKey.new()
 	exit_event.pressed = true
-	exit_event.keycode = KEY_BACKSPACE
+	exit_event.keycode = KEY_ESCAPE
 	inspect_view._unhandled_input(exit_event)
 	await create_timer(0.5).timeout
 	check(not inspect_view.is_inspecting, "Inspection view successfully exited")
+	player.inventory.set_open(true)
+	check(player.inventory.is_open, "Inventory opens after picking up map")
+	check(player.inventory._brochure_preview.visible and not player.inventory._item_image.visible, "Inventory shows a folded brochure instead of the unfolded map")
+	var next_event := InputEventAction.new()
+	next_event.action = &"ui_right"
+	next_event.pressed = true
+	player.inventory._input(next_event)
+	check(not player.inventory._brochure_preview.visible and player.inventory._use.disabled, "Empty slot hides the brochure and disables use")
+	check(player.inventory._cards[player.inventory.selected_slot_index].has_focus(), "Keyboard selection moves the inventory highlight")
+	player.inventory.select_relative(-1)
+	player.inventory._use_selected()
+	check(not player.inventory.is_open and display.is_map_open(), "OPEN MAP uses the collected map from inventory")
+	display.set_map_open(false)
+	check(player.inventory.has_item(&"map"), "Closing map keeps it in inventory")
 
 	forest.queue_free()
+	await process_frame
 
 	print("--- All Inspection Brochure Pickup Checks Passed! ---")
 	if failures == 0:
