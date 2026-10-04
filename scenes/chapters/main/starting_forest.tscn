@@ -54,6 +54,7 @@
 [ext_resource type="AudioStream" uid="uid://x0oudfd18kan" path="res://music/welcomingHike.mp3" id="53_welcoming_hike"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="54_world_map"]
 [ext_resource type="Script" path="res://scenes/interaction/brochure_pickup.gd" id="55_brochure_pickup"]
+[ext_resource type="Script" path="res://scenes/atmosphere/forest_apparitions.gd" id="56_apparitions"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -920,6 +921,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="ForestApparitions" type="Node3D" parent="."]
+script = ExtResource("56_apparitions")
 
 [node name="Streets" type="Node3D" parent="." unique_id=186703953]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3547363)
