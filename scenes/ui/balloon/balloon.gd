@@ -47,8 +47,11 @@ func _ready() -> void:
 	balloon.hide()
 	Engine.get_singleton("DialogueManager").mutated.connect(_on_mutated)
 
-	if responses_menu and responses_menu.next_action.is_empty():
-		responses_menu.next_action = next_action
+	if responses_menu:
+		if responses_menu.next_action.is_empty():
+			responses_menu.next_action = next_action
+		if not responses_menu.response_selected.is_connected(_on_responses_menu_response_selected):
+			responses_menu.response_selected.connect(_on_responses_menu_response_selected)
 
 	if talk_sfx:
 		talk_sfx.finished.connect(_on_talk_sfx_finished)

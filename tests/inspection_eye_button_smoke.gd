@@ -43,6 +43,13 @@ func run() -> void:
 	assert(click_received[0], "clicked signal should be emitted on mouse left click")
 	print("PASS: Clicked signal emitted on mouse press")
 
+	# 6. Square frame styling checks
+	assert(InspectionDotButton.FRAME_BG_COLOR.r == 0.0 and InspectionDotButton.FRAME_BG_COLOR.g == 0.0 and InspectionDotButton.FRAME_BG_COLOR.b == 0.0, "Background should be black")
+	assert(InspectionDotButton.FRAME_BG_COLOR.a > 0.0 and InspectionDotButton.FRAME_BG_COLOR.a < 1.0, "Background should be semi-transparent")
+	assert(InspectionDotButton.FRAME_OUTLINE_COLOR.r == 1.0 and InspectionDotButton.FRAME_OUTLINE_COLOR.g == 1.0 and InspectionDotButton.FRAME_OUTLINE_COLOR.b == 1.0, "Outline should be white")
+	assert(InspectionDotButton.FRAME_OUTLINE_WIDTH >= 1.0, "Outline width should be at least 1px")
+	print("PASS: Square frame has semi-transparent black background and white outline")
+
 	btn.queue_free()
 	print("--- All Inspection Eye Button Checks Passed! ---")
 	quit(0)

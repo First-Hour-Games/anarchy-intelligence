@@ -1,0 +1,77 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/menu_background.gdshader" id="1_ctg3t"]
+
+[sub_resource type="Gradient" id="Gradient_y6n3j"]
+colors = PackedColorArray(0.03, 0.04, 0.06, 1, 0.12, 0.14, 0.18, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hdqor"]
+seed = 101
+frequency = 0.005
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_l3vuf"]
+noise = SubResource("FastNoiseLite_hdqor")
+color_ramp = SubResource("Gradient_y6n3j")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_3jej2"]
+colors = PackedColorArray(0.12, 0.15, 0.2, 0, 0.25, 0.3, 0.38, 0.35)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fdfok"]
+seed = 202
+frequency = 0.008
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_f4m0w"]
+noise = SubResource("FastNoiseLite_fdfok")
+color_ramp = SubResource("Gradient_3jej2")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_uyttk"]
+colors = PackedColorArray(0.1, 0.12, 0.18, 0, 0.2, 0.26, 0.35, 0.3)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_va7mb"]
+seed = 303
+frequency = 0.012
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kcdk4"]
+noise = SubResource("FastNoiseLite_va7mb")
+color_ramp = SubResource("Gradient_uyttk")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_y4jo0"]
+colors = PackedColorArray(0.08, 0.1, 0.15, 0, 0.22, 0.28, 0.36, 0.25)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_b1cvi"]
+noise_type = 2
+seed = 404
+frequency = 0.015
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2u40j"]
+noise = SubResource("FastNoiseLite_b1cvi")
+color_ramp = SubResource("Gradient_y4jo0")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_wi0km"]
+colors = PackedColorArray(0.05, 0.08, 0.12, 0, 0.3, 0.35, 0.42, 0.2)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8y2mp"]
+seed = 505
+frequency = 0.025
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lkbk0"]
+noise = SubResource("FastNoiseLite_8y2mp")
+color_ramp = SubResource("Gradient_wi0km")
+seamless = true
+
+[resource]
+shader = ExtResource("1_ctg3t")
+shader_parameter/time_scale = 0.5
+shader_parameter/velocity_scale = 0.1
+shader_parameter/amount = 5
+shader_parameter/patterns = Array[Texture2D]([SubResource("NoiseTexture2D_l3vuf"), SubResource("NoiseTexture2D_f4m0w"), SubResource("NoiseTexture2D_kcdk4"), SubResource("NoiseTexture2D_2u40j"), SubResource("NoiseTexture2D_lkbk0")])
+shader_parameter/directions = [Vector2(1, 0.3), Vector2(-0.7, 0.7), Vector2(0.5, -0.8), Vector2(-0.6, -0.5), Vector2(0.8, -0.4)]
+shader_parameter/velocities = [0.4, 0.8, 0.6, 1.0, 0.5]
+shader_parameter/visible_duration = 15.0
+shader_parameter/transition_duration = 2.0

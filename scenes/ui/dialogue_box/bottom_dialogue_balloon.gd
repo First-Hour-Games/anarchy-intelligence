@@ -43,8 +43,13 @@ func _ready() -> void:
 	balloon.hide()
 	Engine.get_singleton("DialogueManager").mutated.connect(_on_mutated)
 
-	if responses_menu and responses_menu.next_action.is_empty():
-		responses_menu.next_action = next_action
+	if responses_menu:
+		if responses_menu.next_action.is_empty():
+			responses_menu.next_action = next_action
+		if not responses_menu.response_selected.is_connected(_on_responses_menu_response_selected):
+			responses_menu.response_selected.connect(_on_responses_menu_response_selected)
+		if not responses_menu.response_focused.is_connected(_on_responses_menu_response_focused):
+			responses_menu.response_focused.connect(_on_responses_menu_response_focused)
 
 	if talk_sfx:
 		talk_sfx.finished.connect(_on_talk_sfx_finished)
@@ -80,25 +85,95 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not balloon.visible:
 		return
 
-	if will_block_other_input:
-		if is_inside_tree() and get_viewport():
-			get_viewport().set_input_as_handled()
-
 	if not is_instance_valid(dialogue_line):
+		if will_block_other_input and is_inside_tree() and get_viewport():
+			get_viewport().set_input_as_handled()
 		return
 
 	if event.is_pressed() and not event.is_echo():
+		# 1. When dialogue options / responses are active:
+		if dialogue_line.responses.size() > 0 and responses_menu.visible:
+			var items: Array = responses_menu.get_menu_items()
+			if not items.is_empty():
+				# Navigation Up: Up arrow or W
+				if event.is_action_pressed(&"ui_up") or (event is InputEventKey and (event.keycode == KEY_UP or event.keycode == KEY_W)):
+					_navigate_responses(-1)
+					if get_viewport():
+						get_viewport().set_input_as_handled()
+					return
+
+				# Navigation Down: Down arrow or S
+				if event.is_action_pressed(&"ui_down") or (event is InputEventKey and (event.keycode == KEY_DOWN or event.keycode == KEY_S)):
+					_navigate_responses(1)
+					if get_viewport():
+						get_viewport().set_input_as_handled()
+					return
+
+				# Selection / Confirmation: E (interact), ui_accept (Enter / Space)
+				if event.is_action_pressed(&"interact") or event.is_action_pressed(next_action) or (event is InputEventKey and (event.keycode == KEY_E or event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE)):
+					var focused := get_viewport().gui_get_focus_owner()
+					var target_item: Control = focused if focused in items else items[0]
+					if is_instance_valid(target_item):
+						var resp = target_item.get_meta("response", null)
+						if resp != null:
+							if get_viewport():
+								get_viewport().set_input_as_handled()
+							_on_responses_menu_response_selected(resp)
+							return
+
+				# Cancel / Escape: select 'No' if present
+				if event.is_action_pressed(skip_action) or event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+					for itm in items:
+						var resp = itm.get_meta("response", null)
+						if resp != null and resp.text.to_lower() == "no":
+							if get_viewport():
+								get_viewport().set_input_as_handled()
+							_on_responses_menu_response_selected(resp)
+							return
+
+			if will_block_other_input and is_inside_tree() and get_viewport():
+				get_viewport().set_input_as_handled()
+			return
+
+		# 2. When regular dialogue line (no responses active yet):
 		var is_click: bool = event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT
-		var is_advance_key: bool = event.is_action_pressed(next_action) or (event is InputEventKey and (event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE))
+		var is_advance_key: bool = event.is_action_pressed(next_action) or event.is_action_pressed(&"interact") or (event is InputEventKey and (event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE or event.keycode == KEY_E))
 
 		if is_click or is_advance_key:
 			if dialogue_label.is_typing:
 				dialogue_label.skip_typing()
+				if get_viewport():
+					get_viewport().set_input_as_handled()
 				return
 			elif is_waiting_for_input and dialogue_line.responses.size() == 0:
 				if click_sfx:
 					click_sfx.play()
+				if get_viewport():
+					get_viewport().set_input_as_handled()
 				next(dialogue_line.next_id)
+				return
+
+	if will_block_other_input:
+		if is_inside_tree() and get_viewport():
+			get_viewport().set_input_as_handled()
+
+
+func _navigate_responses(dir: int) -> void:
+	if not responses_menu:
+		return
+	var items: Array = responses_menu.get_menu_items()
+	if items.is_empty():
+		return
+	var current_focus := get_viewport().gui_get_focus_owner()
+	var current_idx := items.find(current_focus)
+	if current_idx == -1:
+		current_idx = 0
+	else:
+		current_idx = posmod(current_idx + dir, items.size())
+	items[current_idx].grab_focus()
+	if move_sfx:
+		move_sfx.pitch_scale = randf_range(0.96, 1.04)
+		move_sfx.play()
 
 
 func start(with_dialogue_resource: DialogueResource = null, cue: String = "", extra_game_states: Array = []) -> void:
@@ -135,7 +210,6 @@ func apply_dialogue_line() -> void:
 	if character_label.visible:
 		character_label.text = tr(char_name, "dialogue").to_upper()
 
-
 	dialogue_label.hide()
 	dialogue_label.dialogue_line = dialogue_line
 
@@ -144,6 +218,9 @@ func apply_dialogue_line() -> void:
 
 	balloon.show()
 	will_hide_balloon = false
+
+	if dialogue_line.responses.size() > 0:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	dialogue_label.show()
 	if not dialogue_line.text.is_empty():
@@ -156,6 +233,10 @@ func apply_dialogue_line() -> void:
 	if dialogue_line.responses.size() > 0:
 		balloon.focus_mode = Control.FOCUS_NONE
 		responses_menu.show()
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		var items: Array = responses_menu.get_menu_items()
+		if not items.is_empty():
+			items[0].grab_focus()
 	else:
 		is_waiting_for_input = true
 		balloon.focus_mode = Control.FOCUS_ALL
@@ -196,14 +277,17 @@ func _freeze_player() -> void:
 
 
 func _unfreeze_player() -> void:
-	if is_instance_valid(_cached_player) and _cached_player.has_method(&"unfreeze"):
-		_cached_player.unfreeze()
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	else:
-		var p := get_tree().get_first_node_in_group(&"player") as FirstPersonPlayer
-		if is_instance_valid(p) and p.has_method(&"unfreeze"):
+	var p := _cached_player
+	if not is_instance_valid(p) and is_inside_tree() and get_tree():
+		p = get_tree().get_first_node_in_group(&"player") as FirstPersonPlayer
+
+	if is_instance_valid(p):
+		if p.get_meta(&"is_climbing_over", false):
+			# Do not unfreeze player while a climb-over fade is active
+			return
+		if p.has_method(&"unfreeze"):
 			p.unfreeze()
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func _on_mutated(_mutation: Dictionary) -> void:
@@ -212,9 +296,55 @@ func _on_mutated(_mutation: Dictionary) -> void:
 		talk_sfx.stop()
 
 
+func _on_responses_menu_response_focused(_control: Variant) -> void:
+	if move_sfx:
+		move_sfx.pitch_scale = randf_range(0.96, 1.04)
+		move_sfx.play()
+
+
 func _on_responses_menu_response_selected(response: DialogueResponse) -> void:
+	if not is_instance_valid(dialogue_line):
+		return
 	if talk_sfx:
 		talk_sfx.stop()
 	if click_sfx:
 		click_sfx.play()
+	if responses_menu:
+		responses_menu.hide()
 	next(response.next_id)
+
+
+func has_item(item_id: Variant) -> bool:
+	var p := _cached_player
+	if not is_instance_valid(p) and is_inside_tree() and get_tree():
+		p = get_tree().get_first_node_in_group(&"player") as FirstPersonPlayer
+	if is_instance_valid(p) and p.has_method(&"has_item"):
+		return p.has_item(item_id)
+	return false
+
+
+func proceed() -> void:
+	var player_to_proceed := _cached_player
+	if not is_instance_valid(player_to_proceed) and is_inside_tree() and get_tree():
+		player_to_proceed = get_tree().get_first_node_in_group(&"player") as FirstPersonPlayer
+
+	for state in temporary_game_states:
+		if is_instance_valid(state) and state.has_method(&"climb_over_barrier"):
+			state.call(&"climb_over_barrier", player_to_proceed)
+			return
+		elif is_instance_valid(state) and state.has_method(&"proceed") and state != self:
+			state.call(&"proceed", player_to_proceed)
+			return
+
+	if is_inside_tree() and get_tree():
+		var scene_root := get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
+		if is_instance_valid(scene_root):
+			var barrier := scene_root.find_child("BarrierTree", true, false)
+			if is_instance_valid(barrier) and barrier.has_method(&"proceed"):
+				barrier.call(&"proceed", player_to_proceed)
+				return
+			elif is_instance_valid(barrier) and barrier.has_method(&"climb_over_barrier"):
+				barrier.call(&"climb_over_barrier", player_to_proceed)
+				return
+
+

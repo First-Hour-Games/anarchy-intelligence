@@ -39,6 +39,8 @@ func _ready() -> void:
 	_build_documents()
 	checkpoint = player.global_transform
 	player.inventory.inventory_changed.connect(_inventory_changed)
+	if is_instance_valid(player) and is_instance_valid(player.inventory) and not player.inventory.has_item(PlayerInventory.MAP_ITEM):
+		player.inventory.add_item(PlayerInventory.MAP_ITEM)
 	_restore()
 	_refresh_objective()
 	if not _restored:

@@ -87,6 +87,11 @@ var current_footstep_surface: StringName = &"dirt"
 	preload("res://sounds/footsteps/grass/Grass-footsteps-7.ogg"),
 ]
 @export var snow_footsteps: Array[AudioStream] = []
+@export_category("Visibility")
+## When true, ensures the player node and essential visuals are automatically shown in game,
+## even if hidden in the editor hierarchy for editing convenience.
+@export var force_visible_in_game: bool = true
+
 @export var metal_footsteps: Array[AudioStream] = []
 @export var custom_surface_sounds: Dictionary = {}
 
@@ -98,6 +103,7 @@ var current_footstep_surface: StringName = &"dirt"
 @onready var interaction_detector: InteractionDetector = $InteractionDetector
 @onready var footstep_players: Array[AudioStreamPlayer] = [$FootstepPlayerA, $FootstepPlayerB]
 @onready var flashlight: PlayerFlashlight = get_node_or_null("Head/Camera3D/Flashlight") as PlayerFlashlight
+@onready var distance_fog: MeshInstance3D = get_node_or_null("Head/Camera3D/DistanceFog") as MeshInstance3D
 @onready var inventory: PlayerInventory = (get_node_or_null("InventoryHUD") as PlayerInventory) if has_node("InventoryHUD") else (get_node_or_null("Inventory") as PlayerInventory)
 
 var forced_surface: StringName = &""
@@ -124,7 +130,19 @@ var _footstep_player_index: int = 0
 var is_frozen: bool = false
 
 
+func _enter_tree() -> void:
+	if not Engine.is_editor_hint() and force_visible_in_game:
+		visible = true
+
+
 func _ready() -> void:
+	if not Engine.is_editor_hint() and force_visible_in_game:
+		_ensure_runtime_visibility()
+		visibility_changed.connect(func() -> void:
+			if not visible and force_visible_in_game and not Engine.is_editor_hint():
+				visible = true
+		)
+
 	if is_instance_valid(floor_detector):
 		floor_detector.add_exception(self)
 	_footstep_random.randomize()
@@ -167,6 +185,22 @@ func unfreeze() -> void:
 		interaction_detector.set_process(true)
 
 
+func has_item(item_id: Variant) -> bool:
+	if is_instance_valid(inventory):
+		return inventory.has_item(StringName(item_id))
+	return false
+
+
+func proceed() -> void:
+	var barrier := get_tree().current_scene.find_child("BarrierTree", true, false)
+	if is_instance_valid(barrier) and barrier.has_method(&"proceed"):
+		barrier.call(&"proceed", self)
+		return
+	elif is_instance_valid(barrier) and barrier.has_method(&"climb_over_barrier"):
+		barrier.call(&"climb_over_barrier", self)
+		return
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if is_frozen:
 		return
@@ -176,6 +210,16 @@ func _unhandled_input(event: InputEvent) -> void:
 			flashlight.toggle()
 			get_viewport().set_input_as_handled()
 			return
+
+	if event.is_action_pressed(&"map_toggle") and not event.is_echo():
+		if is_instance_valid(inventory) and inventory.has_item(PlayerInventory.MAP_ITEM):
+			var maps := get_tree().get_nodes_in_group("world_map")
+			if not maps.is_empty():
+				var map_overlay = maps[0]
+				if map_overlay.has_method(&"set_map_open") and map_overlay.has_method(&"is_map_open"):
+					map_overlay.set_map_open(not map_overlay.is_map_open())
+					get_viewport().set_input_as_handled()
+					return
 
 	var is_interact_pressed: bool = event.is_action_pressed(&"interact") or (event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E)
 	if is_interact_pressed and not event.is_echo():
@@ -462,3 +506,29 @@ func _play_footstep_sound() -> void:
 		maxf(footstep_pitch_min, footstep_pitch_max)
 	)
 	footstep_player.play()
+
+
+func get_distance_fog_material() -> ShaderMaterial:
+	if is_instance_valid(distance_fog):
+		return distance_fog.material_override as ShaderMaterial
+	return null
+
+
+func set_distance_fog_enabled(enabled: bool) -> void:
+	if is_instance_valid(distance_fog):
+		distance_fog.visible = enabled
+
+
+func _ensure_runtime_visibility() -> void:
+	visible = true
+	var head_node := get_node_or_null("Head") as Node3D
+	if is_instance_valid(head_node):
+		head_node.visible = true
+	var cam_node := get_node_or_null("Head/Camera3D") as Camera3D
+	if is_instance_valid(cam_node):
+		cam_node.visible = true
+	if is_instance_valid(distance_fog):
+		distance_fog.visible = true
+	var vm := get_node_or_null("HandViewmodel") as CanvasLayer
+	if is_instance_valid(vm):
+		vm.visible = true

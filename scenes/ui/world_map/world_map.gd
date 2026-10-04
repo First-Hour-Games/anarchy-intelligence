@@ -43,7 +43,19 @@ const COLOR_TEXT := Color(0.82, 0.90, 0.82, 1.0)
 const COLOR_MUTED_TEXT := Color(0.56, 0.66, 0.59, 1.0)
 const COLOR_PLAYER := Color(0.96, 0.79, 0.32, 1.0)
 const PIXEL_STEP := 2.0
+const MAP_TEXTURE: Texture2D = preload("res://img/player/mapOnly.png")
+const MAP_TEXTURE_SIZE := Vector2(701.0, 535.0)
 
+@export_category("Town Map Image")
+@export var use_image_map: bool = true
+@export var map_texture: Texture2D = MAP_TEXTURE
+@export var map_origin: Vector2 = Vector2(356.77, 69.50)
+@export var world_scale: Vector2 = Vector2(0.8423, 0.9800)
+@export var require_inventory_item: bool = true
+@export var required_item_id: StringName = &"map"
+@export var show_coordinates_footer: bool = true
+
+@export_category("References & Behavior")
 @export var player_path: NodePath = NodePath("../../Player")
 @export var environment_path: NodePath = NodePath("../../WorldEnvironment")
 @export var toggle_action: StringName = &"map_toggle"
@@ -63,7 +75,7 @@ var _previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_CAPTURED
 func _ready() -> void:
 	add_to_group("world_map")
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_player = get_node_or_null(player_path) as Node3D
+	_player = _resolve_player()
 	_map_viewport = get_node_or_null("../MapViewport") as SubViewport
 	if is_instance_valid(_map_viewport):
 		_map_viewport.world_3d = get_viewport().world_3d
@@ -73,6 +85,29 @@ func _ready() -> void:
 	visible = false
 	set_process(true)
 	set_process_unhandled_input(true)
+
+
+func _resolve_player() -> Node3D:
+	if is_instance_valid(_player):
+		return _player
+	var p: Node3D = get_node_or_null(player_path) as Node3D
+	if not is_instance_valid(p):
+		p = get_tree().get_first_node_in_group("player") as Node3D
+	_player = p
+	return _player
+
+
+func has_town_map() -> bool:
+	if not require_inventory_item:
+		return true
+	var p := _resolve_player()
+	if not is_instance_valid(p):
+		return true # Default to true in isolated test scenes where no player exists
+	if p.has_method(&"has_item"):
+		return p.has_item(String(required_item_id))
+	if "inventory" in p and is_instance_valid(p.inventory):
+		return p.inventory.has_item(required_item_id)
+	return false
 
 
 func _exit_tree() -> void:
@@ -95,7 +130,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		var story := get_tree().get_first_node_in_group("opening_story")
 		if story != null and bool(story.get("document_open")):
 			return
-		set_map_open(not _is_open)
+		if not _is_open:
+			if not has_town_map():
+				return
+			set_map_open(true)
+		else:
+			set_map_open(false)
 		get_viewport().set_input_as_handled()
 	elif _is_open and event.is_action_pressed(&"ui_cancel"):
 		set_map_open(false)
@@ -134,6 +174,21 @@ func _draw() -> void:
 		return
 
 	draw_rect(Rect2(Vector2.ZERO, size), COLOR_SCREEN_DIM)
+
+	if use_image_map and is_instance_valid(map_texture):
+		_map_rect = _calculate_panel_rect()
+		# Drop shadow
+		draw_rect(Rect2(_map_rect.position + Vector2(6.0, 8.0), _map_rect.size), COLOR_PANEL_SHADOW)
+		# Paper map texture
+		draw_texture_rect(map_texture, _map_rect, false)
+		# Vintage map border
+		draw_rect(_map_rect, Color(0.35, 0.30, 0.24, 0.85), false, 2.0)
+		# Live player waypoint with facing arrow & beacon
+		_draw_player_waypoint()
+		# Footer
+		_draw_footer(_map_rect)
+		return
+
 	var panel_rect := _calculate_panel_rect()
 	draw_rect(Rect2(panel_rect.position + Vector2(8.0, 8.0), panel_rect.size), COLOR_PANEL_SHADOW)
 	draw_rect(panel_rect, COLOR_PANEL)
@@ -159,6 +214,19 @@ func _draw() -> void:
 
 
 func _calculate_panel_rect() -> Rect2:
+	if use_image_map and is_instance_valid(map_texture):
+		var tex_sz := map_texture.get_size()
+		var target_ratio := tex_sz.x / tex_sz.y
+		var available_panel := size - Vector2(48.0, 48.0)
+		var map_w := available_panel.x
+		var map_h := map_w / target_ratio
+		if map_h > available_panel.y:
+			map_h = available_panel.y
+			map_w = map_h * target_ratio
+		map_w = floorf(map_w / PIXEL_STEP) * PIXEL_STEP
+		map_h = floorf(map_h / PIXEL_STEP) * PIXEL_STEP
+		return Rect2((size - Vector2(map_w, map_h)) * 0.5, Vector2(map_w, map_h))
+
 	var panel_padding := Vector2(28.0, 76.0)
 	var available_panel := size - Vector2(48.0, 40.0)
 	var map_size := available_panel - panel_padding
@@ -325,6 +393,62 @@ func _draw_player_marker() -> void:
 	draw_string(ThemeDB.fallback_font, _snap_vector(center + Vector2(14.0, -12.0)), "YOU", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 11, COLOR_PLAYER)
 
 
+func _draw_player_waypoint() -> void:
+	if not is_instance_valid(_player):
+		_player = _resolve_player()
+	if not is_instance_valid(_player):
+		return
+
+	var world_pos := Vector2(_player.global_position.x, _player.global_position.z)
+	var screen_pos := _world_to_map(world_pos)
+
+	# Clamped to map rect bounds with margin so the player arrow stays visible
+	var margin := 16.0
+	var clamped_pos := Vector2(
+		clampf(screen_pos.x, _map_rect.position.x + margin, _map_rect.end.x - margin),
+		clampf(screen_pos.y, _map_rect.position.y + margin, _map_rect.end.y - margin)
+	)
+
+	# Live rotation from player's forward direction
+	var forward := -_player.global_transform.basis.z
+	var angle := atan2(forward.x, -forward.z)
+
+	# Green directional arrow (slightly bigger, clean GPS style)
+	var arrow_pts := PackedVector2Array([
+		Vector2(0.0, -16.0),   # tip
+		Vector2(8.0, 7.5),     # right wing
+		Vector2(0.0, 3.5),     # inner notch
+		Vector2(-8.0, 7.5),    # left wing
+	])
+	var rot_pts := PackedVector2Array()
+	var shadow_pts := PackedVector2Array()
+	for pt in arrow_pts:
+		var rotated_pt := pt.rotated(angle)
+		rot_pts.append(_snap_vector(clamped_pos + rotated_pt))
+		shadow_pts.append(_snap_vector(clamped_pos + Vector2(1.5, 2.0) + rotated_pt))
+
+	# Soft shadow
+	draw_colored_polygon(shadow_pts, Color(0.0, 0.0, 0.0, 0.45))
+	# Vibrant green arrow body
+	draw_colored_polygon(rot_pts, Color(0.16, 0.82, 0.36, 1.0))
+	# Crisp dark outline
+	draw_polyline(rot_pts + PackedVector2Array([rot_pts[0]]), Color(0.04, 0.24, 0.08, 0.95), 1.5)
+
+
+func _draw_footer(panel_rect: Rect2) -> void:
+	var font := ThemeDB.fallback_font
+	var font_size := 12
+	var footer_y := panel_rect.end.y + 18.0
+	if footer_y + 6.0 > size.y:
+		footer_y = panel_rect.end.y - 8.0
+
+	draw_string(font, Vector2(panel_rect.position.x, footer_y), "M / ESC   CLOSE MAP", HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, COLOR_MUTED_TEXT)
+
+	if show_coordinates_footer and is_instance_valid(_player):
+		var location := "X: %d   Z: %d" % [roundi(_player.global_position.x), roundi(_player.global_position.z)]
+		draw_string(font, Vector2(panel_rect.end.x - 120.0, footer_y), location, HORIZONTAL_ALIGNMENT_RIGHT, -1, font_size, COLOR_MUTED_TEXT)
+
+
 func _draw_scanlines() -> void:
 	var y := _map_rect.position.y + 2.0
 	while y < _map_rect.end.y:
@@ -346,6 +470,16 @@ func _draw_header_and_footer(panel_rect: Rect2) -> void:
 
 
 func _world_to_map(world_xz: Vector2) -> Vector2:
+	if use_image_map and is_instance_valid(map_texture):
+		var tex_sz := map_texture.get_size()
+		var map_px := map_origin.x + world_xz.x * world_scale.x
+		var map_py := map_origin.y + world_xz.y * world_scale.y
+		var mapped := Vector2(
+			_map_rect.position.x + (map_px / tex_sz.x) * _map_rect.size.x,
+			_map_rect.position.y + (map_py / tex_sz.y) * _map_rect.size.y
+		)
+		return _snap_vector(mapped)
+
 	var normalized_x := inverse_lerp(WORLD_BOUNDS.position.x, WORLD_BOUNDS.end.x, world_xz.x)
 	var normalized_z := inverse_lerp(WORLD_BOUNDS.position.y, WORLD_BOUNDS.end.y, world_xz.y)
 	var mapped := Vector2(

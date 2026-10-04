@@ -6,7 +6,9 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ng4fm"]
 resource_name = "Grass_Mat"
-transparency = 4
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
 cull_mode = 2
 albedo_texture = ExtResource("1_w0236")
 metallic_texture = ExtResource("2_j4sxp")

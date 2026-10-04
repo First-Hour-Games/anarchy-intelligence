@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://dnotlsbydtyli" path="res://img/materials/tutorial/wallpaper2/Wallpaper002C_1K-JPG_NormalGL.jpg" id="16_hvcje"]
 [ext_resource type="Texture2D" uid="uid://dxnebw5gcwxwj" path="res://img/materials/tutorial/wallpaper2/Wallpaper002C_1K-JPG_Roughness.jpg" id="17_70sur"]
 [ext_resource type="Texture2D" uid="uid://d3bgdu2q00d2x" path="res://img/tutorial/Mouse.png" id="17_exp0a"]
+[ext_resource type="PackedScene" uid="uid://ds7lvv3hlcqoo" path="res://models/props/prison_bed.glb" id="18_2dume"]
 [ext_resource type="Script" uid="uid://c77jwxmg8o5w1" path="res://scenes/chapters/tutorial/tutorial_door_color_pass.gd" id="18_door_color"]
 [ext_resource type="AudioStream" uid="uid://svbawlu627w5" path="res://music/tutorial.ogg" id="20_tutorial_music"]
 [ext_resource type="PackedScene" uid="uid://cixneq627we6i" path="res://models/interior/door/door_2.tscn" id="21_8khbb"]
@@ -32,9 +33,12 @@
 [ext_resource type="AudioStream" uid="uid://dyany7iaad53o" path="res://sounds/chapters/tutorial/oldPhoneRinging.mp3" id="30_phone_ring"]
 [ext_resource type="AudioStream" uid="uid://dr7ufabs336qh" path="res://sounds/chapters/tutorial/lightBuzzing.mp3" id="31_light_buzz"]
 [ext_resource type="AudioStream" uid="uid://cgblq8d1sbi8a" path="res://sounds/chapters/tutorial/phonePickUp.mp3" id="32_phone_pickup"]
+[ext_resource type="Script" uid="uid://cbjy88ume4ahy" path="res://scenes/chapters/tutorial/floating_bed.gd" id="33_floating_bed"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6xd7"]
 albedo_texture = ExtResource("9_nbcrf")
+metallic_specular = 0.0
+roughness = 0.64
 roughness_texture = ExtResource("13_exp0a")
 normal_enabled = true
 normal_texture = ExtResource("12_47c88")
@@ -46,7 +50,7 @@ uv1_scale = Vector3(0.4, 0.4, 0.4)
 uv1_triplanar = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_yqqos"]
-size = Vector3(46, 0.20654297, 57)
+size = Vector3(46, 0.20654297, 96)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xobi4"]
 albedo_texture = ExtResource("1_77hjh")
@@ -62,13 +66,13 @@ uv1_triplanar = true
 size = Vector3(10, 0.20654297, 50)
 
 [sub_resource type="BoxMesh" id="BoxMesh_0s14b"]
-size = Vector3(13, 0.5994873, 45)
+size = Vector3(13, 0.5994873, 85)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u6ikx"]
+size = Vector3(13, 0.5994873, 85)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_u6ikx"]
 data = PackedVector3Array(-5, 0.1033, 25, 5, 0.1033, 25, -5, -0.1033, 25, 5, 0.1033, 25, 5, -0.1033, 25, -5, -0.1033, 25, 5, 0.1033, -25, -5, 0.1033, -25, 5, -0.1033, -25, -5, 0.1033, -25, -5, -0.1033, -25, 5, -0.1033, -25, 5, 0.1033, 25, 5, 0.1033, -25, 5, -0.1033, 25, 5, 0.1033, -25, 5, -0.1033, -25, 5, -0.1033, 25, -5, 0.1033, -25, -5, 0.1033, 25, -5, -0.1033, -25, -5, 0.1033, 25, -5, -0.1033, 25, -5, -0.1033, -25, 5, 0.1033, 25, -5, 0.1033, 25, 5, 0.1033, -25, -5, 0.1033, 25, -5, 0.1033, -25, 5, 0.1033, -25, -5, -0.1033, 25, 5, -0.1033, 25, -5, -0.1033, -25, 5, -0.1033, 25, 5, -0.1033, -25, -5, -0.1033, -25)
-
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_2dume"]
-data = PackedVector3Array(-6.5, 0.2997, 22.5, 6.5, 0.2997, 22.5, -6.5, -0.2997, 22.5, 6.5, 0.2997, 22.5, 6.5, -0.2997, 22.5, -6.5, -0.2997, 22.5, 6.5, 0.2997, -22.5, -6.5, 0.2997, -22.5, 6.5, -0.2997, -22.5, -6.5, 0.2997, -22.5, -6.5, -0.2997, -22.5, 6.5, -0.2997, -22.5, 6.5, 0.2997, 22.5, 6.5, 0.2997, -22.5, 6.5, -0.2997, 22.5, 6.5, 0.2997, -22.5, 6.5, -0.2997, -22.5, 6.5, -0.2997, 22.5, -6.5, 0.2997, -22.5, -6.5, 0.2997, 22.5, -6.5, -0.2997, -22.5, -6.5, 0.2997, 22.5, -6.5, -0.2997, 22.5, -6.5, -0.2997, -22.5, 6.5, 0.2997, 22.5, -6.5, 0.2997, 22.5, 6.5, 0.2997, -22.5, -6.5, 0.2997, 22.5, -6.5, 0.2997, -22.5, 6.5, 0.2997, -22.5, -6.5, -0.2997, 22.5, 6.5, -0.2997, 22.5, -6.5, -0.2997, -22.5, 6.5, -0.2997, 22.5, 6.5, -0.2997, -22.5, -6.5, -0.2997, -22.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lykhv"]
 size = Vector3(0.24890137, 5, 12)
@@ -121,6 +125,9 @@ heightmap_texture = ExtResource("15_wbkrs")
 uv1_scale = Vector3(0.4, 0.4, 0.4)
 uv1_triplanar = true
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_jpyye"]
+size = Vector3(2.2, 1, 1)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
 shader = ExtResource("6_crt")
 shader_parameter/crt_curve = 0.050000002375
@@ -144,12 +151,13 @@ adjustment_saturation = 0.0
 
 [node name="Tutorial" type="Node3D" unique_id=163176996]
 script = ExtResource("18_door_color")
+intro_light_path = NodePath("Lights/StartingOmni")
 
 [node name="TutorialRooms" type="Node3D" parent="." unique_id=1935477990]
 transform = Transform3D(0.71999997, 0, 0, 0, 0.71999997, 0, 0, 0, 0.71999997, 0, 0, 0)
 
 [node name="Roof" type="MeshInstance3D" parent="TutorialRooms" unique_id=1464213161]
-transform = Transform3D(0.9778786, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.413086, -23.500002)
+transform = Transform3D(0.9778786, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.413086, -43)
 material_override = SubResource("StandardMaterial3D_s6xd7")
 mesh = SubResource("BoxMesh_yqqos")
 
@@ -159,19 +167,20 @@ material_override = SubResource("StandardMaterial3D_xobi4")
 mesh = SubResource("BoxMesh_jpyye")
 
 [node name="Floor2" type="MeshInstance3D" parent="TutorialRooms" unique_id=1764351557]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -0.99371344, -27.463482)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -0.99371344, -47.46348)
 material_override = SubResource("StandardMaterial3D_xobi4")
 mesh = SubResource("BoxMesh_0s14b")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TutorialRooms/Floor2" unique_id=1545743541]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TutorialRooms/Floor2/StaticBody3D" unique_id=24855826]
+shape = SubResource("BoxShape3D_u6ikx")
 
 [node name="CollisionGeometry" type="StaticBody3D" parent="TutorialRooms" unique_id=2143540752]
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="TutorialRooms/CollisionGeometry" unique_id=1011374971]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7934571, 0)
 shape = SubResource("ConcavePolygonShape3D_u6ikx")
-
-[node name="CollisionShape3D6" type="CollisionShape3D" parent="TutorialRooms/CollisionGeometry" unique_id=423355559]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -0.99371344, -27.463482)
-shape = SubResource("ConcavePolygonShape3D_2dume")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TutorialRooms/CollisionGeometry" unique_id=220116079]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.552067, 1, 0)
@@ -264,8 +273,9 @@ material_override = SubResource("StandardMaterial3D_8khbb")
 size = Vector3(5.1, 4.9, 0.5)
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="TutorialRooms" unique_id=689637865]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5738153, 0.95, -50.200005)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5738153, 0.95, -47.422226)
 material_override = SubResource("StandardMaterial3D_8khbb")
+use_collision = true
 size = Vector3(13, 4.9, 0.6)
 
 [node name="CSGBox3D3" type="CSGBox3D" parent="TutorialRooms" unique_id=598873713]
@@ -274,14 +284,24 @@ material_override = SubResource("StandardMaterial3D_8khbb")
 size = Vector3(5.2000003, 4.9, 0.5)
 
 [node name="CSGBox3D4" type="CSGBox3D" parent="TutorialRooms" unique_id=324155951]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.573815, 0.95, -43.388893)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.573815, 0.95, -63.38889)
 material_override = SubResource("StandardMaterial3D_8khbb")
-size = Vector3(1, 4.9, 14)
+size = Vector3(1, 4.9, 54)
 
 [node name="CSGBox3D5" type="CSGBox3D" parent="TutorialRooms" unique_id=1588390785]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9261854, 0.95, -43.388893)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9261854, 0.95, -63.38889)
 material_override = SubResource("StandardMaterial3D_8khbb")
-size = Vector3(1, 4.9, 14)
+size = Vector3(1, 4.9, 54)
+
+[node name="FloatingBed" parent="TutorialRooms" unique_id=1711705541 instance=ExtResource("18_2dume")]
+transform = Transform3D(1.2547994, 0, 1.2327042, 0.20131965, 1.7353834, -0.20492813, -1.2161537, 0.2872719, 1.2379522, -0.0657739, 1.3257586, -0.060128175)
+script = ExtResource("33_floating_bed")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TutorialRooms/FloatingBed" unique_id=123701266]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TutorialRooms/FloatingBed/StaticBody3D" unique_id=734477021]
+transform = Transform3D(1, -3.7252903e-08, 0, -1.4901161e-08, 0.99999976, 0, 0, 2.2351742e-08, 1, -1.4156103e-07, 0, 0)
+shape = SubResource("BoxShape3D_jpyye")
 
 [node name="Player" parent="." unique_id=1902877193 instance=ExtResource("5_player")]
 transform = Transform3D(0.79614544, 0, 0.6051053, 0, 1, 0, -0.6051053, 0, 0.79614544, 2.376462, -0.49136588, 2.7018838)
@@ -473,14 +493,12 @@ can_close = false
 
 [node name="Lights" type="Node3D" parent="." unique_id=2081709650]
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Lights" unique_id=745692810]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0725677, 0)
+[node name="StartingOmni" type="OmniLight3D" parent="Lights" unique_id=745692810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.278, 0)
 light_energy = 0.3
-omni_range = 5.236
-
-[node name="OmniLight3D2" type="OmniLight3D" parent="Lights" unique_id=671373627]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.772594, 1.0725677, -32.480404)
-light_energy = 0.3
+light_size = 0.045
+shadow_enabled = true
+shadow_blur = 4.605
 omni_range = 5.236
 
 [node name="CeilingBulb" parent="." unique_id=1469696977 instance=ExtResource("21_qcdpd")]
@@ -512,25 +530,134 @@ autoplay = true
 max_distance = 20.0
 bus = &"Reverb"
 
-[node name="oldPhone" parent="." unique_id=127163723 instance=ExtResource("27_yqqos")]
-transform = Transform3D(0.017, 0, 0, 0, 0.017, 0, 0, 0, 0.017, -1.6980813, 0.4854297, -32.693474)
-script = ExtResource("29_old_phone")
-next_scene_path = "res://scenes/chapters/main/starting_forest.tscn"
+[node name="HallwayBulbs" type="Node3D" parent="." unique_id=259921552]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6950241, 2.8428612, -30.523037)
 
-[node name="Interactable" type="Node3D" parent="oldPhone" unique_id=127163724]
+[node name="CeilingBulb3" parent="HallwayBulbs" unique_id=502459670 instance=ExtResource("21_qcdpd")]
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb3" unique_id=671373627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 5.236
+
+[node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb3" unique_id=1775665610]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -4.2319298e-05, -1.1496964, -0.008349419)
+light_energy = 1.208
+light_size = 0.13
+shadow_enabled = true
+shadow_bias = 0.0
+spot_range = 98.337
+spot_angle = 80.87
+spot_angle_attenuation = 1.0717734
+script = ExtResource("22_flicker_light")
+
+[node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb3" unique_id=1299220181]
+stream = ExtResource("31_light_buzz")
+autoplay = true
+max_distance = 20.0
+bus = &"Reverb"
+
+[node name="CeilingBulb4" parent="HallwayBulbs" unique_id=489575249 instance=ExtResource("21_qcdpd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb4" unique_id=735640619]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 5.236
+
+[node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb4" unique_id=858370197]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -4.2319298e-05, -1.1496964, -0.008349419)
+light_energy = 1.208
+light_size = 0.13
+shadow_enabled = true
+shadow_bias = 0.0
+spot_range = 98.337
+spot_angle = 80.87
+spot_angle_attenuation = 1.0717734
+script = ExtResource("22_flicker_light")
+
+[node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb4" unique_id=893755361]
+stream = ExtResource("31_light_buzz")
+autoplay = true
+max_distance = 20.0
+bus = &"Reverb"
+
+[node name="CeilingBulb5" parent="HallwayBulbs" unique_id=331897879 instance=ExtResource("21_qcdpd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb5" unique_id=132644805]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 5.236
+
+[node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb5" unique_id=1924241228]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -4.2319298e-05, -1.1496964, -0.008349419)
+light_energy = 1.208
+light_size = 0.13
+shadow_enabled = true
+shadow_bias = 0.0
+spot_range = 98.337
+spot_angle = 80.87
+spot_angle_attenuation = 1.0717734
+script = ExtResource("22_flicker_light")
+
+[node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb5" unique_id=853781603]
+stream = ExtResource("31_light_buzz")
+autoplay = true
+max_distance = 20.0
+bus = &"Reverb"
+
+[node name="CeilingBulb6" parent="HallwayBulbs" unique_id=1280649615 instance=ExtResource("21_qcdpd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb6" unique_id=1591296137]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 5.236
+
+[node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb6" unique_id=54558558]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -4.2319298e-05, -1.1496964, -0.008349419)
+light_energy = 1.208
+light_size = 0.13
+shadow_enabled = true
+shadow_bias = 0.0
+spot_range = 98.337
+spot_angle = 80.87
+spot_angle_attenuation = 1.0717734
+script = ExtResource("22_flicker_light")
+
+[node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb6" unique_id=230557659]
+stream = ExtResource("31_light_buzz")
+autoplay = true
+max_distance = 20.0
+bus = &"Reverb"
+
+[node name="Phone and Table" type="Node3D" parent="." unique_id=2042310006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.737, -0.478, -67.22078)
+
+[node name="oldPhone" parent="Phone and Table" unique_id=127163723 instance=ExtResource("27_yqqos")]
+transform = Transform3D(0.017, 0, 0, 0, 0.017, 0, 0, 0, 0.017, 0, 0.95764494, 0)
+script = ExtResource("29_old_phone")
+door_path = NodePath("../../Door3")
+
+[node name="Interactable" type="Node3D" parent="Phone and Table/oldPhone" unique_id=127163724]
 script = ExtResource("28_interactable")
 interaction_distance = 2.5
 interaction_message = "Interacted with old phone."
 
-[node name="RingingAudio" type="AudioStreamPlayer3D" parent="oldPhone" unique_id=127163725]
+[node name="RingingAudio" type="AudioStreamPlayer3D" parent="Phone and Table/oldPhone" unique_id=127163725]
 stream = ExtResource("30_phone_ring")
 volume_db = -6.0
 max_distance = 35.0
 bus = &"Reverb"
 
-[node name="PickupAudio" type="AudioStreamPlayer" parent="oldPhone" unique_id=127163726]
+[node name="PickupAudio" type="AudioStreamPlayer" parent="Phone and Table/oldPhone" unique_id=127163726]
 stream = ExtResource("32_phone_pickup")
 bus = &"Reverb"
 
-[node name="Sketchfab_Scene" parent="." unique_id=1592312842 instance=ExtResource("27_70sur")]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -1.737, -0.478, -33)
+[node name="Sketchfab_Scene" parent="Phone and Table" unique_id=1592312842 instance=ExtResource("27_70sur")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.0053550303, 0)

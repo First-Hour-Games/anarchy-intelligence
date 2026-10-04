@@ -61,14 +61,14 @@ func run() -> void:
 	var pickup_screen = ItemPickupScreen.instance
 	check(is_instance_valid(pickup_screen), "ItemPickupScreen instance exists")
 	check(pickup_screen.is_active, "ItemPickupScreen is open and active")
-	check(pickup_screen.get("_title_label").text == "TOURIST MAP", "Pickup screen shows TOURIST MAP")
+	check(pickup_screen.get("_prompt_label").text == "[ E ] Confirm", "Pickup screen prompt label says '[ E ] Confirm'")
 	check(player.inventory.has_item(&"map"), "Player inventory received map item")
 	check(brochure_hotspot.has_triggered, "BrochurePickUp hotspot has_triggered is true")
 
-	# Close pickup screen via input event
+	# Close pickup screen via input event (E key)
 	var event := InputEventKey.new()
 	event.pressed = true
-	event.keycode = KEY_ENTER
+	event.keycode = KEY_E
 	pickup_screen._unhandled_input(event)
 	await create_timer(0.35).timeout
 

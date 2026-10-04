@@ -1,0 +1,374 @@
+class_name StartingForest
+extends Node3D
+
+## Handles chapter entry for the starting forest:
+## - Cinematic subtitle "five days later" fading in and out on black screen.
+## - Full black screen fade out revealing the misty forest road.
+## - Concurrent audio fade-in from 0 volume for all initial sound effects.
+## - Cinematic handoff to opening dialogue and background music.
+
+const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf")
+
+@export_category("Intro Fade")
+@export var auto_start_fade: bool = true
+@export_range(0.5, 10.0, 0.05) var fade_duration: float = 3.75
+@export_range(0.0, 3.0, 0.1) var initial_black_hold: float = 0.4
+@export var delay_dialogue_until_fade: bool = true
+
+@export_category("Intro Subtitle")
+@export var show_intro_subtitle: bool = true
+@export var subtitle_text: String = "five days later"
+@export var subtitle_font: Font = SUBTITLE_FONT
+@export var subtitle_font_size: int = 34
+@export_range(0.1, 5.0, 0.1) var subtitle_fade_in_duration: float = 1.0
+@export_range(0.5, 8.0, 0.1) var subtitle_hold_duration: float = 2.5
+@export_range(0.1, 5.0, 0.1) var subtitle_fade_out_duration: float = 1.0
+@export_range(0.0, 4.0, 0.1) var subtitle_pause_after: float = 0.5
+
+@export_category("Audio Fade")
+@export var initial_audio_players: Array[NodePath] = [
+	NodePath("NightAmbience"),
+	NodePath("toyotaCrownModel2/EngineLoop"),
+]
+
+@export_category("Log Climb Music Transition")
+@export var barrier_tree_node: NodePath = NodePath("Interactables/BarrierTree")
+@export var welcoming_hike_stream: AudioStream = preload("res://music/welcomingHike.mp3")
+@export_range(0.1, 10.0, 0.1) var music_fade_out_duration: float = 1.8
+@export_range(0.1, 10.0, 0.1) var music_fade_in_duration: float = 2.4
+@export_range(0.0, 5.0, 0.1) var music_fade_in_delay: float = 0.4
+@export_range(-40.0, 6.0, 0.5) var welcoming_hike_volume_db: float = -3.0
+
+@onready var player: FirstPersonPlayer = get_node_or_null("Player") as FirstPersonPlayer
+@onready var opening_balloon: BottomDialogueBalloon = get_node_or_null("BottomDialogueBalloon") as BottomDialogueBalloon
+@onready var visitor_bgm: AudioStreamPlayer = get_node_or_null("VisitorBGM") as AudioStreamPlayer
+@onready var welcoming_hike_bgm: AudioStreamPlayer = get_node_or_null("WelcomingHikeBGM") as AudioStreamPlayer
+
+var _fade_canvas: CanvasLayer = null
+var _black_screen: ColorRect = null
+var subtitle_label: Label = null
+var _fade_tween: Tween = null
+var _is_fading: bool = false
+var _has_faded: bool = false
+var _target_volumes: Dictionary = {}
+var _has_switched_music: bool = false
+var _music_transition_tween: Tween = null
+
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+
+	_setup_fade_ui()
+	_setup_welcoming_hike_player()
+	_setup_barrier_music_trigger()
+	_prepare_audio_players()
+
+	if auto_start_fade:
+		start_intro_fade()
+
+
+func _setup_fade_ui() -> void:
+	_fade_canvas = get_node_or_null("IntroFadeCanvas") as CanvasLayer
+	if not is_instance_valid(_fade_canvas):
+		_fade_canvas = CanvasLayer.new()
+		_fade_canvas.name = "IntroFadeCanvas"
+		_fade_canvas.layer = 105
+		add_child(_fade_canvas)
+
+	_black_screen = _fade_canvas.get_node_or_null("BlackScreen") as ColorRect
+	if not is_instance_valid(_black_screen):
+		_black_screen = ColorRect.new()
+		_black_screen.name = "BlackScreen"
+		_black_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_black_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_fade_canvas.add_child(_black_screen)
+
+	_black_screen.color = Color(0, 0, 0, 1.0)
+
+	subtitle_label = _fade_canvas.get_node_or_null("SubtitleLabel") as Label
+	if not is_instance_valid(subtitle_label):
+		subtitle_label = Label.new()
+		subtitle_label.name = "SubtitleLabel"
+		_fade_canvas.add_child(subtitle_label)
+
+	subtitle_label.text = subtitle_text
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	subtitle_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	subtitle_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	subtitle_label.offset_left = 30.0
+	subtitle_label.offset_right = -30.0
+	subtitle_label.offset_top = -120.0
+	subtitle_label.offset_bottom = -60.0
+	subtitle_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	subtitle_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
+
+	var applied_font: Font = subtitle_font if subtitle_font != null else SUBTITLE_FONT
+	subtitle_label.add_theme_font_override("font", applied_font)
+	subtitle_label.add_theme_font_size_override("font_size", subtitle_font_size)
+	subtitle_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	subtitle_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.95))
+	subtitle_label.add_theme_constant_override("outline_size", 4)
+	subtitle_label.modulate.a = 0.0
+
+	_fade_canvas.visible = true
+
+
+func _collect_sound_effects() -> Array[Node]:
+	var result: Array[Node] = []
+	for np in initial_audio_players:
+		var n := get_node_or_null(np)
+		if is_instance_valid(n) and not result.has(n):
+			result.append(n)
+
+	# Include any autoplay audio streams in the scene except VisitorBGM and WelcomingHikeBGM
+	for child in find_children("*", "AudioStreamPlayer", true, false):
+		if child != visitor_bgm and child != welcoming_hike_bgm and not result.has(child):
+			if child.autoplay or child.playing:
+				result.append(child)
+
+	for child in find_children("*", "AudioStreamPlayer3D", true, false):
+		if not result.has(child):
+			if child.autoplay or child.playing:
+				result.append(child)
+
+	return result
+
+
+func _prepare_audio_players() -> void:
+	var sfx_nodes := _collect_sound_effects()
+	for sfx in sfx_nodes:
+		var target_db: float = sfx.volume_db
+		_target_volumes[sfx] = target_db
+		# Start from 0 volume (inaudible floor -80 dB)
+		sfx.volume_db = -80.0
+		if not sfx.playing:
+			sfx.play()
+
+
+func start_intro_fade() -> void:
+	if _has_faded or _is_fading:
+		return
+
+	_is_fading = true
+
+	# Freeze player during black screen hold, subtitle, and fade
+	if is_instance_valid(player) and player.has_method(&"freeze"):
+		player.freeze()
+
+	_fade_tween = create_tween()
+
+	# Subtitle sequence (before fading in the actual game)
+	if show_intro_subtitle and not subtitle_text.is_empty() and is_instance_valid(subtitle_label):
+		if initial_black_hold > 0.0:
+			_fade_tween.tween_interval(initial_black_hold)
+
+		# Subtitle fades in
+		_fade_tween.tween_property(
+			subtitle_label,
+			"modulate:a",
+			1.0,
+			subtitle_fade_in_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+		# Hold for a few seconds
+		if subtitle_hold_duration > 0.0:
+			_fade_tween.tween_interval(subtitle_hold_duration)
+
+		# Subtitle fades out
+		_fade_tween.tween_property(
+			subtitle_label,
+			"modulate:a",
+			0.0,
+			subtitle_fade_out_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+		# Brief pause after subtitle before fading in the actual game
+		if subtitle_pause_after > 0.0:
+			_fade_tween.tween_interval(subtitle_pause_after)
+	elif initial_black_hold > 0.0:
+		_fade_tween.tween_interval(initial_black_hold)
+
+	# Fading in the actual game (black screen fades out + audio fades in, 50% slower)
+	_fade_tween.chain().set_parallel(true)
+
+	# Black screen fade out
+	if is_instance_valid(_black_screen):
+		_fade_tween.tween_property(
+			_black_screen,
+			"color:a",
+			0.0,
+			fade_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	# Sound effects volume fade in together starting from 0 volume
+	var sfx_nodes := _collect_sound_effects()
+	for sfx in sfx_nodes:
+		var target_db: float = _target_volumes.get(sfx, sfx.volume_db)
+		var target_linear: float = db_to_linear(target_db)
+		var update_vol := func(val: float) -> void:
+			if is_instance_valid(sfx):
+				sfx.volume_db = linear_to_db(maxf(val, 0.0001))
+		_fade_tween.tween_method(
+			update_vol,
+			0.0,
+			target_linear,
+			fade_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	_fade_tween.chain().tween_callback(_on_fade_finished)
+
+
+func skip_fade() -> void:
+	if not _is_fading or _has_faded:
+		return
+	if is_instance_valid(_fade_tween) and _fade_tween.is_valid():
+		_fade_tween.kill()
+	_on_fade_finished()
+
+
+func finish_fade_immediately() -> void:
+	skip_fade()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if _is_fading and not _has_faded:
+		if event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"ui_cancel") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+			skip_fade()
+			get_viewport().set_input_as_handled()
+
+
+func _on_fade_finished() -> void:
+	_is_fading = false
+	_has_faded = true
+
+	# Ensure all audio players reach exact target volume
+	for sfx in _target_volumes.keys():
+		if is_instance_valid(sfx):
+			sfx.volume_db = _target_volumes[sfx]
+
+	# Clean up black screen overlay and subtitle
+	if is_instance_valid(_fade_canvas):
+		_fade_canvas.visible = false
+		_fade_canvas.queue_free()
+		_fade_canvas = null
+		_black_screen = null
+		subtitle_label = null
+
+	# Trigger opening dialogue if configured
+	if delay_dialogue_until_fade and is_instance_valid(opening_balloon):
+		if opening_balloon.dialogue_resource != null:
+			opening_balloon.start(opening_balloon.dialogue_resource, opening_balloon.start_from_cue)
+			return
+
+	# If no opening dialogue, restore player movement
+	if is_instance_valid(player) and player.has_method(&"unfreeze"):
+		player.unfreeze()
+
+
+func _setup_welcoming_hike_player() -> void:
+	if not is_instance_valid(welcoming_hike_bgm):
+		welcoming_hike_bgm = get_node_or_null("WelcomingHikeBGM") as AudioStreamPlayer
+	if not is_instance_valid(welcoming_hike_bgm):
+		welcoming_hike_bgm = AudioStreamPlayer.new()
+		welcoming_hike_bgm.name = "WelcomingHikeBGM"
+		welcoming_hike_bgm.process_mode = Node.PROCESS_MODE_ALWAYS
+		welcoming_hike_bgm.stream = welcoming_hike_stream if welcoming_hike_stream != null else preload("res://music/welcomingHike.mp3")
+		welcoming_hike_bgm.volume_db = -80.0
+		welcoming_hike_bgm.bus = &"Music"
+		add_child(welcoming_hike_bgm)
+
+	if welcoming_hike_bgm.stream is AudioStreamMP3:
+		(welcoming_hike_bgm.stream as AudioStreamMP3).loop = true
+	if not welcoming_hike_bgm.finished.is_connected(welcoming_hike_bgm.play):
+		welcoming_hike_bgm.finished.connect(welcoming_hike_bgm.play)
+
+
+func _setup_barrier_music_trigger() -> void:
+	var barrier: InteractableBlock3D = get_node_or_null(barrier_tree_node) as InteractableBlock3D
+	if not is_instance_valid(barrier):
+		barrier = find_child("BarrierTree", true, false) as InteractableBlock3D
+	if is_instance_valid(barrier):
+		if not barrier.climb_over_started.is_connected(_on_climb_over_started):
+			barrier.climb_over_started.connect(_on_climb_over_started)
+
+
+func _on_climb_over_started(_player: Node3D = null) -> void:
+	transition_to_welcoming_hike()
+
+
+func transition_to_welcoming_hike(fade_out_time: float = music_fade_out_duration, fade_in_time: float = music_fade_in_duration) -> void:
+	if _has_switched_music:
+		return
+	_has_switched_music = true
+
+	# Ensure VisitorBGM will not trigger or loop again
+	if is_instance_valid(visitor_bgm):
+		if is_instance_valid(opening_balloon) and opening_balloon.dialogue_finished.is_connected(visitor_bgm.play):
+			opening_balloon.dialogue_finished.disconnect(visitor_bgm.play)
+		if visitor_bgm.finished.is_connected(visitor_bgm.play):
+			visitor_bgm.finished.disconnect(visitor_bgm.play)
+
+	_setup_welcoming_hike_player()
+
+	if is_instance_valid(_music_transition_tween) and _music_transition_tween.is_valid():
+		_music_transition_tween.kill()
+
+	_music_transition_tween = create_tween().set_parallel(true)
+
+	# 1. Fade out VisitorBGM
+	if is_instance_valid(visitor_bgm) and visitor_bgm.playing:
+		var v_start_linear: float = db_to_linear(visitor_bgm.volume_db)
+		var update_visitor_vol := func(val: float) -> void:
+			if is_instance_valid(visitor_bgm):
+				visitor_bgm.volume_db = linear_to_db(maxf(val, 0.0001))
+
+		_music_transition_tween.tween_method(
+			update_visitor_vol,
+			v_start_linear,
+			0.0001,
+			fade_out_time
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+		_music_transition_tween.tween_callback(func() -> void:
+			if is_instance_valid(visitor_bgm):
+				visitor_bgm.stop()
+				visitor_bgm.volume_db = -80.0
+		).set_delay(fade_out_time)
+	elif is_instance_valid(visitor_bgm):
+		visitor_bgm.stop()
+		visitor_bgm.volume_db = -80.0
+
+	# 2. Fade in WelcomingHikeBGM
+	if is_instance_valid(welcoming_hike_bgm):
+		welcoming_hike_bgm.volume_db = -80.0
+		if not welcoming_hike_bgm.playing:
+			welcoming_hike_bgm.play()
+
+		var h_target_linear: float = db_to_linear(welcoming_hike_volume_db)
+		var update_hike_vol := func(val: float) -> void:
+			if is_instance_valid(welcoming_hike_bgm):
+				welcoming_hike_bgm.volume_db = linear_to_db(maxf(val, 0.0001))
+
+		var hike_tweener := _music_transition_tween.tween_method(
+			update_hike_vol,
+			0.0001,
+			h_target_linear,
+			fade_in_time
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+		if music_fade_in_delay > 0.0:
+			hike_tweener.set_delay(music_fade_in_delay)
+
+
+func finish_music_transition_immediately() -> void:
+	if is_instance_valid(_music_transition_tween) and _music_transition_tween.is_valid():
+		_music_transition_tween.kill()
+	if is_instance_valid(visitor_bgm):
+		visitor_bgm.volume_db = -80.0
+		visitor_bgm.stop()
+	if is_instance_valid(welcoming_hike_bgm):
+		welcoming_hike_bgm.volume_db = welcoming_hike_volume_db
+		if not welcoming_hike_bgm.playing:
+			welcoming_hike_bgm.play()

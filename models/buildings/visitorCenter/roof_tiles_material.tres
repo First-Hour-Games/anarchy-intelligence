@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dudn7j5w1y2qo"]
+
+[ext_resource type="Texture2D" uid="uid://bimruypivvri" path="res://models/buildings/visitorCenter/welcomeCenterTextured_RoofingTiles013A_1K-JPG_Color.png" id="1_color"]
+[ext_resource type="Texture2D" uid="uid://cehao5s6gyqsp" path="res://models/buildings/visitorCenter/welcomeCenterTextured_RoofingTiles013A_1K-JPG_Roughness.png" id="2_roughness"]
+
+[resource]
+resource_name = "RoofingTiles013A_1K-JPG_DISPLACEMENT"
+cull_mode = 2
+depth_draw_mode = 1
+albedo_texture = ExtResource("1_color")
+roughness_texture = ExtResource("2_roughness")
+roughness_texture_channel = 1
+uv1_scale = Vector3(3.333333, 3.333333, 1)
+uv1_offset = Vector3(0, -2.333333, 0)

@@ -1,17 +1,24 @@
 class_name InspectionDotButton extends Control
 
 ## An interactive eye icon button for inspection mode.
-## Displays res://img/player/eyeInteract.png in gray when unhovered,
-## turning white and scaling up with a smooth animation when hovered.
+## Displays a square frame with semi-transparent black background and white outline,
+## with res://img/player/eyeInteract.png centered inside.
+## Scales up and highlights with a smooth animation when hovered.
 
 signal clicked()
 
 const EYE_TEXTURE: Texture2D = preload("res://img/player/eyeInteract.png")
-const COLOR_UNHOVERED: Color = Color(0.30, 0.30, 0.30, 0.85)
+const COLOR_UNHOVERED: Color = Color(0.85, 0.85, 0.85, 0.95)
 const COLOR_HOVERED: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SCALE_UNHOVERED: Vector2 = Vector2(1.0, 1.0)
 const SCALE_HOVERED: Vector2 = Vector2(1.28, 1.28)
 const HOVER_DURATION: float = 0.16
+
+# Square frame styling
+const FRAME_BG_COLOR: Color = Color(0.0, 0.0, 0.0, 0.65)
+const FRAME_OUTLINE_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
+const FRAME_OUTLINE_WIDTH: float = 2.0
+const ICON_PADDING: float = 5.0
 
 # Backwards compatibility properties for InspectionHotspot3D
 var dot_color: Color = COLOR_UNHOVERED
@@ -79,8 +86,20 @@ func _play_click_pop() -> void:
 
 
 func _draw() -> void:
+	var frame_rect := Rect2(Vector2.ZERO, size)
+
+	# 1. Square frame background: semi-transparent black
+	draw_rect(frame_rect, FRAME_BG_COLOR, true)
+
+	# 2. Square frame outline: white outline
+	draw_rect(frame_rect, FRAME_OUTLINE_COLOR, false, FRAME_OUTLINE_WIDTH)
+
+	# 3. Centered eye icon inside frame
 	if EYE_TEXTURE:
-		# Subtle shadow for contrast against bright backgrounds
-		draw_texture_rect(EYE_TEXTURE, Rect2(Vector2(1.0, 1.0), size), false, Color(0.0, 0.0, 0.0, 0.5))
-		# Main eye icon (tinted by node modulate: gray when idle, white when hovered)
-		draw_texture_rect(EYE_TEXTURE, Rect2(Vector2.ZERO, size), false, Color.WHITE)
+		var pad := ICON_PADDING
+		var icon_rect := Rect2(Vector2(pad, pad), size - Vector2(pad * 2.0, pad * 2.0))
+		# Subtle shadow for extra depth
+		draw_texture_rect(EYE_TEXTURE, Rect2(icon_rect.position + Vector2(1.0, 1.0), icon_rect.size), false, Color(0.0, 0.0, 0.0, 0.4))
+		# Main eye icon
+		draw_texture_rect(EYE_TEXTURE, icon_rect, false, Color.WHITE)
+

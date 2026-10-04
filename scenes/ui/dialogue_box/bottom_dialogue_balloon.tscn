@@ -23,6 +23,70 @@ corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.7)
 shadow_size = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_resp_normal"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.06, 0.08, 0.12, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.45, 0.55, 0.6)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_resp_hover"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.16, 0.2, 0.28, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_resp_focus"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.16, 0.2, 0.28, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_resp_pressed"]
+content_margin_left = 16.0
+content_margin_top = 5.0
+content_margin_right = 16.0
+content_margin_bottom = 5.0
+bg_color = Color(0.08, 0.1, 0.14, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.85, 0.9, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 
 [node name="BottomDialogueBalloon" type="CanvasLayer" unique_id=9100001]
 layer = 25
@@ -62,7 +126,7 @@ layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_bottom = 28
 
 [node name="TextVBox" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer" unique_id=9100009]
 layout_mode = 2
@@ -104,25 +168,48 @@ script = ExtResource("2_dialogue_label")
 seconds_per_step = 0.035
 seconds_per_pause_step = 0.3
 
-[node name="ResponsesMenu" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox" unique_id=9100012]
+[node name="ResponsesMenu" type="VBoxContainer" parent="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox" unique_id=9100012 node_paths=PackedStringArray("response_template")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 alignment = 1
 script = ExtResource("3_responses_menu")
+response_template = NodePath("ResponseTemplate")
 
-
-[node name="ProgressIndicator" type="Label" parent="AspectRatioContainer/Control/Balloon" unique_id=9100013]
+[node name="ResponseTemplate" type="Button" parent="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox/ResponsesMenu" unique_id=9100018]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-size_flags_horizontal = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.95, 0.9)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("7_teletext_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_resp_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_resp_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_resp_focus")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_resp_pressed")
+text = "Response option"
+
+
+[node name="ProgressMargin" type="MarginContainer" parent="AspectRatioContainer/Control/Balloon" unique_id=9100017]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_bottom = 12
+
+[node name="ProgressIndicator" type="Label" parent="AspectRatioContainer/Control/Balloon/ProgressMargin" unique_id=9100013]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 8
 theme_override_colors/font_color = Color(0.75, 0.75, 0.8, 0.85)
 theme_override_fonts/font = ExtResource("7_teletext_font")
 theme_override_font_sizes/font_size = 14
 text = "[ ENTER ]"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 2
 
 [node name="MoveSfx" type="AudioStreamPlayer" parent="." unique_id=9100014]
@@ -139,3 +226,5 @@ volume_db = -18.0
 unique_name_in_owner = true
 stream = ExtResource("10_narrator_sfx")
 volume_db = -18.0
+
+[connection signal="response_selected" from="AspectRatioContainer/Control/Balloon/MarginContainer/TextVBox/ResponsesMenu" to="." method="_on_responses_menu_response_selected"]

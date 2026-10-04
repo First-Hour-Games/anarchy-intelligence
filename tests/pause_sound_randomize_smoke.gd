@@ -52,5 +52,26 @@ func run() -> void:
 	assert(min_pitch != max_pitch, "Pitch variation should produce different pitch values")
 	print("PASS: Both sounds selected, pitch range observed: [%.4f, %.4f]" % [min_pitch, max_pitch])
 
+	# 6. Verify pressing Resume only plays cassette sound, not UI click sound
+	pause_menu._click_sfx_player.stop()
+	pause_menu._pause_sfx_player.stop()
+	pause_menu.opened = true
+	pause_menu._is_transitioning = false
+	pause_menu.is_in_options = false
+	pause_menu.selected_index = 0
+	pause_menu._trigger_current_option()
+	assert(not pause_menu._click_sfx_player.playing, "Click SFX player must NOT play when resuming")
+	assert(pause_menu._pause_sfx_player.playing, "Pause cassette SFX player must play when resuming")
+	print("PASS: Resume triggers cassette sound only, without UI click sound")
+
+	# 7. Verify other options DO play UI click sound
+	pause_menu._click_sfx_player.stop()
+	pause_menu.opened = true
+	pause_menu._is_transitioning = false
+	pause_menu.selected_index = 1
+	pause_menu._trigger_current_option()
+	assert(pause_menu._click_sfx_player.playing, "Click SFX player should play for Options menu item")
+	print("PASS: Non-resume menu item plays UI click sound")
+
 	print("--- All Pause Sound Randomization Checks Passed! ---")
 	quit(0)

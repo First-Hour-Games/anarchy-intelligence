@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://models/props/woodFence_woodfence_low_woodfence_BaseColor.png" id="1_72lc2"]
+[ext_resource type="Texture2D" path="res://models/props/woodFence_woodfence_low_woodfence_Metallic-woodfence_low_woodfence_Roughness.png" id="2_vlyeu"]
+
+[resource]
+resource_name = "WoodFenceMaterial"
+cull_mode = 2
+albedo_texture = ExtResource("1_72lc2")
+metallic_texture = ExtResource("2_vlyeu")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_vlyeu")
+roughness_texture_channel = 1

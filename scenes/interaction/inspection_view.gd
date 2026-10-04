@@ -17,9 +17,16 @@ signal inspection_ended(player: FirstPersonPlayer)
 @export var sway_smoothing: float = 8.0
 
 @export_category("Controls")
-@export var exit_key: Key = KEY_BACKSPACE
+@export var exit_key: Key = KEY_ESCAPE
+@export var alternate_exit_key: Key = KEY_TAB
+@export var exit_prompt_text: String = "[ TAB / ESC ] RETURN":
+	set(value):
+		exit_prompt_text = value
+		if is_instance_valid(_exit_prompt_label):
+			_exit_prompt_label.text = exit_prompt_text
 @export var dialogue_balloon_scene: PackedScene = preload("res://scenes/ui/dialogue_box/bottom_dialogue_balloon.tscn")
 const ItemPickupScreenScript = preload("res://scenes/ui/item_pickup/item_pickup_screen.gd")
+const TELETEXT_FONT: Font = preload("res://fonts/EuropeanTeletextNuevo.ttf")
 
 @export_category("Blink Transition")
 @export var blink_sound: AudioStream = preload("res://sounds/player/blink.mp3")
@@ -86,17 +93,18 @@ func _build_overlay_ui() -> void:
 
 	# Bottom exit prompt inside 4:3 safe area
 	_exit_prompt_label = Label.new()
-	_exit_prompt_label.text = "[ Backspace ] Return"
+	_exit_prompt_label.text = exit_prompt_text
 	_exit_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_exit_prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_exit_prompt_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	_exit_prompt_label.offset_top = -55.0
 	_exit_prompt_label.offset_bottom = -20.0
-	_exit_prompt_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9, 0.8))
+	_exit_prompt_label.add_theme_font_override("font", TELETEXT_FONT)
+	_exit_prompt_label.add_theme_font_size_override("font_size", 14)
+	_exit_prompt_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8, 0.85))
 	_exit_prompt_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
 	_exit_prompt_label.add_theme_constant_override("shadow_offset_x", 1)
 	_exit_prompt_label.add_theme_constant_override("shadow_offset_y", 1)
-	_exit_prompt_label.add_theme_font_size_override("font_size", 18)
 	_exit_prompt_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	prompt_content.add_child(_exit_prompt_label)
 
@@ -316,7 +324,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active:
 		return
 
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == exit_key:
+	var is_exit_pressed: bool = false
+	if event is InputEventKey and event.pressed and not event.echo:
+		var code: Key = event.keycode if event.keycode != KEY_NONE else event.physical_keycode
+		if code in [exit_key, alternate_exit_key, KEY_TAB, KEY_ESCAPE, KEY_BACKSPACE]:
+			is_exit_pressed = true
+
+	if is_exit_pressed or event.is_action_pressed("ui_cancel"):
 		exit_inspection()
 		get_viewport().set_input_as_handled()
 

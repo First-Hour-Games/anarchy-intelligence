@@ -523,7 +523,8 @@ func _on_label_gui_input(event: InputEvent, idx: int) -> void:
 
 
 func _trigger_current_option() -> void:
-	if _click_sfx_player:
+	var is_resume: bool = not is_in_options and selected_index == 0
+	if not is_resume and _click_sfx_player:
 		_click_sfx_player.play()
 	if is_in_options:
 		if selected_index >= 0 and selected_index < _options_menu_items.size():

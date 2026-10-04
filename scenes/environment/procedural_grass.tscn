@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://cxvy5m6w0k7q1"]
+
+[ext_resource type="Script" path="res://scenes/environment/procedural_grass_generator.gd" id="1_gen"]
+[ext_resource type="ArrayMesh" uid="uid://da5vbso1tkjik" path="res://models/foliage/grass1.tres" id="2_low"]
+[ext_resource type="ArrayMesh" uid="uid://6juh4mefv3m1" path="res://models/foliage/tallgrass1.tres" id="3_tall"]
+
+[sub_resource type="MultiMesh" id="MultiMesh_low"]
+transform_format = 1
+mesh = ExtResource("2_low")
+
+[sub_resource type="MultiMesh" id="MultiMesh_tall"]
+transform_format = 1
+mesh = ExtResource("3_tall")
+
+[node name="ProceduralGrass" type="Node3D"]
+script = ExtResource("1_gen")
+low_grass_mesh = ExtResource("2_low")
+tall_grass_mesh = ExtResource("3_tall")
+area_size = Vector2(500, 350)
+low_grass_count = 2000
+tall_grass_count = 500
+exclusion_margin = 1.5
+
+[node name="LowGrassMultiMesh" type="MultiMeshInstance3D" parent="."]
+cast_shadow = 0
+multimesh = SubResource("MultiMesh_low")
+
+[node name="TallGrassMultiMesh" type="MultiMeshInstance3D" parent="."]
+cast_shadow = 0
+multimesh = SubResource("MultiMesh_tall")
