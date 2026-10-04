@@ -16,7 +16,7 @@ const PAPER := Color(0.84, 0.85, 0.75)
 @export var selected_style: StyleBoxFlat
 @export var unselected_style: StyleBoxFlat
 var selected_slot_index: int = 0
-var _items: Array[StringName] = [MAP_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM]
+var _items: Array[StringName] = [EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM]
 var is_open: bool = false
 var _was_paused: bool = false
 var _previous_mouse: Input.MouseMode
@@ -77,11 +77,29 @@ func select_relative(direction: int) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_echo():
 		return
-	if event.is_action_pressed("inventory_toggle"):
-		set_open(not is_open)
-		get_viewport().set_input_as_handled()
+	var is_toggle: bool = (
+		event.is_action_pressed("inventory_toggle")
+		or (event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_TAB or event.physical_keycode == KEY_TAB))
+	)
+	if is_toggle:
+		if is_open:
+			set_open(false)
+			get_viewport().set_input_as_handled()
+		else:
+			var story := get_tree().get_first_node_in_group("opening_story")
+			var health := _player.get_node_or_null("CombatHealth") if is_instance_valid(_player) else null
+			var cannot_open: bool = (
+				not is_instance_valid(_player)
+				or _player.is_frozen
+				or get_tree().paused
+				or (story != null and bool(story.get("document_open")))
+				or (health != null and bool(health.get("is_dead")))
+			)
+			if not cannot_open:
+				set_open(true)
+				get_viewport().set_input_as_handled()
 	elif is_open:
-		if event.is_action_pressed("ui_cancel"):
+		if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or event.physical_keycode == KEY_ESCAPE)):
 			set_open(false)
 		elif event.is_action_pressed("ui_left"):
 			select_relative(-1)
@@ -268,8 +286,16 @@ func _update_hud() -> void:
 	_preview.visible = item == FLASHLIGHT_ITEM
 	_paper_preview.visible = item != FLASHLIGHT_ITEM
 	_paper_preview.text = "CICELY TOWN\nTOURIST MAP" if item == MAP_ITEM else "CARRIE\nPERSONAL NOTES" if item == NOTEBOOK_ITEM else "—"
-	_description.text = "A working flashlight found at the abandoned gas station. Its beam makes the Ridgeback retreat. Press F anytime while exploring." if item == FLASHLIGHT_ITEM else "Collected at the welcome center. Thomas has marked places connected to Carrie's trail." if item == MAP_ITEM else "Carrie's handwriting. She left for the hospital because people said it was safe. Read this with the other clues in your journal." if item == NOTEBOOK_ITEM else "Nothing stored here."
-	_use.text = "TOGGLE FLASHLIGHT" if item == FLASHLIGHT_ITEM else "OPEN MAP" if item == MAP_ITEM else "READ NOTES" if item == NOTEBOOK_ITEM else "EMPTY"
+	if item == EMPTY_ITEM:
+		_description.text = "Nothing stored here."
+		_use.text = "EMPTY"
+	elif ItemDatabase.has_item(item):
+		var item_data := ItemDatabase.get_item(item)
+		_description.text = item_data.description
+		_use.text = item_data.use_action_text
+	else:
+		_description.text = "A working flashlight found at the abandoned gas station. Its beam makes the Ridgeback retreat. Press F anytime while exploring." if item == FLASHLIGHT_ITEM else "Collected at the welcome center. Thomas has marked places connected to Carrie's trail." if item == MAP_ITEM else "Carrie's handwriting. She left for the hospital because people said it was safe. Read this with the other clues in your journal." if item == NOTEBOOK_ITEM else "Nothing stored here."
+		_use.text = "TOGGLE FLASHLIGHT" if item == FLASHLIGHT_ITEM else "OPEN MAP" if item == MAP_ITEM else "READ NOTES" if item == NOTEBOOK_ITEM else "EMPTY"
 	_use.disabled = item == EMPTY_ITEM
 	var health := _player.get_node_or_null("CombatHealth")
 	_status.text = "CONDITION / %d%%\n\nLIGHT / %s" % [int(health.get("health")) if health != null else 100, "CARRIED" if has_item(FLASHLIGHT_ITEM) else "NOT FOUND"]

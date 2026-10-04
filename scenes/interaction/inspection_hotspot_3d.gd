@@ -17,6 +17,10 @@ signal activated()
 @export_multiline var single_line_dialogue: String = ""
 @export var speaker_name: String = "Thomas"
 
+@export_category("Item Pickup")
+@export var pickup_item_id: StringName = &""
+@export var is_pickup: bool = false
+
 @export_category("Dot Visuals")
 @export var dot_color: Color = Color(1.0, 1.0, 1.0, 0.95)
 @export var glow_color: Color = Color(0.25, 0.75, 1.0, 0.6)
@@ -24,6 +28,13 @@ signal activated()
 @export var glow_radius: float = 16.0
 
 var has_triggered: bool = false
+
+
+func _ready() -> void:
+	if (name == "BrochurePickUp" or hotspot_id == "brochure") and pickup_item_id.is_empty():
+		pickup_item_id = &"map"
+		is_pickup = true
+		trigger_once = true
 
 
 func can_activate() -> bool:

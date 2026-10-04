@@ -6,17 +6,18 @@
 [ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
 [ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
 [ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="6_teletext_font"]
+[ext_resource type="Material" path="res://shaders/menu_background_material.tres" id="7_menu_bg_mat"]
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=1280559174]
 script = ExtResource("2_menu_script")
 
 [node name="MenuBackground" type="ColorRect" parent="." unique_id=1848326248]
+material = ExtResource("7_menu_bg_mat")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 1)
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=1846702775]
 anchors_preset = 15

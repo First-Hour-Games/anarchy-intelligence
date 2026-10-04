@@ -19,6 +19,10 @@ signal dialogue_finished()
 @export var dialogue_balloon_scene: PackedScene = preload("res://scenes/ui/balloon/balloon.tscn")
 @export var dialogue_start_delay: float = 0.5
 
+@export_group("Scene Transition")
+@export_file("*.tscn") var next_scene_path: String = "res://scenes/chapters/main/starting_forest.tscn"
+@export_range(0.0, 5.0, 0.1) var transition_delay: float = 1.0 ## Delay after phone call ends before switching scenes
+
 @onready var interactable: Interactable3D = $Interactable if has_node("Interactable") else null
 @onready var ringing_audio: AudioStreamPlayer3D = $RingingAudio if has_node("RingingAudio") else null
 @onready var pickup_audio: AudioStreamPlayer = $PickupAudio if has_node("PickupAudio") else null
@@ -131,12 +135,39 @@ func _play_dialogue() -> void:
 	dialogue_started.emit()
 
 	if Engine.has_singleton("DialogueManager"):
-		Engine.get_singleton("DialogueManager").dialogue_ended.connect(func(_resource: DialogueResource) -> void:
-			dialogue_finished.emit()
-		, CONNECT_ONE_SHOT)
+		Engine.get_singleton("DialogueManager").dialogue_ended.connect(_on_dialogue_ended, CONNECT_ONE_SHOT)
 
 	if active_balloon.has_method(&"start"):
 		active_balloon.start(phone_dialogue_resource, dialogue_start_cue, [self])
+
+
+func _on_dialogue_ended(_resource: DialogueResource = null) -> void:
+	dialogue_finished.emit()
+	_transition_to_next_scene()
+
+
+func _transition_to_next_scene() -> void:
+	if not is_inside_tree():
+		return
+
+	# Stop / fade out tutorial music if playing
+	var current_scene := get_tree().current_scene
+	if is_instance_valid(current_scene):
+		var tutorial_music := current_scene.get_node_or_null("TutorialMusic") as AudioStreamPlayer
+		if is_instance_valid(tutorial_music) and tutorial_music.playing:
+			var tween := create_tween()
+			tween.tween_property(tutorial_music, "volume_db", -80.0, transition_delay)
+
+	if transition_delay > 0.0:
+		await get_tree().create_timer(transition_delay).timeout
+
+	if not is_inside_tree():
+		return
+
+	if not next_scene_path.is_empty() and ResourceLoader.exists(next_scene_path):
+		get_tree().change_scene_to_file(next_scene_path)
+	else:
+		get_tree().change_scene_to_file("res://scenes/chapters/main/starting_forest.tscn")
 
 
 func _show_black_screen() -> void:

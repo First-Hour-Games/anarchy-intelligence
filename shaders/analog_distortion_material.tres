@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://c7x6y5d8q4m1n"]
+
+[ext_resource type="Shader" uid="uid://bolmxuabafsny" path="res://shaders/analog_distortion.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://hykhvvy70ocb" path="res://shaders/analog_noise.tres" id="2_noise"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/content_rect_min = Vector2(0.125, 0)
+shader_parameter/content_rect_size = Vector2(0.75, 1)
+shader_parameter/distortion_strength = 1.0
+shader_parameter/curvature = 0.0
+shader_parameter/skip = 1.0
+shader_parameter/image_flicker = 1.0
+shader_parameter/vignette_flicker_speed = 1.0
+shader_parameter/vignette_strength = 0.8999999798832
+shader_parameter/small_scanlines_speed = 1.0
+shader_parameter/small_scanlines_proximity = 1.0
+shader_parameter/small_scanlines_opacity = 1.0
+shader_parameter/scanlines_opacity = 1.0
+shader_parameter/scanlines_speed = 0.35999999195328
+shader_parameter/scanline_thickness = 0.5
+shader_parameter/scanlines_spacing = 0.9999999962745301
+shader_parameter/noise_texture = ExtResource("2_noise")

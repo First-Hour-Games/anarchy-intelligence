@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://models/props/wood_fence/wood_fence_mesh_6.res" id="1_ceicv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bt2ei"]
+size = Vector3(7, 4.8772798, 0.6263847)
+
+[node name="WoodFence6" type="StaticBody3D" unique_id=1705175757]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=743402596]
+mesh = ExtResource("1_ceicv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=946186317]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 2.3842967, 0.12191379)
+shape = SubResource("BoxShape3D_bt2ei")

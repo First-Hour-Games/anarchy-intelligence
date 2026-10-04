@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bpibkoo3tok4b"]
+
+[ext_resource type="Shader" uid="uid://k5i0m2pbaa2l" path="res://shaders/distance_fog.gdshader" id="1_shader"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/enable_fog = true
+shader_parameter/fog_color = Color(0.34441718, 0.34792534, 0.31458968, 1)
+shader_parameter/noise_color = Color(0.24, 0.26, 0.28, 1)
+shader_parameter/fog_distance = 70.0000032775
+shader_parameter/fog_fade_range = 40.0
+shader_parameter/affect_sky = false
+shader_parameter/sky_horizon_blend = 0.4290000203775
+shader_parameter/apply_effects_to_sky = false
+shader_parameter/enable_noise = false
+shader_parameter/noise_time_fac = 2.6390001220926202
+shader_parameter/enable_color_limitation = false
+shader_parameter/color_levels = 105
+shader_parameter/enable_dithering = false
+shader_parameter/dither_strength = 0.3

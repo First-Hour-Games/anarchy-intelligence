@@ -18,7 +18,9 @@ func run() -> void:
 	root.add_child(menu)
 	current_scene = menu
 	await process_frame
-	check(menu.can_continue and menu.reset_label.visible, "Saved game exposes reset option")
+	check(menu.can_continue and not menu.reset_label.visible and menu.main_options.size() == 3, "Start menu does not show reset option and has 3 items")
+	menu._open_options()
+	check(menu.is_in_options_menu and menu.reset_label.visible and menu.sub_options.size() == 4, "Options menu exposes reset option and has 4 items")
 	menu._ask_reset_progress()
 	check(menu.reset_warning.visible and FileAccess.file_exists(TEST_SAVE), "Reset displays warning before touching save")
 	menu._start_game()
@@ -29,15 +31,14 @@ func run() -> void:
 	menu._ask_reset_progress()
 	menu.reset_warning.confirmed.emit()
 	check(not FileAccess.file_exists(TEST_SAVE) and not menu.can_continue and not root.get_node("PauseMenu").has_started_chapter, "Confirmed reset clears saved and session progress")
-	check(menu.start_label.text == "Start Game", "Reset returns Play to a new game")
-	check(settings_before == FileAccess.get_file_as_bytes("user://audio_settings.cfg"), "Reset preserves sound settings")
-	menu._open_options()
 	menu.input_ready_at = 0
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	menu.quit_label.gui_input.emit(click)
-	check(not menu.is_in_options_menu and menu.main_options.size() == 4, "Options Back uses correct action after adding reset row")
+	check(not menu.is_in_options_menu and menu.main_options.size() == 3 and not menu.reset_label.visible, "Options Back returns to main menu with 3 items")
+	check(menu.start_label.text == "Start Game", "Reset returns Play to a new game")
+	check(settings_before == FileAccess.get_file_as_bytes("user://audio_settings.cfg"), "Reset preserves sound settings")
 	root.get_node("PauseMenu").has_started_chapter = original_session
 	menu.queue_free()
 	current_scene = null

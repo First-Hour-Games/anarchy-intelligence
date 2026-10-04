@@ -24,6 +24,6 @@ func play(next: String) -> void:
 	clip = next
 	if static_pose_fallback or animation_player == null:
 		return
-	var name := resolve_clip(next)
-	if name != &"" and animation_player.current_animation != name:
-		animation_player.play(name, 0.15)
+	var anim_name := resolve_clip(next)
+	if anim_name != &"" and animation_player.current_animation != anim_name:
+		animation_player.play(anim_name, 0.15)

@@ -18,7 +18,7 @@ Thomas: And maybe also the returning ones...
 
 => END
 
-~ visitor_center_map
+~ visitor_center_map_info
 
 Welcome Board: Welcome to Cicely, South Dakota!
 Welcome Board: A quiet town surrounded by open landscapes, peaceful neighborhoods, and a close-knit community.
@@ -26,3 +26,41 @@ Welcome Board: Whether you're visiting or just passing through,
 Welcome Board: we hope you enjoy your stay and feel at home in Cicely.
 
 => END
+
+~ visitor_center_map_interact
+
+Thomas: There are multiple brochures that contain the town map information.
+Thomas: It's been more than a decade since I move away here, a lot of things have changed.
+Thomas: This town map will come in handy.
+
+=> END
+
+~ visitor_center_barrier
+
+if has_item("map")
+	=> visitor_center_barrier_map
+else
+	=> visitor_center_barrier_nomap
+
+~ visitor_center_barrier_nomap
+
+if has_item("map")
+	=> visitor_center_barrier_map
+
+Thomas: There is a big tree blocking the road. I cannot drive in any further.
+Thomas: I would have to climb over the log and continue moving on foot.
+Thomas: It might be a good idea to find something that can help me navigate easier.
+
+=> END
+
+~ visitor_center_barrier_map
+
+Thomas: There is a big tree blocking the road. I cannot drive in any further.
+Thomas: I would have to climb over the log and continue moving on foot.
+Thomas: Should I proceed?
+- Yes
+	do proceed()
+	=> END
+- No
+	=> END
+

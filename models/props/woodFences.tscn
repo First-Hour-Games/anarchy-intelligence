@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://7w21rwdloh2h"]
+
+[ext_resource type="Script" uid="uid://cx6i2m8x4pv1" path="res://models/props/wood_fence/modular_fence.gd" id="1_fence_script"]
+
+[node name="WoodFences" type="Node3D" unique_id=621802657]
+script = ExtResource("1_fence_script")
+segment_count = 6
+fence_scale = 0.35

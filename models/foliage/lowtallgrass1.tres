@@ -6,7 +6,8 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a26iw"]
 resource_name = "Tall_grass_Mat"
-transparency = 4
+transparency = 2
+alpha_scissor_threshold = 0.5
 cull_mode = 2
 albedo_texture = ExtResource("1_6a64t")
 metallic = 1.0

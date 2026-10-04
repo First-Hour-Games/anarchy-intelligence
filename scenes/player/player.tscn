@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://csgctl1134gpg" path="res://scenes/interaction/interaction_detector.gd" id="3_interaction_detector"]
 [ext_resource type="PackedScene" path="res://scenes/player/flashlight/player_flashlight.tscn" id="4_flashlight"]
 [ext_resource type="PackedScene" path="res://scenes/player/inventory/player_inventory.tscn" id="5_inventory"]
+[ext_resource type="Material" uid="uid://bpibkoo3tok4b" path="res://shaders/distance_fog_material.tres" id="6_distance_fog_mat"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.35
@@ -12,6 +13,10 @@ height = 1.8
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ceiling_check"]
 radius = 0.35
+
+[sub_resource type="QuadMesh" id="QuadMesh_distance_fog"]
+flip_faces = true
+size = Vector2(2, 2)
 
 [node name="Player" type="CharacterBody3D" unique_id=6337926 groups=["player"]]
 floor_snap_length = 0.3
@@ -38,6 +43,13 @@ current = true
 fov = 74.0
 
 [node name="Flashlight" parent="Head/Camera3D" unique_id=112258848 instance=ExtResource("4_flashlight")]
+
+[node name="DistanceFog" type="MeshInstance3D" parent="Head/Camera3D" unique_id=1982736450]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
+cast_shadow = 0
+material_override = ExtResource("6_distance_fog_mat")
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_distance_fog")
 
 [node name="HandViewmodel" parent="." unique_id=1545572486 instance=ExtResource("2_viewmodel")]
 

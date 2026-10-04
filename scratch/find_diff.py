@@ -1,0 +1,16 @@
+import json
+import sys
+
+sys.stdout.reconfigure(encoding='utf-8')
+
+transcript_path = r"C:\Users\ADMIN\.gemini\antigravity\brain\4728e06f-5445-4443-a9d6-83a485e0782c\.system_generated\logs\transcript_full.jsonl"
+with open(transcript_path, "r", encoding="utf-8") as f:
+    for line in f:
+        data = json.loads(line)
+        idx = data.get('step_index', 0)
+        content = data.get('content', '')
+        if 1860 <= idx <= 2075:
+            if 'barricade' in content.lower() or 'barrier' in content.lower() or 'diff --git' in content:
+                print(f"=== Step {idx} ===")
+                print(content[:1500])
+                print("\n" + "="*40 + "\n")
