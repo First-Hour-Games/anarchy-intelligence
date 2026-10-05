@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene format=3 uid="uid://dua8h30cdqr5t"]
 
-[ext_resource type="Texture2D" path="res://img/items/cicely_town_map_board.png" id="1_map"]
-[ext_resource type="FontFile" path="res://fonts/HelveticaNeueCondensed.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://bunj4gjiihqte" path="res://img/textures/mapPost.png" id="1_eftiv"]
 
 [sub_resource type="StandardMaterial3D" id="Material_backing"]
-shading_mode = 0
 cull_mode = 2
+shading_mode = 0
 albedo_color = Color(0.941, 0.914, 0.851, 1)
 
 [sub_resource type="QuadMesh" id="Quad_backing"]
@@ -13,71 +12,40 @@ material = SubResource("Material_backing")
 size = Vector2(3.16, 1.4)
 
 [sub_resource type="StandardMaterial3D" id="Material_map"]
-shading_mode = 0
 cull_mode = 2
-albedo_texture = ExtResource("1_map")
+shading_mode = 0
+albedo_texture = ExtResource("1_eftiv")
 
 [sub_resource type="QuadMesh" id="Quad_map"]
 material = SubResource("Material_map")
-size = Vector2(1.7082353, 1.32)
+size = Vector2(3.108, 1.32)
 
 [sub_resource type="QuadMesh" id="Quad_brochure"]
 material = SubResource("Material_map")
 size = Vector2(0.3, 0.2318182)
 
-[sub_resource type="StandardMaterial3D" id="Material_ink"]
-shading_mode = 0
-cull_mode = 2
-albedo_color = Color(0.22, 0.16, 0.13, 1)
+[node name="TownMapBoard" type="Node3D" unique_id=523185849]
 
-[sub_resource type="TextMesh" id="Text_welcome"]
-material = SubResource("Material_ink")
-text = "Welcome to\nCICELY"
-font = ExtResource("2_font")
-font_size = 40
-pixel_size = 0.006
-depth = 0.0
-
-[sub_resource type="TextMesh" id="Text_pickup"]
-material = SubResource("Material_ink")
-text = "TOWN MAP\nTake a brochure"
-font = ExtResource("2_font")
-font_size = 30
-pixel_size = 0.004
-depth = 0.0
-
-[node name="TownMapBoard" type="Node3D"]
-
-[node name="Backing" type="MeshInstance3D" parent="."]
+[node name="Backing" type="MeshInstance3D" parent="." unique_id=2097676611]
 cast_shadow = 0
 mesh = SubResource("Quad_backing")
 
-[node name="MapImage" type="MeshInstance3D" parent="."]
-position = Vector3(-0.67, 0, 0.006)
+[node name="MapImage" type="MeshInstance3D" parent="." unique_id=941776166]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 cast_shadow = 0
 mesh = SubResource("Quad_map")
 
-[node name="WelcomeText" type="MeshInstance3D" parent="."]
-position = Vector3(0.86, 0.22, 0.04)
-cast_shadow = 0
-mesh = SubResource("Text_welcome")
-
-[node name="PickupText" type="MeshInstance3D" parent="."]
-position = Vector3(0.86, -0.33, 0.04)
-cast_shadow = 0
-mesh = SubResource("Text_pickup")
-
-[node name="BrochureMap1" type="MeshInstance3D" parent="."]
-position = Vector3(-2.185, -0.45, 0.16)
+[node name="BrochureMap1" type="MeshInstance3D" parent="." unique_id=343454613]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.185, -0.45, 0.16)
 cast_shadow = 0
 mesh = SubResource("Quad_brochure")
 
-[node name="BrochureMap2" type="MeshInstance3D" parent="."]
-position = Vector3(-2.185, -0.08, 0.16)
+[node name="BrochureMap2" type="MeshInstance3D" parent="." unique_id=423876260]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.185, -0.08, 0.16)
 cast_shadow = 0
 mesh = SubResource("Quad_brochure")
 
-[node name="BrochureMap3" type="MeshInstance3D" parent="."]
-position = Vector3(-2.185, 0.29, 0.16)
+[node name="BrochureMap3" type="MeshInstance3D" parent="." unique_id=662413298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.185, 0.29, 0.16)
 cast_shadow = 0
 mesh = SubResource("Quad_brochure")
