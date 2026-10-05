@@ -34,6 +34,8 @@
 [ext_resource type="AudioStream" uid="uid://dr7ufabs336qh" path="res://sounds/chapters/tutorial/lightBuzzing.mp3" id="31_light_buzz"]
 [ext_resource type="AudioStream" uid="uid://cgblq8d1sbi8a" path="res://sounds/chapters/tutorial/phonePickUp.mp3" id="32_phone_pickup"]
 [ext_resource type="Script" uid="uid://cbjy88ume4ahy" path="res://scenes/chapters/tutorial/floating_bed.gd" id="33_floating_bed"]
+[ext_resource type="Script" path="res://scenes/chapters/tutorial/moving_wall_zone.gd" id="34_moving_wall_zone"]
+[ext_resource type="Texture2D" uid="uid://p80n57xnhsj4" path="res://img/player/shiftLabel.png" id="35_shift_label"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6xd7"]
 albedo_texture = ExtResource("9_nbcrf")
@@ -133,6 +135,9 @@ uv1_triplanar = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_jpyye"]
 size = Vector3(2.2, 1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_moving_wall_zone"]
+size = Vector3(8.5, 4, 9.5)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
 shader = ExtResource("6_crt")
@@ -287,11 +292,20 @@ material_override = SubResource("StandardMaterial3D_8khbb")
 use_collision = true
 size = Vector3(5.1, 4.9, 0.5)
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="TutorialRooms" unique_id=689637865]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5738153, 0.95, -46.033337)
+[node name="MovingWall" type="CSGBox3D" parent="TutorialRooms" unique_id=689637865]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5738153, 0.95, -46.033)
 material_override = SubResource("StandardMaterial3D_8khbb")
 use_collision = true
 size = Vector3(13, 4.9, 0.6)
+
+[node name="MovingWallZone" type="Area3D" parent="TutorialRooms" unique_id=1847192847]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5738153, 0.95, -41)
+script = ExtResource("34_moving_wall_zone")
+moving_wall = NodePath("../MovingWall")
+run_instruction = NodePath("../../TutorialOverlay/AspectRatioContainer/Content/RunLabel")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TutorialRooms/MovingWallZone" unique_id=1847192848]
+shape = SubResource("BoxShape3D_moving_wall_zone")
 
 [node name="CSGBox3D3" type="CSGBox3D" parent="TutorialRooms" unique_id=598873713]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.473815, 0.95, -36.638893)
@@ -300,13 +314,13 @@ use_collision = true
 size = Vector3(5.2000003, 4.9, 0.5)
 
 [node name="CSGBox3D4" type="CSGBox3D" parent="TutorialRooms" unique_id=324155951]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.573815, 0.95, -59.88889)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4627037, 0.95, -59.88889)
 material_override = SubResource("StandardMaterial3D_8khbb")
 use_collision = true
 size = Vector3(1, 4.9, 47)
 
 [node name="CSGBox3D5" type="CSGBox3D" parent="TutorialRooms" unique_id=1588390785]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9261854, 0.95, -60.08889)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8150742, 0.95, -60.08889)
 material_override = SubResource("StandardMaterial3D_8khbb")
 use_collision = true
 size = Vector3(1, 4.9, 47.4)
@@ -469,6 +483,36 @@ fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="RunLabel" type="TextureRect" parent="TutorialOverlay/AspectRatioContainer/Content" unique_id=197267443]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -255.5
+offset_top = 64.0
+offset_right = 255.5
+offset_bottom = 265.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.34, 0.34)
+pivot_offset = Vector2(255.5, 100.5)
+texture = ExtResource("35_shift_label")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="TutorialOverlay/AspectRatioContainer/Content/RunLabel" unique_id=87483403]
+layout_mode = 0
+offset_left = -44.5
+offset_top = 195.0
+offset_right = 555.5
+offset_bottom = 285.0
+bbcode_enabled = true
+text = "[font_size=64][font=res://fonts/JainiPurva.ttf]Hold to run[/font][/font_size]"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="CRTOverlay" type="CanvasLayer" parent="." unique_id=1482506322]
 layer = 100
 
@@ -568,7 +612,6 @@ shadow_bias = 0.0
 spot_range = 98.337
 spot_angle = 80.87
 spot_angle_attenuation = 1.0717734
-script = ExtResource("22_flicker_light")
 
 [node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb3" unique_id=1299220181]
 stream = ExtResource("31_light_buzz")
@@ -594,7 +637,6 @@ shadow_bias = 0.0
 spot_range = 98.337
 spot_angle = 80.87
 spot_angle_attenuation = 1.0717734
-script = ExtResource("22_flicker_light")
 
 [node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb4" unique_id=893755361]
 stream = ExtResource("31_light_buzz")
@@ -620,7 +662,6 @@ shadow_bias = 0.0
 spot_range = 98.337
 spot_angle = 80.87
 spot_angle_attenuation = 1.0717734
-script = ExtResource("22_flicker_light")
 
 [node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb5" unique_id=853781603]
 stream = ExtResource("31_light_buzz")
@@ -646,7 +687,6 @@ shadow_bias = 0.0
 spot_range = 98.337
 spot_angle = 80.87
 spot_angle_attenuation = 1.0717734
-script = ExtResource("22_flicker_light")
 
 [node name="BuzzingAudio" type="AudioStreamPlayer3D" parent="HallwayBulbs/CeilingBulb6" unique_id=230557659]
 stream = ExtResource("31_light_buzz")

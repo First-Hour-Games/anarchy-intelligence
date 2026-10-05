@@ -4,10 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://0e4u0jo7pges" path="res://models/foliage/grassPack_Image_4.png" id="2_prm4w"]
 [ext_resource type="Texture2D" uid="uid://g2qlxgrahdqm" path="res://models/foliage/grassPack_Image_5.png" id="3_6c41s"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a26iw"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s151l"]
 resource_name = "Tall_grass_Mat"
-transparency = 2
-alpha_scissor_threshold = 0.5
+transparency = 4
 cull_mode = 2
 albedo_texture = ExtResource("1_6a64t")
 metallic = 1.0
@@ -43,7 +42,7 @@ _surfaces = [{
 "format": 34896613431,
 "index_count": 84,
 "index_data": PackedByteArray("AAABAAIAAAACAAMAAAADAAQABAADAAUABgAHAAgABgAJAAcABgAKAAkACgALAAkADAANAA4ADAAOAA8ADAAPABAAEAAPABEAEgATABQAEgAVABMAEgAWABUAFgAXABUAGAAZABoAGAAbABkAGAAcABsAHAAdABsAHgAfACAAHgAgACEAHgAhACIAIgAhACMAJAAlACYAJAAnACUAJAAoACcAKAApACcA"),
-"material": SubResource("StandardMaterial3D_a26iw"),
+"material": SubResource("StandardMaterial3D_s151l"),
 "name": "Tall_grass_Mat",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),

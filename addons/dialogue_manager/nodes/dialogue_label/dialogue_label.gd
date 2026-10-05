@@ -69,6 +69,17 @@ var _is_awaiting_mutation: bool = false
 var _is_skipping_mutations: bool = false
 
 
+func _init() -> void:
+	visible_characters_behavior = TextServer.VC_CHARS_AFTER_SHAPING
+
+
+func _ready() -> void:
+	# Ensure text layout and line wraps are pre-calculated so letters pop into place
+	# without shifting words or reflowing wrapped/centered text.
+	if visible_characters_behavior == TextServer.VC_CHARS_BEFORE_SHAPING:
+		visible_characters_behavior = TextServer.VC_CHARS_AFTER_SHAPING
+
+
 func _process(delta: float) -> void:
 	if _is_typing:
 		# Type out text
