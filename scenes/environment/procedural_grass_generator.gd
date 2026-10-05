@@ -528,7 +528,10 @@ func _extract_node_aabbs(node: Node3D, out_aabbs: Array[AABB]) -> void:
 	var has_direct_shape := false
 	var local_aabb := AABB()
 
-	if node is MeshInstance3D and node.mesh:
+	if node.has_method(&"get_local_aabb"):
+		local_aabb = node.call(&"get_local_aabb")
+		has_direct_shape = true
+	elif node is MeshInstance3D and node.mesh:
 		local_aabb = node.mesh.get_aabb()
 		has_direct_shape = true
 	elif node is CSGShape3D:

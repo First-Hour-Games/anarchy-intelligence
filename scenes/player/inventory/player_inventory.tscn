@@ -30,7 +30,7 @@ ambient_light_color = Color(0.72, 0.82, 0.9, 1)
 ambient_light_energy = 1.15
 
 [node name="InventoryHUD" type="CanvasLayer"]
-layer = 22
+layer = 96
 script = ExtResource("1_inventory")
 selected_style = SubResource("StyleBoxFlat_selected")
 unselected_style = SubResource("StyleBoxFlat_unselected")

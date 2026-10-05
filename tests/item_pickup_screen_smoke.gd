@@ -80,6 +80,9 @@ func run() -> void:
 		check(brochure_hotspot.trigger_once, "BrochurePickUp trigger_once is true")
 		check(brochure_hotspot.dialogue_cue == "visitor_center_map_interact", "BrochurePickUp dialogue cue is visitor_center_map_interact")
 
+	var direct_pickup = brochure_hotspot.get_node_or_null("DirectPickup") if is_instance_valid(brochure_hotspot) else null
+	check(direct_pickup == null, "DirectPickup is removed so brochure must be picked up via inspection")
+
 	var center_hotspot = map_inspect.get_node_or_null("MapCenterHotspot") if is_instance_valid(map_inspect) else null
 	check(is_instance_valid(center_hotspot), "MapCenterHotspot exists in starting_forest")
 	if is_instance_valid(center_hotspot):

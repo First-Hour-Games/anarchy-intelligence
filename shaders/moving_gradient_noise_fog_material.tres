@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://b6b6o01o4muf"]
+
+[ext_resource type="Shader" uid="uid://bf1tjqe6nnhob" path="res://shaders/moving_gradient_noise_fog.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/base_density = 0.338000016055
+shader_parameter/base_color = Color(0.7126892, 0.88376325, 0.8742588, 1)
+shader_parameter/emission_color = Color(0.2671534, 0.28227708, 0.22773743, 1)
+shader_parameter/enable_height_fade = true
+shader_parameter/fade_out_height = 2.0
+shader_parameter/fade_out_distance = 1.5
+shader_parameter/noise_world_scale = Vector3(0.1, 0.5, 0.1)
+shader_parameter/noise_amounts = Vector3(0.4, 0.35, 0.25)
+shader_parameter/noise_scales = Vector3(1, 2, 4)
+shader_parameter/noise_velocity1 = Vector3(0.5, 0, 0)
+shader_parameter/noise_velocity2 = Vector3(0, 0, -1)
+shader_parameter/noise_velocity3 = Vector3(0, 0.6, 0.3)

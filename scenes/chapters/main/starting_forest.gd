@@ -39,10 +39,18 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export_range(0.0, 5.0, 0.1) var music_fade_in_delay: float = 0.4
 @export_range(-40.0, 6.0, 0.5) var welcoming_hike_volume_db: float = -3.0
 
+@export_category("Log Fog Transition")
+@export var fog_volume_node: NodePath = NodePath("FogVolume")
+@export var fog_fade_in_duration: float = 2.5
+@export var fog_size: Vector3 = Vector3(80.0, 8.0, 80.0)
+@export var follow_player_y: bool = false
+@export var fog_fixed_y: float = 2.0
+
 @onready var player: FirstPersonPlayer = get_node_or_null("Player") as FirstPersonPlayer
 @onready var opening_balloon: BottomDialogueBalloon = get_node_or_null("BottomDialogueBalloon") as BottomDialogueBalloon
 @onready var visitor_bgm: AudioStreamPlayer = get_node_or_null("VisitorBGM") as AudioStreamPlayer
 @onready var welcoming_hike_bgm: AudioStreamPlayer = get_node_or_null("WelcomingHikeBGM") as AudioStreamPlayer
+@onready var fog_volume: FogVolume = get_node_or_null(fog_volume_node) as FogVolume
 
 var _fade_canvas: CanvasLayer = null
 var _black_screen: ColorRect = null
@@ -54,18 +62,47 @@ var _target_volumes: Dictionary = {}
 var _has_switched_music: bool = false
 var _music_transition_tween: Tween = null
 
+var _is_fog_active: bool = false
+var _fog_fade_tween: Tween = null
+var _fog_target_density: float = 0.8
+var _fog_material_instance: ShaderMaterial = null
+
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
+	_ensure_player_on_floor()
 	_setup_fade_ui()
 	_setup_welcoming_hike_player()
 	_setup_barrier_music_trigger()
+	_setup_fog_volume()
 	_prepare_audio_players()
 
 	if auto_start_fade:
 		start_intro_fade()
+
+
+func _ensure_player_on_floor() -> void:
+	if not is_instance_valid(player):
+		return
+	if player.has_method(&"snap_to_ground"):
+		player.snap_to_ground()
+	_snap_player_deferred.call_deferred()
+
+
+func _snap_player_deferred() -> void:
+	if is_instance_valid(player) and is_inside_tree():
+		await get_tree().physics_frame
+		if is_instance_valid(player) and player.has_method(&"snap_to_ground"):
+			player.snap_to_ground()
+
+
+func _process(_delta: float) -> void:
+	if _is_fog_active:
+		_update_fog_position()
+	elif is_instance_valid(player) and player.global_position.x > -250.0:
+		activate_fog()
 
 
 func _setup_fade_ui() -> void:
@@ -153,9 +190,12 @@ func start_intro_fade() -> void:
 
 	_is_fading = true
 
-	# Freeze player during black screen hold, subtitle, and fade
-	if is_instance_valid(player) and player.has_method(&"freeze"):
-		player.freeze()
+	# Freeze player during black screen hold, subtitle, and fade (ensuring grounded on floor)
+	if is_instance_valid(player):
+		if player.has_method(&"snap_to_ground"):
+			player.snap_to_ground()
+		if player.has_method(&"freeze"):
+			player.freeze()
 
 	_fade_tween = create_tween()
 
@@ -292,10 +332,17 @@ func _setup_barrier_music_trigger() -> void:
 	if is_instance_valid(barrier):
 		if not barrier.climb_over_started.is_connected(_on_climb_over_started):
 			barrier.climb_over_started.connect(_on_climb_over_started)
+		if not barrier.climb_over_completed.is_connected(_on_climb_over_completed):
+			barrier.climb_over_completed.connect(_on_climb_over_completed)
 
 
 func _on_climb_over_started(_player: Node3D = null) -> void:
 	transition_to_welcoming_hike()
+	activate_fog()
+
+
+func _on_climb_over_completed(_player: Node3D = null) -> void:
+	activate_fog()
 
 
 func transition_to_welcoming_hike(fade_out_time: float = music_fade_out_duration, fade_in_time: float = music_fade_in_duration) -> void:
@@ -372,3 +419,85 @@ func finish_music_transition_immediately() -> void:
 		welcoming_hike_bgm.volume_db = welcoming_hike_volume_db
 		if not welcoming_hike_bgm.playing:
 			welcoming_hike_bgm.play()
+
+
+func _setup_fog_volume() -> void:
+	if not is_instance_valid(fog_volume):
+		fog_volume = get_node_or_null(fog_volume_node) as FogVolume
+	if not is_instance_valid(fog_volume):
+		fog_volume = find_child("FogVolume", true, false) as FogVolume
+	if not is_instance_valid(fog_volume):
+		var volumes := find_children("*", "FogVolume", true, false)
+		if not volumes.is_empty():
+			fog_volume = volumes[0] as FogVolume
+
+	# Fallback: automatically instantiate FogVolume if none was added in the scene tree
+	if not is_instance_valid(fog_volume):
+		fog_volume = FogVolume.new()
+		fog_volume.name = "FogVolume"
+		fog_volume.size = fog_size
+		var default_mat := load("res://shaders/moving_gradient_noise_fog_material.tres") as ShaderMaterial
+		if default_mat != null:
+			fog_volume.material = default_mat
+		add_child(fog_volume)
+
+	# Ensure it is hidden initially until player gets over the log
+	fog_volume.visible = false
+
+	if fog_volume.material is ShaderMaterial:
+		_fog_material_instance = fog_volume.material.duplicate()
+		fog_volume.material = _fog_material_instance
+		var base_den = _fog_material_instance.get_shader_parameter("base_density")
+		_fog_target_density = float(base_den) if base_den != null and float(base_den) > 0.0 else 0.8
+		_fog_material_instance.set_shader_parameter("base_density", 0.0)
+
+	_update_fog_position()
+
+
+func activate_fog(fade_duration: float = fog_fade_in_duration) -> void:
+	if _is_fog_active:
+		return
+	_is_fog_active = true
+
+	if not is_instance_valid(fog_volume):
+		_setup_fog_volume()
+	if not is_instance_valid(fog_volume):
+		return
+
+	_update_fog_position()
+	fog_volume.visible = true
+
+	if is_instance_valid(_fog_material_instance):
+		if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
+			_fog_fade_tween.kill()
+
+		if fade_duration <= 0.0:
+			_fog_material_instance.set_shader_parameter("base_density", _fog_target_density)
+		else:
+			_fog_fade_tween = create_tween()
+			_fog_fade_tween.tween_method(
+				func(val: float) -> void:
+					if is_instance_valid(_fog_material_instance):
+						_fog_material_instance.set_shader_parameter("base_density", val),
+				0.0,
+				_fog_target_density,
+				fade_duration
+			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+func _update_fog_position() -> void:
+	if not is_instance_valid(fog_volume) or not is_instance_valid(player):
+		return
+	if fog_volume.get_parent() == player:
+		return
+	var target_y := player.global_position.y + 1.5 if follow_player_y else fog_fixed_y
+	fog_volume.global_position = Vector3(player.global_position.x, target_y, player.global_position.z)
+
+
+func finish_fog_transition_immediately() -> void:
+	if not _is_fog_active:
+		activate_fog(0.0)
+	if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
+		_fog_fade_tween.kill()
+	if is_instance_valid(_fog_material_instance):
+		_fog_material_instance.set_shader_parameter("base_density", _fog_target_density)

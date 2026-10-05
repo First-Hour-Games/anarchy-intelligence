@@ -1,0 +1,279 @@
+=== mapStand_V3.glb ===
+mapStand_V3 (Node3D) pos=(0.0, 0.0, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+  Blank brochure sheet 1 (MeshInstance3D) pos=(-2.185, 1.78, 0.46) rot=(-8.000001, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.16, -0.15, -0.0125), S: (0.32, 0.3, 0.025)]
+    mat override 0: <Object#null>
+    surface 0 mat: Blank brochure paper (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_7j31f):<StandardMaterial3D#-9223372008299952644>
+  Blank brochure sheet 2 (MeshInstance3D) pos=(-2.185, 2.15, 0.46) rot=(-8.000001, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.16, -0.15, -0.0125), S: (0.32, 0.3, 0.025)]
+    mat override 0: <Object#null>
+    surface 0 mat: Blank brochure paper (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_7j31f):<StandardMaterial3D#-9223372008299952644>
+  Blank brochure sheet 3 (MeshInstance3D) pos=(-2.185, 2.52, 0.46) rot=(-8.000001, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.16, -0.15, -0.0125), S: (0.32, 0.3, 0.025)]
+    mat override 0: <Object#null>
+    surface 0 mat: Blank brochure paper (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_7j31f):<StandardMaterial3D#-9223372008299952644>
+  BLANK MAP CANVAS (MeshInstance3D) pos=(0.0, 2.23, 0.265) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-1.59, -0.71, -0.05), S: (3.18, 1.42, 0.1)]
+    mat override 0: <Object#null>
+    surface 0 mat: Plain blank matte canvas (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_36rb5):<StandardMaterial3D#-9223372008182512126>
+  Brochure pocket floor 1 (MeshInstance3D) pos=(-2.185, 1.58, 0.5) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.19, -0.0225, -0.17), S: (0.38, 0.045, 0.34)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure pocket floor 2 (MeshInstance3D) pos=(-2.185, 1.95, 0.5) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.19, -0.0225, -0.17), S: (0.38, 0.045, 0.34)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure pocket floor 3 (MeshInstance3D) pos=(-2.185, 2.32, 0.5) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.19, -0.0225, -0.17), S: (0.38, 0.045, 0.34)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure pocket front lip 1 (MeshInstance3D) pos=(-2.185, 1.7, 0.66) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.19, -0.115, -0.0275), S: (0.38, 0.23, 0.055)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure pocket front lip 2 (MeshInstance3D) pos=(-2.185, 2.07, 0.66) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.19, -0.115, -0.0275), S: (0.38, 0.23, 0.055)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure pocket front lip 3 (MeshInstance3D) pos=(-2.185, 2.44, 0.66) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.19, -0.115, -0.0275), S: (0.38, 0.23, 0.055)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure rack backboard (MeshInstance3D) pos=(-2.185, 1.95, 0.285) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.24, -0.61, -0.06), S: (0.48, 1.22, 0.12)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure rack left cheek (MeshInstance3D) pos=(-2.4, 1.95, 0.48) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0275, -0.61, -0.18), S: (0.055, 1.22, 0.36)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure rack right cheek (MeshInstance3D) pos=(-1.97, 1.95, 0.48) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0275, -0.61, -0.18), S: (0.055, 1.22, 0.36)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood062_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_wjxjn):<StandardMaterial3D#-9223372008132180475>
+  Brochure rack side mounting plate (MeshInstance3D) pos=(-1.9525, 1.48, 0.29) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0575, -0.05, -0.07), S: (0.115, 0.1, 0.14)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Brochure rack side mounting plate_001 (MeshInstance3D) pos=(-1.9525, 2.42, 0.29) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0575, -0.05, -0.07), S: (0.115, 0.1, 0.14)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Canvas left metal trim (MeshInstance3D) pos=(-1.62, 2.23, 0.33) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0225, -0.755, -0.0225), S: (0.045, 1.51, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Canvas lower metal trim (MeshInstance3D) pos=(0.0, 1.495, 0.33) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-1.64, -0.0225, -0.0225), S: (3.28, 0.045, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Canvas right metal trim (MeshInstance3D) pos=(1.62, 2.23, 0.33) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0225, -0.755, -0.0225), S: (0.045, 1.51, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Canvas upper metal trim (MeshInstance3D) pos=(0.0, 2.965, 0.33) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-1.64, -0.0225, -0.0225), S: (3.28, 0.045, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Front gable tie beam (MeshInstance3D) pos=(0.0, 3.55, 0.98) rot=(0.0, 0.0, -90.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.1, -2.05, -0.1), S: (0.2, 4.1, 0.2)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Front king post (MeshInstance3D) pos=(0.0, 3.95, 0.98) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.08, -0.37, -0.09), S: (0.16, 0.74, 0.18)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Front left fascia (MeshInstance3D) pos=(-1.2, 3.95, 1.15) rot=(0.0, 0.0, -68.61137) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -1.288759, -0.07), S: (0.13, 2.577518, 0.14)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Front left truss web (MeshInstance3D) pos=(-0.885, 3.825, 0.98) rot=(0.0, 0.0, -61.2602) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -0.53033, -0.075), S: (0.13, 1.06066, 0.15)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Front right fascia (MeshInstance3D) pos=(1.2, 3.95, 1.15) rot=(0.0, 0.0, -111.3886) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -1.288759, -0.07), S: (0.13, 2.577518, 0.14)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Front right truss web (MeshInstance3D) pos=(0.885, 3.825, 0.98) rot=(0.0, 0.0, 61.2602) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -0.53033, -0.075), S: (0.13, 1.06066, 0.15)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Heavy upper header (MeshInstance3D) pos=(0.0, 3.05, -0.02) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-1.96, -0.16, -0.25), S: (3.92, 0.32, 0.5)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Left base anchor bolt (MeshInstance3D) pos=(-1.94, 0.15, 0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left base anchor bolt_001 (MeshInstance3D) pos=(-1.94, 0.15, -0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left base anchor bolt_002 (MeshInstance3D) pos=(-1.5, 0.15, 0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left base anchor bolt_003 (MeshInstance3D) pos=(-1.5, 0.15, -0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left extra-thick cedar post (MeshInstance3D) pos=(-1.72, 1.6, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.24, -1.6, -0.24), S: (0.48, 3.2, 0.48)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Left front knee brace (MeshInstance3D) pos=(-1.9522, 3.15, 0.04) rot=(0.0, 0.0, 32.11105) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.095, -0.436826, -0.1), S: (0.19, 0.873652, 0.2)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Left pitched roof (MeshInstance3D) pos=(0.0, 0.0, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-2.344845, 3.454723, -1.12), S: (2.365465, 0.920122, 2.24)]
+    mat override 0: <Object#null>
+    surface 0 mat: RoofingTiles013A_1K-JPG_DISPLACEMENT (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_tlxf1):<StandardMaterial3D#-9223372007142324672>
+  Left roof seam (MeshInstance3D) pos=(-1.125, 3.99, 1.0) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_001 (MeshInstance3D) pos=(-1.125, 3.99, 0.7) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_002 (MeshInstance3D) pos=(-1.125, 3.99, 0.4) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_003 (MeshInstance3D) pos=(-1.125, 3.99, 0.1) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_004 (MeshInstance3D) pos=(-1.125, 3.99, -0.2) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_005 (MeshInstance3D) pos=(-1.125, 3.99, -0.5) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_006 (MeshInstance3D) pos=(-1.125, 3.99, -0.8) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left roof seam_007 (MeshInstance3D) pos=(-1.125, 3.99, -1.0) rot=(0.0, 0.0, -69.08202) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Left steel base plate (MeshInstance3D) pos=(-1.72, 0.07, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.31, -0.07, -0.31), S: (0.62, 0.14, 0.62)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Lower display support (MeshInstance3D) pos=(0.0, 1.42, -0.04) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-1.725, -0.09, -0.15), S: (3.45, 0.18, 0.3)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Rear gable tie beam (MeshInstance3D) pos=(0.0, 3.55, -0.98) rot=(0.0, 0.0, -90.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.1, -2.05, -0.1), S: (0.2, 4.1, 0.2)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Rear king post (MeshInstance3D) pos=(0.0, 3.95, -0.98) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.08, -0.37, -0.09), S: (0.16, 0.74, 0.18)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Rear left fascia (MeshInstance3D) pos=(-1.2, 3.95, -1.15) rot=(0.0, 0.0, -68.61137) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -1.288759, -0.07), S: (0.13, 2.577518, 0.14)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Rear left truss web (MeshInstance3D) pos=(-0.885, 3.825, -0.98) rot=(0.0, 0.0, -61.2602) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -0.53033, -0.075), S: (0.13, 1.06066, 0.15)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Rear right fascia (MeshInstance3D) pos=(1.2, 3.95, -1.15) rot=(0.0, 0.0, -111.3886) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -1.288759, -0.07), S: (0.13, 2.577518, 0.14)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Rear right truss web (MeshInstance3D) pos=(0.885, 3.825, -0.98) rot=(0.0, 0.0, 61.2602) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.065, -0.53033, -0.075), S: (0.13, 1.06066, 0.15)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Right base anchor bolt (MeshInstance3D) pos=(1.5, 0.15, 0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right base anchor bolt_001 (MeshInstance3D) pos=(1.5, 0.15, -0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right base anchor bolt_002 (MeshInstance3D) pos=(1.94, 0.15, 0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right base anchor bolt_003 (MeshInstance3D) pos=(1.94, 0.15, -0.22) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.027, -0.0175, -0.027), S: (0.054, 0.035, 0.054)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right extra-thick cedar post (MeshInstance3D) pos=(1.72, 1.6, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.24, -1.6, -0.24), S: (0.48, 3.2, 0.48)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Right front knee brace (MeshInstance3D) pos=(1.9522, 3.15, 0.04) rot=(0.0, 0.0, -32.11105) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.095, -0.436826, -0.1), S: (0.19, 0.873652, 0.2)]
+    mat override 0: <Object#null>
+    surface 0 mat: Wood035_1K-JPG_NORMAL (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_jtfog):<StandardMaterial3D#-9223372007595309531>
+  Right pitched roof (MeshInstance3D) pos=(0.0, 0.0, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.02062, 3.454723, -1.12), S: (2.365465, 0.920122, 2.24)]
+    mat override 0: <Object#null>
+    surface 0 mat: RoofingTiles013A_1K-JPG_DISPLACEMENT (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_tlxf1):<StandardMaterial3D#-9223372007142324672>
+  Right roof seam (MeshInstance3D) pos=(1.125, 3.99, 1.0) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_001 (MeshInstance3D) pos=(1.125, 3.99, 0.7) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_002 (MeshInstance3D) pos=(1.125, 3.99, 0.4) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_003 (MeshInstance3D) pos=(1.125, 3.99, 0.1) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_004 (MeshInstance3D) pos=(1.125, 3.99, -0.2) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_005 (MeshInstance3D) pos=(1.125, 3.99, -0.5) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_006 (MeshInstance3D) pos=(1.125, 3.99, -0.8) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right roof seam_007 (MeshInstance3D) pos=(1.125, 3.99, -1.0) rot=(0.0, 0.0, -110.918) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.0175, -1.204377, -0.0225), S: (0.035, 2.408755, 0.045)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+  Right steel base plate (MeshInstance3D) pos=(1.72, 0.07, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: ArrayMesh AABB: [P: (-0.31, -0.07, -0.31), S: (0.62, 0.14, 0.62)]
+    mat override 0: <Object#null>
+    surface 0 mat: Brushed dark steel hardware (res://models/buildings/visitorCenter/mapStand_V3.glb::StandardMaterial3D_45qg4):<StandardMaterial3D#-9223372007813413352>
+=== town_map_board.tscn ===
+TownMapBoard (Node3D) pos=(0.0, 0.0, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+  Backing (MeshInstance3D) pos=(0.0, 0.0, 0.0) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: QuadMesh AABB: [P: (-1.58, -0.7, 0.0), S: (3.16, 1.4, 0.0)]
+    mat override 0: <Object#null>
+  MapImage (MeshInstance3D) pos=(0.0, 0.0, 0.006) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: QuadMesh AABB: [P: (-1.554, -0.66, 0.0), S: (3.108, 1.32, 0.0)]
+    mat override 0: <Object#null>
+  BrochureMap1 (MeshInstance3D) pos=(-2.185, -0.45, 0.16) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: QuadMesh AABB: [P: (-0.15, -0.115909, 0.0), S: (0.3, 0.231818, 0.0)]
+    mat override 0: <Object#null>
+  BrochureMap2 (MeshInstance3D) pos=(-2.185, -0.08, 0.16) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: QuadMesh AABB: [P: (-0.15, -0.115909, 0.0), S: (0.3, 0.231818, 0.0)]
+    mat override 0: <Object#null>
+  BrochureMap3 (MeshInstance3D) pos=(-2.185, 0.29, 0.16) rot=(0.0, 0.0, 0.0) scale=(1.0, 1.0, 1.0)
+    mesh: QuadMesh AABB: [P: (-0.15, -0.115909, 0.0), S: (0.3, 0.231818, 0.0)]
+    mat override 0: <Object#null>

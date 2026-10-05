@@ -11,6 +11,10 @@ signal dialogue_finished
 @export var next_action: StringName = &"ui_accept"
 @export var skip_action: StringName = &"ui_cancel"
 
+@export_category("Animation")
+## Duration in seconds for the fold-out (opening) and fold-in (closing) animations.
+@export_range(0.05, 1.0, 0.01) var fold_duration: float = 0.18
+
 @onready var balloon: Control = %Balloon
 @onready var character_label: RichTextLabel = %CharacterLabel
 @onready var dialogue_label: Control = %DialogueLabel
@@ -27,6 +31,10 @@ var will_hide_balloon: bool = false
 var locals: Dictionary = {}
 var accumulated_dialogue_text: String = ""
 var _cached_player: FirstPersonPlayer = null
+var _is_folded_open: bool = false
+var _is_opening: bool = false
+var _is_closing: bool = false
+var _fold_tween: Tween = null
 
 var dialogue_line: DialogueLine:
 	set(value):
@@ -41,6 +49,10 @@ var dialogue_line: DialogueLine:
 
 func _ready() -> void:
 	balloon.hide()
+	_update_pivot()
+	balloon.scale.y = 0.0
+	if not balloon.resized.is_connected(_update_pivot):
+		balloon.resized.connect(_update_pivot)
 	Engine.get_singleton("DialogueManager").mutated.connect(_on_mutated)
 
 	if responses_menu:
@@ -83,6 +95,18 @@ func _process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not balloon.visible:
+		return
+
+	if _is_closing:
+		if will_block_other_input and is_inside_tree() and get_viewport():
+			get_viewport().set_input_as_handled()
+		return
+
+	if _is_opening:
+		if event.is_pressed() and not event.is_echo():
+			finish_opening_animation()
+		if will_block_other_input and is_inside_tree() and get_viewport():
+			get_viewport().set_input_as_handled()
 		return
 
 	if not is_instance_valid(dialogue_line):
@@ -181,6 +205,9 @@ func start(with_dialogue_resource: DialogueResource = null, cue: String = "", ex
 	temporary_game_states = [self] + extra_game_states
 	is_waiting_for_input = false
 	is_post_typing_delay = false
+	_is_folded_open = false
+	_is_opening = false
+	_is_closing = false
 
 	if is_instance_valid(with_dialogue_resource):
 		dialogue_resource = with_dialogue_resource
@@ -200,6 +227,38 @@ func apply_dialogue_line() -> void:
 		progress_indicator.hide()
 	is_waiting_for_input = false
 	is_post_typing_delay = false
+
+	# 1. Fold-out animation on first dialogue line: start at 0 height y, tween to original size y
+	if not _is_folded_open:
+		_is_opening = true
+		if character_label:
+			character_label.hide()
+		if dialogue_label:
+			dialogue_label.hide()
+		if responses_menu:
+			responses_menu.hide()
+		if progress_indicator:
+			progress_indicator.hide()
+
+		_update_pivot()
+		balloon.scale.y = 0.0
+		balloon.show()
+		show()
+
+		if _fold_tween != null and _fold_tween.is_valid():
+			_fold_tween.kill()
+
+		if fold_duration > 0.0:
+			_fold_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			_fold_tween.tween_property(balloon, "scale:y", 1.0, fold_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			await _fold_tween.finished
+
+		if is_instance_valid(balloon):
+			balloon.scale.y = 1.0
+		_is_opening = false
+		_is_folded_open = true
+
+	# 2. Text display and typing/scrolling begins after folding out
 	balloon.focus_mode = Control.FOCUS_ALL
 	balloon.grab_focus()
 
@@ -251,11 +310,48 @@ func next(next_id: String) -> void:
 	dialogue_line = await dialogue_resource.get_next_dialogue_line(next_id, temporary_game_states)
 
 
-func _end_dialogue() -> void:
+func _end_dialogue(animate: bool = true) -> void:
+	if _is_closing:
+		return
+	_is_closing = true
+
 	if talk_sfx:
 		talk_sfx.stop()
-	if balloon:
+
+	# 1. Immediately remove all text
+	if character_label:
+		character_label.text = ""
+		character_label.hide()
+	if dialogue_label:
+		dialogue_label.dialogue_line = null
+		dialogue_label.text = ""
+		dialogue_label.hide()
+	if responses_menu:
+		responses_menu.hide()
+	if progress_indicator:
+		progress_indicator.hide()
+
+	balloon.focus_mode = Control.FOCUS_NONE
+	is_waiting_for_input = false
+	is_post_typing_delay = false
+
+	# 2. Folding back tween animation: reduce scale y to 0 like folding back
+	if animate and fold_duration > 0.0 and is_instance_valid(balloon) and balloon.visible and _is_folded_open:
+		if _fold_tween != null and _fold_tween.is_valid():
+			_fold_tween.kill()
+
+		_update_pivot()
+		_fold_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		_fold_tween.tween_property(balloon, "scale:y", 0.0, fold_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		await _fold_tween.finished
+
+	if is_instance_valid(balloon):
 		balloon.hide()
+		balloon.scale.y = 0.0
+
+	_is_folded_open = false
+	_is_closing = false
+
 	if click_sfx and click_sfx.playing:
 		await click_sfx.finished
 
@@ -268,6 +364,56 @@ func _end_dialogue() -> void:
 		queue_free()
 	else:
 		hide()
+
+
+func _update_pivot() -> void:
+	if is_instance_valid(balloon):
+		var w := balloon.size.x if balloon.size.x > 0.0 else (balloon.offset_right - balloon.offset_left)
+		var h := balloon.size.y if balloon.size.y > 0.0 else (balloon.offset_bottom - balloon.offset_top)
+		balloon.pivot_offset = Vector2(w * 0.5, h * 0.5)
+
+
+func is_animating() -> bool:
+	return _is_opening or _is_closing
+
+
+func is_opening() -> bool:
+	return _is_opening
+
+
+func is_closing() -> bool:
+	return _is_closing
+
+
+func is_folded_open() -> bool:
+	return _is_folded_open
+
+
+func finish_opening_animation() -> void:
+	if not _is_opening:
+		return
+	if _fold_tween != null and _fold_tween.is_valid():
+		_fold_tween.custom_step(999.0)
+	elif is_instance_valid(balloon):
+		balloon.scale.y = 1.0
+		_is_opening = false
+		_is_folded_open = true
+
+
+func finish_closing_animation() -> void:
+	if not _is_closing:
+		return
+	if _fold_tween != null and _fold_tween.is_valid():
+		_fold_tween.custom_step(999.0)
+	elif is_instance_valid(balloon):
+		balloon.scale.y = 0.0
+
+
+func finish_animation_immediately() -> void:
+	if _is_opening:
+		finish_opening_animation()
+	elif _is_closing:
+		finish_closing_animation()
 
 
 func _freeze_player() -> void:

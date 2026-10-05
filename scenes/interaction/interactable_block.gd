@@ -81,6 +81,16 @@ signal climb_over_completed(player: Node3D)
 @export_range(0.1, 5.0, 0.1) var climb_fade_in_duration: float = 0.8
 ## Optional sound effect to play during the blackout (e.g. rustle or footstep).
 @export var climb_sound: AudioStream = null
+## Whether to trigger a dialogue after teleporting.
+@export var trigger_post_teleport_dialogue: bool = true
+## Optional dialogue resource to trigger after teleportation completes. Defaults to dialogue_resource.
+@export var post_teleport_dialogue_resource: DialogueResource = null
+## Optional cue to trigger in post_teleport_dialogue_resource.
+@export var post_teleport_dialogue_cue: String = "visitor_center_barrier_post_teleport"
+## Fallback single line dialogue if resource/cue is not found.
+@export_multiline var post_teleport_single_line_dialogue: String = "Placeholder text."
+## Speaker name for the post-teleport single line dialogue.
+@export var post_teleport_speaker_name: String = "Thomas"
 
 var custom_callback: Callable
 var _editor_mesh_instance: MeshInstance3D = null
@@ -516,6 +526,9 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 
 		_is_climbing_over = false
 		climb_over_completed.emit(player)
+
+		if trigger_post_teleport_dialogue:
+			_play_post_teleport_dialogue(player)
 	)
 
 
@@ -556,6 +569,87 @@ func finish_climb_over_immediately() -> void:
 
 	_is_climbing_over = false
 	climb_over_completed.emit(player)
+
+	if trigger_post_teleport_dialogue:
+		_play_post_teleport_dialogue(player)
+
+
+func play_post_teleport_dialogue(player: FirstPersonPlayer = null) -> void:
+	_play_post_teleport_dialogue(player)
+
+
+func _play_post_teleport_dialogue(interactor: Node3D = null) -> void:
+	if not trigger_post_teleport_dialogue:
+		return
+
+	var player := interactor as FirstPersonPlayer
+	if not is_instance_valid(player):
+		player = _last_interactor as FirstPersonPlayer
+	if not is_instance_valid(player):
+		player = get_tree().get_first_node_in_group(&"player") as FirstPersonPlayer
+
+	var res_to_play: DialogueResource = post_teleport_dialogue_resource
+	if res_to_play == null:
+		res_to_play = dialogue_resource
+
+	var cue_to_play: String = post_teleport_dialogue_cue
+	if cue_to_play.is_empty():
+		if name == "BarrierTree" or dialogue_cue.begins_with("visitor_center_barrier"):
+			cue_to_play = "visitor_center_barrier_post_teleport"
+		else:
+			cue_to_play = "start"
+
+	var cue_exists: bool = false
+	if is_instance_valid(res_to_play):
+		cue_exists = res_to_play.get_cues().has(cue_to_play)
+
+	if not cue_exists:
+		var dm := Engine.get_singleton("DialogueManager")
+		if dm:
+			var speaker := post_teleport_speaker_name.strip_edges()
+			if speaker.is_empty():
+				speaker = "Thomas"
+			var text_line := post_teleport_single_line_dialogue.strip_edges()
+			if text_line.is_empty():
+				text_line = "Placeholder text."
+			var script_text := "~ start\n%s: %s\n=> END" % [speaker, text_line]
+			res_to_play = dm.create_resource_from_text(script_text)
+			cue_to_play = "start"
+
+	if res_to_play == null:
+		return
+
+	var balloon_scene := dialogue_balloon_scene
+	if balloon_scene == null:
+		balloon_scene = load("res://scenes/ui/dialogue_box/bottom_dialogue_balloon.tscn") as PackedScene
+
+	if balloon_scene == null:
+		return
+
+	var balloon := balloon_scene.instantiate()
+	if balloon.get("freeze_player") != null:
+		balloon.set("freeze_player", freeze_player_during_dialogue)
+
+	var root_target := get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
+	root_target.add_child(balloon)
+
+	_is_dialogue_active = true
+
+	if balloon.has_signal("dialogue_finished"):
+		balloon.connect("dialogue_finished", func() -> void:
+			_is_dialogue_active = false
+		, CONNECT_ONE_SHOT)
+	elif Engine.has_singleton("DialogueManager"):
+		Engine.get_singleton("DialogueManager").dialogue_ended.connect(func(_res: DialogueResource) -> void:
+			_is_dialogue_active = false
+		, CONNECT_ONE_SHOT)
+
+	var extra_states: Array = [self]
+	if is_instance_valid(player):
+		extra_states.append(player)
+
+	if balloon.has_method(&"start"):
+		balloon.start(res_to_play, cue_to_play, extra_states)
 
 
 

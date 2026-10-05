@@ -34,12 +34,14 @@ var _use: Button
 var _status: Label
 var _frame: Control
 var _page: Control
+var _fade_rect: ColorRect
+var _fade_tween: Tween
 @onready var _viewport: SubViewport = $ItemPreview
 @onready var _player: FirstPersonPlayer = get_parent() as FirstPersonPlayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	layer = 110
+	layer = 96
 	$InventoryBar.hide()
 	_viewport.size = Vector2i(640, 480)
 	(_viewport.get_node("Camera") as Camera3D).position = Vector3(0, 0.025, 1.2)
@@ -117,7 +119,7 @@ func _input(event: InputEvent) -> void:
 			return
 		get_viewport().set_input_as_handled()
 
-func set_open(value: bool) -> void:
+func set_open(value: bool, animate: bool = true) -> void:
 	if value == is_open:
 		return
 	if value:
@@ -129,17 +131,91 @@ func set_open(value: bool) -> void:
 		_previous_mouse = Input.mouse_mode
 		get_tree().paused = true
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		is_open = true
+		_overlay.visible = true
+		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		_update_hud()
+		if not _cards.is_empty():
+			_cards[selected_slot_index].grab_focus()
+
+		# Quick transition: fade to black, then fade to inventory content
+		if _fade_tween != null and _fade_tween.is_valid():
+			_fade_tween.kill()
+
+		if animate and is_instance_valid(_fade_rect) and is_instance_valid(_frame):
+			_frame.modulate.a = 0.0
+			_fade_rect.visible = true
+			_fade_rect.color = Color(0, 0, 0, 0.0)
+			_fade_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			_fade_tween.tween_property(_fade_rect, "color:a", 1.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_fade_tween.tween_callback(func():
+				if is_instance_valid(_frame):
+					_frame.modulate.a = 1.0
+				if not _cards.is_empty():
+					_cards[selected_slot_index].grab_focus()
+			)
+			_fade_tween.tween_property(_fade_rect, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_fade_tween.tween_callback(func():
+				if is_instance_valid(_fade_rect):
+					_fade_rect.visible = false
+			)
+		else:
+			if is_instance_valid(_frame):
+				_frame.modulate.a = 1.0
+			if is_instance_valid(_fade_rect):
+				_fade_rect.visible = false
 	else:
+		is_open = false
 		get_tree().paused = _was_paused
 		Input.mouse_mode = _previous_mouse
-	is_open = value
-	_overlay.visible = value
-	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if value else SubViewport.UPDATE_DISABLED
-	if value:
-		_update_hud()
+		_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+
+		if _fade_tween != null and _fade_tween.is_valid():
+			_fade_tween.kill()
+
+		if animate and is_instance_valid(_fade_rect) and is_instance_valid(_overlay) and _overlay.visible:
+			_fade_rect.visible = true
+			_fade_rect.color = Color(0, 0, 0, 0.0)
+			_fade_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			_fade_tween.tween_property(_fade_rect, "color:a", 1.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_fade_tween.tween_callback(func():
+				if is_instance_valid(_overlay):
+					_overlay.visible = false
+				if is_instance_valid(_frame):
+					_frame.modulate.a = 1.0
+			)
+			_fade_tween.tween_property(_fade_rect, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_fade_tween.tween_callback(func():
+				if is_instance_valid(_fade_rect):
+					_fade_rect.visible = false
+			)
+		else:
+			if is_instance_valid(_fade_rect):
+				_fade_rect.visible = false
+			if is_instance_valid(_frame):
+				_frame.modulate.a = 1.0
+			if is_instance_valid(_overlay):
+				_overlay.visible = false
+
+func finish_transition_immediately() -> void:
+	if _fade_tween != null and _fade_tween.is_valid():
+		_fade_tween.kill()
+	if is_instance_valid(_fade_rect):
+		_fade_rect.visible = false
+	if is_instance_valid(_frame):
+		_frame.modulate.a = 1.0
+	if not is_open:
+		if is_instance_valid(_overlay):
+			_overlay.visible = false
+		_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		get_tree().paused = _was_paused
+		Input.mouse_mode = _previous_mouse
+	elif not _cards.is_empty():
 		_cards[selected_slot_index].grab_focus()
 
 func _exit_tree() -> void:
+	if _fade_tween != null and _fade_tween.is_valid():
+		_fade_tween.kill()
 	if is_open and get_tree() != null:
 		get_tree().paused = _was_paused
 
@@ -190,21 +266,32 @@ func _build_screen() -> void:
 	_overlay = Control.new()
 	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_overlay)
+
 	var backing := ColorRect.new()
 	backing.color = Color.BLACK
 	backing.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	backing.mouse_filter = Control.MOUSE_FILTER_STOP
 	_overlay.add_child(backing)
+
+	var safe := AspectRatioContainer.new()
+	safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	safe.ratio = 4.0 / 3.0
+	safe.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay.add_child(safe)
+
+	_frame = Control.new()
+	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	safe.add_child(_frame)
+
+	_create_black_gutters(_frame)
+
 	var dim := ColorRect.new()
 	dim.material = preload("res://shaders/menu_background_material.tres")
 	dim.color = Color(0.005, 0.005, 0.005, 1.0)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_overlay.add_child(dim)
-	var safe := AspectRatioContainer.new()
-	safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	safe.ratio = 4.0 / 3.0
-	_overlay.add_child(safe)
-	_frame = Control.new()
-	safe.add_child(_frame)
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_frame.add_child(dim)
+
 	_page = Control.new()
 	_page.size = Vector2(1024, 768)
 	_frame.add_child(_page)
@@ -299,8 +386,63 @@ func _build_screen() -> void:
 	close.pressed.connect(set_open.bind(false))
 	details.add_child(close)
 	page.add_child(_label("TAB / ESC  RETURN    LEFT / RIGHT  SELECT    ENTER  USE", 13, MUTED.lightened(0.4)))
+
+	# Fullscreen fade rect on top of overlay
+	_fade_rect = ColorRect.new()
+	_fade_rect.name = "InventoryFadeRect"
+	_fade_rect.color = Color.BLACK
+	_fade_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fade_rect.visible = false
+	add_child(_fade_rect)
+
 	_overlay.hide()
 	call_deferred("_layout_screen")
+
+func _create_black_gutters(content: Control) -> void:
+	var right_gutter := ColorRect.new()
+	right_gutter.name = "RightGutter"
+	right_gutter.color = Color(0, 0, 0, 1)
+	right_gutter.mouse_filter = Control.MOUSE_FILTER_STOP
+	right_gutter.set_anchors_preset(Control.PRESET_RIGHT_WIDE)
+	right_gutter.offset_left = 0.0
+	right_gutter.offset_right = 4000.0
+	right_gutter.offset_top = -2000.0
+	right_gutter.offset_bottom = 2000.0
+	content.add_child(right_gutter)
+
+	var left_gutter := ColorRect.new()
+	left_gutter.name = "LeftGutter"
+	left_gutter.color = Color(0, 0, 0, 1)
+	left_gutter.mouse_filter = Control.MOUSE_FILTER_STOP
+	left_gutter.set_anchors_preset(Control.PRESET_LEFT_WIDE)
+	left_gutter.offset_left = -4000.0
+	left_gutter.offset_right = 0.0
+	left_gutter.offset_top = -2000.0
+	left_gutter.offset_bottom = 2000.0
+	content.add_child(left_gutter)
+
+	var top_gutter := ColorRect.new()
+	top_gutter.name = "TopGutter"
+	top_gutter.color = Color(0, 0, 0, 1)
+	top_gutter.mouse_filter = Control.MOUSE_FILTER_STOP
+	top_gutter.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	top_gutter.offset_left = -4000.0
+	top_gutter.offset_right = 4000.0
+	top_gutter.offset_top = -4000.0
+	top_gutter.offset_bottom = 0.0
+	content.add_child(top_gutter)
+
+	var bottom_gutter := ColorRect.new()
+	bottom_gutter.name = "BottomGutter"
+	bottom_gutter.color = Color(0, 0, 0, 1)
+	bottom_gutter.mouse_filter = Control.MOUSE_FILTER_STOP
+	bottom_gutter.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	bottom_gutter.offset_left = -4000.0
+	bottom_gutter.offset_right = 4000.0
+	bottom_gutter.offset_top = 0.0
+	bottom_gutter.offset_bottom = 4000.0
+	content.add_child(bottom_gutter)
 
 func _layout_screen() -> void:
 	if _frame == null or _page == null:
@@ -342,15 +484,17 @@ func _use_selected() -> void:
 	var item := get_selected_item()
 	if item == EMPTY_ITEM:
 		return
-	set_open(false)
 	match item:
 		FLASHLIGHT_ITEM:
+			set_open(false)
 			_player.flashlight.toggle()
 		MAP_ITEM:
+			set_open(false, false)
 			var maps := get_tree().get_nodes_in_group("world_map")
 			if not maps.is_empty():
 				maps[0].set_map_open(true)
 		NOTEBOOK_ITEM:
+			set_open(false, false)
 			var story := get_tree().get_first_node_in_group("opening_story")
 			if story != null:
 				story.open_document(&"journal", "Thomas's journal", "\n\n".join(story.journal))

@@ -37,9 +37,11 @@ func run() -> void:
 
 	var inspect_view := forest.get_node_or_null("Interactables/MapInspect/InspectableView") as InspectableView3D
 	check(is_instance_valid(inspect_view), "InspectableView3D found")
+	check(inspect_view.keyboard_pickup_hotspot == null, "keyboard_pickup_hotspot is null on InspectableView")
+	check(not "TAKE BROCHURE" in inspect_view.exit_prompt_text, "Exit prompt does not offer TAKE BROCHURE")
 
 	var brochure_hotspot := inspect_view.get_node_or_null("BrochurePickUp") as InspectionHotspot3D
-	check(is_instance_valid(brochure_hotspot), "BrochurePickUp hotspot found")
+	check(is_instance_valid(brochure_hotspot), "BrochurePickUp hotspot found in InspectableView")
 
 	# Start inspection
 	var board := forest.get_node("Interactables/MapInspect") as InteractableBlock3D
@@ -51,16 +53,33 @@ func run() -> void:
 	check(inspect_view.is_inspecting, "Inspection mode is active")
 	check(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "Mouse is visible in inspection")
 
-	# E can take the brochure while inspecting the board.
+	# Pressing E in inspection mode must NOT take the brochure.
 	var take_event := InputEventAction.new()
 	take_event.action = &"interact"
 	take_event.pressed = true
 	inspect_view._unhandled_input(take_event)
 	await process_frame
 
-	# Check that active dialogue balloon exists
+	check(inspect_view._active_dialogue_balloon == null, "Pressing E in inspection does not spawn dialogue")
+	check(not player.inventory.has_item(&"map"), "Pressing E in inspection does not give map")
+	check(not (is_instance_valid(ItemPickupScreen.instance) and ItemPickupScreen.instance.is_active), "ItemPickupScreen does not open from pressing E in inspection")
+
+	# MapCenterHotspot remains available on the board
+	var center_hotspot := inspect_view.get_node_or_null("MapCenterHotspot") as InspectionHotspot3D
+	check(is_instance_valid(center_hotspot), "MapCenterHotspot found on board")
+	var center_btn: InspectionDotButton = inspect_view._hotspot_map.get(center_hotspot)
+	check(is_instance_valid(center_btn) and center_btn.visible, "MapCenterHotspot dot button is visible")
+
+	# BrochurePickUp eye icon button exists and can be clicked to pick up the brochure
+	var brochure_btn: InspectionDotButton = inspect_view._hotspot_map.get(brochure_hotspot)
+	check(is_instance_valid(brochure_btn) and brochure_btn.visible, "BrochurePickUp eye icon button is visible")
+
+	# Click the eye icon
+	brochure_btn.clicked.emit()
+	await process_frame
+
 	var balloon = inspect_view._active_dialogue_balloon
-	check(is_instance_valid(balloon), "Dialogue balloon spawned for brochure")
+	check(is_instance_valid(balloon), "Dialogue balloon spawned for brochure eye icon click")
 
 	# Finish/dismiss dialogue
 	if is_instance_valid(balloon):
@@ -69,29 +88,28 @@ func run() -> void:
 		balloon.queue_free()
 	await create_timer(0.40).timeout
 
-	# Check that ItemPickupScreen is active
+	# Check that ItemPickupScreen is active after clicking eye icon
 	var pickup_screen = ItemPickupScreen.instance
 	check(is_instance_valid(pickup_screen), "ItemPickupScreen instance exists")
 	check(pickup_screen.is_active, "ItemPickupScreen is open and active")
 	check(pickup_screen.get("_prompt_label").text == "[ E ] Confirm", "Pickup screen prompt label says '[ E ] Confirm'")
-	check(player.inventory.has_item(&"map"), "Player inventory received map item")
+	check(player.inventory.has_item(&"map"), "Player inventory received map item from eye icon click")
 	check(pickup_screen._current_item.image == display.map_texture, "Pickup shows the same PDF map as the usable overlay")
 	check(brochure_hotspot.has_triggered, "BrochurePickUp hotspot has_triggered is true")
 
 	# Close pickup screen via input event (E key)
-	var event := InputEventKey.new()
-	event.pressed = true
-	event.keycode = KEY_E
-	pickup_screen._unhandled_input(event)
+	var confirm_event := InputEventKey.new()
+	confirm_event.pressed = true
+	confirm_event.keycode = KEY_E
+	pickup_screen._unhandled_input(confirm_event)
 	await create_timer(0.35).timeout
 
 	check(not pickup_screen.is_active, "ItemPickupScreen successfully closed")
 	check(inspect_view.is_inspecting, "Still in inspection view after taking brochure")
 	check(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "Mouse mode preserved as visible for remaining inspection")
 
-	# Verify Brochure dot is no longer visible, but MapCenterHotspot remains
-	var brochure_btn: InspectionDotButton = inspect_view._hotspot_map.get(brochure_hotspot)
-	check(brochure_btn == null or not brochure_btn.visible, "Brochure dot button is hidden/consumed")
+	# Verify Brochure eye icon is no longer visible, but MapCenterHotspot remains
+	check(not brochure_btn.visible, "Brochure eye icon button is hidden/consumed")
 
 	# Exit inspection view with Escape.
 	var exit_event := InputEventKey.new()

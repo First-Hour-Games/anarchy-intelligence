@@ -3,13 +3,27 @@ extends Interactable3D
 const PickupScreen = preload("res://scenes/ui/item_pickup/item_pickup_screen.gd")
 
 @export var brochure_visual: Node3D = null
-@onready var hotspot: InspectionHotspot3D = get_parent() as InspectionHotspot3D
-@onready var inspection: InspectableView3D = hotspot.get_parent() as InspectableView3D
+@export var inspection: InspectableView3D = null
+@onready var hotspot: Node3D = get_parent() as Node3D
 
 
 func _ready() -> void:
 	super._ready()
-	if is_instance_valid(brochure_visual):
+	if inspection == null:
+		var p: Node = get_parent()
+		while p != null:
+			if p is InspectableView3D:
+				inspection = p as InspectableView3D
+				break
+			for child in p.get_children():
+				if child is InspectableView3D:
+					inspection = child as InspectableView3D
+					break
+			if inspection != null:
+				break
+			p = p.get_parent()
+
+	if is_instance_valid(brochure_visual) and is_instance_valid(hotspot):
 		hotspot.global_position = brochure_visual.global_position
 
 
@@ -19,7 +33,9 @@ func get_prompt_world_position() -> Vector3:
 
 func can_interact(interactor: Node3D) -> bool:
 	var player := interactor as FirstPersonPlayer
-	if player == null or inspection.is_inspecting or not hotspot.can_activate() or player.has_item(&"map"):
+	if player == null or (is_instance_valid(inspection) and inspection.is_inspecting) or player.has_item(&"map"):
+		return false
+	if is_instance_valid(hotspot) and hotspot is InspectionHotspot3D and not (hotspot as InspectionHotspot3D).can_activate():
 		return false
 	if is_instance_valid(PickupScreen.instance) and PickupScreen.instance.is_active:
 		return false
@@ -31,7 +47,8 @@ func interact(interactor: Node3D) -> void:
 	if not can_interact(interactor):
 		return
 	var player := interactor as FirstPersonPlayer
-	hotspot.activate()
+	if is_instance_valid(hotspot) and hotspot is InspectionHotspot3D:
+		(hotspot as InspectionHotspot3D).activate()
 	player.inventory.add_item(&"map")
 	player.freeze()
 	PickupScreen.show_pickup(&"map", func() -> void:

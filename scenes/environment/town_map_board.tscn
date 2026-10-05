@@ -1,28 +1,24 @@
 [gd_scene format=3 uid="uid://dua8h30cdqr5t"]
 
 [ext_resource type="Texture2D" uid="uid://bunj4gjiihqte" path="res://img/textures/mapPost.png" id="1_eftiv"]
+[ext_resource type="Texture2D" uid="uid://bt5kmeqdt7l0a" path="res://img/player/mapOnly.png" id="2_i7sel"]
 
 [sub_resource type="StandardMaterial3D" id="Material_backing"]
 cull_mode = 2
-shading_mode = 0
 albedo_color = Color(0.941, 0.914, 0.851, 1)
 
 [sub_resource type="QuadMesh" id="Quad_backing"]
 material = SubResource("Material_backing")
 size = Vector2(3.16, 1.4)
 
-[sub_resource type="StandardMaterial3D" id="Material_map"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uyqgq"]
 cull_mode = 2
-shading_mode = 0
 albedo_texture = ExtResource("1_eftiv")
+grow_amount = 0.025
 
 [sub_resource type="QuadMesh" id="Quad_map"]
-material = SubResource("Material_map")
+material = SubResource("StandardMaterial3D_uyqgq")
 size = Vector2(3.108, 1.32)
-
-[sub_resource type="QuadMesh" id="Quad_brochure"]
-material = SubResource("Material_map")
-size = Vector2(0.3, 0.2318182)
 
 [node name="TownMapBoard" type="Node3D" unique_id=523185849]
 
@@ -35,17 +31,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 cast_shadow = 0
 mesh = SubResource("Quad_map")
 
-[node name="BrochureMap1" type="MeshInstance3D" parent="." unique_id=343454613]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.185, -0.45, 0.16)
-cast_shadow = 0
-mesh = SubResource("Quad_brochure")
+[node name="BrochureMap1" type="Decal" parent="." unique_id=343454613]
+transform = Transform3D(1, 0, 0, 0, 0.1391731, -0.99026805, 0, 0.99026805, 0.1391731, -2.185, -0.42698, 0.15586)
+size = Vector3(0.3, 0.04, 0.23)
+texture_albedo = ExtResource("2_i7sel")
 
-[node name="BrochureMap2" type="MeshInstance3D" parent="." unique_id=423876260]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.185, -0.08, 0.16)
-cast_shadow = 0
-mesh = SubResource("Quad_brochure")
+[node name="BrochureMap2" type="Decal" parent="." unique_id=423876260]
+transform = Transform3D(1, 0, 0, 0, 0.1391731, -0.99026805, 0, 0.99026805, 0.1391731, -2.185, -0.05698, 0.15586)
+size = Vector3(0.3, 0.04, 0.23)
+texture_albedo = ExtResource("2_i7sel")
 
-[node name="BrochureMap3" type="MeshInstance3D" parent="." unique_id=662413298]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.185, 0.29, 0.16)
-cast_shadow = 0
-mesh = SubResource("Quad_brochure")
+[node name="BrochureMap3" type="Decal" parent="." unique_id=662413298]
+transform = Transform3D(1, 0, 0, 0, 0.1391731, -0.99026805, 0, 0.99026805, 0.1391731, -2.185, 0.31302, 0.15586)
+size = Vector3(0.3, 0.04, 0.23)
+texture_albedo = ExtResource("2_i7sel")

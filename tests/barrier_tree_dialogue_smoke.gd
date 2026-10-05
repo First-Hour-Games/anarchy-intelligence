@@ -151,9 +151,24 @@ func run() -> void:
 
 		check(not barrier_tree._is_climbing_over, "Climb over finishes and resets state")
 		check(not player.get_meta("is_climbing_over", false), "Player is_climbing_over meta cleared")
-		check(not player.is_frozen, "Player is unfrozen after fade in completes")
 		check(player.global_position.distance_to(teleport_marker.global_position) < 0.1, "Player successfully teleported to ClimbOverTeleport position")
 		check(current_scene == forest, "Scene remains in starting_forest (stays in current scene rather than loading map.tscn)")
+
+		# Verify post-teleport dialogue with placeholder text
+		var post_balloon := _get_latest_balloon(forest)
+		check(is_instance_valid(post_balloon), "Post-teleport dialogue balloon spawned")
+		if is_instance_valid(post_balloon):
+			check(player.is_frozen, "Player is frozen while post-teleport dialogue is active")
+			for i in range(10):
+				if post_balloon.dialogue_line != null:
+					break
+				await process_frame
+			check(post_balloon.dialogue_line != null, "Post-teleport dialogue line is valid")
+			if post_balloon.dialogue_line != null:
+				check(post_balloon.dialogue_line.text.contains("Placeholder text"), "Post-teleport dialogue line contains placeholder text (got: '%s')" % post_balloon.dialogue_line.text)
+			post_balloon._end_dialogue()
+			await process_frame
+			check(not player.is_frozen, "Player is unfrozen after post-teleport dialogue ends")
 
 
 	if is_instance_valid(forest):
