@@ -2,9 +2,14 @@
 
 ...
 Hello, Thomas.
-Isn't it funny that we all live inside dreams??
+Isn't it funny that we all live inside dreams?
 And yet, there are some place one can refuse to live in.
 You left one of those places behind.
-But now...
-It's time for you to return.
+
+do clear_dialogue_text()
+
+So then, your destiny is calling you...
+To return to this long lost place...
+Cicely...
+
 => END
