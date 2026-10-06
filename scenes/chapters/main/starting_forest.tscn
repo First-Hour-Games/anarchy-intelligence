@@ -71,6 +71,7 @@
 [ext_resource type="PackedScene" uid="uid://c0kghikugg0m5" path="res://models/props/vehicles/freelander.tscn" id="70_r0ysj"]
 [ext_resource type="Script" uid="uid://dy41panpgh1vy" path="res://scenes/environment/silo_ambience.gd" id="70_silo_ambience"]
 [ext_resource type="PackedScene" uid="uid://bevyfsml64lsa" path="res://models/props/flashlightItem.tscn" id="71_81j01"]
+[ext_resource type="Script" uid="uid://c0vgx0sxjmfy" path="res://models/props/flashlight_item_flicker.gd" id="72_flashlight_flicker"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -1773,6 +1774,7 @@ transform = Transform3D(1.0786142, 0.0020645275, -0.72566324, 0.027698547, 1.298
 
 [node name="FlashlightItem" parent="." unique_id=1906395878 instance=ExtResource("71_81j01")]
 transform = Transform3D(0.021631548, -0.9198538, 0.3916642, 0.99972355, 0.023509787, 0, -0.00920794, 0.39155602, 0.9201083, 154.9039, 0.66834027, 57.265812)
+script = ExtResource("72_flashlight_flicker")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="FlashlightItem" unique_id=1857828863]
 transform = Transform3D(1, -4.2153992e-08, -5.5426725e-08, -5.5467016e-08, -0.00095641613, -0.9999996, 4.2100957e-08, 0.9999996, -0.00095641613, -0.049453758, 0.4449705, -0.014346001)
