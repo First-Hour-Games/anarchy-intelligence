@@ -54,6 +54,42 @@ func _init() -> void:
 	gen.placement_density = 0.0
 	gen.regenerate_all_trees()
 	check(node.multimesh.instance_count == 0, "Zero density generates no trees")
+	gen.placement_density = 1.0
+	gen.grid_step = 3.0
+	var zone_a := MapBoundaryZone3D.new()
+	zone_a.name = "BoundaryA"
+	zone_a.size = Vector3(18, 6, 18)
+	zone_a.transform = Transform3D(Basis(Vector3.UP, PI / 4.0), Vector3(-30, 0, 0))
+	gen.add_child(zone_a)
+	var zone_b := MapBoundaryZone3D.new()
+	zone_b.name = "BoundaryB"
+	zone_b.size = Vector3(12, 6, 12)
+	zone_b.transform = Transform3D(Basis.IDENTITY.scaled(Vector3(1.5, 1, 0.8)), Vector3(30, 0, 0))
+	gen.add_child(zone_b)
+	gen.custom_placement_nodes.append(NodePath("BoundaryA"))
+	gen.custom_placement_nodes.append(NodePath("BoundaryB"))
+	gen.regenerate_all_trees()
+	var in_a := 0
+	var in_b := 0
+	for i in range(node.multimesh.instance_count):
+		var point: Vector3 = node.transform * node.multimesh.get_instance_transform(i).origin
+		var a_local: Vector3 = zone_a.transform.affine_inverse() * point
+		var b_local: Vector3 = zone_b.transform.affine_inverse() * point
+		var a_inside := absf(a_local.x) <= 9.001 and absf(a_local.z) <= 9.001
+		var b_inside := absf(b_local.x) <= 6.001 and absf(b_local.z) <= 6.001
+		check(a_inside or b_inside, "Generated tree stays within rotated/scaled boundary union")
+		if a_inside: in_a += 1
+		if b_inside: in_b += 1
+	check(in_a > 0 and in_b > 0, "Both boundary zones receive trees")
+	gen.custom_placement_nodes.clear()
+	gen.custom_placement_nodes.append(NodePath("MissingBoundary"))
+	gen.regenerate_all_trees()
+	check(node.multimesh.instance_count == 0, "Invalid explicit selection does not generate in fallback area")
+	gen.custom_placement_nodes.clear()
+	gen.custom_placement_nodes.append(NodePath("BoundaryA"))
+	zone_a.position.y = 100.0
+	gen.regenerate_all_trees()
+	check(node.multimesh.instance_count == 0, "Boundary above ground produces no trees")
 	gen.free()
 	print("Tree variation tests: %d failures" % failures)
 	quit(failures)

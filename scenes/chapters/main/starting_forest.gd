@@ -73,6 +73,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
+	_setup_runtime_ambient_light()
 	_ensure_player_on_floor()
 	_setup_fade_ui()
 	_setup_welcoming_hike_player()
@@ -82,6 +83,65 @@ func _ready() -> void:
 
 	if auto_start_fade:
 		start_intro_fade()
+
+
+func _setup_runtime_ambient_light() -> void:
+	var world_environment := get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if world_environment == null or world_environment.environment == null:
+		return
+	# Keep the saved editor lighting separate from the runtime environment.
+	world_environment.environment = world_environment.environment.duplicate() as Environment
+	world_environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	world_environment.environment.ambient_light_color = Color.BLACK
+
+
+func debug_jump_to_log(after_climb: bool = false) -> void:
+	if not OS.is_debug_build():
+		return
+	var barrier := get_node_or_null(barrier_tree_node) as InteractableBlock3D
+	if not is_instance_valid(player) or not is_instance_valid(barrier):
+		push_warning("Forest debug checkpoint requires the player and BarrierTree.")
+		return
+	var destination := barrier.get_climb_over_teleport_node()
+	if not is_instance_valid(destination):
+		push_warning("Forest debug checkpoint requires ClimbOverTeleport.")
+		return
+	# Checkpoints bypass the opening cinematic and dialogue without starting them.
+	delay_dialogue_until_fade = false
+	finish_fade_immediately()
+	if is_instance_valid(opening_balloon):
+		opening_balloon.auto_start = false
+		opening_balloon.hide()
+		opening_balloon.queue_free()
+		opening_balloon = null
+	if is_instance_valid(player.inventory) and not player.has_item(&"map"):
+		player.inventory.add_item(&"map")
+	# Let the scene's deferred floor snap and collision registration finish first.
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	if not is_inside_tree() or not is_instance_valid(player) or not is_instance_valid(barrier):
+		return
+	if after_climb:
+		var post_dialogue := barrier.trigger_post_teleport_dialogue
+		barrier.trigger_post_teleport_dialogue = false
+		barrier.climb_over_barrier(player)
+		barrier.finish_climb_over_immediately()
+		barrier.trigger_post_teleport_dialogue = post_dialogue
+		finish_music_transition_immediately()
+		finish_fog_transition_immediately()
+	else:
+		var direction := destination.global_position - barrier.global_position
+		direction.y = 0.0
+		direction = direction.normalized() if not direction.is_zero_approx() else Vector3.RIGHT
+		player.global_position = barrier.global_position - direction * 3.0
+		player.global_rotation.y = atan2(-direction.x, -direction.z)
+		var head := player.get_node_or_null("Head") as Node3D
+		if head != null:
+			head.rotation.x = 0.0
+		player.snap_to_ground()
+	player.velocity = Vector3.ZERO
+	player.unfreeze()
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func _ensure_player_on_floor() -> void:
@@ -113,6 +173,13 @@ func _is_player_past_barrier() -> bool:
 	if not is_instance_valid(barrier):
 		barrier = find_child("BarrierTree", true, false) as Node3D
 	if is_instance_valid(barrier):
+		if barrier.has_method("get_climb_over_teleport_node"):
+			var destination := barrier.call("get_climb_over_teleport_node") as Node3D
+			if is_instance_valid(destination):
+				var direction := destination.global_position - barrier.global_position
+				direction.y = 0.0
+				if not direction.is_zero_approx():
+					return (player.global_position - barrier.global_position).dot(direction.normalized()) > 2.0
 		return player.global_position.x > (barrier.global_position.x + 2.0)
 	return player.global_position.x > -95.0
 

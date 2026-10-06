@@ -97,7 +97,9 @@ signal trees_cleared()
 
 
 @export_group("Placement Volumes")
-## Optional specific MeshInstance3D volumes (BoxMesh) to place trees within.
+## Placement volumes: MeshInstance3D (BoxMesh) or MapBoundaryZone3D nodes.
+## Multiple entries form a union. Boundary zones respect position, rotation and scale;
+## their volume must intersect Ground Y. Paths are relative to this generator.
 ## If empty, auto-discovers children matching TreePlacement*.
 @export var custom_placement_nodes: Array[NodePath] = []
 
@@ -438,6 +440,7 @@ func _execute_fill_and_prune(clearing_only: bool) -> Dictionary:
 
 	# --- Pass 2: Fill empty areas across placement volumes ---
 	var placement_rects := _collect_placement_rects(clearing_only)
+	var placement_zones := _collect_boundary_placement_zones()
 	var filled_total := 0
 
 	# Distribute filling candidates across main diverse tree MultiMeshes
@@ -472,6 +475,8 @@ func _execute_fill_and_prune(clearing_only: bool) -> Dictionary:
 						continue
 
 				var pt := Vector3(px, ground_y, pz)
+				if not _is_inside_configured_placement(pt, placement_zones):
+					continue
 
 				# Check OBB exclusion
 				var excluded := false
@@ -565,13 +570,54 @@ func _count_tree_children(n: Node) -> int:
 	return c
 
 
-## Collects all 2D horizontal placement rectangles from MeshInstance3D BoxMeshes.
+func _collect_boundary_placement_zones() -> Array[MapBoundaryZone3D]:
+	var zones: Array[MapBoundaryZone3D] = []
+	for path in custom_placement_nodes:
+		var zone := get_node_or_null(path) as MapBoundaryZone3D
+		if zone and not zones.has(zone):
+			zones.append(zone)
+	return zones
+
+
+func _is_inside_configured_placement(point: Vector3, zones: Array[MapBoundaryZone3D]) -> bool:
+	if zones.is_empty():
+		return true
+	for zone in zones:
+		var world := _get_node_global_xform(zone)
+		if is_zero_approx(world.basis.determinant()):
+			continue
+		var local := world.affine_inverse() * point
+		var half := zone.size.abs() * 0.5
+		if absf(local.x) <= half.x and absf(local.y) <= half.y and absf(local.z) <= half.z:
+			return true
+	# Mixed configurations may also contain legacy BoxMesh placement rectangles.
+	for path in custom_placement_nodes:
+		var mesh_node := get_node_or_null(path) as MeshInstance3D
+		if mesh_node and mesh_node.mesh is BoxMesh:
+			var center := _get_node_global_xform(mesh_node).origin
+			var half: Vector3 = mesh_node.mesh.size * 0.5
+			if absf(point.x - center.x) <= half.x and absf(point.z - center.z) <= half.z:
+				return true
+	return false
+
+
+## Collects candidate rectangles. Oriented boundary volumes are checked before accepting candidates.
 func _collect_placement_rects(clearing_only: bool) -> Array[Rect2]:
 	var rects: Array[Rect2] = []
 	var nodes: Array[MeshInstance3D] = []
 
 	if not custom_placement_nodes.is_empty():
 		for path in custom_placement_nodes:
+			var zone := get_node_or_null(path) as MapBoundaryZone3D
+			if zone:
+				var zone_size := zone.size.abs()
+				var bounds := _get_node_global_xform(zone) * AABB(-zone_size * 0.5, zone_size)
+				var rect := Rect2(bounds.position.x, bounds.position.z, bounds.size.x, bounds.size.z)
+				if clearing_only:
+					rect = rect.intersection(Rect2(clearing_x_range.x, clearing_z_range.x, clearing_x_range.y - clearing_x_range.x, clearing_z_range.y - clearing_z_range.x))
+				if rect.has_area() and ground_y >= bounds.position.y and ground_y <= bounds.end.y:
+					rects.append(rect)
+				continue
 			var n := get_node_or_null(path) as MeshInstance3D
 			if n and not nodes.has(n):
 				nodes.append(n)
@@ -610,7 +656,7 @@ func _collect_placement_rects(clearing_only: bool) -> Array[Rect2]:
 
 			rects.append(Rect2(min_x, min_z, max_x - min_x, max_z - min_z))
 
-	if rects.is_empty():
+	if rects.is_empty() and custom_placement_nodes.is_empty():
 		var fb_rect := _calculate_fallback_rect()
 		var min_x := fb_rect.position.x
 		var max_x := fb_rect.end.x

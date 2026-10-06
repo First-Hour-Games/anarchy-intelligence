@@ -3,7 +3,7 @@ extends Area3D
 
 ## Trigger zone that smoothly tweens MovingWall from its starting position (-46.033 Z)
 ## to its target position (-82.144 Z) over 4-5 seconds when the player enters for the first time.
-## Also displays a run/sprint tutorial instruction until the player holds Shift to run,
+## After movement completes, displays a run/sprint instruction until the player holds Shift to run,
 ## which hides itself after 2-3 seconds.
 
 signal wall_move_started(wall: Node3D, target_z: float, duration: float)
@@ -183,9 +183,8 @@ func trigger() -> void:
 
 	_active_tween.finished.connect(func():
 		wall_move_completed.emit(moving_wall, moving_wall.position.z)
+		_show_instruction()
 	)
-
-	_show_instruction()
 
 
 func _show_instruction() -> void:

@@ -1,10 +1,110 @@
 [gd_scene format=3 uid="uid://ci4k371dol566"]
 
+[ext_resource type="Texture2D" uid="uid://cer5plb17ibtc" path="res://img/materials/asphalt/Road015C_1K-JPG_Color.jpg" id="1_hgjb4"]
 [ext_resource type="Texture2D" uid="uid://dxijsahkh7tst" path="res://assets/local_licensed/street_materials/textures/asphalt_02_diff_4k.jpg" id="1_wpnpe"]
-[ext_resource type="PackedScene" uid="uid://dfltrdy7i1k8n" path="res://models/map/gasPumps.glb" id="2_0ucw1"]
+[ext_resource type="PackedScene" path="res://models/map/gas_pumps.tscn" id="2_0ucw1"]
+[ext_resource type="Texture2D" uid="uid://8bnlb1duhxgx" path="res://img/materials/asphalt/Road015C_1K-JPG_AmbientOcclusion.jpg" id="2_81mmf"]
 [ext_resource type="Texture2D" uid="uid://cff32daeek7vw" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Color.jpg" id="3_1rih7"]
+[ext_resource type="Texture2D" uid="uid://dtqdvoscolwo6" path="res://img/materials/asphalt/Road015C_1K-JPG_Displacement.jpg" id="3_en4a4"]
+[ext_resource type="Texture2D" uid="uid://by0s5qrbkwqdv" path="res://img/materials/asphalt/Road015C_1K-JPG_NormalGL.jpg" id="4_bw8ut"]
 [ext_resource type="Texture2D" uid="uid://8dh7hdnj5fj7" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Roughness.png" id="4_kdt4a"]
 [ext_resource type="Texture2D" uid="uid://u5k0wra73hcl" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_NormalGL.jpg" id="5_jxaea"]
+[ext_resource type="Texture2D" uid="uid://26s3bwaqkewn" path="res://img/materials/asphalt/Road015C_1K-JPG_Roughness.jpg" id="5_xsro1"]
+[ext_resource type="ArrayMesh" uid="uid://bjxb06i7m0d0q" path="res://models/props/metalFences/fence1.tres" id="6_kdt4a"]
+[ext_resource type="FontFile" uid="uid://20wc1uekvtjp" path="res://fonts/Kuigaf.ttf" id="12_81mmf"]
+[ext_resource type="Script" path="res://scenes/environment/neon_sign.gd" id="13_neon_sign"]
+[ext_resource type="AudioStream" uid="uid://ctjwh7sy2vij3" path="res://sounds/chapters/intro/neonFlickerLoop.mp3" id="14_neon_loop"]
+
+[sub_resource type="Shader" id="Shader_hgjb4"]
+code = "shader_type spatial;
+
+#include \"res://shaders/natural_tiling.gdshaderinc\"
+
+uniform sampler2D albedo_texture : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D normal_texture : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D roughness_texture : hint_default_white, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D ao_texture : hint_default_white, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D height_texture : hint_default_white, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform float texture_scale : hint_range(0.01, 4.0) = 0.385;
+uniform float normal_strength : hint_range(0.0, 2.0) = 1.0;
+uniform float height_scale : hint_range(0.0, 0.1) = 0.02;
+
+varying vec3 world_position;
+varying vec3 world_normal;
+
+void vertex() {
+	world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
+}
+
+void fragment() {
+	vec3 geometric_normal = normalize(world_normal);
+	vec3 weights = pow(abs(geometric_normal), vec3(4.0));
+	weights /= max(weights.x + weights.y + weights.z, 0.0001);
+	vec3 facing = step(vec3(0.0), geometric_normal) * 2.0 - 1.0;
+	vec3 position = world_position * texture_scale;
+	vec3 view_direction = normalize(CAMERA_POSITION_WORLD - world_position);
+	vec3 color = vec3(0.0);
+	vec3 mapped_normal = vec3(0.0);
+	float roughness = 0.0;
+	float occlusion = 0.0;
+	// Project onto each face, including the thin road edges. Flat tops use one axis.
+	for (int axis = 0; axis < 3; axis++) {
+		float weight = weights[axis];
+		if (weight > 0.0001) {
+			vec2 uv;
+			vec2 projected_view;
+			if (axis == 0) {
+				uv = vec2(position.z * facing.x, position.y);
+				projected_view = vec2(view_direction.z * facing.x, view_direction.y);
+			} else if (axis == 1) {
+				uv = vec2(position.x, -position.z * facing.y);
+				projected_view = vec2(view_direction.x, -view_direction.z * facing.y);
+			} else {
+				uv = vec2(-position.x * facing.z, position.y);
+				projected_view = vec2(-view_direction.x * facing.z, view_direction.y);
+			}
+			float height = natural_texture(height_texture, uv).r - 0.5;
+			uv -= projected_view / max(abs(view_direction[axis]), 0.25) * height * height_scale;
+			color += natural_texture(albedo_texture, uv).rgb * weight;
+			roughness += natural_texture(roughness_texture, uv).r * weight;
+			occlusion += natural_texture(ao_texture, uv).r * weight;
+			vec3 n = natural_normal(normal_texture, uv).rgb * 2.0 - 1.0;
+			n.xy *= normal_strength;
+			n = normalize(n);
+			if (axis == 0) {
+				mapped_normal += vec3(n.z * facing.x, n.y, n.x * facing.x) * weight;
+			} else if (axis == 1) {
+				mapped_normal += vec3(n.x, n.z * facing.y, -n.y * facing.y) * weight;
+			} else {
+				mapped_normal += vec3(-n.x * facing.z, n.y, n.z * facing.z) * weight;
+			}
+		}
+	}
+	ALBEDO = color;
+	NORMAL = normalize((VIEW_MATRIX * vec4(normalize(mapped_normal), 0.0)).xyz);
+	ROUGHNESS = roughness;
+	AO = occlusion;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_81mmf"]
+render_priority = 0
+shader = SubResource("Shader_hgjb4")
+shader_parameter/anti_repeat_strength = 1.0
+shader_parameter/anti_repeat_patch_size = 2.4900000707750003
+shader_parameter/patch_rotation_strength = 1.0
+shader_parameter/patch_scale_min = 0.68900002946762
+shader_parameter/patch_scale_max = 1.1090000494176202
+shader_parameter/regular_tiling_blend = 0.2
+shader_parameter/albedo_texture = ExtResource("1_hgjb4")
+shader_parameter/normal_texture = ExtResource("4_bw8ut")
+shader_parameter/roughness_texture = ExtResource("5_xsro1")
+shader_parameter/ao_texture = ExtResource("2_81mmf")
+shader_parameter/height_texture = ExtResource("3_en4a4")
+shader_parameter/texture_scale = 0.25200001127148
+shader_parameter/normal_strength = 1.0
+shader_parameter/height_scale = 0.0210000009975
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_jes87"]
 size = Vector2(40, 28)
@@ -34,23 +134,74 @@ uv1_triplanar = true
 uv1_triplanar_sharpness = 1.4142108
 metadata/_gltf_primary_texture_coord = 0
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_jpyye"]
+size = Vector3(1.9, 0.13378906, 3.1933594)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pump_sign_glow"]
+resource_name = "Pump Sign White Glow"
+emission_enabled = true
+emission = Color(0.89794457, 0.23848048, 0.2532429, 1)
+emission_energy_multiplier = 6.22
+
+[sub_resource type="TextMesh" id="TextMesh_jpyye"]
+text = "THIRD WARD GAS
+"
+font = ExtResource("12_81mmf")
+font_size = 60
+
+[sub_resource type="BoxMesh" id="BoxMesh_jpyye"]
+size = Vector3(10.864746, 0.08703613, 0.061523438)
+
+[sub_resource type="BoxMesh" id="BoxMesh_81mmf"]
+size = Vector3(0.8354492, 0.08703613, 0.061523438)
+
+[sub_resource type="BoxMesh" id="BoxMesh_en4a4"]
+size = Vector3(4.884033, 0.08703613, 0.061523438)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bw8ut"]
+size = Vector3(0.9206543, 0.08703613, 0.061523438)
+
 [node name="Node3D" type="Node3D" unique_id=382333741]
 
-[node name="GasStationPlatform" type="MeshInstance3D" parent="." unique_id=1057922095]
-transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 1.5119998, -0.03519249, 0.034160614, 2.9920874)
+[node name="GasStationPlatform2" type="MeshInstance3D" parent="." unique_id=89436089]
+transform = Transform3D(0.78624, 0, 0, 0, 1, 0, 0, 0, 1.08864, 0.3012179, 0.003487587, 5.000498)
+material_override = SubResource("ShaderMaterial_81mmf")
 mesh = SubResource("PlaneMesh_jes87")
 surface_material_override/0 = SubResource("StandardMaterial3D_1rih7")
 metadata/surface = "concrete"
 
-[node name="StaticBody3D" type="StaticBody3D" parent="GasStationPlatform" unique_id=700538232]
+[node name="StaticBody3D" type="StaticBody3D" parent="GasStationPlatform2" unique_id=2024819937]
 metadata/surface = "concrete"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="GasStationPlatform/StaticBody3D" unique_id=339053418]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GasStationPlatform2/StaticBody3D" unique_id=1413769630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
 shape = SubResource("BoxShape3D_kdt4a")
 metadata/surface = "concrete"
 
-[node name="GasStationMarker" type="Label3D" parent="GasStationPlatform" unique_id=243078109]
+[node name="GasStationMarker" type="Label3D" parent="GasStationPlatform2" unique_id=1484474113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+billboard = 1
+text = "GAS STATION SITE
+(Corner of 3-Way Junction)"
+font_size = 36
+outline_size = 4
+
+[node name="GasStationPlatform3" type="MeshInstance3D" parent="." unique_id=552196802]
+transform = Transform3D(0.235872, 0, 0, 0, 1, 0, 0, 0, 0.326592, -6.698782, 0.003487587, 24.700497)
+material_override = SubResource("ShaderMaterial_81mmf")
+mesh = SubResource("PlaneMesh_jes87")
+surface_material_override/0 = SubResource("StandardMaterial3D_1rih7")
+metadata/surface = "concrete"
+
+[node name="StaticBody3D" type="StaticBody3D" parent="GasStationPlatform3" unique_id=532767353]
+metadata/surface = "concrete"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GasStationPlatform3/StaticBody3D" unique_id=1748542682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+shape = SubResource("BoxShape3D_kdt4a")
+metadata/surface = "concrete"
+
+[node name="GasStationMarker" type="Label3D" parent="GasStationPlatform3" unique_id=2093503255]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 billboard = 1
 text = "GAS STATION SITE
@@ -66,18 +217,130 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4862366, 4.7997093, 2.9751
 
 [node name="AreaLight3D" type="AreaLight3D" parent="gasPumps" unique_id=697575121]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -2.4862366, 4.7997093, 2.9751167)
-light_energy = 2.455
-area_range = 8.581
+light_energy = 2.312
+light_volumetric_fog_energy = 6.195
+shadow_enabled = true
+shadow_normal_bias = 1.909
+area_range = 9.471
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="gasPumps" unique_id=712129616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5451813, 4.7997093, 2.9751167)
 
 [node name="AreaLight3D2" type="AreaLight3D" parent="gasPumps" unique_id=428037064]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.5451813, 4.7997093, 2.9751167)
-light_energy = 2.455
-area_range = 8.581
+light_energy = 2.312
+light_volumetric_fog_energy = 6.195
+shadow_enabled = true
+shadow_normal_bias = 1.909
+area_range = 9.471
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=1560766250]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -20, 0.1, 26.435501)
 material_override = SubResource("StandardMaterial3D_4raly")
 polygon = PackedVector2Array(4, 26, 4, 45, 36, 45, 36, 27)
+
+[node name="Fence1" type="MeshInstance3D" parent="." unique_id=841152302]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -2.794776)
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence1" unique_id=1460873356]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence1/StaticBody3D" unique_id=141578256]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence3" type="MeshInstance3D" parent="." unique_id=571611213]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -11.594776)
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence3" unique_id=1194515726]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence3/StaticBody3D" unique_id=5616633]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence4" type="MeshInstance3D" parent="." unique_id=1733387483]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -15.994776)
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence4" unique_id=1699585180]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence4/StaticBody3D" unique_id=595881984]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence2" type="MeshInstance3D" parent="." unique_id=1877248571]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -7.194776)
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence2" unique_id=2081829233]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence2/StaticBody3D" unique_id=951691418]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="PumpSign" type="MeshInstance3D" parent="." unique_id=1418398082]
+script = ExtResource("13_neon_sign")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.046146, 5.1923013, 16.423864)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+cast_shadow = 0
+mesh = SubResource("TextMesh_jpyye")
+
+[node name="NeonAmbience" type="AudioStreamPlayer3D" parent="PumpSign"]
+stream = ExtResource("14_neon_loop")
+volume_db = -18.0
+unit_size = 4.0
+max_distance = 24.0
+bus = &"Effects"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="PumpSign" unique_id=1139558474]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.030258179)
+light_color = Color(0.9745385, 0.4699847, 0.4469819, 1)
+light_energy = 0.896
+light_volumetric_fog_energy = 2.455
+light_size = 0.417
+omni_range = 8.729
+omni_attenuation = -0.455
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PumpSign" unique_id=1729137865]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.932373, 0.011901379, -0.05932045)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+mesh = SubResource("BoxMesh_jpyye")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="PumpSign" unique_id=457480727]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9050908, 0.011901379, -0.05932045)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+mesh = SubResource("BoxMesh_81mmf")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="PumpSign" unique_id=1503457242]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.3286672, 0.011901379, -8.27025)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+mesh = SubResource("BoxMesh_en4a4")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="PumpSign" unique_id=413832434]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.3286672, 0.011901379, -0.5643177)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+mesh = SubResource("BoxMesh_bw8ut")
+
+[node name="PumpSign2" type="MeshInstance3D" parent="." unique_id=1374204770]
+script = ExtResource("13_neon_sign")
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 8.433613, 5.1923013, 13.072986)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+cast_shadow = 0
+mesh = SubResource("TextMesh_jpyye")
+
+[node name="NeonAmbience" type="AudioStreamPlayer3D" parent="PumpSign2"]
+stream = ExtResource("14_neon_loop")
+volume_db = -18.0
+unit_size = 4.0
+max_distance = 24.0
+bus = &"Effects"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="PumpSign2" unique_id=1059884405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.030258179)
+light_color = Color(0.9745385, 0.4699847, 0.4469819, 1)
+light_energy = 0.896
+light_volumetric_fog_energy = 2.455
+light_size = 0.417
+omni_range = 8.729
+omni_attenuation = -0.455
