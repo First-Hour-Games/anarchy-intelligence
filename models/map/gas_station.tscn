@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://ci4k371dol566"]
+
+[ext_resource type="Texture2D" uid="uid://dxijsahkh7tst" path="res://assets/local_licensed/street_materials/textures/asphalt_02_diff_4k.jpg" id="1_wpnpe"]
+[ext_resource type="PackedScene" uid="uid://dfltrdy7i1k8n" path="res://models/map/gasPumps.glb" id="2_0ucw1"]
+[ext_resource type="Texture2D" uid="uid://cff32daeek7vw" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Color.jpg" id="3_1rih7"]
+[ext_resource type="Texture2D" uid="uid://8dh7hdnj5fj7" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Roughness.png" id="4_kdt4a"]
+[ext_resource type="Texture2D" uid="uid://u5k0wra73hcl" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_NormalGL.jpg" id="5_jxaea"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jes87"]
+size = Vector2(40, 28)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1rih7"]
+albedo_color = Color(0.24, 0.26, 0.28, 1)
+albedo_texture = ExtResource("1_wpnpe")
+roughness = 0.85
+uv1_scale = Vector3(0.125, 0.125, 0.125)
+uv1_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kdt4a"]
+size = Vector3(40, 0.2, 28)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4raly"]
+resource_name = "Concrete047A_1K-JPG_NORMAL"
+cull_mode = 2
+albedo_texture = ExtResource("3_1rih7")
+metallic_texture = ExtResource("4_kdt4a")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("4_kdt4a")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("5_jxaea")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.4142108
+metadata/_gltf_primary_texture_coord = 0
+
+[node name="Node3D" type="Node3D" unique_id=382333741]
+
+[node name="GasStationPlatform" type="MeshInstance3D" parent="." unique_id=1057922095]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 1.5119998, -0.03519249, 0.034160614, 2.9920874)
+mesh = SubResource("PlaneMesh_jes87")
+surface_material_override/0 = SubResource("StandardMaterial3D_1rih7")
+metadata/surface = "concrete"
+
+[node name="StaticBody3D" type="StaticBody3D" parent="GasStationPlatform" unique_id=700538232]
+metadata/surface = "concrete"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GasStationPlatform/StaticBody3D" unique_id=339053418]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+shape = SubResource("BoxShape3D_kdt4a")
+metadata/surface = "concrete"
+
+[node name="GasStationMarker" type="Label3D" parent="GasStationPlatform" unique_id=243078109]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+billboard = 1
+text = "GAS STATION SITE
+(Corner of 3-Way Junction)"
+font_size = 36
+outline_size = 4
+
+[node name="gasPumps" parent="." unique_id=890866125 instance=ExtResource("2_0ucw1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 8)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="gasPumps" unique_id=58043998]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4862366, 4.7997093, 2.9751167)
+
+[node name="AreaLight3D" type="AreaLight3D" parent="gasPumps" unique_id=697575121]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -2.4862366, 4.7997093, 2.9751167)
+light_energy = 2.455
+area_range = 8.581
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="gasPumps" unique_id=712129616]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5451813, 4.7997093, 2.9751167)
+
+[node name="AreaLight3D2" type="AreaLight3D" parent="gasPumps" unique_id=428037064]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.5451813, 4.7997093, 2.9751167)
+light_energy = 2.455
+area_range = 8.581
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=1560766250]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -20, 0.1, 26.435501)
+material_override = SubResource("StandardMaterial3D_4raly")
+polygon = PackedVector2Array(4, 26, 4, 45, 36, 45, 36, 27)

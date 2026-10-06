@@ -53,7 +53,7 @@ uv1_scale = Vector3(0.4, 0.4, 0.4)
 uv1_triplanar = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_yqqos"]
-size = Vector3(46, 0.20654297, 96)
+size = Vector3(46, 0.20654297, 74)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xobi4"]
 albedo_texture = ExtResource("1_77hjh")
@@ -66,10 +66,10 @@ uv1_scale = Vector3(0.4, 0.4, 0.4)
 uv1_triplanar = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_0s14b"]
-size = Vector3(28, 0.4, 98)
+size = Vector3(28, 0.4, 81)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8yf2k"]
-size = Vector3(28, 0.4, 98)
+size = Vector3(28, 0.4, 81)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gytjy"]
 albedo_texture = ExtResource("2_7opay")
@@ -252,7 +252,7 @@ shader_parameter/color_contrast = 1.0
 
 [sub_resource type="Environment" id="Environment_jpyye"]
 background_mode = 1
-background_color = Color(0.9953061, 0.99558014, 0.9963272, 1)
+background_color = Color(0.27058825, 0.27058825, 0.27058825, 1)
 background_energy_multiplier = 0.1
 glow_intensity = 8.0
 adjustment_enabled = true
@@ -268,19 +268,19 @@ intro_light_path = NodePath("Lights/StartingOmni")
 transform = Transform3D(0.71999997, 0, 0, 0, 0.71999997, 0, 0, 0, 0.71999997, 0, 0, 0)
 
 [node name="Roof" type="MeshInstance3D" parent="TutorialRooms" unique_id=1464213161]
-transform = Transform3D(0.9778786, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.413086, -43)
+transform = Transform3D(0.9778786, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.413086, -32)
 material_override = SubResource("StandardMaterial3D_s6xd7")
 mesh = SubResource("BoxMesh_yqqos")
 
 [node name="Floor2" type="MeshInstance3D" parent="TutorialRooms" unique_id=1764351557]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.283, -0.89274365, -35.976006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.283, -0.89274365, -27.476006)
 material_override = SubResource("StandardMaterial3D_xobi4")
 mesh = SubResource("BoxMesh_0s14b")
 
 [node name="CollisionGeometry" type="StaticBody3D" parent="TutorialRooms" unique_id=2143540752]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TutorialRooms/CollisionGeometry" unique_id=1963997755]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.283, -0.89274365, -35.976006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.283, -0.89274365, -27.476006)
 shape = SubResource("BoxShape3D_8yf2k")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="TutorialRooms" unique_id=388196913]
@@ -371,7 +371,7 @@ use_collision = true
 size = Vector3(1.4883423, 3.327478, 2.078467)
 
 [node name="BakedMovingWall" type="MeshInstance3D" parent="TutorialRooms" unique_id=1560640569]
-transform = Transform3D(1.388889, 0, 0, 0, 1.388889, 0, 0, 0, 1.388889, -2.247, 0, -30.556)
+transform = Transform3D(1.388889, 0, 0, 0, 1.388889, 0, 0, 0, 1.388889, -2.247, 0, -64.583565)
 material_override = SubResource("StandardMaterial3D_8khbb")
 mesh = SubResource("ArrayMesh_8yf2k")
 
@@ -696,6 +696,12 @@ spot_range = 5.895
 spot_angle = 133.65
 spot_angle_attenuation = 1.0717734
 
+[node name="OmniLight3D2" type="OmniLight3D" parent="CeilingBulb" unique_id=753490737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 5.236
+
 [node name="CeilingBulb2" parent="." unique_id=1717932075 instance=ExtResource("21_qcdpd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6950241, 2.8428612, -11.584032)
 
@@ -713,6 +719,12 @@ stream = ExtResource("31_light_buzz")
 autoplay = true
 max_distance = 20.0
 bus = &"Reverb"
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="CeilingBulb2" unique_id=235993476]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
+light_energy = 0.3
+shadow_enabled = true
+omni_range = 5.236
 
 [node name="HallwayBulbs" type="Node3D" parent="." unique_id=259921552]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6950241, 2.8428612, -19.523037)

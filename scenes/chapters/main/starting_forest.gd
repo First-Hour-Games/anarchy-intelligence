@@ -45,6 +45,7 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export var fog_size: Vector3 = Vector3(80.0, 8.0, 80.0)
 @export var follow_player_y: bool = false
 @export var fog_fixed_y: float = 2.0
+@export_range(0.0, 1.0, 0.05) var fog_target_density: float = 0.8
 
 @onready var player: FirstPersonPlayer = get_node_or_null("Player") as FirstPersonPlayer
 @onready var opening_balloon: BottomDialogueBalloon = get_node_or_null("BottomDialogueBalloon") as BottomDialogueBalloon
@@ -101,8 +102,20 @@ func _snap_player_deferred() -> void:
 func _process(_delta: float) -> void:
 	if _is_fog_active:
 		_update_fog_position()
-	elif is_instance_valid(player) and player.global_position.x > -250.0:
+	elif is_instance_valid(player) and _is_player_past_barrier():
 		activate_fog()
+
+
+func _is_player_past_barrier() -> bool:
+	if not is_instance_valid(player):
+		return false
+	var barrier: Node3D = get_node_or_null(barrier_tree_node) as Node3D
+	if not is_instance_valid(barrier):
+		barrier = find_child("BarrierTree", true, false) as Node3D
+	if is_instance_valid(barrier):
+		return player.global_position.x > (barrier.global_position.x + 2.0)
+	return player.global_position.x > -95.0
+
 
 
 func _setup_fade_ui() -> void:
@@ -448,7 +461,12 @@ func _setup_fog_volume() -> void:
 		_fog_material_instance = fog_volume.material.duplicate()
 		fog_volume.material = _fog_material_instance
 		var base_den = _fog_material_instance.get_shader_parameter("base_density")
-		_fog_target_density = float(base_den) if base_den != null and float(base_den) > 0.0 else 0.8
+		if fog_target_density > 0.0:
+			_fog_target_density = fog_target_density
+		elif base_den != null and float(base_den) > 0.0:
+			_fog_target_density = float(base_den)
+		else:
+			_fog_target_density = 0.8
 		_fog_material_instance.set_shader_parameter("base_density", 0.0)
 
 	_update_fog_position()

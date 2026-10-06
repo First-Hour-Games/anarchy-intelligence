@@ -5,6 +5,7 @@ extends Node3D
 
 const DOOR_OVERLAY_LAYER := 18
 const INTRO_FADE_LAYER := 200
+const DEFAULT_BACKGROUND_COLOR := Color("454545")
 
 @export_category("Intro Fade")
 @export_range(0.0, 10.0, 0.1) var intro_black_hold_seconds := 0.5
@@ -32,6 +33,9 @@ const INTRO_FADE_LAYER := 200
 @export var occluders_enabled: bool = true
 @export var occluder_paths: Array[NodePath] = [NodePath("TutorialRooms")]
 
+@export_category("Environment")
+@export var default_background_color: Color = DEFAULT_BACKGROUND_COLOR
+
 @onready var _source_door: Node3D = $Door3
 @onready var _source_camera: Camera3D = $Player/Head/Camera3D
 @onready var _source_environment: WorldEnvironment = $WorldEnvironment
@@ -58,6 +62,7 @@ var _tutorial_labels_are_hiding := false
 
 
 func _ready() -> void:
+	_init_world_environment()
 	_intro_light = _find_intro_light()
 	if is_instance_valid(_intro_light):
 		_intro_light.light_energy = intro_light_start_energy
@@ -290,6 +295,16 @@ func _unlock_player() -> void:
 		return
 	_player.set_physics_process(_player_was_physics_processing)
 	_player.set_process_unhandled_input(_player_was_processing_unhandled_input)
+
+
+func _init_world_environment() -> void:
+	if not is_instance_valid(_source_environment):
+		_source_environment = get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if is_instance_valid(_source_environment):
+		if _source_environment.environment == null:
+			_source_environment.environment = Environment.new()
+		_source_environment.environment.background_mode = Environment.BG_COLOR
+		_source_environment.environment.background_color = default_background_color
 
 
 func _make_color_environment() -> Environment:
