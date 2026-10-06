@@ -1,5 +1,6 @@
 extends Node
 
+const END_LOGO := preload("res://img/menu/title.png")
 const CONTACT_SOUND := preload("res://sounds/entities/death_scares/wrapper_kill.wav")
 ## One-shot flashlight ambush, confined to the starting forest gas station.
 @export var rush_speed: float = 6.5
@@ -102,3 +103,19 @@ func _blackout() -> void:
 	black.color = Color.BLACK
 	black.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(black)
+	var logo := TextureRect.new()
+	logo.name = "EndingLogo"
+	logo.texture = END_LOGO
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	black.add_child(logo)
+	logo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	logo.anchor_left = 0.2
+	logo.anchor_right = 0.8
+	logo.anchor_top = 0.35
+	logo.anchor_bottom = 0.65
+	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	logo.modulate.a = 0.0
+	audio.finished.connect(func() -> void:
+		create_tween().tween_property(logo, "modulate:a", 1.0, 0.8)
+	, CONNECT_ONE_SHOT)

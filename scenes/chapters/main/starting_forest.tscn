@@ -74,6 +74,7 @@
 [ext_resource type="Script" uid="uid://c0vgx0sxjmfy" path="res://models/props/flashlight_item_flicker.gd" id="72_flashlight_flicker"]
 [ext_resource type="Texture2D" uid="uid://dolwgi5r17228" path="res://models/props/gasStation/gasStationEntrance_metal_doors.png" id="73_g43pb"]
 [ext_resource type="PackedScene" path="res://scenes/monsters/the_ridgeback/the_ridgeback.tscn" id="74_nv6oe"]
+[ext_resource type="PackedScene" uid="uid://daotai6cgjpe5" path="res://sounds/chapters/intro/welcomeSign.glb" id="77_wmd5a"]
 [ext_resource type="Script" uid="uid://cagslsxg8jabo" path="res://scenes/chapters/main/gas_station_ridgeback_scare.gd" id="ridgeback_scare"]
 [ext_resource type="Script" uid="uid://bl3e8ydhkd3m4" path="res://scenes/items/flashlight_pickup.gd" id="station_flashlight_pickup"]
 
@@ -652,6 +653,9 @@ shadow_mesh = SubResource("ArrayMesh_1y1pg")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_go1h3"]
 size = Vector3(0.89190674, 2.1412354, 0.12988281)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1y1pg"]
+size = Vector3(0.63616365, 10.98191, 12.5398035)
 
 [node name="StartingForest" type="Node3D" unique_id=1800767174]
 script = ExtResource("1_starting_forest")
@@ -1939,6 +1943,31 @@ activation_enabled = false
 
 [node name="GasStationRidgebackScare" type="Node" parent="." unique_id=1811143361]
 script = ExtResource("ridgeback_scare")
+
+[node name="welcomeSign" parent="." unique_id=1655642069 instance=ExtResource("77_wmd5a")]
+transform = Transform3D(1.1781021, 0, -0.22820051, 0, 1.2, 0, 0.22820051, 0, 1.1781021, 99.087975, 0.09330263, 18.130264)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="welcomeSign" unique_id=669655748]
+transform = Transform3D(0.6901827, 0.13554868, -0.7108266, 0.7174481, -2.510447e-08, 0.69661194, 0.09442481, -0.9907707, -0.09724916, -1.3223114, 2.6063373, -2.3535252)
+light_energy = 0.368
+spot_range = 4.482
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="welcomeSign" unique_id=897654332]
+transform = Transform3D(0.69661194, 3.1360653e-08, -0.7174481, 0.7174481, -3.0449876e-08, 0.69661194, 0, -1, -4.371139e-08, -1.3223114, 2.6063373, -1.467741)
+light_energy = 0.368
+spot_range = 4.482
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="welcomeSign" unique_id=1193828195]
+transform = Transform3D(0.67411023, -0.25211075, -0.6942734, 0.7174481, -3.0449876e-08, 0.69661194, -0.17562337, -0.9676984, 0.18087637, -1.3223114, 2.6063373, -0.64229393)
+light_energy = 0.368
+shadow_enabled = true
+spot_range = 4.482
+
+[node name="StaticBody3D" type="StaticBody3D" parent="welcomeSign" unique_id=1212044317]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="welcomeSign/StaticBody3D" unique_id=484663336]
+transform = Transform3D(0.197482, 0, 0, 0, 0, 0.19748203, 0, -0.19748205, 0, 0.035232544, 1.1438904, -1.5794468)
+shape = SubResource("BoxShape3D_1y1pg")
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]

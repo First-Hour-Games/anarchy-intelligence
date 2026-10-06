@@ -59,6 +59,13 @@ func run() -> void:
 	var layer := scare.get_node("RidgebackBlackout") as CanvasLayer
 	assert(layer.layer == 128)
 	assert((layer.get_child(0) as ColorRect).color == Color.BLACK)
+	var logo := layer.get_child(0).get_node("EndingLogo") as TextureRect
+	assert(logo.texture.resource_path == "res://img/menu/title.png")
+	assert(is_zero_approx(logo.modulate.a))
+	audio.stop()
+	audio.finished.emit()
+	await create_timer(0.9).timeout
+	assert(is_equal_approx(logo.modulate.a, 1.0))
 	print("PASS: Hidden Ridgeback waits for flashlight and turn, runs, and blacks out on contact")
 	forest.queue_free()
 	await process_frame

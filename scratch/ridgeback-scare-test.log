@@ -11,6 +11,6 @@ WARNING: Failed to correctly set transform for shape at index %d in body '%s'. T
    GDScript backtrace (most recent call first):
        [0] run (res://tests/gas_station_ridgeback_scare_smoke.gd:7)
 [ProceduralGrassGenerator] Collected 0 exclusion AABBs (margin=1.5m)
-[ProceduralGrassGenerator] Done in 33 ms! Low grass: 3680, Tall grass: 700
+[ProceduralGrassGenerator] Done in 35 ms! Low grass: 3680, Tall grass: 700
 Picked up flashlight.
 PASS: Hidden Ridgeback waits for flashlight and turn, runs, and blacks out on contact
