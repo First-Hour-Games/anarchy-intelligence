@@ -87,6 +87,10 @@ func _process(_delta: float) -> void:
 				progress_indicator.visible = false
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Never intercept or block pause input (Escape / ui_cancel) so the pause menu can always open
+	if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+		return
+
 	if will_block_other_input:
 		if is_inside_tree() and get_viewport():
 			get_viewport().set_input_as_handled()

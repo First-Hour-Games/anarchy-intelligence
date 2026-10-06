@@ -44,7 +44,7 @@ func run() -> void:
 	check(player.get_footstep_surface() == &"tile", "Hospital floor selects tile footsteps")
 	player.global_position = Vector3(100, 0.3, 100)
 	await physics_frame
-	check(player.get_footstep_surface() == &"concrete", "Town road selects concrete footsteps")
+	check(player.get_footstep_surface() == &"gravel", "Town road selects gravel footsteps")
 	var bottles: Array[Node] = []
 	for child: Node in hospital.get_children():
 		if child.has_meta("target_height") and is_equal_approx(float(child.get_meta("target_height")), 0.22):

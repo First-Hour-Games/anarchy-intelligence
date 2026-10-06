@@ -12,9 +12,9 @@ func run() -> void:
 		quit(1)
 		return
 
-	# 1. Verify CanvasLayer layer is 99
-	assert(pause_menu.layer == 99, "Expected PauseMenu.layer to be 99, got %d" % pause_menu.layer)
-	print("PASS: PauseMenu layer is 99 (behind CRTOverlay at 100)")
+	# 1. Verify CanvasLayer layer is 250 (always on top)
+	assert(pause_menu.layer == 250, "Expected PauseMenu.layer to be 250, got %d" % pause_menu.layer)
+	print("PASS: PauseMenu layer is 250 (always on top)")
 
 	# 2. Verify AspectRatioContainer exists
 	var arc: AspectRatioContainer = null

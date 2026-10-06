@@ -524,7 +524,7 @@ mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
 [node name="TutorialOverlay" type="CanvasLayer" parent="." unique_id=1642738836]
-layer = 100
+layer = 20
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="TutorialOverlay" unique_id=1972865061]
 anchors_preset = 15
@@ -555,6 +555,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.34, 0.34)
 pivot_offset = Vector2(344, 237)
+mouse_filter = 2
 texture = ExtResource("16_47c88")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TutorialOverlay/AspectRatioContainer/Content/MoveLabel" unique_id=87483402]
@@ -563,6 +564,7 @@ offset_left = 79.290985
 offset_top = 469.3529
 offset_right = 605.64087
 offset_bottom = 555.3529
+mouse_filter = 2
 bbcode_enabled = true
 text = "[font_size=64][font=res://fonts/JainiPurva.ttf]Move around[/font][/font_size]"
 fit_content = true
@@ -585,6 +587,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.34, 0.34)
 pivot_offset = Vector2(344, 237)
+mouse_filter = 2
 texture = ExtResource("17_exp0a")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TutorialOverlay/AspectRatioContainer/Content/LookLabel" unique_id=375308673]
@@ -593,6 +596,7 @@ offset_left = -52.90754
 offset_top = 469.353
 offset_right = 573.6835
 offset_bottom = 555.353
+mouse_filter = 2
 bbcode_enabled = true
 text = "[font_size=64][font=res://fonts/JainiPurva.ttf]Look around[/font][/font_size]"
 fit_content = true
@@ -615,6 +619,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.34, 0.34)
 pivot_offset = Vector2(255.5, 100.5)
+mouse_filter = 2
 texture = ExtResource("35_shift_label")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TutorialOverlay/AspectRatioContainer/Content/RunLabel" unique_id=87483403]
@@ -623,6 +628,7 @@ offset_left = -44.5
 offset_top = 195.0
 offset_right = 555.5
 offset_bottom = 285.0
+mouse_filter = 2
 bbcode_enabled = true
 text = "[font_size=64][font=res://fonts/JainiPurva.ttf]Hold to run[/font][/font_size]"
 fit_content = true

@@ -53,7 +53,9 @@
 [ext_resource type="PackedScene" uid="uid://dua8h30cdqr5t" path="res://scenes/environment/town_map_board.tscn" id="52_map_post"]
 [ext_resource type="AudioStream" uid="uid://x0oudfd18kan" path="res://music/welcomingHike.mp3" id="53_welcoming_hike"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="54_world_map"]
+[ext_resource type="PackedScene" uid="uid://b64n6bbhuodv2" path="res://assets/local_licensed/6twelve/Models/6twelve.fbx" id="55_lqylb"]
 [ext_resource type="Script" uid="uid://rg72wc8mxajv" path="res://scenes/atmosphere/forest_apparitions.gd" id="56_apparitions"]
+[ext_resource type="Script" uid="uid://baiyq2t3cq3lm" path="res://scenes/environment/visibility_filter.gd" id="56_cv14n"]
 [ext_resource type="PackedScene" path="res://scenes/zones/tree_exclusion_zone.tscn" id="56_p6ceg"]
 [ext_resource type="Material" uid="uid://b6b6o01o4muf" path="res://shaders/moving_gradient_noise_fog_material.tres" id="56_pw44y"]
 
@@ -934,13 +936,14 @@ script = ExtResource("56_apparitions")
 
 [node name="Streets" type="Node3D" parent="." unique_id=186703953]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3547363)
+metadata/surface = "gravel"
 
 [node name="MainRoad" type="CSGBox3D" parent="Streets" unique_id=2104113461]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -0.1, 8.179955)
 use_collision = true
 size = Vector3(600, 0.4, 8)
 material = SubResource("StandardMaterial3D_avnp4")
-metadata/surface = "concrete"
+metadata/surface = "gravel"
 
 [node name="MainRoad_CenterLine" type="CSGBox3D" parent="Streets" unique_id=1758345466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.105, 8.179955)
@@ -970,26 +973,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -277.5, -0.1, 2.5947547)
 use_collision = true
 size = Vector3(25, 0.4, 8)
 material = SubResource("StandardMaterial3D_avnp4")
-metadata/surface = "concrete"
+metadata/surface = "gravel"
 
 [node name="MainRoad2" type="CSGBox3D" parent="ParkingLot" unique_id=2077443011]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -282.9, -0.1, -12.855245)
 use_collision = true
 size = Vector3(14.2, 0.4, 22.9)
 material = SubResource("StandardMaterial3D_avnp4")
-metadata/surface = "concrete"
+metadata/surface = "gravel"
 
-[node name="CSGPolygon3D" type="CSGPolygon3D" parent="ParkingLot" unique_id=1605238647]
+[node name="Sidewalk" type="CSGPolygon3D" parent="ParkingLot" unique_id=1605238647]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -274.98532, 0.132, 6.7078586)
 material_override = SubResource("StandardMaterial3D_43khc")
 use_collision = true
 polygon = PackedVector2Array(-2, 0, -2, 1, 8.3, 1, 8.3, 8.1, 10.1, 8.1, 10, 0)
+metadata/surface = "concrete"
 
-[node name="CSGPolygon3D2" type="CSGPolygon3D" parent="ParkingLot" unique_id=2031382842]
+[node name="Sidewalk2" type="CSGPolygon3D" parent="ParkingLot" unique_id=2031382842]
 transform = Transform3D(-4.371139e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 1.9106855e-15, -289.8853, 0.132, 6.7078586)
 material_override = SubResource("StandardMaterial3D_43khc")
 use_collision = true
 polygon = PackedVector2Array(0, 0, 0, 2, 31, 2, 31, -14, 30, -14, 30, 0)
+metadata/surface = "concrete"
 
 [node name="BottomDialogueBalloon" parent="." unique_id=2140000001 instance=ExtResource("17_dialogue_balloon")]
 dialogue_resource = ExtResource("18_forest_dialogue")
@@ -1587,8 +1592,16 @@ metadata/modular_fence_segment = true
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 102.899956, 0, 0)
 metadata/modular_fence_segment = true
 
+[node name="GasStation" type="Node3D" parent="." unique_id=1764018158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 136.08078, 0.8, 25.77362)
+
+[node name="Store" parent="GasStation" unique_id=1833174118 instance=ExtResource("55_lqylb")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("56_cv14n")
+hidden_child_names = PackedStringArray("Trees", "Tree", "Tree_01", "Tree_02", "Tree_03", "Background", "Asphalt", "Asphalt_01", "Grass_", "Grass", "Grass_01", "Grass_02", "Grass_03", "Dry_leaves", "Dry_leaves_01", "Dry_leaves_02", "Dry_leaves_03", "Crosswalk", "guard_rails", "Plants")
+
 [node name="GasStationPlatform" type="MeshInstance3D" parent="." unique_id=1952694109]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 146, 0.05, 28)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.6, 146, 0.05, 36.69002)
 mesh = SubResource("PlaneMesh_gas_station_platform")
 surface_material_override/0 = SubResource("StandardMaterial3D_gas_station_platform")
 metadata/surface = "concrete"

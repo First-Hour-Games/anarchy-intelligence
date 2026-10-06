@@ -76,6 +76,15 @@ var current_footstep_surface: StringName = &"dirt"
 	preload("res://sounds/footsteps/concrete/Concrete footsteps 7.ogg"),
 	preload("res://sounds/footsteps/concrete/Concrete footsteps 8.ogg"),
 ]
+@export var gravel_footsteps: Array[AudioStream] = [
+	preload("res://sounds/footsteps/gravel/gravelFootstep1.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep2.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep3.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep4.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep5.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep6.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep7.ogg"),
+]
 @export var dirt_footsteps: Array[AudioStream] = []
 @export var grass_footsteps: Array[AudioStream] = [
 	preload("res://sounds/footsteps/grass/Grass-footsteps-1.ogg"),
@@ -464,6 +473,11 @@ func _detect_ground_surface() -> StringName:
 		ancestor = ancestor.get_parent()
 		depth += 1
 
+	if is_instance_valid(collider) and collider is Node:
+		var classified := SURFACES.classify(collider as Node)
+		if not classified.is_empty() and classified != &"dirt":
+			return classified
+
 	return default_surface
 
 
@@ -476,6 +490,8 @@ func _check_node_surface(node: Node) -> StringName:
 		return StringName(str(node.get_meta("surface_type")).to_lower())
 	if node.has_meta("footstep"):
 		return StringName(str(node.get_meta("footstep")).to_lower())
+	if node.has_meta("footstep_surface"):
+		return StringName(str(node.get_meta("footstep_surface")).to_lower())
 
 	var surface_prop = node.get("surface_type")
 	if surface_prop != null and not str(surface_prop).is_empty():
@@ -495,8 +511,10 @@ func _get_sounds_for_surface(surface: StringName) -> Array[AudioStream]:
 	match surface:
 		&"wood":
 			return wood_footsteps
-		&"concrete", &"asphalt", &"stone", &"road":
+		&"concrete", &"asphalt", &"stone":
 			return concrete_footsteps
+		&"gravel", &"road":
+			return gravel_footsteps
 		&"dirt", &"mud", &"ground":
 			return dirt_footsteps
 		&"grass", &"foliage":
@@ -517,6 +535,14 @@ func _get_sounds_for_surface(surface: StringName) -> Array[AudioStream]:
 			return []
 
 
+func get_footstep_surface() -> StringName:
+	return _detect_ground_surface()
+
+
+func _play_surface_footstep() -> void:
+	_play_footstep_sound()
+
+
 func _play_random_wood_footstep() -> void:
 	_play_footstep_sound()
 
@@ -526,6 +552,7 @@ func _play_footstep_sound() -> void:
 		return
 
 	var surface := _detect_ground_surface()
+	current_footstep_surface = surface
 	var sound_list := _get_sounds_for_surface(surface)
 
 	if sound_list.is_empty() and surface != default_surface:
