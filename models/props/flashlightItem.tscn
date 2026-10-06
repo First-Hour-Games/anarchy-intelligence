@@ -2,7 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://bkcwc11n0uni0" path="res://models/props/Flashlight_Game.glb" id="1_2wvj5"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7hciw"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 4.0
+
 [node name="Flashlight_Game" unique_id=1906395878 instance=ExtResource("1_2wvj5")]
 
 [node name="Flashlight_Body" parent="." index="0" unique_id=1989796194]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+
+[node name="Flashlight_Lens" parent="Flashlight_Body" index="1" unique_id=1689889398]
+material_override = SubResource("StandardMaterial3D_7hciw")
