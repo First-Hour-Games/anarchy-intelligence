@@ -13,7 +13,6 @@ const MUTED := Color(0.50, 0.50, 0.50)
 const WHITE := Color(1.0, 1.0, 1.0)
 const PAPER := Color(0.78, 0.78, 0.78)
 const MENU_FONT: Font = preload("res://fonts/EuropeanTeletextNuevo.ttf")
-const BrochurePreview = preload("res://scenes/player/inventory/brochure_preview.gd")
 
 @export var selected_style: StyleBoxFlat
 @export var unselected_style: StyleBoxFlat
@@ -24,14 +23,12 @@ var _was_paused: bool = false
 var _previous_mouse: Input.MouseMode
 var _overlay: Control
 var _cards: Array[Button] = []
-var _description: Label
+var _carousel: Control
+var _carousel_tween: Tween
+var _portrait_atlas: AtlasTexture
+var _counter: Label
 var _title: Label
-var _preview: TextureRect
-var _item_image: TextureRect
-var _brochure_preview: Control
-var _paper_preview: Label
 var _use: Button
-var _status: Label
 var _frame: Control
 var _page: Control
 var _fade_rect: ColorRect
@@ -76,11 +73,15 @@ func select_slot(slot: int) -> void:
 	selected_slot_index = clampi(slot, 0, SLOT_COUNT - 1)
 	_update_hud()
 	if is_open and not _cards.is_empty():
-		_cards[selected_slot_index].grab_focus()
+		_use.grab_focus()
 	selection_changed.emit(selected_slot_index, get_selected_item())
 
 func select_relative(direction: int) -> void:
-	select_slot(posmod(selected_slot_index + direction, SLOT_COUNT))
+	for step in range(1, SLOT_COUNT + 1):
+		var slot := posmod(selected_slot_index + step * direction, SLOT_COUNT)
+		if _items[slot] != EMPTY_ITEM:
+			select_slot(slot)
+			return
 
 func _input(event: InputEvent) -> void:
 	if event.is_echo():
@@ -98,6 +99,7 @@ func _input(event: InputEvent) -> void:
 			var health := _player.get_node_or_null("CombatHealth") if is_instance_valid(_player) else null
 			var cannot_open: bool = (
 				not is_instance_valid(_player)
+				or not _player.inventory_enabled
 				or _player.is_frozen
 				or get_tree().paused
 				or (story != null and bool(story.get("document_open")))
@@ -109,6 +111,8 @@ func _input(event: InputEvent) -> void:
 	elif is_open:
 		if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_ESCAPE or event.physical_keycode == KEY_ESCAPE)):
 			set_open(false)
+		elif event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			select_relative(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
 		elif event.is_action_pressed("ui_left"):
 			select_relative(-1)
 		elif event.is_action_pressed("ui_right"):
@@ -123,6 +127,8 @@ func set_open(value: bool, animate: bool = true) -> void:
 	if value == is_open:
 		return
 	if value:
+		if not is_instance_valid(_player) or not _player.inventory_enabled:
+			return
 		var story := get_tree().get_first_node_in_group("opening_story")
 		var health := _player.get_node_or_null("CombatHealth")
 		if _player.is_frozen or get_tree().paused or (story != null and bool(story.get("document_open"))) or (health != null and bool(health.get("is_dead"))):
@@ -136,7 +142,7 @@ func set_open(value: bool, animate: bool = true) -> void:
 		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		_update_hud()
 		if not _cards.is_empty():
-			_cards[selected_slot_index].grab_focus()
+			_use.grab_focus()
 
 		# Quick transition: fade to black, then fade to inventory content
 		if _fade_tween != null and _fade_tween.is_valid():
@@ -152,7 +158,7 @@ func set_open(value: bool, animate: bool = true) -> void:
 				if is_instance_valid(_frame):
 					_frame.modulate.a = 1.0
 				if not _cards.is_empty():
-					_cards[selected_slot_index].grab_focus()
+					_use.grab_focus()
 			)
 			_fade_tween.tween_property(_fade_rect, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_fade_tween.tween_callback(func():
@@ -211,25 +217,13 @@ func finish_transition_immediately() -> void:
 		get_tree().paused = _was_paused
 		Input.mouse_mode = _previous_mouse
 	elif not _cards.is_empty():
-		_cards[selected_slot_index].grab_focus()
+		_use.grab_focus()
 
 func _exit_tree() -> void:
 	if _fade_tween != null and _fade_tween.is_valid():
 		_fade_tween.kill()
 	if is_open and get_tree() != null:
 		get_tree().paused = _was_paused
-
-func _panel(parent: Node, header: String) -> VBoxContainer:
-	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _style(MUTED.darkened(0.55)))
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 14)
-	panel.add_child(column)
-	var title := _label(header, 14, MUTED.lightened(0.5))
-	column.add_child(title)
-	return column
 
 func _style(border: Color) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -295,97 +289,87 @@ func _build_screen() -> void:
 	_page = Control.new()
 	_page.size = Vector2(1024, 768)
 	_frame.add_child(_page)
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_page.add_child(margin)
-	for side: String in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 34)
 	_frame.resized.connect(_layout_screen)
-	var page := VBoxContainer.new()
-	page.add_theme_constant_override("separation", 18)
-	margin.add_child(page)
-	var heading := HBoxContainer.new()
-	page.add_child(heading)
-	var name := _label("INVENTORY", 30, WHITE)
-	name.autowrap_mode = TextServer.AUTOWRAP_OFF
-	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	heading.add_child(name)
-	var town := _label("THOMAS / CICELY", 14, MUTED.lightened(0.4))
-	town.autowrap_mode = TextServer.AUTOWRAP_OFF
-	town.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	town.custom_minimum_size.x = 160
-	heading.add_child(town)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	page.add_child(row)
-	for slot in SLOT_COUNT:
-		var card := Button.new()
-		card.custom_minimum_size = Vector2(0, 86)
-		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		card.add_theme_font_size_override("font_size", 14)
-		_style_button(card)
-		card.pressed.connect(select_slot.bind(slot))
-		row.add_child(card)
-		_cards.append(card)
-	var body := HBoxContainer.new()
-	body.add_theme_constant_override("separation", 14)
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	page.add_child(body)
-	var status_column := _panel(body, "PERSONAL STATUS")
-	status_column.get_parent().size_flags_stretch_ratio = 0.7
+	var status_heading := _label("STATUS", 18, MUTED)
+	status_heading.position = Vector2(64, 56)
+	_page.add_child(status_heading)
 	var portrait := TextureRect.new()
-	var faces := load("res://img/player/hpFaces.png") as Texture2D
-	var atlas := AtlasTexture.new()
-	atlas.atlas = faces
-	atlas.region = Rect2(0, 0, faces.get_width() / 2.0, faces.get_height() / 6.0)
-	portrait.texture = atlas
+	var faces := preload("res://img/player/hpFaces.png")
+	_portrait_atlas = AtlasTexture.new()
+	_portrait_atlas.atlas = faces
+	_portrait_atlas.region = Rect2(0, 0, faces.get_width() / 2.0, faces.get_height() / 6.0)
+	portrait.texture = _portrait_atlas
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	portrait.custom_minimum_size.y = 140
-	status_column.add_child(portrait)
-	status_column.add_child(_label("THOMAS", 18, WHITE))
-	_status = _label("", 14)
-	status_column.add_child(_status)
-	status_column.add_child(_label("Find Carrie.\nFollow what she left behind.", 14, MUTED.lightened(0.35)))
-	var preview_column := _panel(body, "EXAMINE ITEM")
-	preview_column.get_parent().size_flags_stretch_ratio = 1.7
-	_preview = TextureRect.new()
-	_preview.texture = _viewport.get_texture()
-	_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_preview.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	preview_column.add_child(_preview)
-	_item_image = TextureRect.new()
-	_item_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_item_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_item_image.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	preview_column.add_child(_item_image)
-	_brochure_preview = BrochurePreview.new()
-	_brochure_preview.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	preview_column.add_child(_brochure_preview)
-	_paper_preview = _label("", 30, PAPER)
-	_paper_preview.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_paper_preview.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_paper_preview.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	preview_column.add_child(_paper_preview)
-	var details := _panel(body, "ITEM INFORMATION")
-	details.get_parent().size_flags_stretch_ratio = 1.1
-	_title = _label("", 20, WHITE)
-	details.add_child(_title)
-	_description = _label("", 15)
-	_description.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	details.add_child(_description)
+	portrait.position = Vector2(64, 92)
+	portrait.size = Vector2(164, 178)
+	_page.add_child(portrait)
+	var equipment_heading := _label("INVENTORY", 18, MUTED)
+	equipment_heading.position = Vector2(390, 56)
+	_page.add_child(equipment_heading)
+	_carousel = Control.new()
+	_carousel.position = Vector2(42, 290)
+	_carousel.size = Vector2(940, 300)
+	_carousel.clip_contents = true
+	_page.add_child(_carousel)
+	for slot in SLOT_COUNT:
+		var card := Button.new()
+		card.size = Vector2(240, 260)
+		card.focus_mode = Control.FOCUS_NONE
+		_style_button(card)
+		card.pressed.connect(select_slot.bind(slot))
+		_carousel.add_child(card)
+		_cards.append(card)
+		var image := TextureRect.new()
+		image.name = "Image"
+		image.position = Vector2(20, 20)
+		image.size = Vector2(200, 220)
+		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(image)
+		var fallback := _label("", 22, PAPER)
+		fallback.name = "Fallback"
+		fallback.position = Vector2(20, 20)
+		fallback.size = Vector2(200, 220)
+		fallback.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		fallback.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		fallback.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(fallback)
+	for direction in [-1, 1]:
+		var arrow := Button.new()
+		arrow.text = "<" if direction < 0 else ">"
+		arrow.position = Vector2(278 if direction < 0 else 706, 600)
+		arrow.size = Vector2(40, 40)
+		_style_button(arrow)
+		arrow.focus_mode = Control.FOCUS_NONE
+		arrow.pressed.connect(select_relative.bind(direction))
+		_page.add_child(arrow)
+	_title = _label("", 26, WHITE)
+	_title.position = Vector2(320, 600)
+	_title.size = Vector2(384, 40)
+	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_page.add_child(_title)
+	_counter = _label("", 14, MUTED)
+	_counter.position = Vector2(390, 650)
+	_counter.size = Vector2(244, 24)
+	_counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_page.add_child(_counter)
 	_use = Button.new()
-	_use.custom_minimum_size.y = 44
+	_use.position = Vector2(728, 110)
+	_use.size = Vector2(232, 48)
 	_style_button(_use)
+	_use.focus_mode = Control.FOCUS_ALL
 	_use.pressed.connect(_use_selected)
-	details.add_child(_use)
+	_page.add_child(_use)
 	var close := Button.new()
-	close.text = "RETURN TO TOWN"
+	close.text = "EXIT"
+	close.position = Vector2(804, 698)
+	close.size = Vector2(156, 40)
 	_style_button(close)
+	close.focus_mode = Control.FOCUS_NONE
 	close.pressed.connect(set_open.bind(false))
-	details.add_child(close)
-	page.add_child(_label("TAB / ESC  RETURN    LEFT / RIGHT  SELECT    ENTER  USE", 13, MUTED.lightened(0.4)))
+	_page.add_child(close)
 
 	# Fullscreen fade rect on top of overlay
 	_fade_rect = ColorRect.new()
@@ -454,31 +438,65 @@ func _layout_screen() -> void:
 func _update_hud() -> void:
 	if _cards.is_empty():
 		return
+	var occupied: Array[int] = []
 	for slot in SLOT_COUNT:
-		_cards[slot].text = "%02d\n%s" % [slot + 1, _get_item_display_name(_items[slot])]
-		_cards[slot].add_theme_stylebox_override("normal", _style(WHITE if slot == selected_slot_index else MUTED.darkened(0.5)))
-		_cards[slot].add_theme_color_override("font_color", WHITE if slot == selected_slot_index else MUTED.lightened(0.3))
+		if _items[slot] != EMPTY_ITEM:
+			occupied.append(slot)
+	if not occupied.is_empty() and _items[selected_slot_index] == EMPTY_ITEM:
+		selected_slot_index = occupied[0]
+	var selected := occupied.find(selected_slot_index)
+	if _carousel_tween != null and _carousel_tween.is_valid():
+		_carousel_tween.kill()
+	_carousel_tween = null
+	if is_open and not occupied.is_empty():
+		_carousel_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_parallel(true)
+	for slot in SLOT_COUNT:
+		var card := _cards[slot]
+		var index := occupied.find(slot)
+		card.visible = index >= 0
+		if index < 0:
+			continue
+		var offset := index - selected
+		if offset > occupied.size() / 2.0:
+			offset -= occupied.size()
+		elif offset < -occupied.size() / 2.0:
+			offset += occupied.size()
+		var active := slot == selected_slot_index
+		var target := Vector2(350 + offset * 270, 16 if active else 42)
+		var scale_target := Vector2.ONE if active else Vector2.ONE * 0.8
+		card.pivot_offset = card.size * 0.5
+		if is_open:
+			_carousel_tween.tween_property(card, "position", target, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_carousel_tween.tween_property(card, "scale", scale_target, 0.18)
+		else:
+			card.position = target
+			card.scale = scale_target
+		card.modulate = WHITE if active else Color(0.5, 0.5, 0.5, 1)
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color.TRANSPARENT
+		style.border_color = Color(0.65, 0.62, 0.78) if active else Color.TRANSPARENT
+		style.set_border_width_all(2 if active else 0)
+		card.add_theme_stylebox_override("normal", style)
+		card.add_theme_stylebox_override("hover", style)
+		card.add_theme_stylebox_override("pressed", style)
+		var item := _items[slot]
+		var data := ItemDatabase.get_item(item)
+		var image := card.get_node("Image") as TextureRect
+		image.texture = _viewport.get_texture() if item == FLASHLIGHT_ITEM else data.image
+		image.visible = image.texture != null
+		var fallback := card.get_node("Fallback") as Label
+		fallback.visible = not image.visible
+		fallback.text = "CARRIE'S\nNOTES" if item == NOTEBOOK_ITEM else data.name
 	var item := get_selected_item()
-	_title.text = _get_item_display_name(item)
-	_preview.visible = item == FLASHLIGHT_ITEM
-	var item_data: ItemData = ItemDatabase.get_item(item) if item != EMPTY_ITEM else null
-	_item_image.texture = item_data.image if item_data != null else null
-	_item_image.visible = item != FLASHLIGHT_ITEM and item != MAP_ITEM and _item_image.texture != null
-	_brochure_preview.visible = item == MAP_ITEM
-	_paper_preview.visible = item != FLASHLIGHT_ITEM and item != MAP_ITEM and not _item_image.visible
-	_paper_preview.text = "CICELY TOWN\nTOURIST MAP" if item == MAP_ITEM else "CARRIE\nPERSONAL NOTES" if item == NOTEBOOK_ITEM else "—"
-	if item == EMPTY_ITEM:
-		_description.text = "Nothing stored here."
-		_use.text = "EMPTY"
-	elif ItemDatabase.has_item(item):
-		_description.text = item_data.description
-		_use.text = item_data.use_action_text
-	else:
-		_description.text = "A working flashlight found at the abandoned gas station. Its beam makes the Ridgeback retreat. Press F anytime while exploring." if item == FLASHLIGHT_ITEM else "Collected at the welcome center. Thomas has marked places connected to Carrie's trail." if item == MAP_ITEM else "Carrie's handwriting. She left for the hospital because people said it was safe. Read this with the other clues in your journal." if item == NOTEBOOK_ITEM else "Nothing stored here."
-		_use.text = "TOGGLE FLASHLIGHT" if item == FLASHLIGHT_ITEM else "OPEN MAP" if item == MAP_ITEM else "READ NOTES" if item == NOTEBOOK_ITEM else "EMPTY"
+	_title.text = "EMPTY" if occupied.is_empty() else _get_item_display_name(item)
+	_counter.text = "" if occupied.is_empty() else "%02d / %02d" % [selected + 1, occupied.size()]
+	_use.text = "USE" if item == EMPTY_ITEM else ItemDatabase.get_item(item).use_action_text
 	_use.disabled = item == EMPTY_ITEM
 	var health := _player.get_node_or_null("CombatHealth")
-	_status.text = "CONDITION / %d%%\n\nLIGHT / %s" % [int(health.get("health")) if health != null else 100, "CARRIED" if has_item(FLASHLIGHT_ITEM) else "NOT FOUND"]
+	var ratio := clampf(float(health.get("health")) / maxf(float(health.get("max_health")), 0.01), 0.0, 1.0) if health != null else 1.0
+	var row := 5 if ratio <= 0.0 else 0 if ratio >= 0.8 else 1 if ratio >= 0.6 else 2 if ratio >= 0.4 else 3 if ratio >= 0.2 else 4
+	var faces := _portrait_atlas.atlas
+	_portrait_atlas.region = Rect2(0, row * faces.get_height() / 6.0, faces.get_width() / 2.0, faces.get_height() / 6.0)
 
 func _use_selected() -> void:
 	var item := get_selected_item()

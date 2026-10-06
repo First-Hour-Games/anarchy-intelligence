@@ -33,9 +33,12 @@ var _outside_view := false
 var _outside_body := false
 var _wall_finished := false
 var _initialized := false
+var _back_collision_enabled := false
+@onready var _ledge_back_collision: CollisionShape3D = $"../Ledge/StaticBody3D/LedgeBackCollision"
 
 
 func _ready() -> void:
+	_ledge_back_collision.disabled = true
 	_door = get_node(door_path) as InteractiveDoor
 	_camera = get_node(camera_path) as Camera3D
 	_player = get_node(player_path) as Node3D
@@ -144,6 +147,7 @@ func _process(_delta: float) -> void:
 		_set_outside_body(not _outside_body)
 		_set_outside_view(_outside_body)
 	_last_body_position = body_position
+	_update_back_collision(body_position)
 	# Walking around the frame keeps the player outside, even behind the plane.
 	var camera_on_front := _door.to_local(_camera.global_position).z > _door._door_center_local.z + 0.01
 	_portal_surface.visible = _outside_view and camera_on_front
@@ -154,6 +158,22 @@ func _process(_delta: float) -> void:
 
 func _body_position() -> Vector3:
 	return _player.global_position + Vector3.UP * crossing_height
+
+
+func _update_back_collision(body_position: Vector3) -> void:
+	if not _outside_body or _back_collision_enabled:
+		return
+	# The barrier overlaps the doorway. Wait until the entire player capsule
+	# clears its ledge-facing edge before enabling it behind the player.
+	var outward := _door.global_basis.z.normalized()
+	var half_size := (_ledge_back_collision.shape as BoxShape3D).size * 0.5
+	var basis := _ledge_back_collision.global_basis
+	var extent := absf(outward.dot(basis.x)) * half_size.x \
+		+ absf(outward.dot(basis.y)) * half_size.y \
+		+ absf(outward.dot(basis.z)) * half_size.z
+	if outward.dot(body_position - _ledge_back_collision.global_position) > extent + 0.45:
+		_back_collision_enabled = true
+		_ledge_back_collision.set_deferred("disabled", false)
 
 
 func _crossed_opening(previous: Vector3, current: Vector3) -> bool:
@@ -180,6 +200,9 @@ func _set_outside_view(outside: bool) -> void:
 
 func _set_outside_body(outside: bool) -> void:
 	_outside_body = outside
+	if not outside:
+		_back_collision_enabled = false
+		_ledge_back_collision.set_deferred("disabled", true)
 	# The hallway extends over part of the ledge. Its invisible walls must not block it.
 	# Keep the white door's own hinge/collision, and the separate ledge, active.
 	for body in _bodies:

@@ -153,10 +153,13 @@ func _transition_to_next_scene() -> void:
 	# Stop / fade out tutorial music if playing
 	var current_scene := get_tree().current_scene
 	if is_instance_valid(current_scene):
-		var tutorial_music := current_scene.get_node_or_null("TutorialMusic") as AudioStreamPlayer
-		if is_instance_valid(tutorial_music) and tutorial_music.playing:
-			var tween := create_tween()
-			tween.tween_property(tutorial_music, "volume_db", -80.0, transition_delay)
+		if current_scene.has_method("fade_out_tutorial_music"):
+			current_scene.fade_out_tutorial_music(transition_delay)
+		else:
+			var tutorial_music := current_scene.get_node_or_null("TutorialMusic") as AudioStreamPlayer
+			if is_instance_valid(tutorial_music) and tutorial_music.playing:
+				var tween := create_tween()
+				tween.tween_property(tutorial_music, "volume_db", -80.0, transition_delay)
 
 	if transition_delay > 0.0:
 		await get_tree().create_timer(transition_delay).timeout

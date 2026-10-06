@@ -1,5 +1,7 @@
 [gd_scene format=4 uid="uid://bq1e0ov2k1wwv"]
 
+[ext_resource type="Script" path="res://scenes/chapters/tutorial/dream_floating.gd" id="52_dream_floating"]
+
 [ext_resource type="Texture2D" uid="uid://cahroxrn47r4l" path="res://img/materials/woodFloor/wood_floor_worn_diff_1k.jpg" id="1_77hjh"]
 [ext_resource type="Texture2D" uid="uid://peat2bav8s47" path="res://img/materials/tutorial/floralwallpaper/albedo.jpg" id="2_7opay"]
 [ext_resource type="Texture2D" uid="uid://qw1ka6cipomn" path="res://img/materials/woodFloor/wood_floor_worn_disp_1k.jpg" id="2_sr10g"]
@@ -33,6 +35,7 @@
 [ext_resource type="AudioStream" uid="uid://dyany7iaad53o" path="res://sounds/chapters/tutorial/oldPhoneRinging.mp3" id="30_phone_ring"]
 [ext_resource type="AudioStream" uid="uid://cgblq8d1sbi8a" path="res://sounds/chapters/tutorial/phonePickUp.mp3" id="32_phone_pickup"]
 [ext_resource type="Script" uid="uid://cbjy88ume4ahy" path="res://scenes/chapters/tutorial/floating_bed.gd" id="33_floating_bed"]
+[ext_resource type="AudioStream" uid="uid://dr7ufabs336qh" path="res://sounds/chapters/tutorial/lightBuzzing.mp3" id="34_6fpwm"]
 [ext_resource type="Script" uid="uid://cc8t4nn522ogr" path="res://scenes/chapters/tutorial/moving_wall_zone.gd" id="34_moving_wall_zone"]
 [ext_resource type="Texture2D" uid="uid://p80n57xnhsj4" path="res://img/player/shiftLabel.png" id="35_shift_label"]
 [ext_resource type="Texture2D" uid="uid://dv6iwxtqypwjs" path="res://models/props/low_poly_doors_0.png" id="37_8yf2k"]
@@ -343,7 +346,10 @@ shadow_mesh = SubResource("ArrayMesh_1m5m1")
 data = PackedVector3Array(0, 0, -2.1667, 0.1951, 0.59999996, -2.1475, 0, 0.59999996, -2.1667, 0, 0, -2.1667, 0.1951, 0, -2.1475, 0.1951, 0.59999996, -2.1475, 0.1951, 0, -2.1475, 0.3827, 0.59999996, -2.0906, 0.1951, 0.59999996, -2.1475, 0.1951, 0, -2.1475, 0.3827, 0, -2.0906, 0.3827, 0.59999996, -2.0906, 0.3827, 0.59999996, -2.0906, 0, 0.59999996, -2.1667, 0.1951, 0.59999996, -2.1475, 0.3827, 0, -2.0906, 0.5556, 0.59999996, -1.9981999, 0.3827, 0.59999996, -2.0906, 0.5556, 0.59999996, -1.9981999, 0, 0.59999996, -2.1667, 0.3827, 0.59999996, -2.0906, 0.3827, 0, -2.0906, 0.5556, 0, -1.9981999, 0.5556, 0.59999996, -1.9981999, 0.5556, 0, -1.9981999, 0.7071, 0.59999996, -1.8737999, 0.5556, 0.59999996, -1.9981999, 0.5556, 0, -1.9981999, 0.7071, 0, -1.8737999, 0.7071, 0.59999996, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0.5556, 0.59999996, -1.9981999, 0.7071, 0.59999996, -1.8737999, 0.7071, 0, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0.7071, 0.59999996, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0, 0.59999996, -2.1667, 0.5556, 0.59999996, -1.9981999, 0.7071, 0, -1.8737999, 0.8314, 0, -1.7222999, 0.8314, 0.59999996, -1.7222999, 0.8314, 0, -1.7222999, 0.92389995, 0.59999996, -1.5494, 0.8314, 0.59999996, -1.7222999, 0.8314, 0, -1.7222999, 0.92389995, 0, -1.5494, 0.92389995, 0.59999996, -1.5494, 0.92389995, 0, -1.5494, 0.9808, 0.59999996, -1.3618, 0.92389995, 0.59999996, -1.5494, 0.9808, 0.59999996, -1.3618, 0.8314, 0.59999996, -1.7222999, 0.92389995, 0.59999996, -1.5494, 0.92389995, 0, -1.5494, 0.9808, 0, -1.3618, 0.9808, 0.59999996, -1.3618, 0.9808, 0, -1.3618, 1, 0.59999996, 0, 0.9808, 0.59999996, -1.3618, 0.9808, 0, -1.3618, 1, 0, 0, 1, 0.59999996, 0, -1, 0.59999996, 0, 0.8314, 0.59999996, -1.7222999, 0.9808, 0.59999996, -1.3618, -1, 0.59999996, 0, 0.9808, 0.59999996, -1.3618, 1, 0.59999996, 0, 1, 0, 0, -1, 0.59999996, 0, 1, 0.59999996, 0, 0, 0.59999996, -2.1667, 0.8314, 0.59999996, -1.7222999, -1, 0.59999996, 0, 1, 0, 0, -1, 0, 0, -1, 0.59999996, 0, -1, 0, 0, -0.9808, 0.59999996, -1.3618, -1, 0.59999996, 0, -1, 0, 0, -0.9808, 0, -1.3618, -0.9808, 0.59999996, -1.3618, -0.9808, 0, -1.3618, -0.92389995, 0.59999996, -1.5494, -0.9808, 0.59999996, -1.3618, -0.92389995, 0.59999996, -1.5494, -1, 0.59999996, 0, -0.9808, 0.59999996, -1.3618, -0.9808, 0, -1.3618, -0.92389995, 0, -1.5494, -0.92389995, 0.59999996, -1.5494, -0.92389995, 0, -1.5494, -0.8315, 0.59999996, -1.7222999, -0.92389995, 0.59999996, -1.5494, -0.92389995, 0, -1.5494, -0.8315, 0, -1.7222999, -0.8315, 0.59999996, -1.7222999, -0.7071, 0.59999996, -1.8737999, -1, 0.59999996, 0, -0.92389995, 0.59999996, -1.5494, -0.7071, 0.59999996, -1.8737999, -0.92389995, 0.59999996, -1.5494, -0.8315, 0.59999996, -1.7222999, -0.8315, 0, -1.7222999, -0.7071, 0.59999996, -1.8737999, -0.8315, 0.59999996, -1.7222999, 0, 0.59999996, -2.1667, -1, 0.59999996, 0, -0.7071, 0.59999996, -1.8737999, -0.8315, 0, -1.7222999, -0.7071, 0, -1.8737999, -0.7071, 0.59999996, -1.8737999, -0.7071, 0, -1.8737999, -0.5556, 0.59999996, -1.9981999, -0.7071, 0.59999996, -1.8737999, -0.7071, 0, -1.8737999, -0.5556, 0, -1.9981999, -0.5556, 0.59999996, -1.9981999, -0.3827, 0.59999996, -2.0906, -0.7071, 0.59999996, -1.8737999, -0.5556, 0.59999996, -1.9981999, -0.5556, 0, -1.9981999, -0.3827, 0.59999996, -2.0906, -0.5556, 0.59999996, -1.9981999, 0, 0.59999996, -2.1667, -0.7071, 0.59999996, -1.8737999, -0.3827, 0.59999996, -2.0906, -0.5556, 0, -1.9981999, -0.3827, 0, -2.0906, -0.3827, 0.59999996, -2.0906, -0.3827, 0, -2.0906, -0.1951, 0.59999996, -2.1475, -0.3827, 0.59999996, -2.0906, 0, 0.59999996, -2.1667, -0.3827, 0.59999996, -2.0906, -0.1951, 0.59999996, -2.1475, -0.3827, 0, -2.0906, -0.1951, 0, -2.1475, -0.1951, 0.59999996, -2.1475, -0.1951, 0, -2.1475, 0, 0.59999996, -2.1667, -0.1951, 0.59999996, -2.1475, -0.1951, 0, -2.1475, 0, 0, -2.1667, 0, 0.59999996, -2.1667)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_orua6"]
-size = Vector3(0.4444336, 4.7000003, 1.3505859)
+size = Vector3(2.1000001, 4.7000003, 1.3505859)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ledge_sides"]
+size = Vector3(0.15, 4.7000003, 1.3505859)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_o88mx"]
 size = Vector3(3, 3, 0.62109375)
@@ -653,6 +659,7 @@ transform = Transform3D(1, -3.7252903e-08, 0, -1.4901161e-08, 0.99999976, 0, 0, 
 shape = SubResource("BoxShape3D_jpyye")
 
 [node name="Player" parent="." unique_id=1902877193 instance=ExtResource("5_player")]
+inventory_enabled = false
 transform = Transform3D(0.79614544, 0, 0.6051053, 0, 1, 0, -0.6051053, 0, 0.79614544, 2.376462, -0.49136588, 2.7018838)
 visible = false
 walk_speed = 1.3
@@ -923,6 +930,14 @@ light_energy = 0.3
 shadow_enabled = true
 omni_range = 5.236
 
+[node name="buzzingLight" type="AudioStreamPlayer3D" parent="CeilingBulb2" unique_id=716163523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42862356, -0.32533836, 0.95208836)
+stream = ExtResource("34_6fpwm")
+unit_size = 15.58
+autoplay = true
+max_distance = 15.0
+bus = &"Reverb"
+
 [node name="HallwayBulbs" type="Node3D" parent="." unique_id=259921552]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6950241, 2.8428612, -19.523037)
 script = ExtResource("38_hallway_lights")
@@ -1045,19 +1060,24 @@ shape = SubResource("ConcavePolygonShape3D_sgdgq")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=1809852923]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 2.472, -5.921)
-shape = SubResource("BoxShape3D_orua6")
+shape = SubResource("BoxShape3D_ledge_sides")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=1735451833]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.80442476, 2.4715393, -5.920889)
-shape = SubResource("BoxShape3D_orua6")
+shape = SubResource("BoxShape3D_ledge_sides")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=461113629]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.882208, 2.4715393, -1.3544817)
+shape = SubResource("BoxShape3D_ledge_sides")
+
+[node name="LedgeBackCollision" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=1643954754]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.054424733, 2.4715393, 0.01748848)
 shape = SubResource("BoxShape3D_orua6")
+disabled = true
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=555412078]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8877036, 2.4715393, -1.3544817)
-shape = SubResource("BoxShape3D_orua6")
+shape = SubResource("BoxShape3D_ledge_sides")
 
 [node name="AreaLight3D" type="AreaLight3D" parent="Ledge" unique_id=623701919]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 1.4749262, -1.474926)
@@ -1121,6 +1141,7 @@ transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -1.7052734, 5.9673514, 
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -1.7052734, 7.8231354, -66.68557)
 
 [node name="Sketchfab_Scene" parent="." unique_id=319737725 instance=ExtResource("47_3uwsk")]
+script = ExtResource("52_dream_floating")
 transform = Transform3D(1.2664846, -0.12727045, -0.44979873, 0.10572222, 1.3433281, -0.08241553, 0.45534548, 0.04209206, 1.2701925, 1.1823075, -1.1920929e-07, -52.4455)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Sketchfab_Scene" unique_id=51081378]
@@ -1128,6 +1149,7 @@ transform = Transform3D(0.7407408, -2.4214387e-08, -1.1920929e-07, 3.259629e-08,
 shadow_enabled = true
 
 [node name="hourglass" type="Node3D" parent="." unique_id=188943970]
+script = ExtResource("52_dream_floating")
 transform = Transform3D(6.873301, 1.881225, 1.9572487, -2.0981183, 0.3001084, 7.079543, 1.72271, -7.1402392, 0.8132298, -5.0556397, 1.2454832, -54.158596)
 
 [node name="hourglass_glass_0" type="MeshInstance3D" parent="hourglass" unique_id=1299093101]
@@ -1137,9 +1159,11 @@ mesh = SubResource("ArrayMesh_r102g")
 mesh = SubResource("ArrayMesh_6fpwm")
 
 [node name="Sketchfab_Scene2" parent="." unique_id=1794794232 instance=ExtResource("49_sgdgq")]
+script = ExtResource("52_dream_floating")
 transform = Transform3D(0.20584704, -0.20955981, 0.06092298, 0.10090768, 0.017137151, -0.28199983, 0.19350608, 0.21398811, 0.082246155, 2.8439362, 6.1215553, -62.90628)
 
 [node name="toyotaCrownModel2" parent="." unique_id=274795217 instance=ExtResource("50_stvp6")]
+script = ExtResource("52_dream_floating")
 transform = Transform3D(1.0442559, -0.23450536, 0.75540507, 0.40146533, 1.2351091, -0.1715544, -0.681509, 0.36825618, 1.0564243, -7.7080097, 4.9310865, -61.99579)
 
 [node name="CarLights" type="Node3D" parent="toyotaCrownModel2" unique_id=1474634385]

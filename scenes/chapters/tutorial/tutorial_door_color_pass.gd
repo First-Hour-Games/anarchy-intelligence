@@ -23,6 +23,11 @@ const DEFAULT_BACKGROUND_COLOR := Color("454545")
 @export_category("Tutorial Music")
 @export_range(1.0, 15.0, 0.5) var tutorial_music_fade_duration := 7.5
 @export_range(-30.0, 0.0, 0.5) var tutorial_music_volume_db := -7.0
+@export var stairs_music: AudioStream = preload("res://music/dreamStairs.mp3")
+@export_range(0.1, 10.0, 0.1) var tutorial_music_exit_fade_duration := 1.0
+@export_range(0.1, 10.0, 0.1) var stairs_music_fade_duration := 2.0
+@export_range(0.0, 10.0, 0.1) var stairs_music_silence_duration := 2.0
+@export_range(-30.0, 0.0, 0.5) var stairs_music_volume_db := -7.0
 
 @export_category("Tutorial Labels")
 @export_range(0.1, 5.0, 0.1) var tutorial_label_fade_duration := 1.5
@@ -57,11 +62,14 @@ var _player_was_physics_processing := true
 var _player_was_processing_unhandled_input := true
 var _tutorial_label_tween: Tween
 var _music_fade_tween: Tween
+var _stairs_music_started := false
+var _music_ending := false
 var _tutorial_labels_can_hide := false
 var _tutorial_labels_are_hiding := false
 
 
 func _ready() -> void:
+	$TutorialRooms/BakedMovingWall/WhiteDoor.opened.connect(_on_white_door_opened)
 	_init_world_environment()
 	_intro_light = _find_intro_light()
 	if is_instance_valid(_intro_light):
@@ -243,6 +251,8 @@ func _start_intro_light_fade() -> void:
 
 
 func _start_tutorial_music() -> void:
+	if _stairs_music_started or _music_ending:
+		return
 	if not is_instance_valid(_music_player) or _music_player.stream == null:
 		return
 
@@ -257,6 +267,34 @@ func _start_tutorial_music() -> void:
 		tutorial_music_volume_db,
 		tutorial_music_fade_duration
 	)
+
+
+func _on_white_door_opened(_interactor: Node3D = null) -> void:
+	if _stairs_music_started or _music_ending:
+		return
+	_stairs_music_started = true
+	if _music_fade_tween:
+		_music_fade_tween.kill()
+	_music_fade_tween = create_tween()
+	_music_fade_tween.tween_property(_music_player, "volume_db", -80.0, tutorial_music_exit_fade_duration)
+	_music_fade_tween.tween_callback(_music_player.stop)
+	_music_fade_tween.tween_interval(stairs_music_silence_duration)
+	_music_fade_tween.tween_callback(_play_stairs_music)
+	_music_fade_tween.tween_property(_music_player, "volume_db", stairs_music_volume_db, stairs_music_fade_duration)
+
+
+func _play_stairs_music() -> void:
+	_music_player.stream = stairs_music
+	_music_player.play()
+
+
+func fade_out_tutorial_music(duration: float) -> void:
+	_music_ending = true
+	if _music_fade_tween:
+		_music_fade_tween.kill()
+	_music_fade_tween = create_tween()
+	_music_fade_tween.tween_property(_music_player, "volume_db", -80.0, duration)
+	_music_fade_tween.tween_callback(_music_player.stop)
 
 
 func _fade_in_tutorial_labels() -> void:

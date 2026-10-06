@@ -23,6 +23,8 @@ func run_test() -> void:
 	root.add_child(tutorial)
 	await process_frame
 	var portal := tutorial.get_node("LedgePortal")
+	var back_collision := tutorial.get_node("Ledge/StaticBody3D/LedgeBackCollision") as CollisionShape3D
+	check(back_collision.disabled, "ledge back collision starts disabled inside hallway")
 	var zone := tutorial.get_node("TutorialRooms/MovingWallZone") as MovingWallZone
 	var door := tutorial.get_node("TutorialRooms/BakedMovingWall/WhiteDoor") as InteractiveDoor
 	var player := tutorial.get_node("Player") as Node3D
@@ -52,12 +54,28 @@ func run_test() -> void:
 		tutorial.get_node("HallwayBulbs")._set_bulb_on(bulb, true)
 	var center := door.to_global(door._door_center_local)
 	var normal := door.global_basis.z.normalized()
+	await physics_frame
+	await physics_frame
+	var passage_query := PhysicsShapeQueryParameters3D.new()
+	passage_query.shape = player.get_node("CollisionShape3D").shape
+	passage_query.exclude = [player.get_rid()]
+	var passage_clear := true
+	for distance in [-0.5, -0.2, 0.0, 0.2, 0.5, 1.0, 2.0]:
+		passage_query.transform = Transform3D(Basis.IDENTITY, center + normal * distance)
+		var hits: Array = tutorial.get_world_3d().direct_space_state.intersect_shape(passage_query)
+		passage_clear = passage_clear and hits.is_empty()
+	check(passage_clear, "player capsule fits through first doorway crossing without hitting ledge barriers")
 	position_player(player, camera, portal, center, center - normal * 2.0)
 	tutorial.call("_sync_color_pass")
 	await save_view("inside")
+	position_player(player, camera, portal, center, center + normal * 0.05)
+	await process_frame
+	check(portal._outside_body and back_collision.disabled, "crossing doorway keeps back barrier disabled until player clears it")
 	position_player(player, camera, portal, center, center + normal * 3.0)
 	tutorial.call("_sync_color_pass")
 	check(portal._outside_body, "walking through the opening enters the ledge space")
+	await process_frame
+	check(not back_collision.disabled, "ledge back collision enables after portal exit")
 	check(not camera.get_cull_mask_value(20), "hallway is hidden outside the doorway window")
 	check(portal._portal_surface.visible, "doorway window shows the hallway from the ledge")
 	check(portal._portal_camera.cull_mask == portal.INTERIOR_LAYER, "portal camera renders the hallway")
@@ -86,6 +104,8 @@ func run_test() -> void:
 	position_player(player, camera, portal, center, center + normal * 2.0)
 	position_player(player, camera, portal, center, center - normal * 2.0)
 	check(not portal._outside_body and camera.get_cull_mask_value(20), "returning through the actual opening restores the hallway")
+	await process_frame
+	check(back_collision.disabled, "ledge back collision disables on return through portal")
 	check(floor_body.collision_layer == original_collision_layer, "returning through opening restores hallway physics")
 	check(not portal._portal_surface.visible, "portal surface is hidden while inside")
 	check(phone.is_in_group(&"interactable"), "phone interaction persists on both sides")

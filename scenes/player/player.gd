@@ -17,6 +17,9 @@ const FOOTSTEP_PHASE_INTERVAL := PI
 const SURFACES := preload("res://scenes/player/footstep_surfaces.gd")
 var current_footstep_surface: StringName = &"dirt"
 
+@export_category("Inventory")
+@export var inventory_enabled: bool = true
+
 @export_category("Movement")
 @export var walk_speed: float = 3.2
 @export var sprint_speed: float = 4.8
