@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scenes/player/flashlight/player_flashlight.gd" id="1_flashlight"]
-[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="2_model"]
+[ext_resource type="PackedScene" path="res://scenes/items/flashlight_visual.tscn" id="2_model"]
 
 [node name="Flashlight" type="Node3D"]
 script = ExtResource("1_flashlight")
@@ -12,6 +12,14 @@ position = Vector3(0.34, -0.52, -0.43)
 rotation_degrees = Vector3(10, -8, -8)
 
 [node name="Model" parent="ModelPivot" instance=ExtResource("2_model")]
+
+[node name="ModelLight" type="OmniLight3D" parent="."]
+position = Vector3(0.05, 0.08, -0.22)
+light_color = Color(0.84, 0.91, 1, 1)
+light_energy = 3.0
+light_size = 0.12
+omni_range = 1.0
+cull_mask = 2
 
 [node name="Beam" type="SpotLight3D" parent="."]
 visible = false

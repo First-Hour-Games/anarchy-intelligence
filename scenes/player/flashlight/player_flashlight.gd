@@ -7,9 +7,9 @@ extends Node3D
 signal toggled(is_on: bool)
 
 @export_category("Presentation")
-@export var held_position: Vector3 = Vector3(0.31, -0.24, -0.58)
+@export var held_position: Vector3 = Vector3(0.23, -0.20, -0.42)
 @export var lowered_position: Vector3 = Vector3(0.34, -0.52, -0.43)
-@export var held_rotation_degrees: Vector3 = Vector3(-6.0, -8.0, -8.0)
+@export var held_rotation_degrees: Vector3 = Vector3(-8.0, -14.0, -8.0)
 @export var raise_speed: float = 13.0
 
 @export_category("Held Motion")
@@ -94,6 +94,9 @@ func _process(delta: float) -> void:
 	target_rotation.z += target_roll + _look_lag.x * 80.0
 	target_rotation.x += _look_lag.y * 55.0
 	model_pivot.rotation_degrees = target_rotation
+	# Start the beam at the supplied model's lens while keeping camera aim stable.
+	beam.position = model_pivot.transform * Vector3(0, 0, -0.123)
+	spill.position = beam.position
 
 	if not _is_on and _presentation < 0.01:
 		model_pivot.visible = false

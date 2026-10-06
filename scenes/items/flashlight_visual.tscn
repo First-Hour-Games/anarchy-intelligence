@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/gas_station_interior/Flashlight_Game.glb" id="1_model"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.09, 0.105, 0.12, 1)
+metallic = 0.65
+roughness = 0.38
+
+[node name="FlashlightModel" instance=ExtResource("1_model")]
+
+[node name="Flashlight_Body" parent="."]
+material_override = SubResource("StandardMaterial3D_metal")

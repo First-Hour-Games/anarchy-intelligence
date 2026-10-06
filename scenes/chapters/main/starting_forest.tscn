@@ -69,6 +69,7 @@
 [ext_resource type="PackedScene" uid="uid://mvwvx8udtema" path="res://models/map/factory/gantryTankStation.glb" id="67_2717q"]
 [ext_resource type="PackedScene" uid="uid://h6rqfheq1j7o" path="res://models/map/factory/ps1_style_factory_building.glb" id="68_deoyv"]
 [ext_resource type="Script" uid="uid://dy41panpgh1vy" path="res://scenes/environment/silo_ambience.gd" id="70_silo_ambience"]
+[ext_resource type="PackedScene" path="res://scenes/environment/gas_station_interior.tscn" id="71_station_interior"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -1061,6 +1062,10 @@ bus = &"Music"
 
 [node name="WorldMap" parent="." unique_id=862421942 instance=ExtResource("54_world_map")]
 
+[node name="Display" parent="WorldMap" index="1"]
+map_origin = Vector2(1092.1233, 192.5354)
+world_scale = Vector2(3.0444227, 3.487944)
+
 [node name="tree_004" parent="." unique_id=1896254311 instance=ExtResource("25_7ds25")]
 transform = Transform3D(0.24680898, 0, -0.98089147, 0, 1.0114657, 0, 0.98089147, 0, 0.24680898, -247.9456, -0.22229062, -0.080916405)
 
@@ -1713,6 +1718,9 @@ material = ExtResource("56_pw44y")
 
 [node name="GasStation" parent="." unique_id=382333741 instance=ExtResource("58_lqylb")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 147.67859, 0.06913996, 43.409603)
+
+[node name="Interior" parent="GasStation" instance=ExtResource("71_station_interior")]
+position = Vector3(0.015458405, 0.43130732, -10.430483)
 
 [node name="SiloTreeExclusionZone" parent="." unique_id=260123463 instance=ExtResource("56_p6ceg")]
 transform = Transform3D(2.8528397, 0, 0, 0, 1, 0, 0, 0, 1.1201993, -16.004673, 3.5437012, -21.427357)

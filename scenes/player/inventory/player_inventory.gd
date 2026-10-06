@@ -60,6 +60,16 @@ func add_item(item_id: StringName) -> bool:
 func has_item(item_id: StringName) -> bool:
 	return _items.has(item_id)
 
+func remove_item(item_id: StringName) -> bool:
+	var slot := _items.find(item_id)
+	if item_id == EMPTY_ITEM or slot < 0:
+		return false
+	_items[slot] = EMPTY_ITEM
+	_update_hud()
+	selection_changed.emit(selected_slot_index, get_selected_item())
+	inventory_changed.emit()
+	return true
+
 func is_full() -> bool:
 	return not _items.has(EMPTY_ITEM)
 
@@ -291,7 +301,10 @@ func _build_screen() -> void:
 	_frame.add_child(_page)
 	_frame.resized.connect(_layout_screen)
 	var status_heading := _label("STATUS", 18, MUTED)
+	status_heading.name = "StatusHeading"
 	status_heading.position = Vector2(64, 56)
+	status_heading.size = Vector2(164, 28)
+	status_heading.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_page.add_child(status_heading)
 	var portrait := TextureRect.new()
 	var faces := preload("res://img/player/hpFaces.png")
@@ -305,7 +318,11 @@ func _build_screen() -> void:
 	portrait.size = Vector2(164, 178)
 	_page.add_child(portrait)
 	var equipment_heading := _label("INVENTORY", 18, MUTED)
+	equipment_heading.name = "InventoryHeading"
 	equipment_heading.position = Vector2(390, 56)
+	equipment_heading.size = Vector2(244, 28)
+	equipment_heading.autowrap_mode = TextServer.AUTOWRAP_OFF
+	equipment_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_page.add_child(equipment_heading)
 	_carousel = Control.new()
 	_carousel.position = Vector2(42, 290)

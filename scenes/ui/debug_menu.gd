@@ -95,6 +95,14 @@ func _build_menu() -> void:
 	_add_button(column, "Before the log: test the climb", _jump_to_checkpoint.bind("before_log"))
 	_add_button(column, "After climbing the log: continue on foot", _jump_to_checkpoint.bind("after_log"))
 	column.add_child(HSeparator.new())
+	var station_heading := Label.new()
+	station_heading.text = "GAS STATION ENCOUNTER"
+	station_heading.add_theme_font_size_override("font_size", 14)
+	column.add_child(station_heading)
+	_add_button(column, "Preview Ridgeback scare and title flythrough", _gas_station_action.bind("preview_encounter"))
+	_add_button(column, "Reset station encounter and flashlight pickup", _gas_station_action.bind("reset_encounter"))
+	_add_button(column, "Skip station encounter and collect flashlight", _gas_station_action.bind("skip_encounter"))
+	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
 	_skip_intro_button = _add_button(column, "Skip forest intro fade", _skip_forest_intro)
@@ -108,6 +116,17 @@ func _build_menu() -> void:
 func _resize_menu() -> void:
 	if _scroll != null:
 		_scroll.custom_minimum_size.y = clampf(get_viewport().get_visible_rect().size.y - 100.0, 240.0, 600.0)
+
+func _gas_station_action(action: String) -> void:
+	var encounter := get_tree().get_first_node_in_group("gas_station_encounter")
+	if encounter == null:
+		_status_label.text = "Load Starting forest to test the gas station encounter."
+		return
+	set_open(false)
+	var scene := get_tree().current_scene
+	if scene != null and scene.has_method("finish_fade_immediately"):
+		scene.call("finish_fade_immediately")
+	encounter.call(action)
 
 
 func _add_button(parent: Node, caption: String, action: Callable) -> Button:

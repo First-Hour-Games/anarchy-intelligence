@@ -1,0 +1,16 @@
+{
+  "source_filename": "smartsound_ANIMAL_PIG_Herd_Grunt_Scream_Many_02.mp3",
+  "source_sha256": "469d749264b032a3a55ed05810be961b95647dd49d5e00ee1199339749aeff5d",
+  "source_duration_seconds": 64.60666666666667,
+  "clip_start_seconds": 62.53,
+  "clip_end_seconds": 64.13,
+  "selection": "Original loudest 1.10-second window (63.03\u201364.13), extended by 0.50 seconds of source lead-in",
+  "source_window_rms_dbfs": -17.41953051437019,
+  "source_window_peak_dbfs": -5.674250348407602,
+  "output_peak_dbfs": -0.915149450302124,
+  "fade_in_seconds": 0.008,
+  "fade_out_seconds": 0.1,
+  "sample_rate": 48000,
+  "channels": 2,
+  "bits_per_sample": 16
+}

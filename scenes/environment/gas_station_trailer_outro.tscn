@@ -1,0 +1,83 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/environment/gas_station_trailer_outro.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://img/menu/title.png" id="2_logo"]
+
+[node name="TrailerOutro" type="Node3D"]
+top_level = true
+script = ExtResource("1_script")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+fov = 60.0
+near = 0.2
+far = 900.0
+
+[node name="Moonlight" type="DirectionalLight3D" parent="."]
+visible = false
+rotation_degrees = Vector3(-52, -30, 0)
+light_color = Color(0.61, 0.72, 0.84, 1)
+light_energy = 0.65
+shadow_enabled = true
+directional_shadow_max_distance = 180.0
+
+[node name="Shots" type="Node3D" parent="."]
+
+[node name="Station" type="Marker3D" parent="Shots"]
+position = Vector3(195, 38, 100)
+
+[node name="LookAt" type="Marker3D" parent="Shots/Station"]
+position = Vector3(-47, -35, -49)
+
+[node name="ForestRoad" type="Marker3D" parent="Shots"]
+position = Vector3(118, 62, 65)
+
+[node name="LookAt" type="Marker3D" parent="Shots/ForestRoad"]
+position = Vector3(-40, -59, -52)
+
+[node name="Silos" type="Marker3D" parent="Shots"]
+position = Vector3(5, 70, 65)
+
+[node name="LookAt" type="Marker3D" parent="Shots/Silos"]
+position = Vector3(-35, -65, -82)
+
+[node name="WelcomeCenter" type="Marker3D" parent="Shots"]
+position = Vector3(-112, 52, 67)
+
+[node name="LookAt" type="Marker3D" parent="Shots/WelcomeCenter"]
+position = Vector3(-6, -48, -66)
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+visible = false
+layer = 115
+
+[node name="Blackout" type="ColorRect" parent="Overlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TopBar" type="ColorRect" parent="Overlay"]
+anchor_right = 1.0
+anchor_bottom = 0.12
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BottomBar" type="ColorRect" parent="Overlay"]
+anchor_top = 0.88
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Title" type="TextureRect" parent="Overlay"]
+anchor_left = 0.19
+anchor_top = 0.67
+anchor_right = 0.81
+anchor_bottom = 0.82
+mouse_filter = 2
+texture = ExtResource("2_logo")
+expand_mode = 1
+stretch_mode = 5

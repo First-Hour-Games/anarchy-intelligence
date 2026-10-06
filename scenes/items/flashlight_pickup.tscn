@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scenes/items/flashlight_pickup.gd" id="1_pickup"]
-[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="2_model"]
+[ext_resource type="PackedScene" path="res://scenes/items/flashlight_visual.tscn" id="2_model"]
 
 [node name="FlashlightPickup" type="Node3D"]
 script = ExtResource("1_pickup")

@@ -73,14 +73,18 @@ func _run() -> void:
 	var panel_rect := display._calculate_panel_rect()
 	check(panel_rect.size.x > 100.0 and panel_rect.size.y > 100.0, "Panel rect properly sized on screen")
 	var road := forest.get_node("Streets/MainRoad") as Node3D
+	var connector := forest.get_node("Streets2/MainRoad") as Node3D
+	var welcome := forest.get_node("welcomeCenterTextured2") as Node3D
 	var locations := [
-		{"world": Vector2(-270, road.global_position.z), "pixel": Vector2(210.806, 229.696), "name": "Forest road near welcome center"},
-		{"world": Vector2(100, road.global_position.z), "pixel": Vector2(1481.259, 229.696), "name": "Forest main road junction"},
+		{"world": Vector2(welcome.global_position.x, road.global_position.z), "pixel": Vector2(733.230, 229.696), "name": "Moved welcome center driveway at the forest road"},
+		{"world": Vector2(connector.global_position.x, road.global_position.z), "pixel": Vector2(1481.259, 229.696), "name": "Current forest main road junction"},
 	]
 	for location: Dictionary in locations:
 		var world: Vector2 = location["world"]
 		var expected: Vector2 = location["pixel"]
 		var map_pixel: Vector2 = display.map_origin + world * display.world_scale
+		if map_pixel.distance_to(expected) >= 2.0:
+			print("ALIGNMENT: world=", world, " pixel=", map_pixel, " expected=", expected)
 		check(map_pixel.distance_to(expected) < 2.0, "Waypoint matches PDF artwork: " + location["name"])
 
 	# Test 5: Verify drawing renders without errors

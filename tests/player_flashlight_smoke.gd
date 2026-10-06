@@ -36,6 +36,10 @@ func _run() -> void:
 
 	inventory.select_slot(1)
 	flashlight._process(1.0)
+	passed = passed and flashlight.is_enabled() and beam.visible and model_pivot.visible
+	# F-anytime behavior is independent of the selected inventory item.
+	player._unhandled_input(toggle_event)
+	flashlight._process(1.0)
 	passed = passed and not flashlight.is_enabled() and not beam.visible and not model_pivot.visible
 
 	print("PASS player flashlight" if passed else "FAIL player flashlight")

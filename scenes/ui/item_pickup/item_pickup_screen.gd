@@ -286,6 +286,10 @@ func _setup_item_display(item: ItemData) -> void:
 			var model_node := item.model_scene.instantiate()
 			_model_pivot.add_child(model_node)
 			_model_pivot.rotation = Vector3(deg_to_rad(-10.0), 0.0, deg_to_rad(-5.0))
+			_model_pivot.scale = Vector3.ONE
+			if item.id == &"flashlight":
+				_model_pivot.rotation = Vector3(deg_to_rad(-18.0), deg_to_rad(55.0), deg_to_rad(-25.0))
+				_model_pivot.scale = Vector3.ONE * 4.2
 	else:
 		if is_instance_valid(_model_viewport_container):
 			_model_viewport_container.visible = false
