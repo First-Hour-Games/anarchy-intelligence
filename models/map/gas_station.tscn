@@ -688,7 +688,7 @@ omni_range = 8.729
 omni_attenuation = -0.455
 
 [node name="stationV3" parent="." unique_id=85918364 instance=ExtResource("15_xsro1")]
-transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 3)
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.0047283173, 0, 3.005585)
 
 [node name="PumpSign3" type="MeshInstance3D" parent="stationV3" unique_id=541698722]
 transform = Transform3D(0.83333325, 0, 0, 0, 0.83333325, 0, 0, 0, 0.83333325, -0.063599, 5.478143, -7.0048757)

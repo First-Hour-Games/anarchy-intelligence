@@ -49,6 +49,7 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export_category("Log Fog Transition")
 @export var fog_volume_node: NodePath = NodePath("FogVolume")
 @export var fog_fade_in_duration: float = 2.5
+@export var gas_station_fog_clear_duration: float = 6.0
 @export var fog_size: Vector3 = Vector3(80.0, 8.0, 80.0)
 @export var follow_player_y: bool = false
 @export var fog_fixed_y: float = 2.0
@@ -82,6 +83,7 @@ var _has_switched_music: bool = false
 var _music_transition_tween: Tween = null
 
 var _is_fog_active: bool = false
+var _fog_cleared_at_gas_station := false
 var _fog_fade_tween: Tween = null
 var _fog_target_density: float = 0.0
 var _fog_material_instance: ShaderMaterial = null
@@ -97,6 +99,7 @@ func _ready() -> void:
 	_setup_welcoming_hike_player()
 	_setup_barrier_music_trigger()
 	_setup_fog_volume()
+	get_node("GasStation/FogClearArea").body_entered.connect(_on_gas_station_fog_clear_area_body_entered)
 	_prepare_audio_players()
 
 	if auto_start_fade:
@@ -628,7 +631,7 @@ func _setup_fog_volume() -> void:
 
 
 func activate_fog(fade_duration: float = fog_fade_in_duration) -> void:
-	if _is_fog_active:
+	if _is_fog_active or _fog_cleared_at_gas_station:
 		return
 	_is_fog_active = true
 
@@ -668,9 +671,46 @@ func _update_fog_position() -> void:
 
 
 func finish_fog_transition_immediately() -> void:
+	if _fog_cleared_at_gas_station:
+		return
 	if not _is_fog_active:
 		activate_fog(0.0)
 	if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
 		_fog_fade_tween.kill()
 	if is_instance_valid(_fog_material_instance):
 		_fog_material_instance.set_shader_parameter("base_density", _fog_target_density)
+
+
+func _on_gas_station_fog_clear_area_body_entered(body: Node3D) -> void:
+	if body != player or _fog_cleared_at_gas_station:
+		return
+	_fog_cleared_at_gas_station = true
+	if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
+		_fog_fade_tween.kill()
+	var duration := maxf(gas_station_fog_clear_duration, 0.01)
+	_fog_fade_tween = create_tween().set_parallel(true)
+	if is_instance_valid(_fog_material_instance):
+		_fog_fade_tween.tween_property(_fog_material_instance, "shader_parameter/base_density", 0.0, duration)
+	var world := get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if is_instance_valid(world) and world.environment != null:
+		# Keep the fade local to this scene rather than changing a shared resource.
+		world.environment = world.environment.duplicate() as Environment
+		_fog_fade_tween.tween_property(world.environment, "fog_density", 0.0, duration)
+		_fog_fade_tween.tween_property(world.environment, "volumetric_fog_density", 0.0, duration)
+	var distance_material := player.get_distance_fog_material()
+	if distance_material != null:
+		distance_material = distance_material.duplicate() as ShaderMaterial
+		player.distance_fog.material_override = distance_material
+		if distance_material.get_shader_parameter("fog_strength") == null:
+			distance_material.set_shader_parameter("fog_strength", 1.0)
+		_fog_fade_tween.tween_property(distance_material, "shader_parameter/fog_strength", 0.0, duration)
+	_fog_fade_tween.finished.connect(func() -> void:
+		_is_fog_active = false
+		if is_instance_valid(fog_volume):
+			fog_volume.hide()
+		if is_instance_valid(player):
+			player.set_distance_fog_enabled(false)
+		if is_instance_valid(world) and world.environment != null:
+			world.environment.fog_enabled = false
+			world.environment.volumetric_fog_enabled = false
+	)

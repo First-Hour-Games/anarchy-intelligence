@@ -5,6 +5,7 @@ render_mode cull_disabled, unshaded, depth_test_disabled, depth_draw_never;
 uniform sampler2D depth_texture : source_color, hint_depth_texture;
 uniform sampler2D screen_texture : source_color, hint_screen_texture, repeat_disable, filter_nearest;
 
+uniform float fog_strength : hint_range(0.0, 1.0) = 1.0;
 uniform bool enable_fog = true; 
 uniform vec3 fog_color : source_color = vec3(0.35, 0.38, 0.40);
 uniform vec3 noise_color : source_color = vec3(0.24, 0.26, 0.28);
@@ -132,5 +133,5 @@ void fragment() {
 		}
 	}
 	
-	ALBEDO = final_color;
+	ALBEDO = mix(screen_color, final_color, fog_strength);
 }

@@ -1,0 +1,16 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/gas_station_ridgeback_scare_smoke.gd:5)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/gas_station_ridgeback_scare_smoke.gd:7)
+[ProceduralGrassGenerator] Collected 0 exclusion AABBs (margin=1.5m)
+[ProceduralGrassGenerator] Done in 33 ms! Low grass: 3680, Tall grass: 700
+Picked up flashlight.
+PASS: Hidden Ridgeback waits for flashlight and turn, runs, and blacks out on contact
