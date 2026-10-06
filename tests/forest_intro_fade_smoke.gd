@@ -56,6 +56,11 @@ func run() -> void:
 	check(is_equal_approx(engine_loop.volume_db, -80.0), "EngineLoop starts at 0 volume (-80 dB)")
 	check(night_ambience.playing, "NightAmbience is playing")
 	check(engine_loop.playing, "EngineLoop is playing")
+	var suv_engine := forest.get_node("freelanderSUV/EngineLoop") as AudioStreamPlayer3D
+	check(suv_engine.playing and is_equal_approx(suv_engine.volume_db, -80.0), "SUV engine starts playing silently for intro fade")
+	check(suv_engine.stream.resource_path == "res://sounds/chapters/intro/suvEngineLoop.mp3", "SUV uses its own engine sound")
+	check(suv_engine.is_connected("finished", Callable(suv_engine, "play")), "SUV engine restarts on completion")
+	check(suv_engine.bus == engine_loop.bus and is_equal_approx(suv_engine.max_distance, engine_loop.max_distance), "SUV matches Crown spatial audio settings")
 
 	# Start the intro fade with compressed durations for testing
 	forest.initial_black_hold = 0.05
@@ -99,6 +104,7 @@ func run() -> void:
 
 	check(is_equal_approx(night_ambience.volume_db, -4.0), "NightAmbience faded in to target volume (-4.0 dB)")
 	check(is_equal_approx(engine_loop.volume_db, -10.0), "EngineLoop faded in to target volume (-10.0 dB)")
+	check(is_equal_approx(suv_engine.volume_db, -10.0), "SUV engine fades in to target volume")
 
 	var opening_balloon := forest.get_node_or_null("BottomDialogueBalloon") as BottomDialogueBalloon
 	check(is_instance_valid(opening_balloon), "Opening dialogue balloon exists")

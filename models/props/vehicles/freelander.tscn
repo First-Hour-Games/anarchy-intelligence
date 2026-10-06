@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://c0kghikugg0m5"]
+
+[ext_resource type="PackedScene" uid="uid://r503gcm3lk8y" path="res://models/props/vehicles/land_rover_freelander.glb" id="1_30s6r"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_30s6r"]
+size = Vector3(2.0926607, 1.7161045, 4.3031006)
+
+[node name="Sketchfab_Scene" unique_id=405479715 instance=ExtResource("1_30s6r")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sketchfab_model/freelander_fbx/RootNode/unnamed" parent_id_path=PackedInt32Array(1678162584) index="1" unique_id=951994342]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1162976, -0.12718843)
+shape = SubResource("BoxShape3D_30s6r")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Sketchfab_model/freelander_fbx" parent_id_path=PackedInt32Array(1086264611) index="1" unique_id=2115817545]
+
+[node name="CarLights" type="Node3D" parent="Sketchfab_model" parent_id_path=PackedInt32Array(1378816654) index="1" unique_id=484550694]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -8.940697e-08, -8.940697e-08, -4.371139e-08, 1, -3.9081024e-15, 1, 4.371139e-08, 0.036640167, -2.079035, -0.16709834)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Sketchfab_model/CarLights" index="0" unique_id=375413991]
+transform = Transform3D(0.9982014, -2.2164523e-16, 0.05995019, 2.220446e-16, 1, 0, -0.05995019, 0, 0.9982014, -0.6320735, 0.054607436, 1.5258789e-05)
+light_color = Color(0.94764113, 1, 0.9333369, 1)
+light_energy = 2.731
+light_volumetric_fog_energy = 1.089
+light_size = 0.067
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 40.466
+spot_attenuation = 0.59
+spot_angle = 26.61
+spot_angle_attenuation = 1.3660432
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Sketchfab_model/CarLights" index="1" unique_id=1062265646]
+transform = Transform3D(0.9926673, 8.816656e-16, -0.12087882, -8.881784e-16, 1, 0, 0.12087882, 0, 0.9926673, 0.6340323, 0.0548124, 0)
+light_color = Color(0.94764113, 1, 0.9333369, 1)
+light_energy = 2.731
+light_volumetric_fog_energy = 1.089
+light_size = 0.067
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 40.466
+spot_attenuation = 0.59
+spot_angle = 26.61
+spot_angle_attenuation = 1.3660432
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="Sketchfab_model/CarLights" index="2" unique_id=692134087]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.63189465, 0.049713656, 0)
+light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
+light_energy = 0.2
+light_volumetric_fog_energy = 4.094
+light_size = 0.56
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 52.132
+spot_angle = 70.0
+spot_angle_attenuation = 1.3660438
+
+[node name="SpotLight3D4" type="SpotLight3D" parent="Sketchfab_model/CarLights" index="3" unique_id=22812510]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6355751, 0.05459529, 0)
+light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
+light_energy = 0.2
+light_volumetric_fog_energy = 4.094
+light_size = 0.56
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 52.132
+spot_angle = 70.0
+spot_angle_attenuation = 1.3660438
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Sketchfab_model/CarLights" index="4" unique_id=2022233797]
+transform = Transform3D(1, 0, -1.6391283e-08, 0, 1, 0, 1.6391283e-08, 0, 1, 0.64898133, 0.06255585, -0.19935608)
+light_energy = 0.8
+light_volumetric_fog_energy = 9.0
+shadow_enabled = true
+omni_range = 3.0
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="Sketchfab_model/CarLights" index="5" unique_id=977125014]
+transform = Transform3D(1, 0, -1.6391283e-08, 0, 1, 0, 1.6391283e-08, 0, 1, -0.61367464, 0.051342726, -0.17526245)
+light_energy = 0.8
+light_volumetric_fog_energy = 9.0
+shadow_enabled = true
+omni_range = 3.0
+
+[node name="OmniLight3D5" type="OmniLight3D" parent="Sketchfab_model/CarLights" index="6" unique_id=829461143]
+transform = Transform3D(1, 0, 1.8775204e-08, 0, 1, 0, -1.8775204e-08, 0, 1, -0.7974887, 0.049407005, 0.07650757)
+light_energy = 0.544
+light_volumetric_fog_energy = 5.089
+shadow_enabled = true
+omni_range = 4.0
+omni_attenuation = 0.75
+
+[node name="OmniLight3D6" type="OmniLight3D" parent="Sketchfab_model/CarLights" index="7" unique_id=960145408]
+transform = Transform3D(1, 4.2351647e-22, 2.2530244e-08, -4.2351647e-22, 1, 0, -2.2530244e-08, 0, 1, 0.8583312, 0.04784604, 0.1491394)
+light_energy = 0.544
+light_volumetric_fog_energy = 5.089
+shadow_enabled = true
+omni_range = 4.0
+omni_attenuation = 0.75
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="Sketchfab_model/CarLights" index="8" unique_id=88373490]
+transform = Transform3D(1, 0, 1.5020163e-08, 0, 1, 0, -1.5020163e-08, 0, 1, 0.869515, 0.17753491, 4.243602)
+light_color = Color(0.8666667, 0, 0, 1)
+shadow_enabled = true
+omni_range = 66.767
+
+[node name="OmniLight3D4" type="OmniLight3D" parent="Sketchfab_model/CarLights" index="9" unique_id=233608563]
+transform = Transform3D(1, 0, 1.5020163e-08, 0, 1, 0, -1.5020163e-08, 0, 1, -0.798, 0.178, 4.363)
+light_color = Color(0.8666667, 0, 0, 1)
+shadow_enabled = true
+omni_range = 66.767

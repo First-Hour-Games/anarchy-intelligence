@@ -33,7 +33,7 @@
 [ext_resource type="PackedScene" path="res://scenes/interaction/interactable_block.tscn" id="27_interactable_block"]
 [ext_resource type="Texture2D" uid="uid://cff32daeek7vw" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Color.jpg" id="28_16o3n"]
 [ext_resource type="AudioStream" uid="uid://bkbqlv0ggdx5c" path="res://sounds/chapters/intro/engineLoop.ogg" id="28_engine_loop"]
-[ext_resource type="PackedScene" uid="uid://dsimae7dfet0v" path="res://models/props/toyota_crown_model.tscn" id="29_jfmiu"]
+[ext_resource type="PackedScene" uid="uid://dsimae7dfet0v" path="res://models/props/vehicles/toyota_crown_model.tscn" id="29_jfmiu"]
 [ext_resource type="Texture2D" uid="uid://8dh7hdnj5fj7" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Roughness.png" id="29_tf0i6"]
 [ext_resource type="Script" uid="uid://b7bcmthg0id31" path="res://scenes/interaction/inspection_view.gd" id="30_inspect_view"]
 [ext_resource type="Texture2D" uid="uid://u5k0wra73hcl" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_NormalGL.jpg" id="30_y0hyv"]
@@ -68,6 +68,7 @@
 [ext_resource type="PackedScene" uid="uid://hbhjrr0rvs1e" path="res://models/map/factory/Silo2.glb" id="66_deoyv"]
 [ext_resource type="PackedScene" uid="uid://mvwvx8udtema" path="res://models/map/factory/gantryTankStation.glb" id="67_2717q"]
 [ext_resource type="PackedScene" uid="uid://h6rqfheq1j7o" path="res://models/map/factory/ps1_style_factory_building.glb" id="68_deoyv"]
+[ext_resource type="PackedScene" uid="uid://c0kghikugg0m5" path="res://models/props/vehicles/freelander.tscn" id="70_r0ysj"]
 [ext_resource type="Script" uid="uid://dy41panpgh1vy" path="res://scenes/environment/silo_ambience.gd" id="70_silo_ambience"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
@@ -93,7 +94,7 @@ background_color = Color(0.096204735, 0.09620475, 0.096204735, 1)
 background_energy_multiplier = 0.6
 sky = SubResource("Sky_bernf")
 ambient_light_source = 2
-ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_color = Color(0.035346244, 0.035346244, 0.03534624, 1)
 ssao_radius = 7.15
 ssao_intensity = 6.78
 ssao_detail = 0.7
@@ -820,6 +821,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.23, 0.32)
 
 [node name="dead_tree_rt_155" parent="." unique_id=1490817319 instance=ExtResource("14_bernf")]
 transform = Transform3D(1.2056148, 0, 0, 0, 1.2707283, 0, 0, 0, 1.1674359, -106.97684, -0.0060327053, -2.0260053)
+
+[node name="dead_tree_rt_157" parent="." unique_id=625325316 instance=ExtResource("14_bernf")]
+transform = Transform3D(1.4, 0, 0, 0, 1.476, 0, 0, 0, 1.354, 138.80826, -0.006033182, 18.205315)
+
+[node name="dead_tree_rt_158" parent="." unique_id=1584572786 instance=ExtResource("14_bernf")]
+transform = Transform3D(0.4983099, 0, -1.1553993, 0, 1.4355863, 0, 1.2464172, 0, 0.46192154, 160.67424, -0.006033182, 20.088615)
 
 [node name="tree_rt_4" type="MeshInstance3D" parent="." unique_id=296439327]
 transform = Transform3D(1.0583315, 0, 0, 0, 0, -1.1154904, 0, 1.0248166, 0, -262.28882, -10.170757, -1.5172061)
@@ -1758,6 +1765,9 @@ transform = Transform3D(0.35052794, 0, 0, 0, 1, 0, 0, 0, 0.8926983, 9.3738, -3.5
 
 [node name="Sketchfab_Scene2" parent="SiloTreeExclusionZone" unique_id=301900032 instance=ExtResource("68_deoyv")]
 transform = Transform3D(0.15413381, 0, -0.005510899, 0, 0.44, 0, 0.014034744, 0, 0.39253643, 0.9027357, -3.5447009, 9.202557)
+
+[node name="freelanderSUV" parent="." unique_id=405479715 instance=ExtResource("70_r0ysj")]
+transform = Transform3D(1.0786142, 0.0020645275, -0.72566324, 0.027698547, 1.2989302, 0.04486616, 0.72513735, -0.052687, 1.0776826, 154.94852, 1.4120878, 40.87145)
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]

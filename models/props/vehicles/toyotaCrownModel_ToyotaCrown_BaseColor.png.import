@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp2salj154th1"
-path.s3tc="res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-31e7beec278e4f502edcccb3489f4c90.s3tc.ctex"
-path.etc2="res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-31e7beec278e4f502edcccb3489f4c90.etc2.ctex"
+path.s3tc="res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-4dac2f7143022e5ef231b1a58046968b.s3tc.ctex"
+path.etc2="res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-4dac2f7143022e5ef231b1a58046968b.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -15,8 +15,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://models/props/toyotaCrownModel_ToyotaCrown_BaseColor.png"
-dest_files=["res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-31e7beec278e4f502edcccb3489f4c90.s3tc.ctex", "res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-31e7beec278e4f502edcccb3489f4c90.etc2.ctex"]
+source_file="res://models/props/vehicles/toyotaCrownModel_ToyotaCrown_BaseColor.png"
+dest_files=["res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-4dac2f7143022e5ef231b1a58046968b.s3tc.ctex", "res://.godot/imported/toyotaCrownModel_ToyotaCrown_BaseColor.png-4dac2f7143022e5ef231b1a58046968b.etc2.ctex"]
 
 [params]
 

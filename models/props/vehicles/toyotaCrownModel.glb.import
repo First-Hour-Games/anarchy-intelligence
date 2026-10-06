@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://6sxak2q2kuna"
-path="res://.godot/imported/toyotaCrownModel.glb-da9a7b46fdc24d69ca42612d7979a1d4.scn"
+path="res://.godot/imported/toyotaCrownModel.glb-ca1945c3c1b142727c98b94a26a05b9b.scn"
 
 [deps]
 
-source_file="res://models/props/toyotaCrownModel.glb"
-dest_files=["res://.godot/imported/toyotaCrownModel.glb-da9a7b46fdc24d69ca42612d7979a1d4.scn"]
+source_file="res://models/props/vehicles/toyotaCrownModel.glb"
+dest_files=["res://.godot/imported/toyotaCrownModel.glb-ca1945c3c1b142727c98b94a26a05b9b.scn"]
 
 [params]
 

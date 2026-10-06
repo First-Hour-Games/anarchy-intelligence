@@ -14,7 +14,7 @@
 [ext_resource type="FontFile" uid="uid://20wc1uekvtjp" path="res://fonts/Kuigaf.ttf" id="12_81mmf"]
 [ext_resource type="Script" uid="uid://c0y8ypnbgqljc" path="res://scenes/environment/neon_sign.gd" id="13_neon_sign"]
 [ext_resource type="AudioStream" uid="uid://ctjwh7sy2vij3" path="res://sounds/chapters/intro/lightBuzzing.mp3" id="14_neon_loop"]
-[ext_resource type="PackedScene" uid="uid://b5nuohx6bhoun" path="res://models/map/gasStation/stationV2.glb" id="15_xsro1"]
+[ext_resource type="PackedScene" uid="uid://cdnhelekhv5ft" path="res://models/buildings/gasStation/station_v_2.tscn" id="15_xsro1"]
 
 [sub_resource type="Shader" id="Shader_hgjb4"]
 code = "shader_type spatial;
@@ -161,6 +161,12 @@ size = Vector3(4.884033, 0.08703613, 0.061523438)
 
 [sub_resource type="BoxMesh" id="BoxMesh_bw8ut"]
 size = Vector3(0.9206543, 0.08703613, 0.061523438)
+
+[sub_resource type="TextMesh" id="TextMesh_xsro1"]
+text = "THIRD WARD GAS
+"
+font = ExtResource("12_81mmf")
+font_size = 120
 
 [node name="Node3D" type="Node3D" unique_id=382333741]
 
@@ -337,5 +343,27 @@ light_size = 0.417
 omni_range = 8.729
 omni_attenuation = -0.455
 
-[node name="stationV2" parent="." unique_id=85918364 instance=ExtResource("15_xsro1")]
-transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.05, 0.015458405, -0.008692715, 2.169516)
+[node name="stationV3" parent="." unique_id=85918364 instance=ExtResource("15_xsro1")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 3)
+
+[node name="PumpSign3" type="MeshInstance3D" parent="stationV3" unique_id=541698722]
+transform = Transform3D(0.83333325, 0, 0, 0, 0.83333325, 0, 0, 0, 0.83333325, -0.063599, 5.478143, -7.0048757)
+material_override = SubResource("StandardMaterial3D_pump_sign_glow")
+cast_shadow = 0
+mesh = SubResource("TextMesh_xsro1")
+script = ExtResource("13_neon_sign")
+
+[node name="NeonAmbience" type="AudioStreamPlayer3D" parent="stationV3/PumpSign3" unique_id=1807122775]
+stream = ExtResource("14_neon_loop")
+volume_db = -18.0
+unit_size = 4.0
+max_distance = 24.0
+
+[node name="OmniLight3D" type="OmniLight3D" parent="stationV3/PumpSign3" unique_id=74269302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2863903)
+light_color = Color(0.9745385, 0.4699847, 0.4469819, 1)
+light_volumetric_fog_energy = 2.455
+light_size = 0.417
+shadow_enabled = true
+omni_range = 13.523
+omni_attenuation = -0.455

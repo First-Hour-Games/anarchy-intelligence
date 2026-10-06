@@ -35,6 +35,7 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export var initial_audio_players: Array[NodePath] = [
 	NodePath("NightAmbience"),
 	NodePath("toyotaCrownModel2/EngineLoop"),
+	NodePath("freelanderSUV/EngineLoop"),
 ]
 
 @export_category("Log Climb Music Transition")

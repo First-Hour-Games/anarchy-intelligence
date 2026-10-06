@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://dsimae7dfet0v"]
 
-[ext_resource type="Texture2D" uid="uid://bp2salj154th1" path="res://models/props/toyotaCrownModel_ToyotaCrown_BaseColor.png" id="1_06gcp"]
+[ext_resource type="Texture2D" uid="uid://bp2salj154th1" path="res://models/props/vehicles/toyotaCrownModel_ToyotaCrown_BaseColor.png" id="1_06gcp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oqji8"]
 resource_name = "ToyotaCrown"

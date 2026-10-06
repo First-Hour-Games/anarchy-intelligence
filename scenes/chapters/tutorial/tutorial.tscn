@@ -1,7 +1,5 @@
 [gd_scene format=4 uid="uid://bq1e0ov2k1wwv"]
 
-[ext_resource type="Script" path="res://scenes/chapters/tutorial/dream_floating.gd" id="52_dream_floating"]
-
 [ext_resource type="Texture2D" uid="uid://cahroxrn47r4l" path="res://img/materials/woodFloor/wood_floor_worn_diff_1k.jpg" id="1_77hjh"]
 [ext_resource type="Texture2D" uid="uid://peat2bav8s47" path="res://img/materials/tutorial/floralwallpaper/albedo.jpg" id="2_7opay"]
 [ext_resource type="Texture2D" uid="uid://qw1ka6cipomn" path="res://img/materials/woodFloor/wood_floor_worn_disp_1k.jpg" id="2_sr10g"]
@@ -52,8 +50,9 @@
 [ext_resource type="PackedScene" uid="uid://bjs36b63l68mc" path="res://models/tutorial/grandfather_clock.glb" id="47_3uwsk"]
 [ext_resource type="Texture2D" uid="uid://1ffpf3hfvcvl" path="res://models/tutorial/hourglass_0.png" id="48_a40ct"]
 [ext_resource type="PackedScene" uid="uid://cgx4jovdi02b0" path="res://models/tutorial/coffin.glb" id="49_sgdgq"]
-[ext_resource type="PackedScene" uid="uid://dsimae7dfet0v" path="res://models/props/toyota_crown_model.tscn" id="50_stvp6"]
+[ext_resource type="PackedScene" uid="uid://dsimae7dfet0v" path="res://models/props/vehicles/toyota_crown_model.tscn" id="50_stvp6"]
 [ext_resource type="AudioStream" uid="uid://bkbqlv0ggdx5c" path="res://sounds/chapters/intro/engineLoop.ogg" id="51_6fpwm"]
+[ext_resource type="Script" uid="uid://cdf632wiagchb" path="res://scenes/chapters/tutorial/dream_floating.gd" id="52_dream_floating"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6xd7"]
 albedo_texture = ExtResource("9_nbcrf")
@@ -345,11 +344,11 @@ shadow_mesh = SubResource("ArrayMesh_1m5m1")
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_sgdgq"]
 data = PackedVector3Array(0, 0, -2.1667, 0.1951, 0.59999996, -2.1475, 0, 0.59999996, -2.1667, 0, 0, -2.1667, 0.1951, 0, -2.1475, 0.1951, 0.59999996, -2.1475, 0.1951, 0, -2.1475, 0.3827, 0.59999996, -2.0906, 0.1951, 0.59999996, -2.1475, 0.1951, 0, -2.1475, 0.3827, 0, -2.0906, 0.3827, 0.59999996, -2.0906, 0.3827, 0.59999996, -2.0906, 0, 0.59999996, -2.1667, 0.1951, 0.59999996, -2.1475, 0.3827, 0, -2.0906, 0.5556, 0.59999996, -1.9981999, 0.3827, 0.59999996, -2.0906, 0.5556, 0.59999996, -1.9981999, 0, 0.59999996, -2.1667, 0.3827, 0.59999996, -2.0906, 0.3827, 0, -2.0906, 0.5556, 0, -1.9981999, 0.5556, 0.59999996, -1.9981999, 0.5556, 0, -1.9981999, 0.7071, 0.59999996, -1.8737999, 0.5556, 0.59999996, -1.9981999, 0.5556, 0, -1.9981999, 0.7071, 0, -1.8737999, 0.7071, 0.59999996, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0.5556, 0.59999996, -1.9981999, 0.7071, 0.59999996, -1.8737999, 0.7071, 0, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0.7071, 0.59999996, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0, 0.59999996, -2.1667, 0.5556, 0.59999996, -1.9981999, 0.7071, 0, -1.8737999, 0.8314, 0, -1.7222999, 0.8314, 0.59999996, -1.7222999, 0.8314, 0, -1.7222999, 0.92389995, 0.59999996, -1.5494, 0.8314, 0.59999996, -1.7222999, 0.8314, 0, -1.7222999, 0.92389995, 0, -1.5494, 0.92389995, 0.59999996, -1.5494, 0.92389995, 0, -1.5494, 0.9808, 0.59999996, -1.3618, 0.92389995, 0.59999996, -1.5494, 0.9808, 0.59999996, -1.3618, 0.8314, 0.59999996, -1.7222999, 0.92389995, 0.59999996, -1.5494, 0.92389995, 0, -1.5494, 0.9808, 0, -1.3618, 0.9808, 0.59999996, -1.3618, 0.9808, 0, -1.3618, 1, 0.59999996, 0, 0.9808, 0.59999996, -1.3618, 0.9808, 0, -1.3618, 1, 0, 0, 1, 0.59999996, 0, -1, 0.59999996, 0, 0.8314, 0.59999996, -1.7222999, 0.9808, 0.59999996, -1.3618, -1, 0.59999996, 0, 0.9808, 0.59999996, -1.3618, 1, 0.59999996, 0, 1, 0, 0, -1, 0.59999996, 0, 1, 0.59999996, 0, 0, 0.59999996, -2.1667, 0.8314, 0.59999996, -1.7222999, -1, 0.59999996, 0, 1, 0, 0, -1, 0, 0, -1, 0.59999996, 0, -1, 0, 0, -0.9808, 0.59999996, -1.3618, -1, 0.59999996, 0, -1, 0, 0, -0.9808, 0, -1.3618, -0.9808, 0.59999996, -1.3618, -0.9808, 0, -1.3618, -0.92389995, 0.59999996, -1.5494, -0.9808, 0.59999996, -1.3618, -0.92389995, 0.59999996, -1.5494, -1, 0.59999996, 0, -0.9808, 0.59999996, -1.3618, -0.9808, 0, -1.3618, -0.92389995, 0, -1.5494, -0.92389995, 0.59999996, -1.5494, -0.92389995, 0, -1.5494, -0.8315, 0.59999996, -1.7222999, -0.92389995, 0.59999996, -1.5494, -0.92389995, 0, -1.5494, -0.8315, 0, -1.7222999, -0.8315, 0.59999996, -1.7222999, -0.7071, 0.59999996, -1.8737999, -1, 0.59999996, 0, -0.92389995, 0.59999996, -1.5494, -0.7071, 0.59999996, -1.8737999, -0.92389995, 0.59999996, -1.5494, -0.8315, 0.59999996, -1.7222999, -0.8315, 0, -1.7222999, -0.7071, 0.59999996, -1.8737999, -0.8315, 0.59999996, -1.7222999, 0, 0.59999996, -2.1667, -1, 0.59999996, 0, -0.7071, 0.59999996, -1.8737999, -0.8315, 0, -1.7222999, -0.7071, 0, -1.8737999, -0.7071, 0.59999996, -1.8737999, -0.7071, 0, -1.8737999, -0.5556, 0.59999996, -1.9981999, -0.7071, 0.59999996, -1.8737999, -0.7071, 0, -1.8737999, -0.5556, 0, -1.9981999, -0.5556, 0.59999996, -1.9981999, -0.3827, 0.59999996, -2.0906, -0.7071, 0.59999996, -1.8737999, -0.5556, 0.59999996, -1.9981999, -0.5556, 0, -1.9981999, -0.3827, 0.59999996, -2.0906, -0.5556, 0.59999996, -1.9981999, 0, 0.59999996, -2.1667, -0.7071, 0.59999996, -1.8737999, -0.3827, 0.59999996, -2.0906, -0.5556, 0, -1.9981999, -0.3827, 0, -2.0906, -0.3827, 0.59999996, -2.0906, -0.3827, 0, -2.0906, -0.1951, 0.59999996, -2.1475, -0.3827, 0.59999996, -2.0906, 0, 0.59999996, -2.1667, -0.3827, 0.59999996, -2.0906, -0.1951, 0.59999996, -2.1475, -0.3827, 0, -2.0906, -0.1951, 0, -2.1475, -0.1951, 0.59999996, -2.1475, -0.1951, 0, -2.1475, 0, 0.59999996, -2.1667, -0.1951, 0.59999996, -2.1475, -0.1951, 0, -2.1475, 0, 0, -2.1667, 0, 0.59999996, -2.1667)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_orua6"]
-size = Vector3(2.1000001, 4.7000003, 1.3505859)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_ledge_sides"]
 size = Vector3(0.15, 4.7000003, 1.3505859)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_orua6"]
+size = Vector3(2.1000001, 4.7000003, 1.3505859)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_o88mx"]
 size = Vector3(3, 3, 0.62109375)
@@ -659,9 +658,9 @@ transform = Transform3D(1, -3.7252903e-08, 0, -1.4901161e-08, 0.99999976, 0, 0, 
 shape = SubResource("BoxShape3D_jpyye")
 
 [node name="Player" parent="." unique_id=1902877193 instance=ExtResource("5_player")]
-inventory_enabled = false
 transform = Transform3D(0.79614544, 0, 0.6051053, 0, 1, 0, -0.6051053, 0, 0.79614544, 2.376462, -0.49136588, 2.7018838)
 visible = false
+inventory_enabled = false
 walk_speed = 1.3
 sprint_speed = 2.6
 sprint_enabled = false
@@ -1141,16 +1140,16 @@ transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -1.7052734, 5.9673514, 
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -1.7052734, 7.8231354, -66.68557)
 
 [node name="Sketchfab_Scene" parent="." unique_id=319737725 instance=ExtResource("47_3uwsk")]
-script = ExtResource("52_dream_floating")
 transform = Transform3D(1.2664846, -0.12727045, -0.44979873, 0.10572222, 1.3433281, -0.08241553, 0.45534548, 0.04209206, 1.2701925, 1.1823075, -1.1920929e-07, -52.4455)
+script = ExtResource("52_dream_floating")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Sketchfab_Scene" unique_id=51081378]
 transform = Transform3D(0.7407408, -2.4214387e-08, -1.1920929e-07, 3.259629e-08, 0.7407408, 1.3038516e-08, 1.1920929e-07, -2.2351742e-08, 0.7407407, 0.12154961, 1.6406816, 0.572979)
 shadow_enabled = true
 
 [node name="hourglass" type="Node3D" parent="." unique_id=188943970]
-script = ExtResource("52_dream_floating")
 transform = Transform3D(6.873301, 1.881225, 1.9572487, -2.0981183, 0.3001084, 7.079543, 1.72271, -7.1402392, 0.8132298, -5.0556397, 1.2454832, -54.158596)
+script = ExtResource("52_dream_floating")
 
 [node name="hourglass_glass_0" type="MeshInstance3D" parent="hourglass" unique_id=1299093101]
 mesh = SubResource("ArrayMesh_r102g")
@@ -1159,12 +1158,12 @@ mesh = SubResource("ArrayMesh_r102g")
 mesh = SubResource("ArrayMesh_6fpwm")
 
 [node name="Sketchfab_Scene2" parent="." unique_id=1794794232 instance=ExtResource("49_sgdgq")]
-script = ExtResource("52_dream_floating")
 transform = Transform3D(0.20584704, -0.20955981, 0.06092298, 0.10090768, 0.017137151, -0.28199983, 0.19350608, 0.21398811, 0.082246155, 2.8439362, 6.1215553, -62.90628)
+script = ExtResource("52_dream_floating")
 
 [node name="toyotaCrownModel2" parent="." unique_id=274795217 instance=ExtResource("50_stvp6")]
-script = ExtResource("52_dream_floating")
 transform = Transform3D(1.0442559, -0.23450536, 0.75540507, 0.40146533, 1.2351091, -0.1715544, -0.681509, 0.36825618, 1.0564243, -7.7080097, 4.9310865, -61.99579)
+script = ExtResource("52_dream_floating")
 
 [node name="CarLights" type="Node3D" parent="toyotaCrownModel2" unique_id=1474634385]
 unique_name_in_owner = true
