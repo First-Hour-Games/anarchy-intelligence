@@ -14,7 +14,7 @@
 [ext_resource type="FontFile" uid="uid://20wc1uekvtjp" path="res://fonts/Kuigaf.ttf" id="12_81mmf"]
 [ext_resource type="Script" uid="uid://c0y8ypnbgqljc" path="res://scenes/environment/neon_sign.gd" id="13_neon_sign"]
 [ext_resource type="AudioStream" uid="uid://ctjwh7sy2vij3" path="res://sounds/chapters/intro/lightBuzzing.mp3" id="14_neon_loop"]
-[ext_resource type="PackedScene" uid="uid://ccqvcvl0tdc5f" path="res://models/map/stationV1.glb" id="15_xsro1"]
+[ext_resource type="PackedScene" uid="uid://b5nuohx6bhoun" path="res://models/map/gasStation/stationV2.glb" id="15_xsro1"]
 
 [sub_resource type="Shader" id="Shader_hgjb4"]
 code = "shader_type spatial;
@@ -337,5 +337,5 @@ light_size = 0.417
 omni_range = 8.729
 omni_attenuation = -0.455
 
-[node name="stationV1" parent="." unique_id=1867552226 instance=ExtResource("15_xsro1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05566311, -0.055869937, 2.3251057)
+[node name="stationV2" parent="." unique_id=85918364 instance=ExtResource("15_xsro1")]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.05, 0.015458405, -0.008692715, 2.169516)
