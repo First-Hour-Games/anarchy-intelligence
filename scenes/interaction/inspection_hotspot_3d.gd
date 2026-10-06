@@ -20,6 +20,7 @@ signal activated()
 @export_category("Item Pickup")
 @export var pickup_item_id: StringName = &""
 @export var is_pickup: bool = false
+@export var pickup_visual_paths: Array[NodePath] = []
 
 @export_category("Dot Visuals")
 @export var dot_color: Color = Color(1.0, 1.0, 1.0, 0.95)
@@ -28,6 +29,13 @@ signal activated()
 @export var glow_radius: float = 16.0
 
 var has_triggered: bool = false
+
+
+func hide_pickup_visuals() -> void:
+	for path in pickup_visual_paths:
+		var visual := get_node_or_null(path) as Node3D
+		if is_instance_valid(visual):
+			visual.hide()
 
 
 func _ready() -> void:

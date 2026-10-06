@@ -2,14 +2,53 @@
 
 [ext_resource type="PackedScene" uid="uid://b5nuohx6bhoun" path="res://models/map/gasStation/stationV2.glb" id="1_g3csy"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g3csy"]
+albedo_color = Color(0.91436976, 0.5338127, 0.33531374, 1)
+metallic = 0.6
+metallic_specular = 0.1
+roughness = 0.55
+
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_g3csy"]
 data = PackedVector3Array(7, -2, 4.5, 7, -2, -4.5, 7, 2, -4.5, 7, -2, 4.5, 7, 2, -4.5, 7, 2, 4.5, 7, -2, -4.5, -7, -2, -4.5, -7, 2, -4.5, 7, -2, -4.5, -7, 2, -4.5, 7, 2, -4.5, -7, -2, -4.5, -7, -2, 4.5, -7, 2, 4.5, -7, -2, -4.5, -7, 2, 4.5, -7, 2, -4.5, 7, 2, 4.5, 6.8999996, -2, 4.5, 7, -2, 4.5, 7, 2, 4.5, 6.8999996, 2, 4.5, 6.8999996, -2, 4.5, 7, -2, 4.5, 6.8999996, -2, -4.5, 7, -2, -4.5, 7, -2, 4.5, 6.8999996, -2, 4.5, 6.8999996, -2, -4.5, 7, 2, -4.5, 6.8999996, 2, 4.5, 7, 2, 4.5, 7, 2, -4.5, 6.8999996, 2, -4.5, 6.8999996, 2, 4.5, 7, -2, -4.5, 6.8999996, 2, -4.5, 7, 2, -4.5, 7, -2, -4.5, 6.8999996, -2, -4.5, 6.8999996, 2, -4.5, -7, -2, -4.5, -6.8812, -2, 4.5, -7, -2, 4.5, -7, -2, -4.5, -6.8812, -2, -4.5, -6.8812, -2, 4.5, -7, 2, 4.5, -6.8812, 2, -4.5, -7, 2, -4.5, -7, 2, 4.5, -6.8812, 2, 4.5, -6.8812, 2, -4.5, -7, -2, 4.5, -6.8812, 2, 4.5, -7, 2, 4.5, -7, -2, 4.5, -6.8812, -2, 4.5, -6.8812, 2, 4.5, -7, 2, -4.5, -6.8812, -2, -4.5, -7, -2, -4.5, -7, 2, -4.5, -6.8812, 2, -4.5, -6.8812, -2, -4.5, -7, 2, -4.5, 7, 2, -4.4332, 7, 2, -4.5, -7, 2, -4.5, -7, 2, -4.4332, 7, 2, -4.4332, -7, -2, -4.5, -7, 2, -4.4332, -7, 2, -4.5, -7, -2, -4.5, -7, -2, -4.4332, -7, 2, -4.4332, 7, 2, -4.5, 7, -2, -4.4332, 7, -2, -4.5, 7, 2, -4.5, 7, 2, -4.4332, 7, -2, -4.4332, 7, -2, -4.5, -7, -2, -4.4332, -7, -2, -4.5, 7, -2, -4.5, 7, -2, -4.4332, -7, -2, -4.4332, 6.8998, -2, 4.5, 6.8998, 2, -4.5, 6.8998, -2, -4.5, 6.8998, -2, 4.5, 6.8998, 2, 4.5, 6.8998, 2, -4.5, -6.8812, -2, -4.5, -6.8812, 2, 4.5, -6.8812, -2, 4.5, -6.8812, -2, -4.5, -6.8812, 2, -4.5, -6.8812, 2, 4.5, 7, -2, -4.4333, -7, 2, -4.4333, -7, -2, -4.4333, 7, -2, -4.4333, 7, 2, -4.4333, -7, 2, -4.4333, -7, 2, 4.5, 7, 2, -4.5, 7, 2, 4.5, -7, 2, 4.5, -7, 2, -4.5, 7, 2, -4.5)
 
 [node name="stationV2" unique_id=85918364 instance=ExtResource("1_g3csy")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 
+[node name="LotBollard0" parent="." index="0" unique_id=816854850]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard0_Cap" parent="." index="1" unique_id=52955898]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard1" parent="." index="2" unique_id=548768168]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard1_Cap" parent="." index="3" unique_id=1691383271]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard2" parent="." index="4" unique_id=2030426240]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard2_Cap" parent="." index="5" unique_id=2130120068]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard3" parent="." index="6" unique_id=1554112021]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
+[node name="LotBollard3_Cap" parent="." index="7" unique_id=1115400422]
+material_override = SubResource("StandardMaterial3D_g3csy")
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Store_Body" parent_id_path=PackedInt32Array(820841643) index="0" unique_id=1096793300]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Store_Body/StaticBody3D" index="0" unique_id=1521879169]
 transform = Transform3D(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 shape = SubResource("ConcavePolygonShape3D_g3csy")
+
+[node name="Store_SideTrim" parent="." index="20" unique_id=526110120]
+visible = false
+
+[node name="Store_SideWindow1" parent="." index="21" unique_id=656350463]
+visible = false
+
+[node name="Store_SideWindow-1" parent="." index="22" unique_id=1513120713]
+visible = false

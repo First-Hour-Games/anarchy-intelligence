@@ -760,6 +760,7 @@ dialogue_resource = ExtResource("18_forest_dialogue")
 dialogue_cue = "visitor_center_map_interact"
 pickup_item_id = &"map"
 is_pickup = true
+pickup_visual_paths = Array[NodePath]([NodePath("../../../../welcomeCenterTextured2/mapStand_V3/Blank brochure sheet 3"), NodePath("../../../../welcomeCenterTextured2/mapStand_V3/TownMapBoard/BrochureMap3")])
 
 [node name="CameraAnchor" type="Marker3D" parent="Interactables/MapInspect/InspectableView" unique_id=1849204822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.59999996, 0.05, 3.363227)

@@ -481,6 +481,7 @@ func _on_hotspot_clicked(hotspot: InspectionHotspot3D) -> void:
 func _trigger_hotspot_pickup(hotspot: InspectionHotspot3D, item_id: StringName) -> void:
 	if is_instance_valid(current_player) and is_instance_valid(current_player.inventory):
 		current_player.inventory.add_item(item_id)
+		hotspot.hide_pickup_visuals()
 
 	if hotspot.trigger_once:
 		hotspot.has_triggered = true
@@ -577,4 +578,3 @@ func _play_hotspot_dialogue(hotspot: InspectionHotspot3D) -> void:
 
 	if balloon.has_method("start"):
 		balloon.call("start", res_to_play, cue_to_play)
-
