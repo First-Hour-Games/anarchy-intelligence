@@ -4,15 +4,15 @@
 
 [resource]
 shader = ExtResource("1_shader")
-shader_parameter/base_density = 0.1870000088825
+shader_parameter/base_density = 0.126000005985
 shader_parameter/base_color = Color(0.8, 0.85, 0.9, 1)
-shader_parameter/emission_color = Color(0.42909607, 0.45107317, 0.37462217, 1)
+shader_parameter/emission_color = Color(0.40395692, 0.4925447, 0.44325408, 1)
 shader_parameter/enable_height_fade = true
-shader_parameter/fade_out_height = 1.3
-shader_parameter/fade_out_distance = 1.5
+shader_parameter/fade_out_height = 0.805
+shader_parameter/fade_out_distance = 1.34
 shader_parameter/noise_world_scale = Vector3(0.1, 0.5, 0.1)
 shader_parameter/noise_amounts = Vector3(0.4, 0.35, 0.25)
-shader_parameter/noise_scales = Vector3(1, 2, 2)
+shader_parameter/noise_scales = Vector3(1, 2, 4)
 shader_parameter/noise_velocity1 = Vector3(0.5, 0, 0)
-shader_parameter/noise_velocity2 = Vector3(0.7, 0, -1)
+shader_parameter/noise_velocity2 = Vector3(1, 0, -1)
 shader_parameter/noise_velocity3 = Vector3(0, 0.6, 0.3)

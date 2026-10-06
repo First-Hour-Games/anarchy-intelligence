@@ -20,6 +20,7 @@ var current_footstep_surface: StringName = &"dirt"
 @export_category("Movement")
 @export var walk_speed: float = 3.2
 @export var sprint_speed: float = 4.8
+@export var sprint_enabled: bool = true
 @export var ground_acceleration: float = 13.0
 @export var ground_deceleration: float = 17.0
 @export var air_acceleration: float = 3.0
@@ -32,12 +33,14 @@ var current_footstep_surface: StringName = &"dirt"
 @export_range(0.0, 100.0, 1.0) var exhausted_recovery_stamina: float = 20.0
 
 @export_category("Jump")
+@export var jump_enabled: bool = false
 @export var jump_velocity: float = 3.4
 
 @export_category("Stair Stepping")
 @export var max_step_height: float = 0.3
 
 @export_category("Crouch")
+@export var crouch_enabled: bool = false
 @export_range(0.3, 0.9, 0.01) var crouch_height_scale: float = 0.55
 @export_range(0.2, 1.0, 0.05) var crouch_speed_multiplier: float = 0.5
 @export var crouch_transition_speed: float = 10.0
@@ -305,7 +308,7 @@ func _physics_process(delta: float) -> void:
 
 	if is_on_floor():
 		velocity.y = 0.0
-		if Input.is_key_pressed(KEY_SPACE) and not is_crouching:
+		if jump_enabled and Input.is_key_pressed(KEY_SPACE) and not is_crouching:
 			velocity.y = jump_velocity
 	else:
 		velocity.y -= gravity * delta
@@ -313,7 +316,7 @@ func _physics_process(delta: float) -> void:
 	var input_vector: Vector2 = _get_movement_input()
 	var local_direction := Vector3(input_vector.x, 0.0, input_vector.y)
 	var world_direction := (global_transform.basis * local_direction).normalized()
-	var wants_to_sprint := Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
+	var wants_to_sprint := sprint_enabled and Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
 	_update_stamina(delta, wants_to_sprint)
 	var target_speed := sprint_speed if is_sprinting else walk_speed
 	if is_crouching:
@@ -356,8 +359,8 @@ func _update_stamina(delta: float, wants_to_sprint: bool) -> void:
 
 
 func _update_crouch(delta: float) -> void:
-	var wants_crouch := Input.is_key_pressed(KEY_CTRL)
-	if is_crouching and not wants_crouch and ceiling_check.is_colliding():
+	var wants_crouch := crouch_enabled and Input.is_key_pressed(KEY_CTRL)
+	if crouch_enabled and is_crouching and not wants_crouch and ceiling_check.is_colliding():
 		wants_crouch = true
 	is_crouching = wants_crouch
 

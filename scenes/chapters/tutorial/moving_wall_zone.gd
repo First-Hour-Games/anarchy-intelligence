@@ -2,7 +2,7 @@ class_name MovingWallZone
 extends Area3D
 
 ## Trigger zone that smoothly tweens MovingWall from its starting position (-46.033 Z)
-## to its target position (-82.144 Z) over 4-5 seconds when the player enters for the first time.
+## to its target position (-82.144 Z) over the drag sound's duration when the player enters for the first time.
 ## After movement completes, displays a run/sprint instruction until the player holds Shift to run,
 ## which hides itself after 2-3 seconds.
 
@@ -22,12 +22,21 @@ signal instruction_hidden(control: Control)
 @export var default_z: float = -46.033
 ## If true, ensures the wall starts at default_z when the scene loads.
 @export var reset_to_default_on_ready: bool = true
-## Duration of the tween in seconds (between 4 and 5 seconds).
+## Fallback tween duration in seconds when the drag sound has no valid length.
 @export_range(0.5, 20.0, 0.1) var duration: float = 4.5
 ## Tween transition type for smooth motion.
 @export var transition_type: Tween.TransitionType = Tween.TRANS_SINE
 ## Tween easing type.
 @export var ease_type: Tween.EaseType = Tween.EASE_IN_OUT
+
+@export_group("Wall Audio")
+@export var drag_sound: AudioStreamMP3 = preload("res://sounds/chapters/intro/doorDrag.mp3")
+@export var bang_sound: AudioStreamMP3 = preload("res://sounds/chapters/intro/doorBang.mp3")
+@export var wall_audio_bus: StringName = &"Reverb"
+@export_range(5.0, 100.0, 1.0) var wall_audio_max_distance: float = 55.0
+@export_range(1.0, 50.0, 1.0) var wall_audio_unit_size: float = 15.0
+@export_range(-30.0, 6.0, 0.5) var drag_volume_db: float = -4.0
+@export_range(-30.0, 6.0, 0.5) var bang_volume_db: float = 3.0
 
 @export_group("Trigger Settings")
 ## Whether this trigger should only activate once.
@@ -53,6 +62,38 @@ var _instruction_tween: Tween
 var _cached_player: Node = null
 var _is_showing_instruction: bool = false
 var _has_run: bool = false
+var _drag_audio: AudioStreamPlayer3D
+var _bang_audio: AudioStreamPlayer3D
+
+
+func _prepare_wall_audio() -> void:
+	if not is_instance_valid(_drag_audio):
+		_drag_audio = _create_wall_audio("WallDragAudio", drag_sound, drag_volume_db, true)
+	if not is_instance_valid(_bang_audio):
+		_bang_audio = _create_wall_audio("WallBangAudio", bang_sound, bang_volume_db, false)
+
+
+func _create_wall_audio(audio_name: String, sound: AudioStreamMP3, volume: float, looping: bool) -> AudioStreamPlayer3D:
+	var player := AudioStreamPlayer3D.new()
+	player.name = audio_name
+	if sound:
+		var local_stream := sound.duplicate() as AudioStreamMP3
+		local_stream.loop = looping
+		player.stream = local_stream
+	player.bus = wall_audio_bus
+	player.max_distance = wall_audio_max_distance
+	player.unit_size = wall_audio_unit_size
+	player.volume_db = volume
+	moving_wall.add_child(player)
+	player.position = Vector3(0.0, 1.0, 0.0)
+	return player
+
+
+func _stop_wall_audio() -> void:
+	if is_instance_valid(_drag_audio):
+		_drag_audio.stop()
+	if is_instance_valid(_bang_audio):
+		_bang_audio.stop()
 
 
 func _ready() -> void:
@@ -174,17 +215,37 @@ func trigger() -> void:
 	if _active_tween and _active_tween.is_valid():
 		_active_tween.kill()
 
+	_prepare_wall_audio()
+	_stop_wall_audio()
+	var move_duration := duration
+	if _drag_audio.stream and _drag_audio.stream.get_length() > 0.0:
+		move_duration = _drag_audio.stream.get_length()
+	_drag_audio.play()
+
 	_active_tween = create_tween()
 	_active_tween.set_trans(transition_type)
 	_active_tween.set_ease(ease_type)
-	_active_tween.tween_property(moving_wall, "position:z", target_z, duration)
+	_active_tween.tween_property(moving_wall, "position:z", target_z, move_duration)
 
-	wall_move_started.emit(moving_wall, target_z, duration)
+	wall_move_started.emit(moving_wall, target_z, move_duration)
 
 	_active_tween.finished.connect(func():
+		if is_instance_valid(_drag_audio):
+			_drag_audio.stop()
+		if is_instance_valid(_bang_audio):
+			_bang_audio.play()
+		_set_player_sprint_enabled(true)
 		wall_move_completed.emit(moving_wall, moving_wall.position.z)
 		_show_instruction()
 	)
+
+
+func _set_player_sprint_enabled(enabled: bool) -> void:
+	var player := get_node_or_null("../../Player") as FirstPersonPlayer
+	if is_instance_valid(player):
+		player.sprint_enabled = enabled
+		if not enabled:
+			player.is_sprinting = false
 
 
 func _show_instruction() -> void:
@@ -215,8 +276,8 @@ func _show_instruction() -> void:
 
 func _check_player_running() -> bool:
 	if is_instance_valid(_cached_player):
-		if "is_sprinting" in _cached_player and _cached_player.is_sprinting:
-			return true
+		if "is_sprinting" in _cached_player:
+			return _cached_player.is_sprinting
 	if Input.is_key_pressed(KEY_SHIFT):
 		return true
 	if InputMap.has_action("sprint") and Input.is_action_pressed("sprint"):
@@ -267,6 +328,8 @@ func is_instruction_showing() -> bool:
 
 
 func reset() -> void:
+	_set_player_sprint_enabled(false)
+	_stop_wall_audio()
 	if _active_tween and _active_tween.is_valid():
 		_active_tween.kill()
 	if _instruction_tween and _instruction_tween.is_valid():

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://b1sdcvrtbvaxi"]
+
+[ext_resource type="PackedScene" uid="uid://baal6bjfp627n" path="res://models/tutorial/stairs.glb" id="1_yjxi6"]
+[ext_resource type="Script" uid="uid://t7ppke702fq4" path="res://models/tutorial/stairs.gd" id="2_stairs_collision"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ojq3t"]
+points = PackedVector3Array(-0.79201764, -0.04243731, -0.15870531, 0.79512554, 0.3702083, -0.4444942, 0.7949702, -0.39164057, 1.0158731, -0.79201764, -0.10587966, 0.50793654, 0.7949702, -0.42336175, 0.6030006, -0.79201764, 0.40192947, -1.0158731, 0.79512554, 0.40192947, -1.0158731, -0.79201764, 0.46546194, -0.6030006, -0.728476, -0.45517305, 0.7619048, -0.79201764, -0.39164057, 1.0158731, 0.79512554, 0.46537182, -0.6030006, -0.79201764, -0.42336175, 0.6030006, 0.7949702, -0.3599194, 0.9840524, 0.7501698, 0.4393, -0.958324, 0.73142856, -0.45517305, 0.79352653, 0.7949702, -0.04243731, -0.15870531, -0.74691534, 0.4393, -0.9581364, 0.7949702, -0.10587966, 0.50793654, -0.79201764, -0.3599194, 0.9840524, 0.79512554, 0.40192947, -0.4761159, -0.76245725, -0.40739998, 0.978032, -0.79201764, 0.40192947, -0.4761159, -0.728476, -0.45517305, 0.79352653, 0.7654156, -0.40739998, 0.978032, 0.73142856, -0.45517305, 0.7619048, 0.7949702, -0.13769095, 0.03162173, -0.79201764, -0.13769095, 0.03162173)
+
+[node name="Sketchfab_Scene" unique_id=405406984 instance=ExtResource("1_yjxi6")]
+script = ExtResource("2_stairs_collision")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Sketchfab_model/Collada visual scene group/stairs_AH/defaultMaterial" parent_id_path=PackedInt32Array(898972187) index="0" unique_id=737117496]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sketchfab_model/Collada visual scene group/stairs_AH/defaultMaterial/StaticBody3D" index="0" unique_id=712733082]
+shape = SubResource("ConvexPolygonShape3D_ojq3t")

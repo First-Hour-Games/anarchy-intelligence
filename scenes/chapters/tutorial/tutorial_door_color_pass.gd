@@ -303,8 +303,17 @@ func _init_world_environment() -> void:
 	if is_instance_valid(_source_environment):
 		if _source_environment.environment == null:
 			_source_environment.environment = Environment.new()
-		_source_environment.environment.background_mode = Environment.BG_COLOR
+		else:
+			_source_environment.environment = _source_environment.environment.duplicate() as Environment
+		_source_environment.environment.background_mode = Environment.BG_SKY if _source_environment.environment.sky else Environment.BG_COLOR
 		_source_environment.environment.background_color = default_background_color
+		_source_environment.environment.background_energy_multiplier = 0.6
+		if _source_environment.environment.sky:
+			var fog_mesh := get_node_or_null("Player/Head/Camera3D/DistanceFog") as MeshInstance3D
+			if fog_mesh and fog_mesh.material_override is ShaderMaterial:
+				var fog_material := fog_mesh.material_override.duplicate() as ShaderMaterial
+				fog_material.set_shader_parameter("sky_horizon_blend", 0.0)
+				fog_mesh.material_override = fog_material
 
 
 func _make_color_environment() -> Environment:
@@ -339,6 +348,7 @@ func _sync_color_pass() -> void:
 		return
 
 	_door_camera.global_transform = _source_camera.global_transform
+	_door_camera.cull_mask = _source_camera.cull_mask
 	_door_camera.projection = _source_camera.projection
 	_door_camera.fov = _source_camera.fov
 	_door_camera.size = _source_camera.size

@@ -38,9 +38,17 @@ func run_test() -> void:
 	if is_instance_valid(world_env):
 		check(world_env.environment != null, "WorldEnvironment has environment resource assigned")
 		if world_env.environment != null:
-			check(world_env.environment.background_mode == Environment.BG_COLOR, "WorldEnvironment background_mode is BG_COLOR (Custom Color)")
+			check(world_env.environment.background_mode == Environment.BG_SKY, "WorldEnvironment uses the starfield sky")
+			check(world_env.environment.sky != null and world_env.environment.sky.sky_material is ShaderMaterial, "starfield sky has its shader material")
+			check(is_equal_approx(world_env.environment.background_energy_multiplier, 0.6), "runtime sky energy is 0.6")
+			check(is_zero_approx(world_env.environment.adjustment_saturation), "tutorial keeps its monochrome grade")
 			check(world_env.environment.background_color == Color("454545"), "WorldEnvironment background_color equals Color(\"454545\")")
 			check(world_env.environment.background_color.to_html(false).to_lower() == "454545", "WorldEnvironment background_color hex is 454545")
+
+	var fog := tutorial.get_node("Player/Head/Camera3D/DistanceFog") as MeshInstance3D
+	check(is_zero_approx(float((fog.material_override as ShaderMaterial).get_shader_parameter("sky_horizon_blend"))), "tutorial fog leaves the starfield visible below the horizon")
+	var shared_fog := load("res://shaders/distance_fog_material.tres") as ShaderMaterial
+	check(float(shared_fog.get_shader_parameter("sky_horizon_blend")) > 0.0, "other scenes retain their shared horizon fog")
 
 	tutorial.queue_free()
 	await process_frame

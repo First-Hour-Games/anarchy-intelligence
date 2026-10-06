@@ -18,6 +18,7 @@ class_name CustomDialogueBalloon extends CanvasLayer
 
 var temporary_game_states: Array = []
 var is_waiting_for_input: bool = false
+var is_advancing: bool = false
 var is_post_typing_delay: bool = false
 var will_hide_balloon: bool = false
 var locals: Dictionary = {}
@@ -96,6 +97,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 	if not is_instance_valid(dialogue_line):
+		return
+	if is_advancing:
 		return
 
 	# Handle click / Enter / Space to skip typing or advance dialogue
@@ -192,11 +195,17 @@ func apply_dialogue_line() -> void:
 		balloon.grab_focus()
 
 func next(next_id: String) -> void:
+	# Dialogue mutations can await cutscene audio and timers. Accept only one
+	# advance until the next line is ready, including when running in the editor.
+	if is_advancing:
+		return
+	is_advancing = true
 	if talk_sfx:
 		talk_sfx.stop()
 	is_waiting_for_input = false
 	is_post_typing_delay = false
 	dialogue_line = await dialogue_resource.get_next_dialogue_line(next_id, temporary_game_states)
+	is_advancing = false
 
 func clear_dialogue_text() -> void:
 	accumulated_dialogue_text = ""

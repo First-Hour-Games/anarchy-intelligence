@@ -4,6 +4,7 @@ extends Node3D
 ## Handles chapter entry for the starting forest:
 ## - Cinematic subtitle "five days later" fading in and out on black screen.
 ## - Full black screen fade out revealing the misty forest road.
+## - Raised establishing camera holds, then descends into the player view.
 ## - Concurrent audio fade-in from 0 volume for all initial sound effects.
 ## - Cinematic handoff to opening dialogue and background music.
 
@@ -14,6 +15,11 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export_range(0.5, 10.0, 0.05) var fade_duration: float = 3.75
 @export_range(0.0, 3.0, 0.1) var initial_black_hold: float = 0.4
 @export var delay_dialogue_until_fade: bool = true
+
+@export_category("Intro Camera")
+@export_range(0.0, 20.0, 0.1) var intro_camera_height: float = 5.0
+@export_range(0.0, 10.0, 0.1) var intro_camera_hold_duration: float = 2.0
+@export_range(0.1, 10.0, 0.1) var intro_camera_descent_duration: float = 3.0
 
 @export_category("Intro Subtitle")
 @export var show_intro_subtitle: bool = true
@@ -37,7 +43,7 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export_range(0.1, 10.0, 0.1) var music_fade_out_duration: float = 1.8
 @export_range(0.1, 10.0, 0.1) var music_fade_in_duration: float = 2.4
 @export_range(0.0, 5.0, 0.1) var music_fade_in_delay: float = 0.4
-@export_range(-40.0, 6.0, 0.5) var welcoming_hike_volume_db: float = -3.0
+@export_range(-40.0, 6.0, 0.5) var welcoming_hike_volume_db: float = -12.0
 
 @export_category("Log Fog Transition")
 @export var fog_volume_node: NodePath = NodePath("FogVolume")
@@ -45,7 +51,6 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @export var fog_size: Vector3 = Vector3(80.0, 8.0, 80.0)
 @export var follow_player_y: bool = false
 @export var fog_fixed_y: float = 2.0
-@export_range(0.0, 1.0, 0.05) var fog_target_density: float = 0.8
 
 @onready var player: FirstPersonPlayer = get_node_or_null("Player") as FirstPersonPlayer
 @onready var opening_balloon: BottomDialogueBalloon = get_node_or_null("BottomDialogueBalloon") as BottomDialogueBalloon
@@ -60,12 +65,24 @@ var _fade_tween: Tween = null
 var _is_fading: bool = false
 var _has_faded: bool = false
 var _target_volumes: Dictionary = {}
+var _intro_camera: Camera3D
+var _intro_camera_offset := 0.0
+var _player_fog_was_visible := false
+var _intro_ui_colors: Dictionary = {}
+var _intro_ui_opacity := 1.0:
+	set(value):
+		_intro_ui_opacity = value
+		for item in _intro_ui_colors:
+			if is_instance_valid(item):
+				var color: Color = _intro_ui_colors[item]
+				color.a *= value
+				item.modulate = color
 var _has_switched_music: bool = false
 var _music_transition_tween: Tween = null
 
 var _is_fog_active: bool = false
 var _fog_fade_tween: Tween = null
-var _fog_target_density: float = 0.8
+var _fog_target_density: float = 0.0
 var _fog_material_instance: ShaderMaterial = null
 
 
@@ -160,6 +177,7 @@ func _snap_player_deferred() -> void:
 
 
 func _process(_delta: float) -> void:
+	_update_intro_camera()
 	if _is_fog_active:
 		_update_fog_position()
 	elif is_instance_valid(player) and _is_player_past_barrier():
@@ -277,6 +295,8 @@ func start_intro_fade() -> void:
 		if player.has_method(&"freeze"):
 			player.freeze()
 
+	_setup_intro_camera()
+	_hide_intro_player_ui()
 	_fade_tween = create_tween()
 
 	# Subtitle sequence (before fading in the actual game)
@@ -337,7 +357,73 @@ func start_intro_fade() -> void:
 			fade_duration
 		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
+	if is_instance_valid(_intro_camera):
+		if intro_camera_hold_duration > 0.0:
+			_fade_tween.chain().tween_interval(intro_camera_hold_duration)
+		_fade_tween.chain().tween_property(
+			self, "_intro_camera_offset", 0.0, intro_camera_descent_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_fade_tween.parallel().tween_property(
+			self, "_intro_ui_opacity", 1.0, intro_camera_descent_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_fade_tween.chain().tween_callback(_on_fade_finished)
+
+
+func _hide_intro_player_ui() -> void:
+	if not is_instance_valid(player):
+		return
+	_intro_ui_colors.clear()
+	# Fade UI roots so child HUD animations can keep their own opacity settings.
+	for canvas in player.find_children("*", "CanvasLayer", true, false):
+		for child in canvas.get_children():
+			if child is CanvasItem:
+				_intro_ui_colors[child] = child.modulate
+	_intro_ui_opacity = 0.0
+
+
+func _restore_intro_player_ui() -> void:
+	_intro_ui_opacity = 1.0
+	_intro_ui_colors.clear()
+
+
+func _setup_intro_camera() -> void:
+	if not is_instance_valid(player) or not is_instance_valid(player.camera):
+		return
+	# Copy the projection settings, keeping gameplay attachments on the player camera.
+	_intro_camera = player.camera.duplicate(0) as Camera3D
+	_intro_camera.name = "ForestIntroCamera"
+	for child in _intro_camera.get_children():
+		child.free()
+	player.camera.add_child(_intro_camera)
+	_intro_camera_offset = intro_camera_height
+	_update_intro_camera()
+	if is_instance_valid(player.distance_fog):
+		_player_fog_was_visible = player.distance_fog.visible
+		var intro_fog := player.distance_fog.duplicate() as MeshInstance3D
+		_intro_camera.add_child(intro_fog)
+		player.distance_fog.hide()
+	_intro_camera.make_current()
+
+
+func _update_intro_camera() -> void:
+	if not is_instance_valid(_intro_camera) or not is_instance_valid(player) or not is_instance_valid(player.camera):
+		return
+	# Follow floor snapping so the final camera transform matches the live player view.
+	_intro_camera.global_transform = player.camera.global_transform
+	_intro_camera.global_position += Vector3.UP * _intro_camera_offset
+
+
+func _restore_player_camera() -> void:
+	if not is_instance_valid(_intro_camera):
+		return
+	if is_instance_valid(player):
+		if is_instance_valid(player.camera):
+			player.camera.make_current()
+		if is_instance_valid(player.distance_fog):
+			player.distance_fog.visible = _player_fog_was_visible
+	_intro_camera.queue_free()
+	_intro_camera = null
+	_intro_camera_offset = 0.0
 
 
 func skip_fade() -> void:
@@ -360,6 +446,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_fade_finished() -> void:
+	_restore_player_camera()
+	_restore_intro_player_ui()
 	_is_fading = false
 	_has_faded = true
 
@@ -423,6 +511,9 @@ func _on_climb_over_started(_player: Node3D = null) -> void:
 
 func _on_climb_over_completed(_player: Node3D = null) -> void:
 	activate_fog()
+	var silo_ambience := get_node_or_null("SiloTreeExclusionZone/SiloAmbience")
+	if is_instance_valid(silo_ambience):
+		silo_ambience.start_ambience()
 
 
 func transition_to_welcoming_hike(fade_out_time: float = music_fade_out_duration, fade_in_time: float = music_fade_in_duration) -> void:
@@ -528,12 +619,8 @@ func _setup_fog_volume() -> void:
 		_fog_material_instance = fog_volume.material.duplicate()
 		fog_volume.material = _fog_material_instance
 		var base_den = _fog_material_instance.get_shader_parameter("base_density")
-		if fog_target_density > 0.0:
-			_fog_target_density = fog_target_density
-		elif base_den != null and float(base_den) > 0.0:
-			_fog_target_density = float(base_den)
-		else:
-			_fog_target_density = 0.8
+		# Fade to the density saved in the editor, including an intentional zero.
+		_fog_target_density = maxf(float(base_den), 0.0) if base_den != null else 0.0
 		_fog_material_instance.set_shader_parameter("base_density", 0.0)
 
 	_update_fog_position()
