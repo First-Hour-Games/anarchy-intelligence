@@ -1,11 +1,17 @@
 extends Node
+
+const CONTACT_SOUND := preload("res://sounds/entities/death_scares/wrapper_kill.wav")
 ## One-shot flashlight ambush, confined to the starting forest gas station.
 @export var rush_speed: float = 6.5
 @export var turn_angle_degrees: float = 100.0
+@export var stare_duration: float = 3.0
+@export var stare_angle_degrees: float = 25.0
 @onready var player: FirstPersonPlayer = get_parent().get_node("Player")
 @onready var ridge: CorruptedFriend = get_parent().get_node("THE_RIDGEBACK")
 @onready var pickup: FlashlightPickup = get_parent().get_node("FlashlightItem/Pickup")
 var armed := false
+var revealed := false
+var stare_time := 0.0
 var rushing := false
 var finished := false
 var pickup_forward := Vector3.ZERO
@@ -27,9 +33,9 @@ func _on_flashlight_picked_up(interactor: Node3D) -> void:
 	get_parent().get_node("FlashlightItem").hide()
 
 func _physics_process(delta: float) -> void:
-	if not armed or finished:
+	if not armed or finished or player.is_frozen:
 		return
-	if not rushing:
+	if not revealed:
 		var forward := -player.camera.global_basis.z
 		forward.y = 0.0
 		if forward.normalized().dot(pickup_forward) > cos(deg_to_rad(turn_angle_degrees)):
@@ -40,12 +46,18 @@ func _physics_process(delta: float) -> void:
 		ridge.velocity = Vector3.ZERO
 		ridge.show()
 		ridge.get_node("CollisionShape3D").disabled = false
-		ridge.visual.play("chase", true)
-		rushing = true
+		ridge.visual.play("dormant", true)
+		revealed = true
 	var direction := player.global_position - ridge.global_position
 	direction.y = 0.0
 	direction = direction.normalized()
 	ridge.rotation.y = atan2(-direction.x, -direction.z)
+	if not rushing:
+		stare_time = stare_time + delta if _player_is_looking_at_ridgeback() else 0.0
+		if stare_time < stare_duration:
+			return
+		rushing = true
+		ridge.visual.play("chase", true)
 	ridge.velocity = direction * rush_speed
 	if not ridge.is_on_floor():
 		ridge.velocity.y = -ridge.gravity * delta
@@ -60,12 +72,28 @@ func _physics_process(delta: float) -> void:
 	if Vector2(separation.x, separation.z).length() <= 0.85 and absf(separation.y) < 1.8:
 		_blackout()
 
+func _player_is_looking_at_ridgeback() -> bool:
+	var focus := ridge.global_position + Vector3.UP * 1.4
+	var to_ridge := focus - player.camera.global_position
+	if (-player.camera.global_basis.z).dot(to_ridge.normalized()) < cos(deg_to_rad(stare_angle_degrees)):
+		return false
+	var ray := PhysicsRayQueryParameters3D.create(player.camera.global_position, focus)
+	ray.exclude = [player.get_rid(), ridge.get_rid()]
+	return player.get_world_3d().direct_space_state.intersect_ray(ray).is_empty()
+
 func _blackout() -> void:
 	if finished:
 		return
 	finished = true
 	ridge.velocity = Vector3.ZERO
 	player.freeze()
+	var audio := AudioStreamPlayer.new()
+	audio.name = "RidgebackContactSound"
+	audio.stream = CONTACT_SOUND
+	audio.bus = &"Reverb"
+	audio.volume_db = 3.0
+	add_child(audio)
+	audio.play()
 	var layer := CanvasLayer.new()
 	layer.name = "RidgebackBlackout"
 	layer.layer = 128

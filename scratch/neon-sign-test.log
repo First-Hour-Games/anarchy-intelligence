@@ -1,0 +1,13 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2582)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run_checks (res://tests/neon_sign_smoke.gd:9)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run_checks (res://tests/neon_sign_smoke.gd:15)
+PASS: independent nonzero flicker, synced lights, private materials, positional audio loops and pause behavior

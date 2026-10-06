@@ -70,6 +70,9 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_uqwhg")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_7hciw"]
+size = Vector3(1.8488, 1.6899999, 0.99)
+
 [node name="stationV2" unique_id=85918364 instance=ExtResource("1_g3csy")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 
@@ -134,6 +137,18 @@ visible = false
 transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, 3.4976451, 0.42014486, -6.456995)
 mesh = SubResource("ArrayMesh_8js55")
 
+[node name="StaticBody3D" type="StaticBody3D" parent="Ice_Merchandiser_2Door_W72in" index="0" unique_id=340479848]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Ice_Merchandiser_2Door_W72in/StaticBody3D" index="0" unique_id=43942779]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8449999, 0)
+shape = SubResource("BoxShape3D_7hciw")
+
 [node name="Ice_Merchandiser_2Door_W72in2" type="MeshInstance3D" parent="." index="28" unique_id=1970988678]
 transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, 5.1643114, 0.42014486, -6.456995)
 mesh = SubResource("ArrayMesh_8js55")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ice_Merchandiser_2Door_W72in2" index="0" unique_id=1248745810]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Ice_Merchandiser_2Door_W72in2/StaticBody3D" index="0" unique_id=1570089747]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8449999, 0)
+shape = SubResource("BoxShape3D_7hciw")

@@ -99,7 +99,6 @@ func _ready() -> void:
 	_setup_welcoming_hike_player()
 	_setup_barrier_music_trigger()
 	_setup_fog_volume()
-	get_node("GasStation/FogClearArea").body_entered.connect(_on_gas_station_fog_clear_area_body_entered)
 	_prepare_audio_players()
 
 	if auto_start_fade:
@@ -182,10 +181,6 @@ func _snap_player_deferred() -> void:
 
 func _process(_delta: float) -> void:
 	_update_intro_camera()
-	if _is_fog_active:
-		_update_fog_position()
-	elif is_instance_valid(player) and _is_player_past_barrier():
-		activate_fog()
 
 
 func _is_player_past_barrier() -> bool:
@@ -510,11 +505,9 @@ func _setup_barrier_music_trigger() -> void:
 
 func _on_climb_over_started(_player: Node3D = null) -> void:
 	transition_to_welcoming_hike()
-	activate_fog()
 
 
 func _on_climb_over_completed(_player: Node3D = null) -> void:
-	activate_fog()
 	var silo_ambience := get_node_or_null("SiloTreeExclusionZone/SiloAmbience")
 	if is_instance_valid(silo_ambience):
 		silo_ambience.start_ambience()
@@ -597,120 +590,17 @@ func finish_music_transition_immediately() -> void:
 
 
 func _setup_fog_volume() -> void:
-	if not is_instance_valid(fog_volume):
-		fog_volume = get_node_or_null(fog_volume_node) as FogVolume
-	if not is_instance_valid(fog_volume):
-		fog_volume = find_child("FogVolume", true, false) as FogVolume
-	if not is_instance_valid(fog_volume):
-		var volumes := find_children("*", "FogVolume", true, false)
-		if not volumes.is_empty():
-			fog_volume = volumes[0] as FogVolume
-
-	# Fallback: automatically instantiate FogVolume if none was added in the scene tree
-	if not is_instance_valid(fog_volume):
-		fog_volume = FogVolume.new()
-		fog_volume.name = "FogVolume"
-		fog_volume.size = fog_size
-		var default_mat := load("res://shaders/moving_gradient_noise_fog_material.tres") as ShaderMaterial
-		if default_mat != null:
-			fog_volume.material = default_mat
-		add_child(fog_volume)
-
-	# Ensure it is hidden initially until player gets over the log
-	fog_volume.visible = false
-
-	if fog_volume.material is ShaderMaterial:
-		_fog_material_instance = fog_volume.material.duplicate()
-		fog_volume.material = _fog_material_instance
-		var base_den = _fog_material_instance.get_shader_parameter("base_density")
-		# Fade to the density saved in the editor, including an intentional zero.
-		_fog_target_density = maxf(float(base_den), 0.0) if base_den != null else 0.0
-		_fog_material_instance.set_shader_parameter("base_density", 0.0)
-
-	_update_fog_position()
+	# Preserve the original player/environment fog, but never enable the log FogVolume.
+	if is_instance_valid(fog_volume):
+		fog_volume.hide()
+	if is_instance_valid(player):
+		player.set_distance_fog_enabled(true)
 
 
-func activate_fog(fade_duration: float = fog_fade_in_duration) -> void:
-	if _is_fog_active or _fog_cleared_at_gas_station:
-		return
-	_is_fog_active = true
-
-	if not is_instance_valid(fog_volume):
-		_setup_fog_volume()
-	if not is_instance_valid(fog_volume):
-		return
-
-	_update_fog_position()
-	fog_volume.visible = true
-
-	if is_instance_valid(_fog_material_instance):
-		if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
-			_fog_fade_tween.kill()
-
-		if fade_duration <= 0.0:
-			_fog_material_instance.set_shader_parameter("base_density", _fog_target_density)
-		else:
-			_fog_fade_tween = create_tween()
-			_fog_fade_tween.tween_method(
-				func(val: float) -> void:
-					if is_instance_valid(_fog_material_instance):
-						_fog_material_instance.set_shader_parameter("base_density", val),
-				0.0,
-				_fog_target_density,
-				fade_duration
-			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-
-func _update_fog_position() -> void:
-	if not is_instance_valid(fog_volume) or not is_instance_valid(player):
-		return
-	if fog_volume.get_parent() == player:
-		return
-	var target_y := player.global_position.y + 1.5 if follow_player_y else fog_fixed_y
-	fog_volume.global_position = Vector3(player.global_position.x, target_y, player.global_position.z)
+# Retained for debug checkpoint callers; log FogVolume activation is disabled.
+func activate_fog(_fade_duration: float = 0.0) -> void:
+	pass
 
 
 func finish_fog_transition_immediately() -> void:
-	if _fog_cleared_at_gas_station:
-		return
-	if not _is_fog_active:
-		activate_fog(0.0)
-	if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
-		_fog_fade_tween.kill()
-	if is_instance_valid(_fog_material_instance):
-		_fog_material_instance.set_shader_parameter("base_density", _fog_target_density)
-
-
-func _on_gas_station_fog_clear_area_body_entered(body: Node3D) -> void:
-	if body != player or _fog_cleared_at_gas_station:
-		return
-	_fog_cleared_at_gas_station = true
-	if is_instance_valid(_fog_fade_tween) and _fog_fade_tween.is_valid():
-		_fog_fade_tween.kill()
-	var duration := maxf(gas_station_fog_clear_duration, 0.01)
-	_fog_fade_tween = create_tween().set_parallel(true)
-	if is_instance_valid(_fog_material_instance):
-		_fog_fade_tween.tween_property(_fog_material_instance, "shader_parameter/base_density", 0.0, duration)
-	var world := get_node_or_null("WorldEnvironment") as WorldEnvironment
-	if is_instance_valid(world) and world.environment != null:
-		# Keep the fade local to this scene rather than changing a shared resource.
-		world.environment = world.environment.duplicate() as Environment
-		_fog_fade_tween.tween_property(world.environment, "fog_density", 0.0, duration)
-		_fog_fade_tween.tween_property(world.environment, "volumetric_fog_density", 0.0, duration)
-	var distance_material := player.get_distance_fog_material()
-	if distance_material != null:
-		distance_material = distance_material.duplicate() as ShaderMaterial
-		player.distance_fog.material_override = distance_material
-		if distance_material.get_shader_parameter("fog_strength") == null:
-			distance_material.set_shader_parameter("fog_strength", 1.0)
-		_fog_fade_tween.tween_property(distance_material, "shader_parameter/fog_strength", 0.0, duration)
-	_fog_fade_tween.finished.connect(func() -> void:
-		_is_fog_active = false
-		if is_instance_valid(fog_volume):
-			fog_volume.hide()
-		if is_instance_valid(player):
-			player.set_distance_fog_enabled(false)
-		if is_instance_valid(world) and world.environment != null:
-			world.environment.fog_enabled = false
-			world.environment.volumetric_fog_enabled = false
-	)
+	pass

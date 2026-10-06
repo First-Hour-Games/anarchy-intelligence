@@ -16,8 +16,10 @@ func run_checks() -> void:
 	assert(sign_a.material_override != original)
 	assert(sign_a.material_override != sign_b.material_override)
 	assert((sign_a.get_node("MeshInstance3D") as MeshInstance3D).material_override == sign_a.material_override)
-	for sign in [sign_a, sign_b]:
+	assert(imported.resource_path.ends_with("neonBuzz.mp3"))
+	for sign in [sign_a, sign_b, station.get_node("stationV3/PumpSign3")]:
 		var audio := sign.get_node("NeonAmbience") as AudioStreamPlayer3D
+		assert(audio.bus == &"Reverb")
 		assert(audio.playing)
 		assert((audio.stream as AudioStreamMP3).loop)
 		assert(audio.stream != imported)
