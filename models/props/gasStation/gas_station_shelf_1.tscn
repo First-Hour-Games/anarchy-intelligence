@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://x24epk5n3wao"]
+
+[ext_resource type="PackedScene" uid="uid://cppudgp02th0k" path="res://models/props/gasStation/gasStationShelf1.glb" id="1_0njac"]
+
+[node name="gasStationShelf1" unique_id=100825940 instance=ExtResource("1_0njac")]
+
+[node name="Gondola_2Side_L96in_H72in" parent="." index="0" unique_id=257687130]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

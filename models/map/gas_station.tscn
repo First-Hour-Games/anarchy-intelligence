@@ -15,6 +15,8 @@
 [ext_resource type="Script" uid="uid://c0y8ypnbgqljc" path="res://scenes/environment/neon_sign.gd" id="13_neon_sign"]
 [ext_resource type="AudioStream" uid="uid://ctjwh7sy2vij3" path="res://sounds/chapters/intro/lightBuzzing.mp3" id="14_neon_loop"]
 [ext_resource type="PackedScene" uid="uid://cdnhelekhv5ft" path="res://models/buildings/gasStation/station_v_2.tscn" id="15_xsro1"]
+[ext_resource type="PackedScene" uid="uid://h7jluo2qxga7" path="res://models/props/trash_can.glb" id="16_tuakg"]
+[ext_resource type="PackedScene" uid="uid://x24epk5n3wao" path="res://models/props/gasStation/gas_station_shelf_1.tscn" id="17_m3mms"]
 
 [sub_resource type="Shader" id="Shader_hgjb4"]
 code = "shader_type spatial;
@@ -167,6 +169,9 @@ text = "THIRD WARD GAS
 "
 font = ExtResource("12_81mmf")
 font_size = 120
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_go1h3"]
+size = Vector3(1.248291, 2.0582886, 1.2011719)
 
 [node name="Node3D" type="Node3D" unique_id=382333741]
 
@@ -367,3 +372,42 @@ light_size = 0.417
 shadow_enabled = true
 omni_range = 13.523
 omni_attenuation = -0.455
+
+[node name="StationWindow" type="CSGPolygon3D" parent="stationV3" unique_id=1388899311]
+transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, 2.64951, 0.8241737, -7.2015314)
+use_collision = true
+polygon = PackedVector2Array(-0.3, 0, -0.3, 2, 3, 2, 3, 0)
+depth = 0.02
+
+[node name="StationWindow2" type="CSGPolygon3D" parent="stationV3" unique_id=1602881132]
+transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -5.358607, 0.8241737, -7.2015314)
+use_collision = true
+polygon = PackedVector2Array(-0.3, 0, -0.3, 2, 3, 2, 3, 0)
+depth = 0.02
+
+[node name="TrashCan1" parent="." unique_id=3000842 instance=ExtResource("16_tuakg")]
+transform = Transform3D(0.004, 0, 0, 0, 0.004, 0, 0, 0, 0.004, 0.015739225, 0.1588003, 8.677612)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TrashCan1" unique_id=1655458412]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TrashCan1/StaticBody3D" unique_id=248887790]
+transform = Transform3D(199.99992, 0, 0, 0, 199.99992, 0, 0, 0, 199.99992, 0, 105.8288, 0)
+shape = SubResource("BoxShape3D_go1h3")
+
+[node name="TrashCan2" parent="." unique_id=1356942042 instance=ExtResource("16_tuakg")]
+transform = Transform3D(0.004, 0, 0, 0, 0.004, 0, 0, 0, 0.004, 0.015739225, 0.1588003, 13.310107)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TrashCan2" unique_id=390481672]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TrashCan2/StaticBody3D" unique_id=1438251360]
+transform = Transform3D(199.99992, 0, 0, 0, 199.99992, 0, 0, 0, 199.99992, 0, 105.8288, 0)
+shape = SubResource("BoxShape3D_go1h3")
+
+[node name="gasStationShelf1" parent="." unique_id=100825940 instance=ExtResource("17_m3mms")]
+transform = Transform3D(1.44, 0, 0, 0, 1.44, 0, 0, 0, 1.44, -3.0694723, 0.5, -12.545676)
+
+[node name="gasStationShelf3" parent="." unique_id=1156219611 instance=ExtResource("17_m3mms")]
+transform = Transform3D(1.423682, 0, -0.21617123, 0, 1.44, 0, 0.21617123, 0, 1.423682, 0.70787144, 0.5, -12.265609)
+
+[node name="gasStationShelf2" parent="." unique_id=605910037 instance=ExtResource("17_m3mms")]
+transform = Transform3D(1.4030235, 0, 0.32423007, 0, 1.44, 0, -0.32423007, 0, 1.4030235, -3.082544, 0.5, -8.990129)

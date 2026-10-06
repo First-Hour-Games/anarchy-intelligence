@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bevyfsml64lsa"]
+
+[ext_resource type="PackedScene" uid="uid://bkcwc11n0uni0" path="res://models/props/Flashlight_Game.glb" id="1_2wvj5"]
+
+[node name="Flashlight_Game" unique_id=1906395878 instance=ExtResource("1_2wvj5")]
+
+[node name="Flashlight_Body" parent="." index="0" unique_id=1989796194]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
