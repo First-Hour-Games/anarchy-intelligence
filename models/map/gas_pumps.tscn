@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://6rner50wsg71"]
+
+[ext_resource type="PackedScene" uid="uid://dfltrdy7i1k8n" path="res://models/map/gasPumps.glb" id="1_pumps"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jpyye"]
+size = Vector3(12.203125, 5.128784, 1.3144531)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lights"]
+resource_name = "Gas Pump Lights"
+cull_mode = 2
+albedo_color = Color(1, 0.95, 0.85, 1)
+roughness = 0.6
+emission_enabled = true
+emission = Color(1, 0.95, 0.85, 1)
+emission_energy_multiplier = 4.0
+
+[node name="gasPumps" unique_id=1616454800 instance=ExtResource("1_pumps")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Station" parent_id_path=PackedInt32Array(1459526285) index="0" unique_id=10577170]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Station/StaticBody3D" index="0" unique_id=2061603338]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.0856817, -3)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Station/StaticBody3D" index="1" unique_id=1493845613]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.0856817, -7.5931144)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Lights" parent="." index="1" unique_id=814480492]
+surface_material_override/0 = SubResource("StandardMaterial3D_lights")

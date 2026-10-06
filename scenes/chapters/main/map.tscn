@@ -218,32 +218,38 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 180)
 shape = SubResource("BoxShape3D_ground")
 
 [node name="Roads" type="Node3D" parent="." unique_id=581013829]
+metadata/surface = "gravel"
 
 [node name="MainRoad" type="CSGBox3D" parent="Roads" unique_id=27431853]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 use_collision = true
 size = Vector3(600, 0.4, 8)
 material = SubResource("StandardMaterial3D_jdotv")
+metadata/surface = "gravel"
 
 [node name="ConnectorRoad" type="CSGBox3D" parent="Roads" unique_id=822071568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -0.1, 187.5)
 use_collision = true
 size = Vector3(8, 0.4, 375)
 material = SubResource("StandardMaterial3D_jdotv")
+metadata/surface = "gravel"
 
 [node name="WestStubRoad" type="CSGBox3D" parent="Roads" unique_id=394468731]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -0.1, 125)
 use_collision = true
 size = Vector3(219, 0.4, 6)
 material = SubResource("StandardMaterial3D_jdotv")
+metadata/surface = "gravel"
 
 [node name="Crossroad" type="CSGBox3D" parent="Roads" unique_id=190111206]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.5, -0.1, 225)
 use_collision = true
 size = Vector3(317, 0.4, 8)
 material = SubResource("StandardMaterial3D_jdotv")
+metadata/surface = "gravel"
 
 [node name="CulDeSacs" type="Node3D" parent="." unique_id=1990414914]
+metadata/surface = "gravel"
 
 [node name="CrossroadWestTurnaround" parent="CulDeSacs" unique_id=63385126 instance=ExtResource("asset_cul_de_sac_end")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.1, 225)

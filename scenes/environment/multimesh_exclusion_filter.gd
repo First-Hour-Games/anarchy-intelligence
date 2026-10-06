@@ -60,6 +60,22 @@ class_name MultiMeshExclusionFilter
 			click_to_prune_all_foliage_now = false
 			notify_property_list_changed()
 
+## Click this checkbox in the Godot Inspector to fill in the empty clearing and prune all trees across ALL MultiMeshes.
+@export var click_to_fill_clearing_and_prune_now: bool = false:
+	set(val):
+		if val:
+			fill_clearing_and_prune()
+			click_to_fill_clearing_and_prune_now = false
+			notify_property_list_changed()
+
+## Click this checkbox in the Godot Inspector to fill ALL gaps across the forest and prune all trees.
+@export var click_to_fill_all_and_prune_now: bool = false:
+	set(val):
+		if val:
+			fill_all_and_prune()
+			click_to_fill_all_and_prune_now = false
+			notify_property_list_changed()
+
 
 func _ready() -> void:
 	if not Engine.is_editor_hint() and auto_prune_on_ready:
@@ -445,6 +461,30 @@ func _is_point_inside_aabb(pt: Vector3, box: AABB, pad: float) -> bool:
 		   pt.y >= (box.position.y - 1.0) and pt.y <= (box.end.y + 1.0)
 
 
+## Delegates filling clearing and pruning to ProceduralTreeGenerator if available, or prunes.
+func fill_clearing_and_prune(target_parent: Node = null) -> Dictionary:
+	var p: Node = target_parent if is_instance_valid(target_parent) else get_parent()
+	if is_instance_valid(p):
+		if p.has_method(&"fill_clearing_and_prune"):
+			return p.call(&"fill_clearing_and_prune")
+		for child in p.get_children():
+			if child.has_method(&"fill_clearing_and_prune"):
+				return child.call(&"fill_clearing_and_prune")
+	return prune_all_foliage(p)
+
+
+## Delegates filling all gaps and pruning to ProceduralTreeGenerator if available, or prunes.
+func fill_all_and_prune(target_parent: Node = null) -> Dictionary:
+	var p: Node = target_parent if is_instance_valid(target_parent) else get_parent()
+	if is_instance_valid(p):
+		if p.has_method(&"fill_all_and_prune"):
+			return p.call(&"fill_all_and_prune")
+		for child in p.get_children():
+			if child.has_method(&"fill_all_and_prune"):
+				return child.call(&"fill_all_and_prune")
+	return prune_all_foliage(p)
+
+
 func _collect_target_aabbs(target: Node3D) -> Array[AABB]:
 	var result: Array[AABB] = []
 	if not is_instance_valid(target):
@@ -454,32 +494,50 @@ func _collect_target_aabbs(target: Node3D) -> Array[AABB]:
 	if target.has_method(&"is_point_inside"):
 		return result
 
-	var target_shape_aabb := _get_node_local_aabb(target)
-	if target_shape_aabb.size.length_squared() <= 0.001 and target.scene_file_path.is_empty() and target.get_child_count() > 0:
-		var has_child_shape := false
-		for child in target.get_children():
-			if child is Node3D:
-				var child_box := _calculate_node_aabb(child as Node3D)
-				if child_box.size.length_squared() > 0.01:
-					result.append(child_box)
-					has_child_shape = true
-		if has_child_shape:
-			return result
-
-	var box := _calculate_node_aabb(target)
+	var box := _calculate_node_world_aabb(target)
 	if box.size.length_squared() > 0.01:
 		result.append(box)
 	return result
 
 
 func _calculate_node_aabb(node: Node3D) -> AABB:
-	var local_aabb := _get_node_local_aabb(node)
-	if local_aabb.size.length_squared() <= 0.001:
+	return _calculate_node_world_aabb(node)
+
+
+func _calculate_node_world_aabb(node: Node3D) -> AABB:
+	if not is_instance_valid(node):
 		return AABB()
-	return node.global_transform * local_aabb
+
+	if node.has_method(&"get_exclusion_aabb"):
+		return node.call(&"get_exclusion_aabb")
+	if node.has_method(&"get_world_aabb"):
+		return node.call(&"get_world_aabb")
+
+	var leaf_local := _get_leaf_local_aabb(node)
+	var combined := AABB()
+	var has_bounds := false
+
+	if leaf_local.size.length_squared() > 0.001:
+		combined = node.global_transform * leaf_local
+		has_bounds = true
+
+	for child in node.get_children():
+		if child is Node3D:
+			var child_world := _calculate_node_world_aabb(child as Node3D)
+			if child_world.size.length_squared() > 0.001:
+				if not has_bounds:
+					combined = child_world
+					has_bounds = true
+				else:
+					combined = combined.merge(child_world)
+	return combined
 
 
 func _get_node_local_aabb(node: Node3D) -> AABB:
+	return _get_leaf_local_aabb(node)
+
+
+func _get_leaf_local_aabb(node: Node3D) -> AABB:
 	if node.has_method(&"get_local_aabb"):
 		return node.call(&"get_local_aabb")
 	if node is MeshInstance3D and node.mesh:
@@ -488,19 +546,7 @@ func _get_node_local_aabb(node: Node3D) -> AABB:
 		return _shape_to_aabb(node.shape)
 	if node is CSGShape3D:
 		return _csg_to_aabb(node)
-
-	var combined := AABB()
-	var has_bounds := false
-	for child in node.get_children():
-		if child is Node3D:
-			var child_box := _calculate_node_aabb(child as Node3D)
-			if child_box.size.length_squared() > 0.01:
-				if not has_bounds:
-					combined = child_box
-					has_bounds = true
-				else:
-					combined = combined.merge(child_box)
-	return combined
+	return AABB()
 
 
 func _shape_to_aabb(shape: Shape3D) -> AABB:

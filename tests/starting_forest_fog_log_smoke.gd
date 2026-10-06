@@ -20,6 +20,8 @@ func run() -> void:
 	check(packed != null, "starting_forest.tscn loaded")
 
 	var forest := packed.instantiate() as StartingForest
+	var editor_material := (forest.get_node("FogVolume") as FogVolume).material as ShaderMaterial
+	var editor_density := float(editor_material.get_shader_parameter("base_density"))
 	check(forest != null, "starting_forest instantiated as StartingForest")
 	root.add_child(forest)
 	await process_frame
@@ -31,6 +33,8 @@ func run() -> void:
 	# 1. Verify initially hidden before log climb
 	check(not fog_vol.visible, "FogVolume is initially hidden (visible = false)")
 	check(not forest._is_fog_active, "Fog state _is_fog_active is false initially")
+	var silo_ambience := forest.get_node("SiloTreeExclusionZone/SiloAmbience")
+	check(not silo_ambience.get("_enabled"), "Silo ambience waits for log climb completion")
 
 	var player: Node3D = forest.player
 	check(is_instance_valid(player), "Player exists in starting_forest")
@@ -39,6 +43,10 @@ func run() -> void:
 	print("Triggering log climb transition...")
 	forest._on_climb_over_started(player)
 	await process_frame
+	check(not silo_ambience.get("_enabled"), "Silo ambience remains silent during log climb")
+	forest._on_climb_over_completed(player)
+	check(silo_ambience.get("_enabled"), "Silo ambience enabled after log climb completion")
+	check(is_equal_approx(forest.welcoming_hike_volume_db, -12.0), "Welcoming hike music has quieter target volume")
 
 	check(forest._is_fog_active, "Fog is active after log climb started")
 	check(fog_vol.visible, "FogVolume is visible after log climb")
@@ -62,7 +70,8 @@ func run() -> void:
 	check(mat != null, "FogVolume has active ShaderMaterial")
 	if mat != null:
 		var density = mat.get_shader_parameter("base_density")
-		check(density != null and float(density) > 0.5, "Fog density faded in successfully (density: %s)" % str(density))
+		check(density != null and is_equal_approx(float(density), editor_density), "Fog fades to editor material density (density: %s)" % str(density))
+		check(is_equal_approx(float(editor_material.get_shader_parameter("base_density")), editor_density), "Saved editor material remains unchanged")
 
 	forest.queue_free()
 	await process_frame

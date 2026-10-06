@@ -19,7 +19,7 @@ signal opened(interactor: Node3D)
 @export_range(0.5, 10.0, 0.1) var interaction_distance: float = 2.2
 @export_multiline var interaction_message: String = "Interacted with the tutorial door."
 
-const DOOR_LEAF_NAME := "Wooden Door_007"
+@export var door_leaf_name: String = "Wooden Door_007"
 
 var is_open := false
 var _is_animating := false
@@ -35,9 +35,9 @@ var _motion_tween: Tween
 
 
 func _ready() -> void:
-	_door_leaf = find_child(DOOR_LEAF_NAME, true, false) as MeshInstance3D
+	_door_leaf = find_child(door_leaf_name, true, false) as MeshInstance3D
 	if not is_instance_valid(_door_leaf) or _door_leaf.mesh == null:
-		push_error("InteractiveDoor could not find the door leaf mesh: %s" % DOOR_LEAF_NAME)
+		push_error("InteractiveDoor could not find the door leaf mesh: %s" % door_leaf_name)
 		return
 
 	var door_bounds := _get_mesh_bounds_in_door_space(_door_leaf)
@@ -126,6 +126,8 @@ func _get_open_angle(interactor: Node3D) -> float:
 	if open_away_from_interactor and is_instance_valid(interactor):
 		var interactor_local := to_local(interactor.global_position)
 		direction = 1.0 if interactor_local.z >= _door_center_local.z else -1.0
+		if not hinge_on_left:
+			direction *= -1.0
 	elif not hinge_on_left:
 		direction = -1.0
 	return _closed_rotation_y + deg_to_rad(open_angle_degrees) * direction

@@ -5,6 +5,7 @@ extends Node3D
 
 const DOOR_OVERLAY_LAYER := 18
 const INTRO_FADE_LAYER := 200
+const DEFAULT_BACKGROUND_COLOR := Color("454545")
 
 @export_category("Intro Fade")
 @export_range(0.0, 10.0, 0.1) var intro_black_hold_seconds := 0.5
@@ -32,6 +33,9 @@ const INTRO_FADE_LAYER := 200
 @export var occluders_enabled: bool = true
 @export var occluder_paths: Array[NodePath] = [NodePath("TutorialRooms")]
 
+@export_category("Environment")
+@export var default_background_color: Color = DEFAULT_BACKGROUND_COLOR
+
 @onready var _source_door: Node3D = $Door3
 @onready var _source_camera: Camera3D = $Player/Head/Camera3D
 @onready var _source_environment: WorldEnvironment = $WorldEnvironment
@@ -58,6 +62,7 @@ var _tutorial_labels_are_hiding := false
 
 
 func _ready() -> void:
+	_init_world_environment()
 	_intro_light = _find_intro_light()
 	if is_instance_valid(_intro_light):
 		_intro_light.light_energy = intro_light_start_energy
@@ -292,6 +297,25 @@ func _unlock_player() -> void:
 	_player.set_process_unhandled_input(_player_was_processing_unhandled_input)
 
 
+func _init_world_environment() -> void:
+	if not is_instance_valid(_source_environment):
+		_source_environment = get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if is_instance_valid(_source_environment):
+		if _source_environment.environment == null:
+			_source_environment.environment = Environment.new()
+		else:
+			_source_environment.environment = _source_environment.environment.duplicate() as Environment
+		_source_environment.environment.background_mode = Environment.BG_SKY if _source_environment.environment.sky else Environment.BG_COLOR
+		_source_environment.environment.background_color = default_background_color
+		_source_environment.environment.background_energy_multiplier = 0.6
+		if _source_environment.environment.sky:
+			var fog_mesh := get_node_or_null("Player/Head/Camera3D/DistanceFog") as MeshInstance3D
+			if fog_mesh and fog_mesh.material_override is ShaderMaterial:
+				var fog_material := fog_mesh.material_override.duplicate() as ShaderMaterial
+				fog_material.set_shader_parameter("sky_horizon_blend", 0.0)
+				fog_mesh.material_override = fog_material
+
+
 func _make_color_environment() -> Environment:
 	var environment: Environment
 	if _source_environment.environment:
@@ -324,6 +348,7 @@ func _sync_color_pass() -> void:
 		return
 
 	_door_camera.global_transform = _source_camera.global_transform
+	_door_camera.cull_mask = _source_camera.cull_mask
 	_door_camera.projection = _source_camera.projection
 	_door_camera.fov = _source_camera.fov
 	_door_camera.size = _source_camera.size

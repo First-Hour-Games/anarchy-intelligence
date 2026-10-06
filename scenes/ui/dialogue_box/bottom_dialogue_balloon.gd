@@ -97,6 +97,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not balloon.visible:
 		return
 
+	# Never intercept or block pause input (Escape / ui_cancel) so the pause menu can always open
+	if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+		return
+
 	if _is_closing:
 		if will_block_other_input and is_inside_tree() and get_viewport():
 			get_viewport().set_input_as_handled()

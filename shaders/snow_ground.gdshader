@@ -1,10 +1,12 @@
 shader_type spatial;
 
-uniform sampler2D albedo_texture : source_color, filter_linear_mipmap;
-uniform sampler2D normal_texture : hint_normal, filter_linear_mipmap;
-uniform sampler2D roughness_texture : hint_default_white, filter_linear_mipmap;
-uniform sampler2D ao_texture : hint_default_white, filter_linear_mipmap;
-uniform sampler2D height_texture : hint_default_white, filter_linear_mipmap;
+#include "res://shaders/natural_tiling.gdshaderinc"
+
+uniform sampler2D albedo_texture : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D normal_texture : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D roughness_texture : hint_default_white, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D ao_texture : hint_default_white, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D height_texture : hint_default_white, repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D detail_albedo_texture : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
 
 uniform float tiling = 4.0;
@@ -41,6 +43,7 @@ float value_noise(vec2 p) {
 
 vec4 sample_tiled_texture(sampler2D tex, vec2 uv) {
 	vec2 st = uv * tiling;
+	if (anti_repeat_strength > 0.0) { return natural_texture(tex, st); }
 	// Continuous UVs preserve mip derivatives and avoid cell-edge seams.
 	if (randomize_rotation == 0.0) { return texture(tex, st); }
 	vec2 grid_id = floor(st);
@@ -54,6 +57,7 @@ vec4 sample_tiled_texture(sampler2D tex, vec2 uv) {
 
 vec4 sample_tiled_texture_lod(sampler2D tex, vec2 uv, float lod) {
 	vec2 st = uv * tiling;
+	if (anti_repeat_strength > 0.0) { return natural_texture_lod(tex, st, lod); }
 	if (randomize_rotation == 0.0) { return textureLod(tex, st, lod); }
 	vec2 grid_id = floor(st);
 	vec2 grid_uv = fract(st);
@@ -72,10 +76,15 @@ void vertex() {
 
 void fragment() {
 	vec4 albedo_tex = sample_tiled_texture(albedo_texture, UV);
-	vec4 normal_tex = sample_tiled_texture(normal_texture, UV);
+	vec4 normal_tex;
+	if (anti_repeat_strength > 0.0) {
+		normal_tex = natural_normal(normal_texture, UV * tiling);
+	} else {
+		normal_tex = sample_tiled_texture(normal_texture, UV);
+	}
 	vec4 rough_tex = sample_tiled_texture(roughness_texture, UV);
 	vec4 ao_tex = sample_tiled_texture(ao_texture, UV);
-	vec3 detail_albedo = texture(
+	vec3 detail_albedo = natural_texture(
 		detail_albedo_texture,
 		world_vertex_position.xz / max(detail_world_scale, 0.01)
 	).rgb;

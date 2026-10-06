@@ -65,3 +65,18 @@ static func visible_edge(points: PackedVector3Array, camera: Vector3, away: Vect
 			slope = candidate
 			best = point
 	return best
+
+static func world_bark_faces(parts: Array[Dictionary]) -> PackedVector3Array:
+	var result := PackedVector3Array()
+	for part: Dictionary in parts:
+		var transform: Transform3D = part["transform"]
+		for point: Vector3 in part["faces"]:
+			result.append(transform * point)
+	return result
+
+static func bark_line_clear(faces: PackedVector3Array, start: Vector3, end: Vector3) -> bool:
+	# Branch meshes often lack physics collision, but still hide a rendered figure.
+	for index in range(0, faces.size(), 3):
+		if Geometry3D.segment_intersects_triangle(start, end, faces[index], faces[index + 1], faces[index + 2]) != null:
+			return false
+	return true

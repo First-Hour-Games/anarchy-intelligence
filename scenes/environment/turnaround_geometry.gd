@@ -46,5 +46,10 @@ static func finish(parent: Node3D, surface: SurfaceTool, label: String, material
 	item.name = label
 	item.mesh = surface.commit()
 	item.material_override = material
+	if label.to_lower().contains("road"):
+		item.set_meta("surface", "gravel")
 	parent.add_child(item)
 	item.create_trimesh_collision()
+	for child in item.get_children():
+		if child is StaticBody3D and label.to_lower().contains("road"):
+			child.set_meta("surface", "gravel")

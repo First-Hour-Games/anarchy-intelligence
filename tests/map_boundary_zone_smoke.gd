@@ -72,7 +72,9 @@ func _run() -> void:
 	check(results["entered"], "player_entered_zone signal emitted")
 
 	# Simulate player exiting
+	dummy_player.global_position = Vector3(6.0, 0, 0)
 	zone._on_body_exited(dummy_player)
+	await process_frame
 	check(results["exited"], "player_exited_zone signal emitted")
 	check(results["warning"], "boundary_warning_triggered signal emitted on leaving play area")
 	check(results["msg"].contains("should"), "Warning message contains expected dialogue text")

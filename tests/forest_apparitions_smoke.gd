@@ -77,11 +77,30 @@ func run() -> void:
 	var parts: Array[Dictionary] = [{"faces": TreeAnchor.bark_faces(offset_trunk), "transform": trunk_transform}]
 	var measured := TreeAnchor.sections(parts, 0.0)
 	check(measured.size() == 4 and measured[1][0].x > 1.8, "Trunk placement follows an offset mesh instead of guessing from the tree root")
+	var visual_bark := TreeAnchor.world_bark_faces(parts)
+	check(not TreeAnchor.bark_line_clear(visual_bark, Vector3(2, 1.5, 2), Vector3(2, 1.5, -2)), "Visible bark blocks a sightline even when the mesh has no physics collider")
+	check(TreeAnchor.bark_line_clear(visual_bark, Vector3(3, 1.5, 2), Vector3(3, 1.5, -2)), "A clear sightline beside the trunk allows a readable peek")
 	var foliage := QuadMesh.new()
 	var foliage_material := StandardMaterial3D.new()
 	foliage_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	foliage.material = foliage_material
 	check(TreeAnchor.bark_faces(foliage).is_empty(), "Transparent foliage cannot inflate the measured trunk width")
+	# Reproduce the actual visitor-center pedestal, rather than only a box fixture.
+	var pedestal := forest.get_node("welcomeCenterTextured2/Pedestal_front_R") as MeshInstance3D
+	var pedestal_bounds: AABB = pedestal.global_transform * pedestal.mesh.get_aabb()
+	check(pedestal_bounds.size.y < 1.0, "Visitor-center brick pedestal is too low to hide his head and coat")
+	controller.cover_paths = [NodePath("../welcomeCenterTextured2/Pedestal_front_R")]
+	controller._cache_trees()
+	player.global_position = pedestal.global_position + Vector3(0, 0.025, 6)
+	var pedestal_framed := false
+	var pedestal_rejected := true
+	for yaw: float in [-32.0, -28.0, -24.0, 24.0, 28.0, 32.0]:
+		player.camera.look_at(Vector3(pedestal.global_position.x, player.camera.global_position.y, pedestal.global_position.z))
+		player.camera.global_basis = Basis(Vector3.UP, deg_to_rad(yaw)) * player.camera.global_basis
+		pedestal_framed = pedestal_framed or controller._cover_in_peripheral_view(pedestal_bounds)
+		pedestal_rejected = pedestal_rejected and controller._generic_hat_man_candidate().is_empty()
+	check(pedestal_framed and pedestal_rejected, "Actual visitor-center brick surround cannot generate a floating Hat man")
+	controller.cover_paths.clear()
 	# Isolate a real tree for repeatable grounding and retreat checks.
 	var tree := forest.get_node("dead_tree_rt_155") as Node3D
 	controller.tree_paths = [NodePath("../dead_tree_rt_155")]
@@ -124,7 +143,7 @@ func run() -> void:
 		check(coat_offset.dot(outward) / coat_offset.dot(forward) > edge_offset.dot(outward) / edge_offset.dot(forward), "Upper coat extends past the actual trunk edge, below the former shoulder cutoff")
 		var center_offset := controller.active_figure.global_position + Vector3.UP * 1.20 - view_origin
 		var center_error := absf(center_offset.dot(outward) / center_offset.dot(forward) - edge_offset.dot(outward) / edge_offset.dot(forward)) * center_offset.dot(forward)
-		check(center_error < 0.03, "Measured bark edge divides the upright body approximately in half")
+		check(absf(center_error - controller.peek_exposure) < 0.03, "Measured bark edge reveals at most half the upright body")
 		player.global_position += player.camera.global_basis.x * 0.25
 		controller._process(0.01)
 		var mask_view: Vector3 = controller.active_figure._material.get_shader_parameter("conceal_view_origin")
@@ -139,20 +158,28 @@ func run() -> void:
 		check(controller.active_figure == original, "Repeated shortcut presses do not create overlapping figures")
 		player.camera.look_at(controller._target)
 		controller._process(0.02)
+		check(controller.state == Controller.State.PEEKING, "Turning toward hat man gives a brief moment to recognize the silhouette")
+		controller._process(controller.gaze_seconds)
 		check(controller.state == Controller.State.RETREATING and is_zero_approx(controller.active_figure.rotation.z), "Looking directly makes the upright figure slide back")
 		controller._process(0.6)
 		check(controller.state == Controller.State.IDLE and controller.active_figure == null, "Retreat cleans up the figure")
 		check(not (controller._trees[0]["sections"] as Array).is_empty(), "Retreat preserves the cached trunk for later sightings")
 	player.camera.rotation.x = 0.0
 	controller._trees.clear()
+	# The more visible crossing occupies more ground; test it on the open road.
+	player.global_position = Vector3(-280.0, 0.025, 10.5346913)
+	player.rotation = Vector3(0.0, -PI * 0.5, 0.0)
+	player.head.rotation = Vector3.ZERO
+	player.camera.rotation = Vector3.ZERO
+	player.camera.position = player.camera_rest_position
 	controller._unhandled_input(shortcut)
 	check(controller.state == Controller.State.DOG_PASS and controller.active_figure != null and controller.active_figure.shape == Silhouette.Shape.DOG, "Dog makes a close pass without needing a tree")
 	if controller.active_figure != null:
 		controller._process(controller.dog_pass_seconds * 0.3)
 		var ears := controller.active_figure.to_global(Vector3(-0.59, 1.475, 0))
-		check(controller._screen_position(ears).y > 0.83, "Only the top of the dog enters the bottom of the view")
+		check(controller._screen_position(ears).y > 0.70 and controller._screen_position(ears).y < 1.0, "Dog's head enters the lower view where it can be recognized")
 		controller._process(controller.dog_pass_seconds)
-		check(controller.state == Controller.State.IDLE, "Dog vanishes in less than half a second")
+		check(controller.state == Controller.State.IDLE, "Dog disappears after its readable glimpse")
 	# Use real sprint input, physics movement, and head bob on an open road.
 	player.global_position = Vector3(-280.0, 0.025, 10.5346913)
 	player.rotation = Vector3(0.0, -PI * 0.5, 0.0)
@@ -172,7 +199,7 @@ func run() -> void:
 	check(controller.state == Controller.State.DOG_PASS, "Alt + plus triggers the dog while sprinting with Shift held")
 	var sprint_visible_frames := 0
 	var dog_stayed_ahead := true
-	for frame in 25:
+	for frame in ceili(controller.dog_pass_seconds * 60.0) + 2:
 		await physics_frame
 		controller._process(1.0 / 60.0)
 		if controller.active_figure == null:
@@ -266,7 +293,7 @@ func run() -> void:
 	var due_dog := controller.active_figure
 	controller._process(0.1)
 	check(controller.active_figure == due_dog, "Due hat man cannot overlap the automatic dog")
-	controller._process(0.4)
+	controller._process(controller.dog_pass_seconds)
 	player.global_transform = hat_player_transform
 	player.camera.transform = hat_camera_transform
 	controller._process(0.0)
@@ -275,6 +302,60 @@ func run() -> void:
 	controller.automatic_sightings_enabled = false
 	controller._process(200.0)
 	check(controller.state == Controller.State.IDLE, "Automatic sightings can be switched off in the inspector")
+	# Exercise the developer tools through their actual Input Map shortcuts.
+	controller.developer_trigger_enabled = true
+	var dev_key := InputEventKey.new()
+	dev_key.pressed = true
+	dev_key.alt_pressed = true
+	dev_key.keycode = KEY_0
+	controller._unhandled_input(dev_key)
+	check(controller._developer_overlay != null and controller._developer_overlay.visible, "Alt + 0 shows developer instructions and live state")
+	dev_key.keycode = KEY_3
+	controller._unhandled_input(dev_key)
+	check(controller._developer_hold, "Alt + 3 enables held visual previews")
+	player.global_transform = hat_player_transform
+	player.camera.transform = hat_camera_transform
+	controller._cache_trees()
+	dev_key.keycode = KEY_1
+	controller._unhandled_input(dev_key)
+	controller._process(controller.reveal_seconds + 0.01)
+	check(controller.state == Controller.State.PEEKING, "Alt + 1 directly reveals hat man in hold mode")
+	if controller.active_figure != null:
+		player.camera.look_at(controller._target)
+		controller.automatic_sightings_enabled = true
+		var held_clock := controller._hat_man_clock
+		controller._process(10.0)
+		check(controller.state == Controller.State.PEEKING and is_equal_approx(controller._peek_amount, 1.0), "Held hat man remains visible while looking directly at it")
+		check(is_equal_approx(controller._hat_man_clock, held_clock), "Hold suspends automatic timers for repeatable previews")
+		dev_key.keycode = KEY_3
+		controller._unhandled_input(dev_key)
+		controller._process(controller.gaze_seconds)
+		check(controller.state == Controller.State.RETREATING, "Releasing hold restores gaze retreat")
+	controller.automatic_sightings_enabled = false
+	controller._developer_hold = true
+	player.global_position = Vector3(-280.0, 0.025, 10.5346913)
+	player.rotation = Vector3(0.0, -PI * 0.5, 0.0)
+	player.head.rotation = Vector3.ZERO
+	player.camera.rotation = Vector3.ZERO
+	dev_key.keycode = KEY_2
+	var alternating_next := controller.next_shape
+	controller._unhandled_input(dev_key)
+	controller._process(0.01)
+	check(controller.state == Controller.State.DOG_PASS, "Alt + 2 replaces the current figure with a dog preview")
+	if controller.active_figure != null:
+		var held_dog_position := controller.active_figure.global_position
+		player.camera.rotation.x -= deg_to_rad(12.0)
+		controller._process(10.0)
+		check(controller.active_figure != null and controller.active_figure.global_position.is_equal_approx(held_dog_position), "Held dog stays in a fixed world pose for inspection")
+	check(controller.next_shape == alternating_next, "Direct triggers preserve the alternating shortcut sequence")
+	dev_key.keycode = KEY_MINUS
+	controller._unhandled_input(dev_key)
+	check(controller.state == Controller.State.IDLE, "Alt + minus clears a held figure")
+	controller.developer_trigger_enabled = false
+	dev_key.keycode = KEY_2
+	controller._unhandled_input(dev_key)
+	controller._process(0.0)
+	check(controller.active_figure == null and not controller._developer_overlay.visible, "Disabling developer tools blocks direct triggers and hides the overlay")
 	root.size = Vector2i(1920, 1080)
 	await process_frame
 	var safe := controller._gameplay_rect()

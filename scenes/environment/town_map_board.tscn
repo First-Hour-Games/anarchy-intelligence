@@ -14,6 +14,7 @@ size = Vector2(3.16, 1.4)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uyqgq"]
 cull_mode = 2
 albedo_texture = ExtResource("1_eftiv")
+metallic_specular = 0.11
 grow_amount = 0.025
 
 [sub_resource type="QuadMesh" id="Quad_map"]

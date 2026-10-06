@@ -59,7 +59,7 @@ func _physics_process(delta: float) -> void:
 			last_heard = player.global_position
 			memory = 4.5
 			if warning_cooldown <= 0.0:
-				get_tree().call_group("opening_story", "narrate_once", "claw_warning", "Something heard me. I should crouch and get behind cover.")
+				get_tree().call_group("opening_story", "narrate_once", "claw_warning", "Something heard me. I should keep still and get behind cover.")
 				warning_cooldown = 5.0
 		should_move = in_territory and memory > 0.0
 	var motion := Vector3.ZERO

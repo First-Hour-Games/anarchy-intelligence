@@ -130,7 +130,7 @@ func _build_documents() -> void:
 	var hospital := get_parent().get_node("Buildings/NeighborhoodHospital") as Node3D
 	_document(hospital, Vector3(-14, 1.3425, -1.9), &"register", "Emergency shelter registration", "TEMPORARY SHELTER — ARRIVALS\n\nCarrie — admitted to the treatment ward. Personal belongings retained.\n\nLater entry: Shelter closed. Remaining residents transferred with the evacuation party. See staff records for departure instructions.", Color(0.73, 0.68, 0.48))
 	_document(hospital, Vector3(11, 1.0425, -7.6), &"evacuation", "Evacuation notice", "THE HOSPITAL IS NO LONGER SAFE.\n\nMove residents out before nightfall. The last group, including Carrie, departed with the evacuation party.\n\nDo not follow voices calling from empty rooms.\n\n[The destination has been torn from the page.]", Color(0.76, 0.74, 0.64))
-	_document(hospital, Vector3(-12, 1.82, -8.3), &"supply", "Medical stores log", "Most supplies went with the evacuation.\n\nKeep footsteps quiet. Something responds to movement in the corridor. Walk slowly, crouch, and use the partitions for cover.", Color(0.57, 0.65, 0.58))
+	_document(hospital, Vector3(-12, 1.82, -8.3), &"supply", "Medical stores log", "Most supplies went with the evacuation.\n\nKeep footsteps quiet. Something responds to movement in the corridor. Keep still when it is near and use the partitions for cover.", Color(0.57, 0.65, 0.58))
 
 func _mount_entrance_note(house: Node3D) -> void:
 	for i in 3:
@@ -275,7 +275,7 @@ func open_document(id: StringName, title: String, words: String) -> void:
 			&"evacuation":
 				narrate_once("evac_read", "Carrie got out. But that warning about voices... was it the same voice from my dream?")
 			&"supply":
-				narrate_once("supply_read", "Quiet footsteps. I should crouch and stay out of sight.")
+				narrate_once("supply_read", "Quiet footsteps. I should keep still and stay out of sight.")
 		if discovered.has("register") and discovered.has("evacuation"):
 			stage = 5
 		_refresh_objective()

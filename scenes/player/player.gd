@@ -20,6 +20,7 @@ var current_footstep_surface: StringName = &"dirt"
 @export_category("Movement")
 @export var walk_speed: float = 3.2
 @export var sprint_speed: float = 4.8
+@export var sprint_enabled: bool = true
 @export var ground_acceleration: float = 13.0
 @export var ground_deceleration: float = 17.0
 @export var air_acceleration: float = 3.0
@@ -32,12 +33,14 @@ var current_footstep_surface: StringName = &"dirt"
 @export_range(0.0, 100.0, 1.0) var exhausted_recovery_stamina: float = 20.0
 
 @export_category("Jump")
+@export var jump_enabled: bool = false
 @export var jump_velocity: float = 3.4
 
 @export_category("Stair Stepping")
 @export var max_step_height: float = 0.3
 
 @export_category("Crouch")
+@export var crouch_enabled: bool = false
 @export_range(0.3, 0.9, 0.01) var crouch_height_scale: float = 0.55
 @export_range(0.2, 1.0, 0.05) var crouch_speed_multiplier: float = 0.5
 @export var crouch_transition_speed: float = 10.0
@@ -75,6 +78,15 @@ var current_footstep_surface: StringName = &"dirt"
 	preload("res://sounds/footsteps/concrete/Concrete footsteps 6.ogg"),
 	preload("res://sounds/footsteps/concrete/Concrete footsteps 7.ogg"),
 	preload("res://sounds/footsteps/concrete/Concrete footsteps 8.ogg"),
+]
+@export var gravel_footsteps: Array[AudioStream] = [
+	preload("res://sounds/footsteps/gravel/gravelFootstep1.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep2.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep3.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep4.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep5.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep6.ogg"),
+	preload("res://sounds/footsteps/gravel/gravelFootstep7.ogg"),
 ]
 @export var dirt_footsteps: Array[AudioStream] = []
 @export var grass_footsteps: Array[AudioStream] = [
@@ -296,7 +308,7 @@ func _physics_process(delta: float) -> void:
 
 	if is_on_floor():
 		velocity.y = 0.0
-		if Input.is_key_pressed(KEY_SPACE) and not is_crouching:
+		if jump_enabled and Input.is_key_pressed(KEY_SPACE) and not is_crouching:
 			velocity.y = jump_velocity
 	else:
 		velocity.y -= gravity * delta
@@ -304,7 +316,7 @@ func _physics_process(delta: float) -> void:
 	var input_vector: Vector2 = _get_movement_input()
 	var local_direction := Vector3(input_vector.x, 0.0, input_vector.y)
 	var world_direction := (global_transform.basis * local_direction).normalized()
-	var wants_to_sprint := Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
+	var wants_to_sprint := sprint_enabled and Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
 	_update_stamina(delta, wants_to_sprint)
 	var target_speed := sprint_speed if is_sprinting else walk_speed
 	if is_crouching:
@@ -347,8 +359,8 @@ func _update_stamina(delta: float, wants_to_sprint: bool) -> void:
 
 
 func _update_crouch(delta: float) -> void:
-	var wants_crouch := Input.is_key_pressed(KEY_CTRL)
-	if is_crouching and not wants_crouch and ceiling_check.is_colliding():
+	var wants_crouch := crouch_enabled and Input.is_key_pressed(KEY_CTRL)
+	if crouch_enabled and is_crouching and not wants_crouch and ceiling_check.is_colliding():
 		wants_crouch = true
 	is_crouching = wants_crouch
 
@@ -464,6 +476,11 @@ func _detect_ground_surface() -> StringName:
 		ancestor = ancestor.get_parent()
 		depth += 1
 
+	if is_instance_valid(collider) and collider is Node:
+		var classified := SURFACES.classify(collider as Node)
+		if not classified.is_empty() and classified != &"dirt":
+			return classified
+
 	return default_surface
 
 
@@ -476,6 +493,8 @@ func _check_node_surface(node: Node) -> StringName:
 		return StringName(str(node.get_meta("surface_type")).to_lower())
 	if node.has_meta("footstep"):
 		return StringName(str(node.get_meta("footstep")).to_lower())
+	if node.has_meta("footstep_surface"):
+		return StringName(str(node.get_meta("footstep_surface")).to_lower())
 
 	var surface_prop = node.get("surface_type")
 	if surface_prop != null and not str(surface_prop).is_empty():
@@ -495,8 +514,10 @@ func _get_sounds_for_surface(surface: StringName) -> Array[AudioStream]:
 	match surface:
 		&"wood":
 			return wood_footsteps
-		&"concrete", &"asphalt", &"stone", &"road":
+		&"concrete", &"asphalt", &"stone":
 			return concrete_footsteps
+		&"gravel", &"road":
+			return gravel_footsteps
 		&"dirt", &"mud", &"ground":
 			return dirt_footsteps
 		&"grass", &"foliage":
@@ -517,6 +538,14 @@ func _get_sounds_for_surface(surface: StringName) -> Array[AudioStream]:
 			return []
 
 
+func get_footstep_surface() -> StringName:
+	return _detect_ground_surface()
+
+
+func _play_surface_footstep() -> void:
+	_play_footstep_sound()
+
+
 func _play_random_wood_footstep() -> void:
 	_play_footstep_sound()
 
@@ -526,6 +555,7 @@ func _play_footstep_sound() -> void:
 		return
 
 	var surface := _detect_ground_surface()
+	current_footstep_surface = surface
 	var sound_list := _get_sounds_for_surface(surface)
 
 	if sound_list.is_empty() and surface != default_surface:

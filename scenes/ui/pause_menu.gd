@@ -51,7 +51,7 @@ var _options_menu_items: Array[Dictionary] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	layer = 99
+	layer = 250
 
 	for bus: String in ["Effects", "Footsteps"]:
 		if AudioServer.get_bus_index(bus) < 0:
@@ -136,7 +136,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
 			if not get_tree().paused and not _is_transitioning:
 				var player := get_tree().get_first_node_in_group("player") as FirstPersonPlayer
-				if player == null or player.is_frozen:
+				if player == null:
 					return
 				set_open(true)
 				get_viewport().set_input_as_handled()
@@ -211,6 +211,7 @@ func set_open(value: bool) -> void:
 
 	if value:
 		opened = true
+		layer = 250
 		_is_transitioning = true
 		_play_random_pause_sound()
 		_update_distortion_rect_bounds()

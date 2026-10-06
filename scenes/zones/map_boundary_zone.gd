@@ -3,7 +3,7 @@ class_name MapBoundaryZone3D extends Area3D
 
 ## A modular 3D boundary and zone system for maps.
 ## Defines an area where player movement is constrained or monitored.
-## When configured as ALLOWED_PLAY_AREA (default), leaving the zone triggers a warning dialogue
+## Enabled ALLOWED_PLAY_AREA zones combine into one playable area. Leaving all of them triggers a warning dialogue
 ## reminding the player not to go too far and to return back.
 ## Supports an eyelid blink transition after the dialogue that teleports the player back
 ## inside near the boundary edge facing inwards towards the zone center.
@@ -98,6 +98,11 @@ var _is_dialogue_active: bool = false
 var _is_cooling_down: bool = false
 var _trigger_count: int = 0
 var _cached_player: Node3D = null
+var _last_allowed_warning_frame: int = -1
+
+
+func _enter_tree() -> void:
+	add_to_group(&"map_boundary_zones")
 
 
 func _ready() -> void:
@@ -206,7 +211,41 @@ func _on_body_exited(body: Node3D) -> void:
 	player_exited_zone.emit(body)
 
 	if zone_behavior == ZoneBehavior.ALLOWED_PLAY_AREA:
-		trigger_warning(body)
+		# Physics may emit exits before entries when crossing between overlapping zones.
+		# Evaluate geometry after the signal batch rather than relying on overlap flags.
+		_check_allowed_area_exit.call_deferred(body)
+
+
+func _get_enabled_allowed_zones() -> Array[MapBoundaryZone3D]:
+	var zones: Array[MapBoundaryZone3D] = []
+	if not is_inside_tree():
+		return zones
+	for candidate in get_tree().get_nodes_in_group(&"map_boundary_zones"):
+		if candidate is MapBoundaryZone3D and not candidate.is_queued_for_deletion():
+			if candidate.is_enabled and candidate.zone_behavior == ZoneBehavior.ALLOWED_PLAY_AREA:
+				zones.append(candidate)
+	return zones
+
+
+func _check_allowed_area_exit(player: Node3D) -> void:
+	if not is_inside_tree() or is_queued_for_deletion() or not is_instance_valid(player) or not player.is_inside_tree():
+		return
+	if not is_enabled or zone_behavior != ZoneBehavior.ALLOWED_PLAY_AREA:
+		return
+	var zones := _get_enabled_allowed_zones()
+	for zone in zones:
+		if zone.is_point_inside(player.global_position):
+			return
+	# A single outside transition may produce exits from several overlapping zones.
+	# Share active dialogue/cooldown suppression for this player across allowed zones.
+	var frame := Engine.get_physics_frames()
+	for zone in zones:
+		if zone._cached_player == player and (zone._is_dialogue_active or zone._is_cooling_down or zone._last_allowed_warning_frame == frame):
+			return
+	var previous_count := _trigger_count
+	trigger_warning(player)
+	if _trigger_count > previous_count:
+		_last_allowed_warning_frame = frame
 
 
 ## Manually trigger or execute the boundary warning logic.
