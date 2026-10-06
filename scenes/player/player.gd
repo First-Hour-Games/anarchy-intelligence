@@ -163,10 +163,42 @@ func _ready() -> void:
 	if is_instance_valid(inventory):
 		inventory.selection_changed.connect(_on_inventory_selection_changed)
 
+	# Ensure the player's feet are already contacting the floor on initial spawn
+	if not Engine.is_editor_hint():
+		snap_to_ground.call_deferred()
+
+
+## Snaps the player downwards to the nearest floor surface within max_distance.
+## Positions the feet directly on the ground and registers floor contact.
+func snap_to_ground(max_distance: float = 4.0) -> bool:
+	var world := get_world_3d()
+	if not is_instance_valid(world):
+		return false
+	var space_state := world.direct_space_state
+	if not is_instance_valid(space_state):
+		return false
+
+	var start_pos := Vector3(global_position.x, global_position.y + 0.5, global_position.z)
+	var end_pos := Vector3(global_position.x, global_position.y - max_distance, global_position.z)
+	var query := PhysicsRayQueryParameters3D.create(start_pos, end_pos)
+	query.exclude = [get_rid()]
+
+	var result := space_state.intersect_ray(query)
+	if not result.is_empty():
+		var ground_y: float = float(result["position"].y)
+		global_position.y = ground_y + 0.001
+		velocity.x = 0.0
+		velocity.z = 0.0
+		velocity.y = -0.1
+		move_and_slide()
+		return true
+	return false
+
 
 func freeze() -> void:
 	is_frozen = true
-	velocity = Vector3.ZERO
+	velocity.x = 0.0
+	velocity.z = 0.0
 	set_process_unhandled_input(false)
 	for footstep_player in footstep_players:
 		if is_instance_valid(footstep_player) and footstep_player.playing:
@@ -176,6 +208,10 @@ func freeze() -> void:
 		var viewmodel: HandViewmodel = get_node_or_null("HandViewmodel") as HandViewmodel
 		if is_instance_valid(viewmodel):
 			viewmodel.set_interaction_prompt(false)
+
+	# Ensure player is solidly positioned on the floor when frozen
+	if is_inside_tree() and not is_on_floor():
+		snap_to_ground()
 
 
 func unfreeze() -> void:
@@ -247,6 +283,13 @@ func _on_inventory_selection_changed(_slot_index: int, _item_id: StringName) -> 
 func _physics_process(delta: float) -> void:
 	if is_frozen:
 		_update_stamina(delta, false)
+		velocity.x = 0.0
+		velocity.z = 0.0
+		if not is_on_floor():
+			velocity.y -= gravity * delta
+		else:
+			velocity.y = 0.0
+		move_and_slide()
 		return
 
 	_update_crouch(delta)

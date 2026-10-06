@@ -17,6 +17,7 @@ signal inspection_ended(player: FirstPersonPlayer)
 @export var sway_smoothing: float = 8.0
 
 @export_category("Controls")
+@export var keyboard_pickup_hotspot: InspectionHotspot3D = null
 @export var exit_key: Key = KEY_ESCAPE
 @export var alternate_exit_key: Key = KEY_TAB
 @export var exit_prompt_text: String = "[ TAB / ESC ] RETURN":
@@ -324,6 +325,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active:
 		return
 
+	if event.is_action_pressed(&"interact") and not event.is_echo() and is_instance_valid(keyboard_pickup_hotspot):
+		_on_hotspot_clicked(keyboard_pickup_hotspot)
+		get_viewport().set_input_as_handled()
+		return
+
 	var is_exit_pressed: bool = false
 	if event is InputEventKey and event.pressed and not event.echo:
 		var code: Key = event.keycode if event.keycode != KEY_NONE else event.physical_keycode
@@ -436,6 +442,10 @@ func _update_hotspot_positions() -> void:
 			btn.visible = false
 			continue
 
+		if hotspot.is_pickup and is_instance_valid(current_player) and current_player.has_item(hotspot.pickup_item_id):
+			btn.visible = false
+			continue
+
 		if cam.is_position_behind(hotspot.global_position):
 			btn.visible = false
 			continue
@@ -451,6 +461,8 @@ func _update_hotspot_positions() -> void:
 
 func _on_hotspot_clicked(hotspot: InspectionHotspot3D) -> void:
 	if _is_transitioning or is_instance_valid(_active_dialogue_balloon) or not is_instance_valid(hotspot) or not hotspot.can_activate():
+		return
+	if hotspot.is_pickup and is_instance_valid(current_player) and current_player.has_item(hotspot.pickup_item_id):
 		return
 
 	hotspot.activate()

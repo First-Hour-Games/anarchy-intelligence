@@ -1,0 +1,305 @@
+[gd_scene format=3 uid="uid://dhi88tdmvuq7j"]
+
+[ext_resource type="Script" uid="uid://op87exg3bqrp" path="res://scenes/chapters/playground/fog_preview.gd" id="1_script"]
+[ext_resource type="Material" uid="uid://b6b6o01o4muf" path="res://shaders/moving_gradient_noise_fog_material.tres" id="2_fog_mat"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_preview"]
+sky_top_color = Color(0.06, 0.08, 0.14, 1)
+sky_horizon_color = Color(0.18, 0.22, 0.28, 1)
+ground_bottom_color = Color(0.02, 0.02, 0.03, 1)
+ground_horizon_color = Color(0.12, 0.14, 0.18, 1)
+
+[sub_resource type="Sky" id="Sky_preview"]
+sky_material = SubResource("ProceduralSkyMaterial_preview")
+
+[sub_resource type="Environment" id="Environment_preview"]
+background_mode = 2
+sky = SubResource("Sky_preview")
+ambient_light_source = 3
+ambient_light_color = Color(0.25, 0.3, 0.38, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0
+volumetric_fog_albedo = Color(0.85, 0.88, 0.95, 1)
+volumetric_fog_emission_energy = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.2, 0.23, 0.26, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("StandardMaterial3D_ground")
+size = Vector3(32, 0.4, 32)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pillar"]
+albedo_color = Color(0.35, 0.38, 0.42, 1)
+roughness = 0.7
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pillar_short"]
+material = SubResource("StandardMaterial3D_pillar")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 1.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pillar_mid"]
+material = SubResource("StandardMaterial3D_pillar")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 2.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pillar_tall"]
+material = SubResource("StandardMaterial3D_pillar")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_warm_lamp"]
+emission_enabled = true
+emission = Color(1, 0.6, 0.2, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_lamp"]
+material = SubResource("StandardMaterial3D_warm_lamp")
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cool_lamp"]
+emission_enabled = true
+emission = Color(0.2, 0.8, 1, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_cool_lamp"]
+material = SubResource("StandardMaterial3D_cool_lamp")
+radius = 0.25
+height = 0.5
+
+[node name="FogPreview" type="Node3D" unique_id=373715792]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=586690535]
+environment = SubResource("Environment_preview")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=375193449]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 15, 0)
+light_color = Color(0.85, 0.9, 1, 1)
+light_energy = 0.9
+light_volumetric_fog_energy = 1.3
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=842099875]
+transform = Transform3D(1, 0, 0, 0, 0.980067, 0.198669, 0, -0.198669, 0.980067, 0, 3.5, 12)
+current = true
+fov = 70.0
+
+[node name="FogVolume" type="FogVolume" parent="." unique_id=1246491761]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+size = Vector3(32, 5, 32)
+material = ExtResource("2_fog_mat")
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=593924363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("BoxMesh_ground")
+
+[node name="EnvironmentProps" type="Node3D" parent="." unique_id=116094466]
+
+[node name="PillarShort" type="MeshInstance3D" parent="EnvironmentProps" unique_id=1110743731]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.75, -2)
+mesh = SubResource("CylinderMesh_pillar_short")
+
+[node name="PillarMid" type="MeshInstance3D" parent="EnvironmentProps" unique_id=1417623293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -4)
+mesh = SubResource("CylinderMesh_pillar_mid")
+
+[node name="PillarTall" type="MeshInstance3D" parent="EnvironmentProps" unique_id=212779876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, -3)
+mesh = SubResource("CylinderMesh_pillar_tall")
+
+[node name="PillarTall2" type="MeshInstance3D" parent="EnvironmentProps" unique_id=1646827538]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2, 3)
+mesh = SubResource("CylinderMesh_pillar_tall")
+
+[node name="PillarMid2" type="MeshInstance3D" parent="EnvironmentProps" unique_id=971507816]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.25, 2)
+mesh = SubResource("CylinderMesh_pillar_mid")
+
+[node name="WarmLantern" type="Node3D" parent="EnvironmentProps" unique_id=393821844]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.2, 1)
+
+[node name="LampMesh" type="MeshInstance3D" parent="EnvironmentProps/WarmLantern" unique_id=649948843]
+mesh = SubResource("SphereMesh_lamp")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="EnvironmentProps/WarmLantern" unique_id=812509271]
+light_color = Color(1, 0.65, 0.25, 1)
+light_energy = 2.5
+light_volumetric_fog_energy = 2.0
+shadow_enabled = true
+omni_range = 8.0
+
+[node name="CoolBeacon" type="Node3D" parent="EnvironmentProps" unique_id=118386518]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1.2, -1)
+
+[node name="BeaconMesh" type="MeshInstance3D" parent="EnvironmentProps/CoolBeacon" unique_id=1842863670]
+mesh = SubResource("SphereMesh_cool_lamp")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="EnvironmentProps/CoolBeacon" unique_id=1609086406]
+light_color = Color(0.2, 0.8, 1, 1)
+light_energy = 2.5
+light_volumetric_fog_energy = 2.0
+shadow_enabled = true
+omni_range = 8.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=793520156]
+
+[node name="Panel" type="PanelContainer" parent="HUD" unique_id=1965883674]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 380.0
+offset_bottom = 380.0
+
+[node name="VBox" type="VBoxContainer" parent="HUD/Panel" unique_id=580649917]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="HUD/Panel/VBox" unique_id=1829063717]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "Moving Gradient Noise Fog 3D"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="HUD/Panel/VBox" unique_id=761596599]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+text = "By alghost (Godot 4 FogVolume)"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HUD/Panel/VBox" unique_id=2108671761]
+layout_mode = 2
+
+[node name="DensityRow" type="HBoxContainer" parent="HUD/Panel/VBox" unique_id=1917351637]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HUD/Panel/VBox/DensityRow" unique_id=877962812]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Base Density:"
+
+[node name="HSlider" type="HSlider" parent="HUD/Panel/VBox/DensityRow" unique_id=1266560275]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.02
+value = 0.8
+
+[node name="ValueLabel" type="Label" parent="HUD/Panel/VBox/DensityRow" unique_id=2019094147]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "0.80"
+
+[node name="HeightRow" type="HBoxContainer" parent="HUD/Panel/VBox" unique_id=1690788053]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HUD/Panel/VBox/HeightRow" unique_id=1345346779]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Fade Height:"
+
+[node name="HSlider" type="HSlider" parent="HUD/Panel/VBox/HeightRow" unique_id=949333093]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -2.0
+max_value = 6.0
+step = 0.1
+value = 2.0
+
+[node name="ValueLabel" type="Label" parent="HUD/Panel/VBox/HeightRow" unique_id=1726742132]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "2.0m"
+
+[node name="FadeDistRow" type="HBoxContainer" parent="HUD/Panel/VBox" unique_id=1440788843]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HUD/Panel/VBox/FadeDistRow" unique_id=875678582]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Fade Dist:"
+
+[node name="HSlider" type="HSlider" parent="HUD/Panel/VBox/FadeDistRow" unique_id=556887682]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 5.0
+step = 0.1
+value = 1.5
+
+[node name="ValueLabel" type="Label" parent="HUD/Panel/VBox/FadeDistRow" unique_id=1338812813]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "1.5m"
+
+[node name="HeightFadeCheck" type="CheckBox" parent="HUD/Panel/VBox" unique_id=1103037751]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+button_pressed = true
+text = "Enable Ground Height Fade"
+
+[node name="LightsCheck" type="CheckBox" parent="HUD/Panel/VBox" unique_id=1754111827]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+button_pressed = true
+text = "Enable Colored OmniLights"
+
+[node name="ColorRow" type="HBoxContainer" parent="HUD/Panel/VBox" unique_id=1253901780]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HUD/Panel/VBox/ColorRow" unique_id=1781733634]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Color:"
+
+[node name="BtnWhite" type="Button" parent="HUD/Panel/VBox/ColorRow" unique_id=743989353]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 11
+text = "Mist"
+
+[node name="BtnBlue" type="Button" parent="HUD/Panel/VBox/ColorRow" unique_id=2067797952]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 11
+text = "Night"
+
+[node name="BtnGreen" type="Button" parent="HUD/Panel/VBox/ColorRow" unique_id=951040817]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 11
+text = "Eerie"
+
+[node name="BtnWarm" type="Button" parent="HUD/Panel/VBox/ColorRow" unique_id=945516576]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 11
+text = "Dawn"
+
+[node name="HSeparator2" type="HSeparator" parent="HUD/Panel/VBox" unique_id=388766880]
+layout_mode = 2
+
+[node name="ControlsLabel" type="Label" parent="HUD/Panel/VBox" unique_id=1710512184]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 10
+text = "Right Click: Look / Capture Mouse
+WASD: Fly   Q/E: Down/Up   Shift: Sprint
+Esc: Release Mouse   H: Toggle HUD
+1 / 2 / 3: Camera Presets (High / Low / Angle)"
+autowrap_mode = 2

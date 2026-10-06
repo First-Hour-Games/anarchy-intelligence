@@ -92,6 +92,7 @@ bbcode_enabled = true
 text = "IT APPEARS YOU HAVE REACHED AN END."
 fit_content = true
 scroll_active = false
+visible_characters_behavior = 1
 script = ExtResource("2_dialogue_label")
 seconds_per_step = 0.08
 seconds_per_pause_step = 0.4

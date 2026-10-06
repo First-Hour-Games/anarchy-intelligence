@@ -17,8 +17,7 @@ static func _ensure_initialized() -> void:
 	map_item.id = &"map"
 	map_item.name = "TOURIST MAP"
 	map_item.description = "A folded tourist brochure from the welcome center containing the street map of Cicely. Useful for finding your way around the town."
-	if ResourceLoader.exists("res://img/items/brochure_map_placeholder.png"):
-		map_item.image = load("res://img/items/brochure_map_placeholder.png") as Texture2D
+	map_item.image = preload("res://img/items/cicely_town_map.png")
 	map_item.model_scene = null # Ready for future 3D model import
 	map_item.use_action_text = "OPEN MAP"
 	register_item(map_item)

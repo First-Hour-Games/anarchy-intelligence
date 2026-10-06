@@ -30,7 +30,7 @@ Welcome Board: we hope you enjoy your stay and feel at home in Cicely.
 ~ visitor_center_map_interact
 
 Thomas: There are multiple brochures that contain the town map information.
-Thomas: It's been more than a decade since I move away here, a lot of things have changed.
+Thomas: It's been more than a decade since I moved out, a lot of things have changed.
 Thomas: This town map will come in handy.
 
 => END
@@ -64,3 +64,17 @@ Thomas: Should I proceed?
 - No
 	=> END
 
+~ visitor_center_barrier_post_teleport
+
+Thomas: I have driven this far, and I cannot go back now.
+Thomas: There could be someone down the road.
+
+=> END
+
+~ after_climb_over
+
+=> visitor_center_barrier_post_teleport
+
+~ post_teleport
+
+=> visitor_center_barrier_post_teleport

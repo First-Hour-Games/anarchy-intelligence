@@ -43,14 +43,14 @@ const COLOR_TEXT := Color(0.82, 0.90, 0.82, 1.0)
 const COLOR_MUTED_TEXT := Color(0.56, 0.66, 0.59, 1.0)
 const COLOR_PLAYER := Color(0.96, 0.79, 0.32, 1.0)
 const PIXEL_STEP := 2.0
-const MAP_TEXTURE: Texture2D = preload("res://img/player/mapOnly.png")
-const MAP_TEXTURE_SIZE := Vector2(701.0, 535.0)
-
+const MAP_TEXTURE: Texture2D = preload("res://img/items/cicely_town_map.png")
+# Calibrated from the PDF's main-road junction and residential turnarounds.
+# Values are pixels in the 2376 x 1836 map texture; +Z runs down the page.
 @export_category("Town Map Image")
 @export var use_image_map: bool = true
 @export var map_texture: Texture2D = MAP_TEXTURE
-@export var map_origin: Vector2 = Vector2(356.77, 69.50)
-@export var world_scale: Vector2 = Vector2(0.8423, 0.9800)
+@export var map_origin: Vector2 = Vector2(1137.893, 229.696)
+@export var world_scale: Vector2 = Vector2(3.433656, 3.487944)
 @export var require_inventory_item: bool = true
 @export var required_item_id: StringName = &"map"
 @export var show_coordinates_footer: bool = true
@@ -70,6 +70,9 @@ var _map_rect := Rect2()
 var _is_open: bool = false
 var _tree_was_paused: bool = false
 var _previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_CAPTURED
+var _fade_rect: ColorRect
+var _fade_tween: Tween
+var _fade_phase: int = 0
 
 
 func _ready() -> void:
@@ -82,6 +85,17 @@ func _ready() -> void:
 		_map_camera = _map_viewport.get_node_or_null("TopCamera") as Camera3D
 		_configure_overhead_camera()
 	_world_environment = get_node_or_null(environment_path) as WorldEnvironment
+	_fade_rect = ColorRect.new()
+	_fade_rect.name = "MapFadeRect"
+	_fade_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_fade_rect.color = Color(0, 0, 0, 0)
+	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fade_rect.visible = false
+	var parent_canvas := get_parent()
+	if is_instance_valid(parent_canvas):
+		parent_canvas.add_child.call_deferred(_fade_rect)
+	else:
+		add_child(_fade_rect)
 	visible = false
 	set_process(true)
 	set_process_unhandled_input(true)
@@ -111,6 +125,8 @@ func has_town_map() -> bool:
 
 
 func _exit_tree() -> void:
+	if _fade_tween != null and _fade_tween.is_valid():
+		_fade_tween.kill()
 	_set_overhead_rendering(false)
 	_set_runtime_map_lighting(false)
 	if _is_open and pause_while_open and not _tree_was_paused and get_tree() != null:
@@ -142,13 +158,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-func set_map_open(should_open: bool) -> void:
+func set_map_open(should_open: bool, animate: bool = true) -> void:
 	if should_open == _is_open:
 		return
 
 	_is_open = should_open
-	visible = should_open
 	if should_open:
+		visible = true
 		_tree_was_paused = get_tree().paused
 		_previous_mouse_mode = Input.mouse_mode
 		_set_runtime_map_lighting(true)
@@ -157,23 +173,109 @@ func set_map_open(should_open: bool) -> void:
 			get_tree().paused = true
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		queue_redraw()
+
+		# Quick transition: fade to black, then fade to map content
+		if _fade_tween != null and _fade_tween.is_valid():
+			_fade_tween.kill()
+
+		if animate and is_instance_valid(_fade_rect):
+			_fade_phase = 1
+			_fade_rect.visible = true
+			_fade_rect.color = Color(0, 0, 0, 0.0)
+			_fade_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			_fade_tween.tween_property(_fade_rect, "color:a", 1.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_fade_tween.tween_callback(func():
+				_fade_phase = 2
+				queue_redraw()
+			)
+			_fade_tween.tween_property(_fade_rect, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_fade_tween.tween_callback(func():
+				_fade_phase = 0
+				if is_instance_valid(_fade_rect):
+					_fade_rect.visible = false
+			)
+		else:
+			_fade_phase = 0
+			if is_instance_valid(_fade_rect):
+				_fade_rect.visible = false
 	else:
+		_is_open = false
+		if pause_while_open and not _tree_was_paused:
+			get_tree().paused = false
+		Input.mouse_mode = _previous_mouse_mode
+
+		if _fade_tween != null and _fade_tween.is_valid():
+			_fade_tween.kill()
+
+		if animate and is_instance_valid(_fade_rect) and visible:
+			_fade_phase = 0
+			_fade_rect.visible = true
+			_fade_rect.color = Color(0, 0, 0, 0.0)
+			_fade_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+			_fade_tween.tween_property(_fade_rect, "color:a", 1.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_fade_tween.tween_callback(func():
+				visible = false
+				_set_overhead_rendering(false)
+				_set_runtime_map_lighting(false)
+			)
+			_fade_tween.tween_property(_fade_rect, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_fade_tween.tween_callback(func():
+				if is_instance_valid(_fade_rect):
+					_fade_rect.visible = false
+			)
+		else:
+			_fade_phase = 0
+			if is_instance_valid(_fade_rect):
+				_fade_rect.visible = false
+			visible = false
+			_set_overhead_rendering(false)
+			_set_runtime_map_lighting(false)
+
+
+func finish_transition_immediately() -> void:
+	if _fade_tween != null and _fade_tween.is_valid():
+		_fade_tween.kill()
+	_fade_phase = 0
+	if is_instance_valid(_fade_rect):
+		_fade_rect.visible = false
+	if not _is_open:
+		visible = false
 		_set_overhead_rendering(false)
 		_set_runtime_map_lighting(false)
 		if pause_while_open and not _tree_was_paused:
 			get_tree().paused = false
 		Input.mouse_mode = _previous_mouse_mode
+	queue_redraw()
 
 
 func is_map_open() -> bool:
 	return _is_open
 
 
+func _get_4_3_content_rect() -> Rect2:
+	var aspect_w := minf(size.x, size.y * (4.0 / 3.0))
+	var aspect_h := minf(size.y, size.x / (4.0 / 3.0))
+	return Rect2((size - Vector2(aspect_w, aspect_h)) * 0.5, Vector2(aspect_w, aspect_h))
+
+
 func _draw() -> void:
 	if not _is_open:
 		return
 
-	draw_rect(Rect2(Vector2.ZERO, size), COLOR_SCREEN_DIM)
+	if _fade_phase == 1:
+		return
+
+	var content_rect := _get_4_3_content_rect()
+
+	# Black bars outside 4:3 frame
+	if content_rect.position.x > 0.0:
+		draw_rect(Rect2(0.0, 0.0, content_rect.position.x, size.y), Color.BLACK)
+		draw_rect(Rect2(content_rect.end.x, 0.0, size.x - content_rect.end.x, size.y), Color.BLACK)
+	if content_rect.position.y > 0.0:
+		draw_rect(Rect2(0.0, 0.0, size.x, content_rect.position.y), Color.BLACK)
+		draw_rect(Rect2(0.0, content_rect.end.y, size.x, size.y - content_rect.end.y), Color.BLACK)
+
+	draw_rect(content_rect, COLOR_SCREEN_DIM)
 
 	if use_image_map and is_instance_valid(map_texture):
 		_map_rect = _calculate_panel_rect()
@@ -214,10 +316,11 @@ func _draw() -> void:
 
 
 func _calculate_panel_rect() -> Rect2:
+	var content_rect := _get_4_3_content_rect()
 	if use_image_map and is_instance_valid(map_texture):
 		var tex_sz := map_texture.get_size()
 		var target_ratio := tex_sz.x / tex_sz.y
-		var available_panel := size - Vector2(48.0, 48.0)
+		var available_panel := content_rect.size - Vector2(48.0, 48.0)
 		var map_w := available_panel.x
 		var map_h := map_w / target_ratio
 		if map_h > available_panel.y:
@@ -225,10 +328,10 @@ func _calculate_panel_rect() -> Rect2:
 			map_w = map_h * target_ratio
 		map_w = floorf(map_w / PIXEL_STEP) * PIXEL_STEP
 		map_h = floorf(map_h / PIXEL_STEP) * PIXEL_STEP
-		return Rect2((size - Vector2(map_w, map_h)) * 0.5, Vector2(map_w, map_h))
+		return Rect2(content_rect.position + (content_rect.size - Vector2(map_w, map_h)) * 0.5, Vector2(map_w, map_h))
 
 	var panel_padding := Vector2(28.0, 76.0)
-	var available_panel := size - Vector2(48.0, 40.0)
+	var available_panel := content_rect.size - Vector2(48.0, 40.0)
 	var map_size := available_panel - panel_padding
 	var target_ratio := WORLD_BOUNDS.size.x / WORLD_BOUNDS.size.y
 	if map_size.x / map_size.y > target_ratio:
@@ -238,7 +341,7 @@ func _calculate_panel_rect() -> Rect2:
 	var panel_size := map_size + panel_padding
 	panel_size.x = floorf(panel_size.x / PIXEL_STEP) * PIXEL_STEP
 	panel_size.y = floorf(panel_size.y / PIXEL_STEP) * PIXEL_STEP
-	return Rect2((size - panel_size) * 0.5, panel_size)
+	return Rect2(content_rect.position + (content_rect.size - panel_size) * 0.5, panel_size)
 
 
 func _configure_overhead_camera() -> void:

@@ -38,6 +38,8 @@ func run() -> void:
 
 	var balloon := forest.find_child("BottomDialogueBalloon", true, false) as BottomDialogueBalloon
 	check(is_instance_valid(balloon), "Balloon spawned")
+	while balloon.dialogue_line == null:
+		await process_frame
 	var responses_menu := balloon.get_node("%ResponsesMenu") as DialogueResponsesMenu
 	check(responses_menu.response_selected.get_connections().size() > 0, "response_selected signal is connected")
 
@@ -84,6 +86,8 @@ func run() -> void:
 	await process_frame
 
 	balloon = forest.find_child("BottomDialogueBalloon", true, false) as BottomDialogueBalloon
+	while balloon.dialogue_line == null:
+		await process_frame
 	responses_menu = balloon.get_node("%ResponsesMenu") as DialogueResponsesMenu
 
 	# Skip to choices line
@@ -132,6 +136,8 @@ func run() -> void:
 	await process_frame
 
 	balloon = forest.find_child("BottomDialogueBalloon", true, false) as BottomDialogueBalloon
+	while balloon.dialogue_line == null:
+		await process_frame
 	responses_menu = balloon.get_node("%ResponsesMenu") as DialogueResponsesMenu
 
 	# Skip to choices line
@@ -162,7 +168,15 @@ func run() -> void:
 
 	check(not barrier._is_climbing_over, "Climb-over finished")
 	check(player.global_position.distance_to(teleport.global_position) < 1.0, "Player teleported successfully across barrier")
-	check(not player.is_frozen, "Player unfrozen after climbing over")
+
+	# Check and dismiss post-teleport dialogue balloon
+	var post_balloon := forest.find_child("BottomDialogueBalloon", true, false) as BottomDialogueBalloon
+	if is_instance_valid(post_balloon):
+		check(player.is_frozen, "Player is frozen during post-teleport dialogue")
+		post_balloon._end_dialogue()
+		await process_frame
+
+	check(not player.is_frozen, "Player unfrozen after climbing over and ending dialogue")
 
 	print("\nTest completed with ", failures, " failure(s).")
 	if failures == 0:

@@ -51,6 +51,8 @@
 [ext_resource type="PackedScene" uid="uid://b6hh34861ubu5" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_4.glb" id="tree_tree_rt_4"]
 [ext_resource type="PackedScene" path="res://scenes/environment/story_welcome_center.tscn" id="welcome_center"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="world_map_overlay"]
+[ext_resource type="PackedScene" path="res://scenes/environment/town_map_board.tscn" id="town_map_board"]
+[ext_resource type="PackedScene" path="res://models/buildings/visitorCenter/mapStand_V3.glb" id="town_map_stand"]
 
 [sub_resource type="Environment" id="Environment_editor_preview"]
 background_mode = 1
@@ -574,6 +576,14 @@ script = ExtResource("civic_finishing")
 
 [node name="WelcomeCenter" parent="Buildings" unique_id=385812295 instance=ExtResource("welcome_center")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, -14)
+
+[node name="MapStand" parent="Buildings/WelcomeCenter" instance=ExtResource("town_map_stand")]
+position = Vector3(8.8, 0, 10.9)
+rotation_degrees = Vector3(0, 45, 0)
+scale = Vector3(0.65, 0.65, 0.65)
+
+[node name="TownMapBoard" parent="Buildings/WelcomeCenter/MapStand" instance=ExtResource("town_map_board")]
+position = Vector3(0, 2.23, 0.32)
 
 [node name="AtmosphereProps" type="Node3D" parent="." unique_id=262944143]
 

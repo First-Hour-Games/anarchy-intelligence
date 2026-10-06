@@ -55,6 +55,7 @@ func _run() -> void:
 			and map_viewport.render_target_update_mode == SubViewport.UPDATE_ALWAYS
 		)
 		display.set_map_open(false)
+		display.finish_transition_immediately()
 		passed = (
 			passed
 			and not display.visible
@@ -68,6 +69,7 @@ func _run() -> void:
 		display.set_map_open(true)
 		passed = passed and paused
 		display.set_map_open(false)
+		display.finish_transition_immediately()
 		passed = passed and not paused
 
 	print("PASS world map" if passed else "FAIL world map")

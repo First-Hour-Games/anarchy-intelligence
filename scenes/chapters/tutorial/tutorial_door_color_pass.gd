@@ -7,9 +7,9 @@ const DOOR_OVERLAY_LAYER := 18
 const INTRO_FADE_LAYER := 200
 
 @export_category("Intro Fade")
-@export_range(0.0, 10.0, 0.1) var intro_black_hold_seconds := 2.0
-@export_range(0.1, 10.0, 0.1) var intro_fade_duration := 4.0
-@export_range(0.1, 10.0, 0.1) var door_color_fade_duration := 5.0
+@export_range(0.0, 10.0, 0.1) var intro_black_hold_seconds := 0.5
+@export_range(0.1, 10.0, 0.1) var intro_fade_duration := 2.0
+@export_range(0.1, 10.0, 0.1) var door_color_fade_duration := 3.0
 
 @export_category("Intro Light")
 @export var intro_light_path: NodePath

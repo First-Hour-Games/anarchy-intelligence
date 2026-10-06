@@ -128,12 +128,13 @@ func get_exclusion_aabbs() -> Array[AABB]:
 			root_cand = root_cand.get_parent()
 		_find_landmarks_in_node(root_cand, targets)
 
-	# 4. Group "building_exclusion"
+	# 4. Groups "building_exclusion", "foliage_exclusion"
 	if is_inside_tree():
-		var group_nodes := get_tree().get_nodes_in_group(&"building_exclusion")
-		for gnode in group_nodes:
-			if gnode is Node3D and not targets.has(gnode):
-				targets.append(gnode as Node3D)
+		for g in [&"building_exclusion", &"foliage_exclusion"]:
+			var group_nodes := get_tree().get_nodes_in_group(g)
+			for gnode in group_nodes:
+				if gnode is Node3D and not targets.has(gnode):
+					targets.append(gnode as Node3D)
 
 	# Collect AABBs from all discovered targets
 	for target in targets:
@@ -142,6 +143,17 @@ func get_exclusion_aabbs() -> Array[AABB]:
 				aabbs.append(box)
 
 	return aabbs
+
+
+## Collects all active oriented exclusion zones (e.g. TreeExclusionZone3D).
+func get_exclusion_zones() -> Array[Node3D]:
+	var zones: Array[Node3D] = []
+	if is_inside_tree():
+		for g in [&"tree_exclusion_zone"]:
+			for gnode in get_tree().get_nodes_in_group(g):
+				if gnode is Node3D and gnode.has_method(&"is_point_inside") and not zones.has(gnode):
+					zones.append(gnode as Node3D)
+	return zones
 
 
 func _find_landmarks_in_node(node: Node, results: Array[Node3D]) -> void:
@@ -179,9 +191,10 @@ func prune_instances() -> int:
 		return 0
 
 	var aabbs := get_exclusion_aabbs()
+	var obb_zones := get_exclusion_zones()
 	var check_tree_clashes: bool = prune_tree_collisions and is_tree_node()
 
-	if aabbs.is_empty() and not prune_downward_facing and not check_tree_clashes:
+	if aabbs.is_empty() and obb_zones.is_empty() and not prune_downward_facing and not check_tree_clashes:
 		return 0
 
 	var buf: PackedFloat32Array = mm.buffer
@@ -250,7 +263,13 @@ func prune_instances() -> int:
 		var local_orig := Vector3(buf[base + 3], buf[base + 7], buf[base + 11]) if is_3d else Vector3(buf[base + 2], buf[base + 5], 0.0)
 		var gpos := xform * local_orig
 
-		# 2. AABB exclusion check
+		# 2. OBB & AABB exclusion check
+		if not is_rejected and not obb_zones.is_empty():
+			for zone in obb_zones:
+				if zone.is_point_inside(gpos):
+					is_rejected = true
+					break
+
 		if not is_rejected and not aabbs.is_empty():
 			for box in aabbs:
 				if _is_point_inside_aabb(gpos, box, margin):
@@ -428,6 +447,13 @@ func _is_point_inside_aabb(pt: Vector3, box: AABB, pad: float) -> bool:
 
 func _collect_target_aabbs(target: Node3D) -> Array[AABB]:
 	var result: Array[AABB] = []
+	if not is_instance_valid(target):
+		return result
+
+	# Oriented zones implementing is_point_inside are checked via OBB, not loose AABB
+	if target.has_method(&"is_point_inside"):
+		return result
+
 	var target_shape_aabb := _get_node_local_aabb(target)
 	if target_shape_aabb.size.length_squared() <= 0.001 and target.scene_file_path.is_empty() and target.get_child_count() > 0:
 		var has_child_shape := false
@@ -454,6 +480,8 @@ func _calculate_node_aabb(node: Node3D) -> AABB:
 
 
 func _get_node_local_aabb(node: Node3D) -> AABB:
+	if node.has_method(&"get_local_aabb"):
+		return node.call(&"get_local_aabb")
 	if node is MeshInstance3D and node.mesh:
 		return node.mesh.get_aabb()
 	if node is CollisionShape3D and node.shape:
