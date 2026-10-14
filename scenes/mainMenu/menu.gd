@@ -29,6 +29,7 @@ const SELECTED_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
 const UNSELECTED_COLOR: Color = Color(0.65, 0.65, 0.65, 0.65)
 
 func _ready() -> void:
+	SceneLoader.cancel_prefetch()
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	input_ready_at = Time.get_ticks_msec() + 250
@@ -253,13 +254,14 @@ func _begin_start_game() -> void:
 	PauseMenu._save_settings()
 	get_tree().paused = false
 	if can_continue:
-		get_tree().change_scene_to_file("res://scenes/chapters/main/map.tscn")
+		await SceneLoader.change_to("res://scenes/chapters/main/map.tscn")
 		return
+	SceneLoader.prefetch("res://scenes/chapters/intro/intro.tscn")
 	print("Start Game selected!")
 	
 	if OS.has_feature("editor"):
 		if music_player: music_player.stop()
-		get_tree().change_scene_to_file("res://scenes/chapters/intro/intro.tscn")
+		await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn")
 		return
 
 	print("Fading screen and music over 3 seconds...")
@@ -280,7 +282,7 @@ func _begin_start_game() -> void:
 	print("Fade complete. Pausing 3 seconds in pitch black silence...")
 	await get_tree().create_timer(3.0).timeout
 	
-	get_tree().change_scene_to_file("res://scenes/chapters/intro/intro.tscn")
+	await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn")
 
 func _open_options() -> void:
 	is_in_options_menu = true

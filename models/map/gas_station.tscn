@@ -558,22 +558,36 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 8)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="gasPumps" unique_id=58043998]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4862366, 4.7997093, 2.9751167)
+light_color = Color(1, 0.91, 0.78, 1)
+light_energy = 2.0
+light_volumetric_fog_energy = 0.25
+omni_range = 12.0
+omni_attenuation = 0.7
+cull_mask = 1
+
 
 [node name="AreaLight3D" type="AreaLight3D" parent="gasPumps" unique_id=697575121]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -2.4862366, 4.7997093, 2.9751167)
 light_energy = 2.312
-light_volumetric_fog_energy = 6.195
+light_volumetric_fog_energy = 0.25
 shadow_enabled = true
 shadow_normal_bias = 1.909
 area_range = 9.471
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="gasPumps" unique_id=712129616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5451813, 4.7997093, 2.9751167)
+light_color = Color(1, 0.91, 0.78, 1)
+light_energy = 2.0
+light_volumetric_fog_energy = 0.25
+omni_range = 12.0
+omni_attenuation = 0.7
+cull_mask = 1
+
 
 [node name="AreaLight3D2" type="AreaLight3D" parent="gasPumps" unique_id=428037064]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.5451813, 4.7997093, 2.9751167)
 light_energy = 2.312
-light_volumetric_fog_energy = 6.195
+light_volumetric_fog_energy = 0.25
 shadow_enabled = true
 shadow_normal_bias = 1.909
 area_range = 9.471

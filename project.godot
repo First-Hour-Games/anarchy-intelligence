@@ -11,9 +11,9 @@ config_version=5
 [application]
 
 config/name="Anarchy Intelligence"
-run/main_scene="res://scenes/mainMenu/menu.tscn"
+run/main_scene="res://scenes/mainMenu/startup.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://beml1is5mkytf"
 
 [audio]
 
@@ -25,6 +25,7 @@ DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 PauseMenu="*res://scenes/ui/pause_menu.gd"
 ItemPickupScreen="*res://scenes/ui/item_pickup/item_pickup_screen.tscn"
 DebugMenu="*res://scenes/ui/debug_menu.gd"
+SceneLoader="*res://scenes/shared/scene_loader.gd"
 
 [dialogue_manager]
 
@@ -32,6 +33,7 @@ runtime/balloon_path="res://scenes/ui/balloon/balloon.tscn"
 
 [display]
 
+window/size/mode=4
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/vsync/vsync_mode=0

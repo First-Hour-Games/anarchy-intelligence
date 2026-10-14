@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scenes/player/flashlight/player_flashlight.gd" id="1_flashlight"]
-[ext_resource type="PackedScene" uid="uid://xqpnc0rv6764" path="res://assets/local_licensed/exploration_objects/Flashlight/Flashlight.fbx" id="2_model"]
+[ext_resource type="PackedScene" uid="uid://bevyfsml64lsa" path="res://models/props/flashlightItem.tscn" id="2_model"]
 
 [node name="Flashlight" type="Node3D"]
 script = ExtResource("1_flashlight")
@@ -12,6 +12,8 @@ position = Vector3(0.34, -0.52, -0.43)
 rotation_degrees = Vector3(10, -8, -8)
 
 [node name="Model" parent="ModelPivot" instance=ExtResource("2_model")]
+rotation_degrees = Vector3(-90, 0, 0)
+scale = Vector3(0.25, 0.25, 0.25)
 
 [node name="Beam" type="SpotLight3D" parent="."]
 visible = false

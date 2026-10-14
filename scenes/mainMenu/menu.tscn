@@ -5,8 +5,19 @@
 [ext_resource type="AudioStream" uid="uid://cyu0y4q4kwr06" path="res://music/menu.wav" id="3_menu_music"]
 [ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
 [ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
+[ext_resource type="FontFile" uid="uid://m1rgjvehr8j3" path="res://fonts/HelveticaNeueCondensed.ttf" id="5_e61u0"]
 [ext_resource type="FontFile" uid="uid://cm8sqjxdh41x" path="res://fonts/EuropeanTeletextNuevo.ttf" id="6_teletext_font"]
-[ext_resource type="Material" path="res://shaders/menu_background_material.tres" id="7_menu_bg_mat"]
+[ext_resource type="Material" uid="uid://c5otdpmuq0dbq" path="res://shaders/menu_background_material.tres" id="7_menu_bg_mat"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_go1h3"]
+font = ExtResource("6_teletext_font")
+font_size = 25
+font_color = Color(1, 1, 1, 0.50980395)
+shadow_size = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_k7hkw"]
+font = ExtResource("5_e61u0")
+font_size = 32
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=1280559174]
 script = ExtResource("2_menu_script")
@@ -87,6 +98,20 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
+[node name="Version" type="Label" parent="AspectRatioContainer/Control" unique_id=252474182]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 0
+offset_left = 21.998932
+offset_top = 589.0
+offset_right = 255.99893
+offset_bottom = 631.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_teletext_font")
+theme_override_font_sizes/font_size = 24
+text = "v0.0.1a"
+label_settings = SubResource("LabelSettings_go1h3")
+vertical_alignment = 1
+
 [node name="Title" type="TextureRect" parent="AspectRatioContainer/Control" unique_id=762819847]
 layout_mode = 1
 anchors_preset = 5
@@ -98,6 +123,23 @@ offset_right = 240.5
 offset_bottom = 196.0
 grow_horizontal = 2
 texture = ExtResource("1_v2lfg")
+
+[node name="DemoLabel" type="Label" parent="AspectRatioContainer/Control/Title" unique_id=1255055820]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -132.5
+offset_top = 11.0
+offset_right = 132.5
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "EARLY DEMO VERSION"
+label_settings = SubResource("LabelSettings_k7hkw")
+horizontal_alignment = 1
 
 [node name="MenuContainer" type="VBoxContainer" parent="AspectRatioContainer/Control" unique_id=314159265]
 layout_mode = 1

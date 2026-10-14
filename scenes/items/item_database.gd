@@ -26,7 +26,7 @@ static func _ensure_initialized() -> void:
 	var flashlight_item := ItemData.new()
 	flashlight_item.id = &"flashlight"
 	flashlight_item.name = "FLASHLIGHT"
-	flashlight_item.description = "A working flashlight found at the abandoned gas station. Its beam makes the Ridgeback retreat. Press F anytime while exploring."
+	flashlight_item.description = "A working flashlight found at the abandoned gas station. Press F anytime to toggle."
 	if ResourceLoader.exists("res://scenes/items/flashlight_pickup.tscn"):
 		flashlight_item.model_scene = load("res://scenes/items/flashlight_pickup.tscn") as PackedScene
 	flashlight_item.use_action_text = "TOGGLE FLASHLIGHT"

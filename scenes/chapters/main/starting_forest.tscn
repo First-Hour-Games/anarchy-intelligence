@@ -968,7 +968,6 @@ transform = Transform3D(1.1759868, 0, -0.0058803214, 0, 1.2, 0, 0.0055678408, 0,
 
 [node name="Player" parent="." unique_id=1484211140 instance=ExtResource("13_bernf")]
 transform = Transform3D(0.2780319, 0, -0.9605719, 0, 1, 0, 0.9605719, 0, 0.2780319, -130.1589, 0.10088, 2.4300053)
-visible = false
 
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=1750905476]
 layer = 19

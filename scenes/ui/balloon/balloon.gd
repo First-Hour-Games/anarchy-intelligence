@@ -20,6 +20,7 @@ var temporary_game_states: Array = []
 var is_waiting_for_input: bool = false
 var is_advancing: bool = false
 var is_post_typing_delay: bool = false
+var _typing_was_skipped: bool = false
 var will_hide_balloon: bool = false
 var locals: Dictionary = {}
 var accumulated_dialogue_text: String = ""
@@ -107,14 +108,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		var is_advance_key: bool = event.is_action_pressed(next_action) or (event is InputEventKey and (event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER or event.keycode == KEY_SPACE))
 		
 		if is_click or is_advance_key:
-			if OS.has_feature("editor") and is_instance_valid(dialogue_label) and dialogue_label.is_typing:
+			if is_instance_valid(dialogue_label) and dialogue_label.is_typing:
+				_typing_was_skipped = true
 				dialogue_label.skip_typing()
 				if talk_sfx:
 					talk_sfx.stop()
 				return
 
 			if dialogue_label.is_typing or (not OS.has_feature("editor") and is_post_typing_delay):
-				# Cannot skip dialogue typing or advance during 0.5s post-typing delay
+				# A naturally completed line keeps its short post-typing pause.
 				return
 			elif (is_waiting_for_input or OS.has_feature("editor")) and dialogue_line.responses.size() == 0:
 				var is_car_revving_transition: bool = false
@@ -140,6 +142,7 @@ func start(with_dialogue_resource: DialogueResource = null, cue: String = "", ex
 	show()
 
 func apply_dialogue_line() -> void:
+	_typing_was_skipped = false
 	if progress_indicator:
 		progress_indicator.hide()
 	is_waiting_for_input = false
@@ -185,8 +188,8 @@ func apply_dialogue_line() -> void:
 		balloon.focus_mode = Control.FOCUS_NONE
 		responses_menu.show()
 	else:
-		# Wait 0.5 seconds after typing finishes before enabling input and showing [ ENTER ] prompt (skips when running in Godot editor)
-		if not OS.has_feature("editor"):
+		# Skipped text is immediately ready for the next press, as in the editor.
+		if not OS.has_feature("editor") and not _typing_was_skipped:
 			is_post_typing_delay = true
 			await get_tree().create_timer(0.5).timeout
 			is_post_typing_delay = false

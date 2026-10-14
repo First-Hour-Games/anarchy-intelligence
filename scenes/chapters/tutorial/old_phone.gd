@@ -99,6 +99,7 @@ func _on_phone_interacted(interactor: Node3D = null) -> void:
 	if _is_picked_up:
 		return
 	_is_picked_up = true
+	get_node("/root/SceneLoader").prefetch(_next_scene_path())
 
 	stop_ringing()
 
@@ -167,10 +168,12 @@ func _transition_to_next_scene() -> void:
 	if not is_inside_tree():
 		return
 
+	await get_node("/root/SceneLoader").change_to(_next_scene_path())
+
+func _next_scene_path() -> String:
 	if not next_scene_path.is_empty() and ResourceLoader.exists(next_scene_path):
-		get_tree().change_scene_to_file(next_scene_path)
-	else:
-		get_tree().change_scene_to_file("res://scenes/chapters/main/starting_forest.tscn")
+		return next_scene_path
+	return "res://scenes/chapters/main/starting_forest.tscn"
 
 
 func _show_black_screen() -> void:

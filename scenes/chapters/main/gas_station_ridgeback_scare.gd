@@ -5,7 +5,7 @@ const CONTACT_SOUND := preload("res://sounds/entities/death_scares/wrapper_kill.
 ## One-shot flashlight ambush, confined to the starting forest gas station.
 @export var rush_speed: float = 6.5
 @export var turn_angle_degrees: float = 100.0
-@export var stare_duration: float = 3.0
+@export var stare_duration: float = 1.0
 @export var stare_angle_degrees: float = 25.0
 @onready var player: FirstPersonPlayer = get_parent().get_node("Player")
 @onready var ridge: CorruptedFriend = get_parent().get_node("THE_RIDGEBACK")
@@ -119,3 +119,4 @@ func _blackout() -> void:
 	audio.finished.connect(func() -> void:
 		create_tween().tween_property(logo, "modulate:a", 1.0, 0.8)
 	, CONNECT_ONE_SHOT)
+
