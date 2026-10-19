@@ -21,6 +21,7 @@ var input_ready_at: int = 0
 var can_continue: bool = false
 @export var progress_save_path: String = "user://opening_story_v1.json"
 var reset_label: Label
+var graphics_label: Label
 var reset_warning: ConfirmationDialog
 
 const SELECTED_FONT_SIZE: int = 36
@@ -35,6 +36,12 @@ func _ready() -> void:
 	input_ready_at = Time.get_ticks_msec() + 250
 	can_continue = PauseMenu.has_started_chapter or FileAccess.file_exists(progress_save_path)
 	_build_reset_option()
+	graphics_label = quit_label.duplicate() as Label
+	graphics_label.name = "GraphicsLabel"
+	graphics_label.hide()
+	quit_label.get_parent().add_child(graphics_label)
+	quit_label.get_parent().move_child(graphics_label, reset_label.get_index())
+	GraphicsSettings.preset_changed.connect(func(): _update_menu_display(false))
 	master_volume_percent = roundi((PauseMenu.sliders["Master"] as HSlider).value * 100)
 	music_volume_percent = roundi((PauseMenu.sliders["Music"] as HSlider).value * 100)
 	# Set initial Master and Music Audio Bus volumes
@@ -50,6 +57,7 @@ func _ready() -> void:
 	sub_options = [
 		{"label": start_label, "action": _toggle_master_volume_step},
 		{"label": options_label, "action": _toggle_music_volume_step},
+		{"label": graphics_label, "action": _toggle_graphics_step},
 		{"label": reset_label, "action": _ask_reset_progress},
 		{"label": quit_label, "action": _close_options}
 	]
@@ -64,7 +72,7 @@ func _ready() -> void:
 			music_player.play()
 
 func _setup_mouse_listeners() -> void:
-	var all_labels: Array[Label] = [start_label, options_label, quit_label]
+	var all_labels: Array[Label] = [start_label, options_label, quit_label, graphics_label]
 	if is_instance_valid(reset_label):
 		all_labels.append(reset_label)
 
@@ -148,6 +156,10 @@ func _input(event: InputEvent) -> void:
 			_apply_music_volume()
 			_update_menu_display(true)
 			_mark_input_handled()
+		elif selected_index == 2:
+			GraphicsSettings.step_preset(-1)
+			_update_menu_display(true)
+			_mark_input_handled()
 
 	# Right Arrow / D key (Adjust volume up in Options)
 	elif is_in_options_menu and (event.is_action_pressed("ui_right") or (event is InputEventKey and (event.keycode == KEY_RIGHT or event.keycode == KEY_D))):
@@ -159,6 +171,10 @@ func _input(event: InputEvent) -> void:
 		elif selected_index == 1:
 			music_volume_percent = clamp(music_volume_percent + 10, 0, 100)
 			_apply_music_volume()
+			_update_menu_display(true)
+			_mark_input_handled()
+		elif selected_index == 2:
+			GraphicsSettings.step_preset(1)
 			_update_menu_display(true)
 			_mark_input_handled()
 
@@ -177,21 +193,25 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		start_label.show()
 		options_label.show()
 		reset_label.show()
+		graphics_label.show()
 		quit_label.show()
 		
 		start_label.text = "Master Volume: < " + str(master_volume_percent) + "% >"
 		options_label.text = "Music Volume: < " + str(music_volume_percent) + "% >"
 		reset_label.text = "Reset Progress"
+		graphics_label.text = "Graphics: < " + GraphicsSettings.get_preset_name() + " >"
 		quit_label.text = "Back"
 		
 		_apply_label_style(start_label, selected_index == 0)
 		_apply_label_style(options_label, selected_index == 1)
-		_apply_label_style(reset_label, selected_index == 2)
-		_apply_label_style(quit_label, selected_index == 3)
+		_apply_label_style(graphics_label, selected_index == 2)
+		_apply_label_style(reset_label, selected_index == 3)
+		_apply_label_style(quit_label, selected_index == 4)
 	else:
 		start_label.show()
 		options_label.show()
 		reset_label.hide()
+		graphics_label.hide()
 		quit_label.show()
 		
 		start_label.text = "Continue Game" if can_continue else "Start Game"
@@ -306,6 +326,10 @@ func _close_options() -> void:
 	_setup_mouse_listeners()
 	_update_menu_display(false)
 
+func _toggle_graphics_step() -> void:
+	GraphicsSettings.step_preset(1)
+	_update_menu_display(false)
+
 func _build_reset_option() -> void:
 	reset_label = quit_label.duplicate() as Label
 	reset_label.name = "ResetProgressLabel"
@@ -315,7 +339,7 @@ func _build_reset_option() -> void:
 	quit_label.get_parent().move_child(reset_label, quit_label.get_index())
 	reset_warning = ConfirmationDialog.new()
 	reset_warning.title = "Reset all game progress?"
-	reset_warning.dialog_text = "This permanently deletes your saved checkpoint, collected items, journal and story progress.\n\nYour next game will begin with the intro. Sound settings will be kept.\n\nThis cannot be undone."
+	reset_warning.dialog_text = "This permanently deletes your saved checkpoint, collected items, journal and story progress.\n\nYour next game will begin with the intro. Sound and graphics settings will be kept.\n\nThis cannot be undone."
 	reset_warning.ok_button_text = "DELETE PROGRESS"
 	reset_warning.cancel_button_text = "KEEP MY SAVE"
 	add_child(reset_warning)

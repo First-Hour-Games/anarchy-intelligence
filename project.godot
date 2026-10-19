@@ -21,6 +21,7 @@ buses/default_bus_layout="uid://bxj5h2hcmgduk"
 
 [autoload]
 
+GraphicsSettings="*res://scenes/ui/graphics_settings.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 PauseMenu="*res://scenes/ui/pause_menu.gd"
 ItemPickupScreen="*res://scenes/ui/item_pickup/item_pickup_screen.tscn"
