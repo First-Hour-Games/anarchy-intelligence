@@ -1226,7 +1226,7 @@ script = ExtResource("38_hallway_lights")
 [node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb3" unique_id=671373627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 light_energy = 0.3
-shadow_enabled = true
+shadow_enabled = false
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb3" unique_id=1775665610]
@@ -1245,7 +1245,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 [node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb4" unique_id=735640619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 light_energy = 0.3
-shadow_enabled = true
+shadow_enabled = false
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb4" unique_id=858370197]
@@ -1266,7 +1266,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 visible = false
 light_energy = 0.3
-shadow_enabled = true
+shadow_enabled = false
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb5" unique_id=1924241228]
@@ -1287,7 +1287,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 visible = false
 light_energy = 0.3
-shadow_enabled = true
+shadow_enabled = false
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb6" unique_id=54558558]
@@ -1364,28 +1364,28 @@ transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.
 light_energy = 1.837
 shadow_enabled = true
 shadow_bias = 0.0
-area_range = 2630.076
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="AreaLight3D2" type="AreaLight3D" parent="Ledge" unique_id=1128615554]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 1.7699115, -3.2448368)
 light_energy = 1.837
-shadow_enabled = true
-area_range = 2630.076
+shadow_enabled = false
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="AreaLight3D3" type="AreaLight3D" parent="Ledge" unique_id=1723057038]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 2.6548672, -5.0147476)
 light_energy = 1.837
-shadow_enabled = true
-area_range = 2630.076
+shadow_enabled = false
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="AreaLight3D4" type="AreaLight3D" parent="Ledge" unique_id=1622025137]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 4.7197638, -8.259586)
 light_energy = 1.837
-shadow_enabled = true
-area_range = 2630.076
+shadow_enabled = false
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="Ledge2" type="MeshInstance3D" parent="." unique_id=685212319]
