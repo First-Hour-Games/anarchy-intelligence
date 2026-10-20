@@ -20,7 +20,7 @@ func run() -> void:
 	await process_frame
 	check(menu.can_continue and not menu.reset_label.visible and menu.main_options.size() == 3, "Start menu does not show reset option and has 3 items")
 	menu._open_options()
-	check(menu.is_in_options_menu and menu.reset_label.visible and menu.sub_options.size() == 4, "Options menu exposes reset option and has 4 items")
+	check(menu.is_in_options_menu and menu.reset_label.visible and menu.sub_options.size() == 5, "Options menu exposes graphics and reset options and has 5 items")
 	menu._ask_reset_progress()
 	check(menu.reset_warning.visible and FileAccess.file_exists(TEST_SAVE), "Reset displays warning before touching save")
 	menu._start_game()

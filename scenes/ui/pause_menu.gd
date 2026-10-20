@@ -92,8 +92,10 @@ func _ready() -> void:
 	_options_menu_items = [
 		{"action": func(): _toggle_master_volume_step()},
 		{"action": func(): _toggle_music_volume_step()},
+		{"action": func(): _toggle_graphics_step()},
 		{"action": func(): _close_options()}
 	]
+	GraphicsSettings.preset_changed.connect(func(): _update_menu_display(false))
 
 	get_tree().node_added.connect(_route_audio)
 	_ensure_audio_process_modes()
@@ -468,13 +470,14 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		_title_label.text = "OPTIONS"
 		_labels[0].text = "Master Volume: < " + str(master_volume_percent) + "% >"
 		_labels[1].text = "Music Volume: < " + str(music_volume_percent) + "% >"
-		_labels[2].text = "Back"
+		_labels[2].text = "Graphics: < " + GraphicsSettings.get_preset_name() + " >"
+		_labels[3].text = "Back"
 		_labels[0].show()
 		_labels[1].show()
 		_labels[2].show()
-		_labels[3].hide()
+		_labels[3].show()
 
-		for i in range(3):
+		for i in range(4):
 			_apply_label_style(_labels[i], i == selected_index)
 	else:
 		_title_label.text = "PAUSED"
@@ -548,6 +551,10 @@ func _close_options() -> void:
 
 
 func _adjust_volume(delta: int) -> void:
+	if selected_index == 2:
+		GraphicsSettings.step_preset(1 if delta > 0 else -1)
+		_update_menu_display(true)
+		return
 	if selected_index == 0:
 		master_volume_percent = clampi(master_volume_percent + delta, 0, 100)
 		_apply_master_volume()
@@ -567,6 +574,11 @@ func _toggle_master_volume_step() -> void:
 func _toggle_music_volume_step() -> void:
 	music_volume_percent = (music_volume_percent + 10) if music_volume_percent < 100 else 0
 	_apply_music_volume()
+	_update_menu_display(false)
+
+
+func _toggle_graphics_step() -> void:
+	GraphicsSettings.step_preset(1)
 	_update_menu_display(false)
 
 
