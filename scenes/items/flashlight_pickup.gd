@@ -24,6 +24,9 @@ func interact(interactor: Node3D) -> void:
 		return
 
 	_picked_up = true
+	var visual_target := get_node_or_null(visual_target_path) as Node3D
+	if is_instance_valid(visual_target):
+		visual_target.hide()
 	super.interact(interactor)
 	var player := interactor as FirstPersonPlayer
 	if is_instance_valid(player):

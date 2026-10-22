@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://6rner50wsg71"]
 
 [ext_resource type="PackedScene" uid="uid://dfltrdy7i1k8n" path="res://models/map/gasPumps.glb" id="1_pumps"]
+[ext_resource type="Material" path="res://models/map/gas_pumps_station_material.tres" id="2_station_material"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_jpyye"]
 size = Vector3(12.203125, 5.128784, 1.3144531)
@@ -15,6 +16,9 @@ emission = Color(1, 0.95, 0.85, 1)
 emission_energy_multiplier = 4.0
 
 [node name="gasPumps" unique_id=1616454800 instance=ExtResource("1_pumps")]
+
+[node name="Station" parent="." index="0" unique_id=1459526285]
+material_override = ExtResource("2_station_material")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Station" parent_id_path=PackedInt32Array(1459526285) index="0" unique_id=10577170]
 

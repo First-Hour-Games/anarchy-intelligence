@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/local_licensed/trees_v1/meshes/tree_003_leaves_001.res::ImageTexture_qbc75" id="1_leaves"]
+
+[resource]
+resource_name = "TreesV1 Leaves Cutout"
+transparency = 2
+alpha_scissor_threshold = 0.5
+cull_mode = 2
+albedo_texture = ExtResource("1_leaves")
+roughness = 0.85

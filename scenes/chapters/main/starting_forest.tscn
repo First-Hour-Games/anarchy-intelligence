@@ -17,7 +17,7 @@
 [ext_resource type="ArrayMesh" path="res://assets/local_licensed/trees_v1/meshes/tree_tree.res" id="14_rrvih"]
 [ext_resource type="Shader" uid="uid://c5t7wtls5mxk4" path="res://shaders/crt.gdshader" id="15_n1tha"]
 [ext_resource type="Texture2D" uid="uid://xcjr8ukuy20h" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_4_tree_bark_rt_a.png" id="15_s25nh"]
-[ext_resource type="PackedScene" uid="uid://bygd6tn58ujmu" path="res://models/buildings/visitorCenter/mapStand_V3.glb" id="16_3olm8"]
+[ext_resource type="PackedScene" path="res://models/buildings/visitorCenter/map_stand.tscn" id="16_3olm8"]
 [ext_resource type="Texture2D" uid="uid://btsvw6cisv8hv" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_4_tree_rt_4.png" id="16_4x0ik"]
 [ext_resource type="Shader" uid="uid://clb4lv13q106p" path="res://shaders/sky_clouds.gdshader" id="16_sky"]
 [ext_resource type="PackedScene" path="res://assets/local_licensed/trees_v1/trees_v1_tree.tscn" id="17_7ds25"]
@@ -1912,7 +1912,7 @@ omni_range = 2.893
 
 [node name="Pickup" type="Node3D" parent="FlashlightItem" unique_id=1235122218]
 script = ExtResource("station_flashlight_pickup")
-visual_target_path = NodePath("../Flashlight_Body")
+visual_target_path = NodePath("..")
 interaction_message = "Picked up flashlight."
 
 [node name="GasEntrance" type="Node3D" parent="." unique_id=1706779948]

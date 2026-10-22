@@ -31,6 +31,8 @@
 [ext_resource type="Texture2D" uid="uid://ksqycbdbv60k" path="res://models/props/gasStation/cashReg_Reg_Body_Normal.png" id="27_1t1yw"]
 [ext_resource type="Shader" uid="uid://x8mgjg0ufxr7" path="res://shaders/frosted_glass.gdshader" id="27_frosted_glass"]
 
+[ext_resource type="Material" path="res://models/props/metalFences/fence_cutout_material.tres" id="28_fence_cutout"]
+
 [sub_resource type="Shader" id="Shader_hgjb4"]
 code = "shader_type spatial;
 
@@ -209,7 +211,8 @@ size = Vector3(2.689209, 2.2978516, 0.85839844)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mrsj0"]
 resource_name = "Island_Cooler_L72in_Mat"
-transparency = 4
+transparency = 2
+alpha_scissor_threshold = 0.5
 cull_mode = 2
 albedo_texture = ExtResource("18_qi8vr")
 metallic = 1.0
@@ -598,6 +601,7 @@ material_override = SubResource("StandardMaterial3D_4raly")
 polygon = PackedVector2Array(4, 26, 4, 45, 36, 45, 36, 27)
 
 [node name="Fence1" type="MeshInstance3D" parent="." unique_id=841152302]
+material_override = ExtResource("28_fence_cutout")
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -2.794776)
 mesh = ExtResource("6_kdt4a")
 
@@ -608,6 +612,7 @@ transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357
 shape = SubResource("BoxShape3D_jpyye")
 
 [node name="Fence3" type="MeshInstance3D" parent="." unique_id=571611213]
+material_override = ExtResource("28_fence_cutout")
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -11.594776)
 mesh = ExtResource("6_kdt4a")
 
@@ -618,6 +623,7 @@ transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357
 shape = SubResource("BoxShape3D_jpyye")
 
 [node name="Fence4" type="MeshInstance3D" parent="." unique_id=1733387483]
+material_override = ExtResource("28_fence_cutout")
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -15.994776)
 mesh = ExtResource("6_kdt4a")
 
@@ -628,6 +634,7 @@ transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357
 shape = SubResource("BoxShape3D_jpyye")
 
 [node name="Fence2" type="MeshInstance3D" parent="." unique_id=1877248571]
+material_override = ExtResource("28_fence_cutout")
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -7.194776)
 mesh = ExtResource("6_kdt4a")
 
