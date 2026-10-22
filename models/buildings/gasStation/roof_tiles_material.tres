@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://models/map/gasStation/stationV2_RoofingTiles013A_1K-JPG_Color.png" id="1_7p1ba"]
+[ext_resource type="Texture2D" path="res://models/map/gasStation/stationV2_RoofingTiles013A_1K-JPG_Roughness.png" id="2_6uk7e"]
+
+[resource]
+resource_name = "RoofingTiles013A_1K-JPG_DISPLACEMENT"
+cull_mode = 2
+albedo_texture = ExtResource("1_7p1ba")
+metallic_texture = ExtResource("2_6uk7e")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_6uk7e")
+roughness_texture_channel = 1
+uv1_scale = Vector3(3.3333333, 3.3333333, 1)
+uv1_offset = Vector3(0, -2.3333333, 0)
+metadata/_gltf_primary_texture_coord = 0

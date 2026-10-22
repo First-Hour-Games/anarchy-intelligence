@@ -419,7 +419,8 @@ func _build_ui() -> void:
 	var cam := Camera3D.new()
 	cam.name = "Camera3D"
 	cam.position = Vector3(0, 0.2, 1.25)
-	cam.rotation_degrees = Vector3(-15, 0, 0)
+	cam.rotation_degrees = Vector3(-9, 0, 0)
+	cam.fov = 40.0
 	_model_viewport.add_child(cam)
 
 	var light := DirectionalLight3D.new()

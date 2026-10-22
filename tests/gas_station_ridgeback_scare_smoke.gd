@@ -4,6 +4,7 @@ func _initialize() -> void:
 func run() -> void:
 	var forest := load("res://scenes/chapters/main/starting_forest.tscn").instantiate() as StartingForest
 	forest.auto_start_fade = false
+	forest.get_node("GasStationRidgebackScare").enabled = true
 	root.add_child(forest)
 	await create_timer(0.5).timeout
 	var scare := forest.get_node("GasStationRidgebackScare")

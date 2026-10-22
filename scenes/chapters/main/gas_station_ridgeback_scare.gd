@@ -3,6 +3,8 @@ extends Node
 const END_LOGO := preload("res://img/menu/title.png")
 const CONTACT_SOUND := preload("res://sounds/entities/death_scares/wrapper_kill.wav")
 ## One-shot flashlight ambush, confined to the starting forest gas station.
+## Demo only: leave disabled so the player can continue the main game.
+@export var enabled: bool = false
 @export var rush_speed: float = 6.5
 @export var turn_angle_degrees: float = 100.0
 @export var stare_duration: float = 1.0
@@ -22,10 +24,12 @@ func _ready() -> void:
 	ridge.activation_enabled = false
 	ridge.set_physics_process(false)
 	ridge.get_node("CollisionShape3D").set_deferred("disabled", true)
-	pickup.interacted.connect(_on_flashlight_picked_up)
+	set_physics_process(enabled)
+	if enabled:
+		pickup.interacted.connect(_on_flashlight_picked_up)
 
 func _on_flashlight_picked_up(interactor: Node3D) -> void:
-	if interactor != player or armed:
+	if not enabled or interactor != player or armed:
 		return
 	armed = true
 	pickup_forward = -player.camera.global_basis.z
@@ -34,7 +38,7 @@ func _on_flashlight_picked_up(interactor: Node3D) -> void:
 	get_parent().get_node("FlashlightItem").hide()
 
 func _physics_process(delta: float) -> void:
-	if not armed or finished or player.is_frozen:
+	if not enabled or not armed or finished or player.is_frozen:
 		return
 	if not revealed:
 		var forward := -player.camera.global_basis.z
@@ -83,7 +87,7 @@ func _player_is_looking_at_ridgeback() -> bool:
 	return player.get_world_3d().direct_space_state.intersect_ray(ray).is_empty()
 
 func _blackout() -> void:
-	if finished:
+	if not enabled or finished:
 		return
 	finished = true
 	ridge.velocity = Vector3.ZERO

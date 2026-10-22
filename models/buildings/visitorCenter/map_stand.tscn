@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/buildings/visitorCenter/mapStand_V3.glb" id="1_model"]
+[ext_resource type="Material" path="res://models/buildings/visitorCenter/map_stand_roof_material.tres" id="2_roof"]
+
+[node name="mapStand_V3" instance=ExtResource("1_model")]
+
+[node name="Left pitched roof" parent="." index="32"]
+material_override = ExtResource("2_roof")
+
+[node name="Right pitched roof" parent="." index="55"]
+material_override = ExtResource("2_roof")

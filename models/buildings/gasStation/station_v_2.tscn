@@ -5,6 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://bvr61xou3pofy" path="res://models/props/gasStationIceMachine_Ice_Merchandiser_2Door_W72in_Metalness-Ice_Merchandiser_2Door_W72in_Roughness.png" id="3_g3bls"]
 [ext_resource type="Texture2D" uid="uid://ja3pbdl43gia" path="res://models/props/gasStationIceMachine_Ice_Merchandiser_2Door_W72in_Normal.png" id="4_qdrgd"]
 
+[ext_resource type="Material" path="res://models/buildings/gasStation/roof_tiles_material.tres" id="3_roof_material"]
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g3csy"]
 albedo_color = Color(0.91436976, 0.5338127, 0.33531374, 1)
 metallic = 0.6
@@ -75,6 +77,18 @@ size = Vector3(1.8488, 1.6899999, 0.99)
 
 [node name="stationV2" unique_id=85918364 instance=ExtResource("1_g3csy")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+
+[node name="Porch_Roof" parent="." index="8"]
+material_override = ExtResource("3_roof_material")
+
+[node name="Store_Roof1" parent="." index="17"]
+material_override = ExtResource("3_roof_material")
+
+[node name="Store_Roof-1" parent="." index="18"]
+material_override = ExtResource("3_roof_material")
+
+[node name="Store_RoofRidge" parent="." index="19"]
+material_override = ExtResource("3_roof_material")
 
 [node name="LotBollard0" parent="." index="0" unique_id=816854850]
 material_override = SubResource("StandardMaterial3D_g3csy")
