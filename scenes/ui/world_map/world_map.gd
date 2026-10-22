@@ -49,6 +49,8 @@ const MAP_TEXTURE: Texture2D = preload("res://img/items/cicely_town_map.png")
 @export_category("Town Map Image")
 @export var use_image_map: bool = true
 @export var map_texture: Texture2D = MAP_TEXTURE
+## Resolution in which the calibration coordinates were authored, before texture import resizing.
+@export var image_reference_size: Vector2 = Vector2(2376, 1836)
 @export var map_origin: Vector2 = Vector2(1137.893, 229.696)
 @export var world_scale: Vector2 = Vector2(3.433656, 3.487944)
 @export var require_inventory_item: bool = true
@@ -574,7 +576,7 @@ func _draw_header_and_footer(panel_rect: Rect2) -> void:
 
 func _world_to_map(world_xz: Vector2) -> Vector2:
 	if use_image_map and is_instance_valid(map_texture):
-		var tex_sz := map_texture.get_size()
+		var tex_sz := image_reference_size
 		var map_px := map_origin.x + world_xz.x * world_scale.x
 		var map_py := map_origin.y + world_xz.y * world_scale.y
 		var mapped := Vector2(
