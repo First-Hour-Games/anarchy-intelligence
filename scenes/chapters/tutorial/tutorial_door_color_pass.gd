@@ -3,6 +3,9 @@ extends Node3D
 ## Draws a full-color copy of the tutorial door over the monochrome tutorial world.
 ## Layer order: world < door pass (18) < aspect bars (19) < player UI (20) < CRT (100).
 
+const PAD_MOVE_PROMPT := preload("res://img/controller/pad_move.png")
+const PAD_LOOK_PROMPT := preload("res://img/controller/pad_look.png")
+const PAD_SPRINT_PROMPT := preload("res://img/controller/pad_sprint.png")
 const DOOR_OVERLAY_LAYER := 18
 const INTRO_FADE_LAYER := 200
 const DEFAULT_BACKGROUND_COLOR := Color("454545")
@@ -70,6 +73,7 @@ var _tutorial_labels_are_hiding := false
 
 func _ready() -> void:
 	$TutorialRooms/BakedMovingWall/WhiteDoor.opened.connect(_on_white_door_opened)
+	_bind_tutorial_prompts_to_input_device()
 	_init_world_environment()
 	_intro_light = _find_intro_light()
 	if is_instance_valid(_intro_light):
@@ -180,6 +184,18 @@ func _lock_player() -> void:
 	_player.velocity = Vector3.ZERO
 	_player.set_physics_process(false)
 	_player.set_process_unhandled_input(false)
+
+
+## Tutorial hints swap between keyboard/mouse art and controller art as the player switches device.
+func _bind_tutorial_prompts_to_input_device() -> void:
+	InputDevice.bind(_move_label, &"texture", _move_label.texture, PAD_MOVE_PROMPT)
+	InputDevice.bind(_look_label, &"texture", _look_label.texture, PAD_LOOK_PROMPT)
+	var run_label := get_node_or_null(^"TutorialOverlay/AspectRatioContainer/Content/RunLabel") as TextureRect
+	if is_instance_valid(run_label):
+		InputDevice.bind(run_label, &"texture", run_label.texture, PAD_SPRINT_PROMPT)
+		var run_text := run_label.get_node_or_null(^"RichTextLabel") as RichTextLabel
+		if is_instance_valid(run_text):
+			InputDevice.bind(run_text, &"text", run_text.text, run_text.text.replace("Hold to run", "Click to run"))
 
 
 func _play_intro_fade() -> void:

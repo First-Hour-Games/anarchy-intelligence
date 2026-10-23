@@ -45,6 +45,8 @@ var dialogue_line: DialogueLine:
 		return dialogue_line
 
 func _ready() -> void:
+	if progress_indicator:
+		InputDevice.bind(progress_indicator, &"text", progress_indicator.text, "[ A ]")
 	balloon.hide()
 	Engine.get_singleton("DialogueManager").mutated.connect(_on_mutated)
 
@@ -88,8 +90,8 @@ func _process(_delta: float) -> void:
 				progress_indicator.visible = false
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Never intercept or block pause input (Escape / ui_cancel) so the pause menu can always open
-	if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+	# Never intercept or block pause input (Escape / ui_cancel / gamepad Start) so the pause menu can always open
+	if event.is_action_pressed(&"ui_cancel") or event.is_action_pressed(&"pause") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
 		return
 
 	if will_block_other_input:

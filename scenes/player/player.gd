@@ -52,6 +52,21 @@ var current_footstep_surface: StringName = &"dirt"
 @export_range(0.0005, 0.01, 0.0001) var mouse_sensitivity: float = 0.0017
 @export_range(45.0, 89.0, 1.0) var vertical_look_limit_degrees: float = 85.0
 
+@export_category("Gamepad")
+## Turn speed in degrees per second with the right stick fully deflected.
+@export_range(30.0, 720.0, 5.0) var gamepad_look_speed_degrees: float = 165.0
+## Vertical turn speed relative to horizontal (vertical usually feels better a bit slower).
+@export_range(0.2, 1.5, 0.05) var gamepad_vertical_look_scale: float = 0.7
+## Radial deadzone for the right stick.
+@export_range(0.0, 0.5, 0.01) var gamepad_look_deadzone: float = 0.15
+## >1 gives finer aim near the centre of the stick, full speed at the edge.
+@export_range(1.0, 3.0, 0.1) var gamepad_look_response_curve: float = 1.8
+@export var gamepad_invert_look_y: bool = false
+## On a gamepad, clicking L3 starts sprinting until you stop moving forward (holding L3 isn't needed).
+@export var gamepad_sprint_toggle: bool = true
+## On a gamepad, B toggles crouch (you can't hold B while using both sticks).
+@export var gamepad_crouch_toggle: bool = true
+
 @export_category("Head Bob")
 @export var head_bob_frequency: float = 0.95
 @export var head_bob_vertical_amplitude: float = 0.035
@@ -143,6 +158,8 @@ var _footstep_random := RandomNumberGenerator.new()
 var _last_footstep_index: int = -1
 var _footstep_player_index: int = 0
 var is_frozen: bool = false
+var _gamepad_sprint_latched: bool = false
+var _gamepad_crouch_toggled: bool = false
 
 
 func _enter_tree() -> void:
@@ -212,6 +229,7 @@ func snap_to_ground(max_distance: float = 4.0) -> bool:
 
 func freeze() -> void:
 	is_frozen = true
+	_gamepad_sprint_latched = false
 	velocity.x = 0.0
 	velocity.z = 0.0
 	set_process_unhandled_input(false)
@@ -278,17 +296,57 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 
+	# Gamepad-only toggles (keyboard Shift/Ctrl stay hold-to-use).
+	if event is InputEventJoypadButton and event.pressed:
+		if gamepad_sprint_toggle and event.is_action_pressed(&"sprint"):
+			_gamepad_sprint_latched = not _gamepad_sprint_latched
+			get_viewport().set_input_as_handled()
+			return
+		if gamepad_crouch_toggle and crouch_enabled and event.is_action_pressed(&"crouch"):
+			_gamepad_crouch_toggled = not _gamepad_crouch_toggled
+			if _gamepad_crouch_toggled:
+				_gamepad_sprint_latched = false
+			get_viewport().set_input_as_handled()
+			return
+
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
 
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		if is_instance_valid(flashlight):
-			flashlight.add_look_impulse(event.relative)
-		rotate_y(-event.relative.x * mouse_sensitivity)
-		head.rotate_x(-event.relative.y * mouse_sensitivity)
-		var look_limit: float = deg_to_rad(vertical_look_limit_degrees)
-		head.rotation.x = clamp(head.rotation.x, -look_limit, look_limit)
+		_apply_look_rotation(event.relative * mouse_sensitivity, event.relative)
+
+
+func _process(delta: float) -> void:
+	# Same conditions under which mouse look works: scenes that lock the player switch off
+	# _unhandled_input (tutorial intro, death), and menus release the mouse.
+	if is_frozen or not is_processing_unhandled_input() or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+	var stick := Input.get_vector(&"look_left", &"look_right", &"look_up", &"look_down", gamepad_look_deadzone)
+	if stick.is_zero_approx():
+		return
+	stick = stick.normalized() * pow(stick.length(), gamepad_look_response_curve)
+	if gamepad_invert_look_y:
+		stick.y = -stick.y
+	var speed := deg_to_rad(gamepad_look_speed_degrees) * delta
+	var rotation_delta := Vector2(stick.x * speed, stick.y * speed * gamepad_vertical_look_scale)
+	# Express the stick turn as equivalent mouse pixels so the flashlight/hand sway still reacts.
+	var equivalent_mouse_motion := rotation_delta / maxf(mouse_sensitivity, 0.00001)
+	_apply_look_rotation(rotation_delta, equivalent_mouse_motion)
+	# The hand viewmodel reads real mouse motion on its own; feed it the stick motion here.
+	var viewmodel := get_node_or_null(^"HandViewmodel")
+	if viewmodel != null and viewmodel.has_method(&"add_look_impulse"):
+		viewmodel.add_look_impulse(equivalent_mouse_motion)
+
+
+## Rotates body (yaw) and head (pitch) by `rotation_delta` radians; `sway_motion` is in mouse pixels.
+func _apply_look_rotation(rotation_delta: Vector2, sway_motion: Vector2) -> void:
+	if is_instance_valid(flashlight):
+		flashlight.add_look_impulse(sway_motion)
+	rotate_y(-rotation_delta.x)
+	head.rotate_x(-rotation_delta.y)
+	var look_limit: float = deg_to_rad(vertical_look_limit_degrees)
+	head.rotation.x = clamp(head.rotation.x, -look_limit, look_limit)
 
 
 func _on_inventory_selection_changed(_slot_index: int, _item_id: StringName) -> void:
@@ -311,7 +369,7 @@ func _physics_process(delta: float) -> void:
 
 	if is_on_floor():
 		velocity.y = 0.0
-		if jump_enabled and Input.is_key_pressed(KEY_SPACE) and not is_crouching:
+		if jump_enabled and Input.is_action_pressed(&"jump") and not is_crouching:
 			velocity.y = jump_velocity
 	else:
 		velocity.y -= gravity * delta
@@ -319,7 +377,11 @@ func _physics_process(delta: float) -> void:
 	var input_vector: Vector2 = _get_movement_input()
 	var local_direction := Vector3(input_vector.x, 0.0, input_vector.y)
 	var world_direction := (global_transform.basis * local_direction).normalized()
-	var wants_to_sprint := sprint_enabled and Input.is_key_pressed(KEY_SHIFT) and input_vector.y < 0.0 and not is_crouching
+	# Gamepad sprint (L3 click) stays on until the player stops pushing forward.
+	if input_vector.y > -0.3:
+		_gamepad_sprint_latched = false
+	var sprint_held := Input.is_action_pressed(&"sprint") or _gamepad_sprint_latched
+	var wants_to_sprint := sprint_enabled and sprint_held and input_vector.y < 0.0 and not is_crouching
 	_update_stamina(delta, wants_to_sprint)
 	var target_speed := sprint_speed if is_sprinting else walk_speed
 	if is_crouching:
@@ -362,7 +424,10 @@ func _update_stamina(delta: float, wants_to_sprint: bool) -> void:
 
 
 func _update_crouch(delta: float) -> void:
-	var wants_crouch := crouch_enabled and Input.is_key_pressed(KEY_CTRL)
+	if not crouch_enabled:
+		_gamepad_crouch_toggled = false
+	var crouch_held := Input.is_key_pressed(KEY_CTRL) or (not gamepad_crouch_toggle and Input.is_action_pressed(&"crouch"))
+	var wants_crouch := crouch_enabled and (crouch_held or _gamepad_crouch_toggled)
 	if crouch_enabled and is_crouching and not wants_crouch and ceiling_check.is_colliding():
 		wants_crouch = true
 	is_crouching = wants_crouch
@@ -378,11 +443,8 @@ func _update_crouch(delta: float) -> void:
 
 
 func _get_movement_input() -> Vector2:
-	var input_vector := Vector2(
-		float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
-		float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
-	)
-	return input_vector.limit_length(1.0)
+	# move_* actions carry both WASD and the left stick (analog, so partial tilt = slower walk).
+	return Input.get_vector(&"move_left", &"move_right", &"move_forward", &"move_back")
 
 
 func _update_head_bob(delta: float) -> void:

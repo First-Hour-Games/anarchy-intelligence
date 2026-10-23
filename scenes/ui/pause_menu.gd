@@ -131,9 +131,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo():
 		return
 
-	# When paused menu is closed, check for Escape to pause
+	# When paused menu is closed, check for Escape / gamepad Start to pause.
+	# (Gamepad B is ui_cancel too, but it must not pause the game — it's crouch/back.)
 	if not opened:
-		if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+		var is_keyboard_cancel: bool = event.is_action_pressed(&"ui_cancel") and not (event is InputEventJoypadButton)
+		if event.is_action_pressed(&"pause") or is_keyboard_cancel or (event is InputEventKey and event.keycode == KEY_ESCAPE):
 			if not get_tree().paused and not _is_transitioning:
 				var player := get_tree().get_first_node_in_group("player") as FirstPersonPlayer
 				if player == null:
@@ -149,8 +151,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	var active_count: int = _options_menu_items.size() if is_in_options else _main_menu_items.size()
 
-	# Escape key / Cancel
-	if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+	# Escape key / Cancel / gamepad B or Start
+	if event.is_action_pressed(&"ui_cancel") or event.is_action_pressed(&"pause") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
 		if is_in_options:
 			_close_options()
 		else:

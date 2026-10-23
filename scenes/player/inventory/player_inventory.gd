@@ -113,6 +113,8 @@ func _input(event: InputEvent) -> void:
 			set_open(false)
 		elif event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 			select_relative(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
+		elif _is_stick_navigation(event):
+			return  # left stick keeps walking while the inventory is open; D-pad picks slots
 		elif event.is_action_pressed("ui_left"):
 			select_relative(-1)
 		elif event.is_action_pressed("ui_right"):
@@ -122,6 +124,10 @@ func _input(event: InputEvent) -> void:
 		else:
 			return
 		get_viewport().set_input_as_handled()
+
+func _is_stick_navigation(event: InputEvent) -> bool:
+	return event is InputEventAction and event.device == InputDevice.SYNTHETIC_DEVICE_ID
+
 
 func set_open(value: bool, animate: bool = true) -> void:
 	if value == is_open:

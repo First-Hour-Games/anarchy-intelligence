@@ -64,6 +64,16 @@ func _ready() -> void:
 	else:
 		_bind_scene_nodes()
 
+	InputDevice.on_changed(func(_is_gamepad: bool) -> void:
+		if is_instance_valid(_prompt_label):
+			_prompt_label.text = _confirm_prompt_text()
+	)
+
+
+## "[ E ] Confirm" on keyboard, "[ A ] Confirm" on a gamepad.
+func _confirm_prompt_text() -> String:
+	return "[ %s ] Confirm" % ("A" if InputDevice.using_gamepad() else "E")
+
 
 func _exit_tree() -> void:
 	if instance == self:
@@ -84,7 +94,7 @@ func _bind_scene_nodes() -> void:
 	_description_label = _overlay.find_child("DescriptionLabel", true, false) as Label if _overlay else null
 	_prompt_label = _overlay.find_child("PromptLabel", true, false) as Label if _overlay else null
 	if is_instance_valid(_prompt_label):
-		_prompt_label.text = "[ E ] Confirm"
+		_prompt_label.text = _confirm_prompt_text()
 	_sfx_player = get_node_or_null("PickupSfxPlayer")
 
 	if is_instance_valid(_blur_rect) and _blur_rect.material is ShaderMaterial:
@@ -162,7 +172,7 @@ func display_item(item_id_or_data: Variant, on_closed: Callable = Callable()) ->
 		_content_box.scale = Vector2(0.96, 0.96)
 		_content_box.pivot_offset = _content_box.size * 0.5
 	if is_instance_valid(_prompt_label):
-		_prompt_label.text = "[ E ] Confirm"
+		_prompt_label.text = _confirm_prompt_text()
 		_prompt_label.modulate.a = 0.0
 
 	# Play pickup SFX
@@ -499,7 +509,7 @@ func _build_ui() -> void:
 
 	_prompt_label = Label.new()
 	_prompt_label.name = "PromptLabel"
-	_prompt_label.text = "[ E ] Confirm"
+	_prompt_label.text = _confirm_prompt_text()
 	_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_prompt_label.add_theme_font_override("font", font)
