@@ -77,9 +77,16 @@ var _fade_tween: Tween
 var _fade_phase: int = 0
 
 
+## Footer hint: "M / ESC" on keyboard, "Y / B" on a gamepad.
+func _close_hint_text(suffix: String) -> String:
+	var keys := "Y / B" if InputDevice.using_gamepad() else "M / ESC"
+	return keys + suffix
+
+
 func _ready() -> void:
 	add_to_group("world_map")
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	InputDevice.on_changed(queue_redraw.unbind(1))
 	_player = _resolve_player()
 	_map_viewport = get_node_or_null("../MapViewport") as SubViewport
 	if is_instance_valid(_map_viewport):
@@ -547,7 +554,7 @@ func _draw_footer(panel_rect: Rect2) -> void:
 	if footer_y + 6.0 > size.y:
 		footer_y = panel_rect.end.y - 8.0
 
-	draw_string(font, Vector2(panel_rect.position.x, footer_y), "M / ESC   CLOSE MAP", HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, COLOR_MUTED_TEXT)
+	draw_string(font, Vector2(panel_rect.position.x, footer_y), _close_hint_text("   CLOSE MAP"), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, COLOR_MUTED_TEXT)
 
 	if show_coordinates_footer and is_instance_valid(_player):
 		var location := "X: %d   Z: %d" % [roundi(_player.global_position.x), roundi(_player.global_position.z)]
@@ -568,7 +575,7 @@ func _draw_header_and_footer(panel_rect: Rect2) -> void:
 	draw_line(Vector2(compass_x, panel_rect.position.y + 31.0), Vector2(compass_x, panel_rect.position.y + 39.0), COLOR_PLAYER, 2.0)
 
 	var footer_y := panel_rect.end.y - 12.0
-	draw_string(ThemeDB.fallback_font, Vector2(panel_rect.position.x + 16.0, footer_y), "M / ESC  CLOSE", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, COLOR_MUTED_TEXT)
+	draw_string(ThemeDB.fallback_font, Vector2(panel_rect.position.x + 16.0, footer_y), _close_hint_text("  CLOSE"), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, COLOR_MUTED_TEXT)
 	if is_instance_valid(_player):
 		var location := "X %d   Z %d" % [roundi(_player.global_position.x), roundi(_player.global_position.z)]
 		draw_string(ThemeDB.fallback_font, Vector2(panel_rect.end.x - 130.0, footer_y), location, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, COLOR_MUTED_TEXT)
