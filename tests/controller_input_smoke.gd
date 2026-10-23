@@ -87,6 +87,10 @@ func run() -> void:
 			found = found or (event is InputEventJoypadButton and event.button_index == expect[action])
 		check(found, "%s is on gamepad button %d" % [action, expect[action]])
 
+	for button: JoyButton in [JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_X, JOY_BUTTON_Y]:
+		var probe := _joy_button(button)
+		check(probe.is_action_pressed(&"ui_accept"), "face button %d works as Enter" % button)
+
 	# --- Device auto-detection
 	var switches: Array[bool] = []
 	manager.device_changed.connect(func(is_pad: bool) -> void: switches.append(is_pad))

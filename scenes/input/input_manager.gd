@@ -55,6 +55,10 @@ const GAMEPAD_GLYPHS := {
 }
 
 const NAV_ACTIONS := [&"ui_up", &"ui_down", &"ui_left", &"ui_right"]
+## Every face button works as Enter (ui_accept). B keeps its Back meaning where a
+## screen has a real "back" (options submenu, pause menu, inspection), because those
+## screens check ui_cancel before ui_accept.
+const ACCEPT_BUTTONS := [JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_X, JOY_BUTTON_Y]
 const NAV_DPAD_BUTTONS := {
 	&"ui_up": JOY_BUTTON_DPAD_UP,
 	&"ui_down": JOY_BUTTON_DPAD_DOWN,
@@ -136,6 +140,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_remove_left_stick_from_ui_navigation()
 	_ensure_dpad_ui_navigation()
+	_make_face_buttons_accept()
 	# window_input fires for every event before any node sees it, so detection works
 	# even when a script marks the event as handled.
 	get_tree().root.window_input.connect(_on_window_input)
@@ -260,6 +265,21 @@ func _remove_left_stick_from_ui_navigation() -> void:
 		for event: InputEvent in InputMap.action_get_events(action):
 			if event is InputEventJoypadMotion:
 				InputMap.action_erase_event(action, event)
+
+
+func _make_face_buttons_accept() -> void:
+	if not InputMap.has_action(&"ui_accept"):
+		return
+	for button: JoyButton in ACCEPT_BUTTONS:
+		var already := false
+		for event: InputEvent in InputMap.action_get_events(&"ui_accept"):
+			if event is InputEventJoypadButton and event.button_index == button:
+				already = true
+		if not already:
+			var press := InputEventJoypadButton.new()
+			press.device = -1
+			press.button_index = button
+			InputMap.action_add_event(&"ui_accept", press)
 
 
 ## The D-pad is the main way to move through menus; make sure it is always bound.

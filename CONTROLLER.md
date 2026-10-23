@@ -17,8 +17,8 @@ is "active", and on-screen prompts switch to match it immediately.
 | Map | M | Y |
 | Journal | J | View |
 | Pause | Esc | Menu (Start) |
-| Confirm / continue dialogue | Enter / Space / E | A |
-| Back / close menus | Esc / Tab | B |
+| Confirm / Enter (menus, dialogue, pickups) | Enter / Space / E | Any of A, B, X, Y |
+| Back (options submenu, pause menu, inspection) | Esc / Tab | B |
 | Jump (when enabled) | Space | A |
 | Crouch (when enabled) | Hold Ctrl | R3 (toggle) |
 
