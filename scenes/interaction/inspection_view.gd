@@ -60,6 +60,7 @@ func _ready() -> void:
 		blink_sound = preload("res://sounds/player/blink.mp3")
 	_build_overlay_ui()
 	_setup_audio()
+	InputDevice.bind(self, &"exit_prompt_text", exit_prompt_text, "[ B ] RETURN")
 
 
 func _build_overlay_ui() -> void:

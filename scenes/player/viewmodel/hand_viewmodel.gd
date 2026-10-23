@@ -4,6 +4,8 @@ class_name HandViewmodel extends CanvasLayer
 ## The artwork stays independent from the 3D camera and cannot clip into walls.
 
 const SOURCE_SIZE := Vector2(1774.0, 887.0)
+const INTERACT_PROMPT_KEYBOARD := preload("res://img/player/InteractLabel.png")
+const INTERACT_PROMPT_GAMEPAD := preload("res://img/controller/pad_interact.png")
 
 @export_category("Layout")
 @export_range(0.5, 1.2, 0.01) var viewmodel_scale: float = 0.84
@@ -77,6 +79,8 @@ func _ready() -> void:
 	_update_heartbeat()
 	_update_stamina_bar()
 	stamina_hud.modulate.a = 0.0
+	# Interact prompt shows [E] on keyboard/mouse and (X) on a gamepad, switching live.
+	InputDevice.bind(interaction_prompt, &"texture", INTERACT_PROMPT_KEYBOARD, INTERACT_PROMPT_GAMEPAD)
 	_bind_health.call_deferred()
 
 func _bind_health() -> void:
@@ -95,9 +99,15 @@ func _on_health_changed(value: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		look_lag -= event.relative * look_lag_strength
-		look_lag.x = clampf(look_lag.x, -look_lag_limit, look_lag_limit)
-		look_lag.y = clampf(look_lag.y, -look_lag_limit, look_lag_limit)
+		add_look_impulse(event.relative)
+
+
+## Hand sway from looking around. `relative_motion` is in mouse pixels (the player converts
+## right-stick turning into equivalent pixels so gamepad look sways the hands too).
+func add_look_impulse(relative_motion: Vector2) -> void:
+	look_lag -= relative_motion * look_lag_strength
+	look_lag.x = clampf(look_lag.x, -look_lag_limit, look_lag_limit)
+	look_lag.y = clampf(look_lag.y, -look_lag_limit, look_lag_limit)
 
 func _process(delta: float) -> void:
 	_update_hp_face_animation(delta)
