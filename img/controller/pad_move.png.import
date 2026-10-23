@@ -2,6 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://m5gpsopfw40t"
+path="res://.godot/imported/pad_move.png-8284f25d2f375e7cd167486fff5423c9.ctex"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://img/controller/pad_move.png"
+dest_files=["res://.godot/imported/pad_move.png-8284f25d2f375e7cd167486fff5423c9.ctex"]
 
 [params]
 

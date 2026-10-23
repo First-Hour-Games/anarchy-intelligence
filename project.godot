@@ -205,7 +205,7 @@ gamepad_cursor_click={
 
 [internationalization]
 
-locale/translations_pot_files=PackedStringArray("res://scenes/chapters/intro/intro.dialogue", "res://scenes/chapters/tutorial/phone.dialogue", "res://scenes/chapters/main/starting_forest.dialogue")
+locale/translations_pot_files=PackedStringArray("res://scenes/chapters/intro/intro.dialogue", "res://scenes/chapters/tutorial/phone.dialogue", "res://scenes/chapters/main/starting_forest.dialogue", "res://anarchy-intelligence/scenes/chapters/tutorial/phone.dialogue", "res://anarchy-intelligence/scenes/chapters/intro/intro.dialogue", "res://anarchy-intelligence/scenes/chapters/main/starting_forest.dialogue", "res://anarchy-intelligence/anarchy-intelligence/scenes/chapters/tutorial/phone.dialogue", "res://anarchy-intelligence/anarchy-intelligence/scenes/chapters/intro/intro.dialogue", "res://anarchy-intelligence/anarchy-intelligence/scenes/chapters/main/starting_forest.dialogue")
 
 [physics]
 

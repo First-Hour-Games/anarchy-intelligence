@@ -2,6 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
+uid="uid://c0c83n5umrcq"
+path="res://.godot/imported/pad_look.png-956707958523c816ab49c4585b077d5c.ctex"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://img/controller/pad_look.png"
+dest_files=["res://.godot/imported/pad_look.png-956707958523c816ab49c4585b077d5c.ctex"]
 
 [params]
 
