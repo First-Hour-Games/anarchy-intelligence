@@ -79,6 +79,14 @@ func run() -> void:
 			has_dpad = has_dpad or event is InputEventJoypadButton
 		check(not has_stick and has_dpad, "%s uses D-pad directly; stick nav is repeat-limited" % action)
 
+	# --- Requested layout: X interact, Y map, B inventory, L3 sprint, D-pad menus
+	var expect := {&"interact": JOY_BUTTON_X, &"map_toggle": JOY_BUTTON_Y, &"inventory_toggle": JOY_BUTTON_B, &"sprint": JOY_BUTTON_LEFT_STICK, &"pause": JOY_BUTTON_START}
+	for action: StringName in expect:
+		var found := false
+		for event in InputMap.action_get_events(action):
+			found = found or (event is InputEventJoypadButton and event.button_index == expect[action])
+		check(found, "%s is on gamepad button %d" % [action, expect[action]])
+
 	# --- Device auto-detection
 	var switches: Array[bool] = []
 	manager.device_changed.connect(func(is_pad: bool) -> void: switches.append(is_pad))
@@ -131,8 +139,8 @@ func run() -> void:
 	_send(_joy_axis(JOY_AXIS_LEFT_Y, 1.0))
 	await create_timer(0.2).timeout
 	check(nav_events == [&"ui_down"], "holding stick down gives one ui_down at first (%s)" % [nav_events])
-	await create_timer(0.6).timeout
-	check(nav_events.size() >= 3 and nav_events.size() <= 8 and nav_events.all(func(a): return a == &"ui_down"), "then repeats at a readable rate (%d events)" % nav_events.size())
+	await create_timer(1.0).timeout
+	check(nav_events.size() >= 3 and nav_events.size() <= 6 and nav_events.all(func(a): return a == &"ui_down"), "then repeats at a readable rate (%d events in 1.2s)" % nav_events.size())
 	_send(_joy_axis(JOY_AXIS_LEFT_Y, 0.0))
 	await process_frame
 	var count_after_release := nav_events.size()
@@ -187,16 +195,16 @@ func run() -> void:
 		var speed := Vector2(player.velocity.x, player.velocity.z).length()
 		check(speed > 1.0, "left stick walks the player (speed %.2f)" % speed)
 
-		# L3 click latches sprint while pushing forward
+		# Holding L3 sprints (like holding Shift); letting go stops
 		_send(_joy_button(JOY_BUTTON_LEFT_STICK))
-		_send(_joy_button(JOY_BUTTON_LEFT_STICK, false))
-		for i in 30:
+		for i in 10:
 			await physics_frame
-		check(player.is_sprinting, "L3 click keeps sprinting without holding")
-		_send(_joy_axis(JOY_AXIS_LEFT_Y, 0.0))
+		check(player.is_sprinting, "holding L3 sprints")
+		_send(_joy_button(JOY_BUTTON_LEFT_STICK, false))
 		for i in 5:
 			await physics_frame
-		check(not player.is_sprinting and not player._gamepad_sprint_latched, "sprint latch clears when you stop")
+		check(not player.is_sprinting, "releasing L3 stops sprinting")
+		_send(_joy_axis(JOY_AXIS_LEFT_Y, 0.0))
 		player.queue_free()
 		floor_body.queue_free()
 

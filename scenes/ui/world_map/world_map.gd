@@ -75,9 +75,9 @@ var _fade_tween: Tween
 var _fade_phase: int = 0
 
 
-## Footer hint: "M / ESC" on keyboard, "VIEW / B" on a gamepad.
+## Footer hint: "M / ESC" on keyboard, "Y / B" on a gamepad.
 func _close_hint_text(suffix: String) -> String:
-	var keys := "VIEW / B" if InputDevice.using_gamepad() else "M / ESC"
+	var keys := "Y / B" if InputDevice.using_gamepad() else "M / ESC"
 	return keys + suffix
 
 

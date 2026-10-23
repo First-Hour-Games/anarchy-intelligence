@@ -103,6 +103,7 @@ func _input(event: InputEvent) -> void:
 				or _player.is_frozen
 				or get_tree().paused
 				or (story != null and bool(story.get("document_open")))
+				or _is_world_map_open()
 				or (health != null and bool(health.get("is_dead")))
 			)
 			if not cannot_open:
@@ -124,6 +125,14 @@ func _input(event: InputEvent) -> void:
 		else:
 			return
 		get_viewport().set_input_as_handled()
+
+## Gamepad B both opens the inventory and closes the map; let the map have it.
+func _is_world_map_open() -> bool:
+	for map_overlay: Node in get_tree().get_nodes_in_group("world_map"):
+		if map_overlay.has_method(&"is_map_open") and bool(map_overlay.call(&"is_map_open")):
+			return true
+	return false
+
 
 func _is_stick_navigation(event: InputEvent) -> bool:
 	return event is InputEventAction and event.device == InputDevice.SYNTHETIC_DEVICE_ID

@@ -193,9 +193,6 @@ func _bind_tutorial_prompts_to_input_device() -> void:
 	var run_label := get_node_or_null(^"TutorialOverlay/AspectRatioContainer/Content/RunLabel") as TextureRect
 	if is_instance_valid(run_label):
 		InputDevice.bind(run_label, &"texture", run_label.texture, PAD_SPRINT_PROMPT)
-		var run_text := run_label.get_node_or_null(^"RichTextLabel") as RichTextLabel
-		if is_instance_valid(run_text):
-			InputDevice.bind(run_text, &"text", run_text.text, run_text.text.replace("Hold to run", "Click to run"))
 
 
 func _play_intro_fade() -> void:

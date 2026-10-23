@@ -44,17 +44,23 @@ const GAMEPAD_GLYPHS := {
 	&"interact": "X",
 	&"jump": "A",
 	&"sprint": "L3",
-	&"crouch": "B",
+	&"crouch": "R3",
 	&"pause": "MENU",
 	&"ui_accept": "A",
 	&"ui_cancel": "B",
-	&"map_toggle": "VIEW",
-	&"inventory_toggle": "Y",
+	&"map_toggle": "Y",
+	&"inventory_toggle": "B",
 	&"flashlight_toggle": "RB",
-	&"story_journal": "D-PAD UP",
+	&"story_journal": "VIEW",
 }
 
 const NAV_ACTIONS := [&"ui_up", &"ui_down", &"ui_left", &"ui_right"]
+const NAV_DPAD_BUTTONS := {
+	&"ui_up": JOY_BUTTON_DPAD_UP,
+	&"ui_down": JOY_BUTTON_DPAD_DOWN,
+	&"ui_left": JOY_BUTTON_DPAD_LEFT,
+	&"ui_right": JOY_BUTTON_DPAD_RIGHT,
+}
 
 ## How far a stick/trigger must move before it counts as "the player switched to gamepad".
 var gamepad_switch_threshold: float = 0.45
@@ -62,10 +68,11 @@ var gamepad_switch_threshold: float = 0.45
 var mouse_switch_threshold: float = 4.0
 
 ## Left-stick menu navigation.
-var nav_press_threshold: float = 0.6
-var nav_release_threshold: float = 0.35
-var nav_initial_delay: float = 0.38
-var nav_repeat_interval: float = 0.11
+var nav_press_threshold: float = 0.7
+var nav_release_threshold: float = 0.4
+## Seconds before a held stick starts repeating, then seconds between repeats.
+var nav_initial_delay: float = 0.5
+var nav_repeat_interval: float = 0.22
 
 ## Right-stick virtual cursor (only while the mouse cursor is visible).
 var cursor_enabled: bool = true
@@ -128,6 +135,7 @@ static func rumble_pad(weak_magnitude: float, strong_magnitude: float, duration:
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_remove_left_stick_from_ui_navigation()
+	_ensure_dpad_ui_navigation()
 	# window_input fires for every event before any node sees it, so detection works
 	# even when a script marks the event as handled.
 	get_tree().root.window_input.connect(_on_window_input)
@@ -252,6 +260,22 @@ func _remove_left_stick_from_ui_navigation() -> void:
 		for event: InputEvent in InputMap.action_get_events(action):
 			if event is InputEventJoypadMotion:
 				InputMap.action_erase_event(action, event)
+
+
+## The D-pad is the main way to move through menus; make sure it is always bound.
+func _ensure_dpad_ui_navigation() -> void:
+	for action: StringName in NAV_DPAD_BUTTONS:
+		if not InputMap.has_action(action):
+			continue
+		var has_dpad := false
+		for event: InputEvent in InputMap.action_get_events(action):
+			if event is InputEventJoypadButton and event.button_index == NAV_DPAD_BUTTONS[action]:
+				has_dpad = true
+		if not has_dpad:
+			var dpad := InputEventJoypadButton.new()
+			dpad.device = -1
+			dpad.button_index = NAV_DPAD_BUTTONS[action]
+			InputMap.action_add_event(action, dpad)
 
 
 func _update_stick_navigation(delta: float) -> void:

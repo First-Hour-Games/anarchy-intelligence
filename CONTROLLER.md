@@ -10,19 +10,19 @@ is "active", and on-screen prompts switch to match it immediately.
 |---|---|---|
 | Move | W A S D | Left stick (analog) |
 | Look | Mouse | Right stick |
-| Sprint | Hold Shift | Click L3 (stays on until you stop moving forward) |
+| Sprint | Hold Shift | Hold L3 (press the left stick in) |
 | Interact | E | X |
 | Flashlight | F | RB |
-| Inventory | I / Tab | Y (D-pad ← → picks slots) |
-| Map | M | View |
-| Journal | J | D-pad ↑ |
+| Inventory | I / Tab | B (D-pad ← → picks slots) |
+| Map | M | Y |
+| Journal | J | View |
 | Pause | Esc | Menu (Start) |
 | Confirm / continue dialogue | Enter / Space / E | A |
-| Back / close | Esc / Tab | B |
+| Back / close menus | Esc / Tab | B |
 | Jump (when enabled) | Space | A |
-| Crouch (when enabled) | Hold Ctrl | B (toggle) |
+| Crouch (when enabled) | Hold Ctrl | R3 (toggle) |
 
-In menus the D-pad and left stick navigate. When a mouse cursor is on screen (inspection
+In menus the D-pad navigates (the left stick works too, at a slower repeat rate). When a mouse cursor is on screen (inspection
 view, item screens), the right stick moves the cursor and RT clicks.
 
 ## Where things live

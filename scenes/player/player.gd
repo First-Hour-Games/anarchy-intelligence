@@ -62,9 +62,10 @@ var current_footstep_surface: StringName = &"dirt"
 ## >1 gives finer aim near the centre of the stick, full speed at the edge.
 @export_range(1.0, 3.0, 0.1) var gamepad_look_response_curve: float = 1.8
 @export var gamepad_invert_look_y: bool = false
-## On a gamepad, clicking L3 starts sprinting until you stop moving forward (holding L3 isn't needed).
-@export var gamepad_sprint_toggle: bool = true
-## On a gamepad, B toggles crouch (you can't hold B while using both sticks).
+## Off (default): hold L3 (press the left stick in) to sprint, just like holding Shift.
+## On: click L3 once and sprint stays on until you stop moving forward.
+@export var gamepad_sprint_toggle: bool = false
+## On a gamepad, R3 toggles crouch (holding a stick button while aiming is awkward).
 @export var gamepad_crouch_toggle: bool = true
 
 @export_category("Head Bob")
