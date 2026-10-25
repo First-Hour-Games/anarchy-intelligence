@@ -1,4 +1,4 @@
-[gd_resource type="ArrayMesh" format=4 uid="uid://dwun1jchluh82"]
+[gd_resource type="ArrayMesh" format=4 uid="uid://ba8jsv8nk34av"]
 
 [ext_resource type="Texture2D" uid="uid://dl5w3rwirudr8" path="res://models/props/metalfences_fencepaint_Material.001_BaseColor-fencepaint_Material.png" id="1_o6c64"]
 [ext_resource type="Texture2D" uid="uid://die414v4xjtgf" path="res://models/props/metalfences_fencepaint_Material.001_Metallic-fencepaint_Material.png" id="2_bu60h"]
