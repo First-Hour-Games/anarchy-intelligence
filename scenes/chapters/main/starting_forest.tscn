@@ -1914,6 +1914,8 @@ omni_range = 2.893
 script = ExtResource("station_flashlight_pickup")
 visual_target_path = NodePath("..")
 interaction_message = "Picked up flashlight."
+pickup_dialogue_resource = ExtResource("18_forest_dialogue")
+pickup_dialogue_cue = "gas_station_flashlight_pickup"
 
 [node name="GasEntrance" type="Node3D" parent="." unique_id=1706779948]
 transform = Transform3D(0.5853213, 0, -1.3626107, 0, 1.4, 0, 1.27177, 0, 0.62713, 147.02072, 2.0946684, 49.036102)
