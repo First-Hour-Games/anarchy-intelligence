@@ -48,6 +48,8 @@ var dialogue_line: DialogueLine:
 
 
 func _ready() -> void:
+	if progress_indicator:
+		InputDevice.bind(progress_indicator, &"text", progress_indicator.text, "[ A ]")
 	balloon.hide()
 	_update_pivot()
 	balloon.scale.y = 0.0
@@ -97,8 +99,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not balloon.visible:
 		return
 
-	# Never intercept or block pause input (Escape / ui_cancel) so the pause menu can always open
-	if event.is_action_pressed(&"ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
+	# Never intercept or block pause input (Escape / ui_cancel / gamepad Start) so the pause menu can always open.
+	# Gamepad B isn't a pause button — like A/X/Y it continues dialogue — so it isn't passed through here.
+	var is_keyboard_cancel: bool = event.is_action_pressed(&"ui_cancel") and not (event is InputEventJoypadButton)
+	if is_keyboard_cancel or event.is_action_pressed(&"pause") or (event is InputEventKey and event.keycode == KEY_ESCAPE):
 		return
 
 	if _is_closing:
