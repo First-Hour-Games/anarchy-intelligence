@@ -1,0 +1,193 @@
+[gd_scene format=3 uid="uid://b86x208y2oyu7"]
+
+[ext_resource type="Shader" uid="uid://c5cotxt4fso8o" path="res://shaders/snow_ground.gdshader" id="1_oo2gm"]
+[ext_resource type="Texture2D" uid="uid://detx1afnfnjle" path="res://img/materials/ground037/Ground037_1K-JPG_Color.jpg" id="2_eonml"]
+[ext_resource type="Texture2D" uid="uid://wq8pib4bt6ef" path="res://img/materials/ground037/Ground037_1K-JPG_AmbientOcclusion.jpg" id="3_df30d"]
+[ext_resource type="Texture2D" uid="uid://hs1kaxan3hmh" path="res://img/materials/winter_leaves/winter_leaves_diff_4k.jpg" id="4_aufbx"]
+[ext_resource type="Texture2D" uid="uid://dkyajr4yhqfup" path="res://img/materials/ground037/Ground037_1K-JPG_Displacement.jpg" id="5_0ca48"]
+[ext_resource type="Texture2D" uid="uid://b8m0kbbtveqq6" path="res://img/materials/ground037/Ground037_1K-JPG_NormalGL.jpg" id="6_mvw05"]
+[ext_resource type="Texture2D" uid="uid://cbhgf76ivjms1" path="res://img/materials/ground037/Ground037_1K-JPG_Roughness.jpg" id="7_2q3ac"]
+[ext_resource type="Shader" uid="uid://ybo5qd38ua0x" path="res://shaders/natural_road.gdshader" id="8_scyo0"]
+[ext_resource type="Texture2D" uid="uid://dsbd0falvn6n7" path="res://img/materials/asphalt/Road013A_1K-JPG_Color.jpg" id="9_qyyq5"]
+[ext_resource type="Texture2D" uid="uid://brwwoqwm8tw7x" path="res://img/materials/asphalt/Road013A_1K-JPG_AmbientOcclusion.jpg" id="10_stn4k"]
+[ext_resource type="Texture2D" uid="uid://cwlgkhs0rijg6" path="res://img/materials/asphalt/Road013A_1K-JPG_Displacement.jpg" id="11_7an87"]
+[ext_resource type="Texture2D" uid="uid://dvofy5r22pof7" path="res://img/materials/asphalt/Road013A_1K-JPG_NormalGL.jpg" id="12_y6w01"]
+[ext_resource type="Texture2D" uid="uid://ukajwc8gwddd" path="res://img/materials/asphalt/Road013A_1K-JPG_Roughness.jpg" id="13_2hmer"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_q0lqf"]
+size = Vector2(700, 500)
+subdivide_width = 128
+subdivide_depth = 112
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_arlle"]
+render_priority = 0
+shader = ExtResource("1_oo2gm")
+shader_parameter/anti_repeat_strength = 1.0
+shader_parameter/anti_repeat_patch_size = 2.0
+shader_parameter/patch_rotation_strength = 1.0
+shader_parameter/patch_scale_min = 0.6
+shader_parameter/patch_scale_max = 1.2
+shader_parameter/regular_tiling_blend = 0.2
+shader_parameter/albedo_texture = ExtResource("2_eonml")
+shader_parameter/normal_texture = ExtResource("6_mvw05")
+shader_parameter/roughness_texture = ExtResource("7_2q3ac")
+shader_parameter/ao_texture = ExtResource("3_df30d")
+shader_parameter/height_texture = ExtResource("5_0ca48")
+shader_parameter/detail_albedo_texture = ExtResource("4_aufbx")
+shader_parameter/tiling = 100.0
+shader_parameter/randomize_rotation = 0.0
+shader_parameter/normal_scale = 1.0
+shader_parameter/height_scale = 0.15
+shader_parameter/detail_world_scale = 3.5
+shader_parameter/detail_patch_scale = 18.0
+shader_parameter/detail_strength = 0.52
+shader_parameter/ground_tint = Color(0.86, 0.85, 0.78, 1)
+shader_parameter/ground_saturation = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oo2gm"]
+render_priority = 0
+shader = ExtResource("8_scyo0")
+shader_parameter/anti_repeat_strength = 1.0
+shader_parameter/anti_repeat_patch_size = 2.4900000707750003
+shader_parameter/patch_rotation_strength = 1.0
+shader_parameter/patch_scale_min = 0.68900002946762
+shader_parameter/patch_scale_max = 1.1090000494176202
+shader_parameter/regular_tiling_blend = 0.2
+shader_parameter/albedo_texture = ExtResource("9_qyyq5")
+shader_parameter/normal_texture = ExtResource("12_y6w01")
+shader_parameter/roughness_texture = ExtResource("13_2hmer")
+shader_parameter/ao_texture = ExtResource("10_stn4k")
+shader_parameter/height_texture = ExtResource("11_7an87")
+shader_parameter/texture_scale = 0.25200001127148
+shader_parameter/normal_strength = 1.0
+shader_parameter/height_scale = 0.0210000009975
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eonml"]
+albedo_color = Color(0.85, 0.68, 0.12, 1)
+roughness = 0.5
+emission_enabled = true
+emission = Color(0.85, 0.68, 0.12, 1)
+emission_energy_multiplier = 0.15
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_df30d"]
+albedo_color = Color(0.85, 0.85, 0.82, 1)
+roughness = 0.5
+emission_enabled = true
+emission = Color(0.85, 0.85, 0.82, 1)
+emission_energy_multiplier = 0.15
+
+[node name="ResidenceArea" type="Node3D" unique_id=1347028652]
+
+[node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=1939650879]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, 180)
+mesh = SubResource("PlaneMesh_q0lqf")
+surface_material_override/0 = SubResource("ShaderMaterial_arlle")
+metadata/_edit_lock_ = true
+metadata/surface = "grass"
+
+[node name="Streets" type="Node3D" parent="." unique_id=1147493165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3547363)
+metadata/surface = "gravel"
+
+[node name="MainRoad" type="CSGBox3D" parent="Streets" unique_id=930616664]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49.902397, -0.100003816, 8.299309)
+use_collision = true
+size = Vector3(600, 0.4, 8)
+material = SubResource("ShaderMaterial_oo2gm")
+metadata/surface = "gravel"
+
+[node name="MainRoad_CenterLine" type="CSGBox3D" parent="Streets" unique_id=1115931391]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.105, 8.179955)
+size = Vector3(600, 0.01, 0.15)
+material = SubResource("StandardMaterial3D_eonml")
+
+[node name="MainRoad_EdgeLine_North" type="CSGBox3D" parent="Streets" unique_id=1824257750]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0.105, 4.5799546)
+size = Vector3(527, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_North2" type="CSGBox3D" parent="Streets" unique_id=246082771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.96783, 0.105, 4.5799546)
+size = Vector3(60, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="Streets" unique_id=1810357845]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112.870056, 0.105, 11.779955)
+size = Vector3(474.2599, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_South2" type="CSGBox3D" parent="Streets" unique_id=1467470489]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.69112, 0.105, 11.779955)
+size = Vector3(120.617775, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="Streets2" type="Node3D" parent="." unique_id=79269525]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 136, 0, 367.35474)
+metadata/surface = "gravel"
+
+[node name="MainRoad" type="CSGBox3D" parent="Streets2" unique_id=513981347]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51.46161, -0.09999988, 8.180702)
+use_collision = true
+size = Vector3(602.8, 0.4, 8)
+material = SubResource("ShaderMaterial_oo2gm")
+metadata/surface = "gravel"
+
+[node name="MainRoad_CenterLine" type="CSGBox3D" parent="Streets2" unique_id=857931486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.105, 8.179955)
+size = Vector3(600, 0.01, 0.15)
+material = SubResource("StandardMaterial3D_eonml")
+
+[node name="MainRoad_EdgeLine_North" type="CSGBox3D" parent="Streets2" unique_id=285645933]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0.105, 4.5799546)
+size = Vector3(527, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_North2" type="CSGBox3D" parent="Streets2" unique_id=1107019097]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -321.6072, 0.105, 4.579956)
+size = Vector3(63.27871, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="Streets2" unique_id=2046089562]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.149655, 0.105, 11.779953)
+size = Vector3(477.70068, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_South_Approach" type="CSGBox3D" parent="Streets2" unique_id=1960889120]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -294.4842, 0.105, 11.779953)
+size = Vector3(117.56701, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="ResidentialStreet" type="Node3D" parent="." unique_id=103184511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.319298, 0, 135.65405)
+metadata/surface = "gravel"
+
+[node name="RoadSurface" type="CSGCombiner3D" parent="ResidentialStreet" unique_id=1452913730]
+use_collision = true
+metadata/surface = "gravel"
+
+[node name="MainRoad" type="CSGBox3D" parent="ResidentialStreet/RoadSurface" unique_id=1402156887]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+size = Vector3(225, 0.4, 8)
+material = SubResource("ShaderMaterial_oo2gm")
+
+[node name="Turnaround" type="CSGCylinder3D" parent="ResidentialStreet/RoadSurface" unique_id=1793953133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112.5, -0.1, 0)
+radius = 14.0
+height = 0.4
+sides = 64
+material = SubResource("ShaderMaterial_oo2gm")
+
+[node name="MainRoad_CenterLine" type="CSGBox3D" parent="ResidentialStreet" unique_id=961439043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.105, 0)
+size = Vector3(206, 0.01, 0.15)
+material = SubResource("StandardMaterial3D_eonml")
+
+[node name="MainRoad_EdgeLine_North" type="CSGBox3D" parent="ResidentialStreet" unique_id=1019866419]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.105, -3.6)
+size = Vector3(206, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")
+
+[node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="ResidentialStreet" unique_id=1377908808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.105, 3.6)
+size = Vector3(206, 0.01, 0.1)
+material = SubResource("StandardMaterial3D_df30d")

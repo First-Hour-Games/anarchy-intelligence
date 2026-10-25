@@ -901,6 +901,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -117.885345, 0.09806073, -8.3
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.17694092, 4.470615, 1.0085244)
 light_energy = 4.38
 light_volumetric_fog_energy = 6.0
+light_bake_mode = 1
 shadow_enabled = true
 spot_range = 8.471206
 spot_angle = 56.53
@@ -909,6 +910,7 @@ spot_angle = 56.53
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 8.455261, 2.0884695, 11.317863)
 light_volumetric_fog_energy = 6.333
 light_size = 0.115
+light_bake_mode = 1
 shadow_enabled = true
 shadow_bias = 0.545
 shadow_normal_bias = 1.555
@@ -918,6 +920,7 @@ spot_angle = 61.76
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 12.101288, 3.2210011, -0.34363365)
 light_energy = 4.38
 light_volumetric_fog_energy = 6.0
+light_bake_mode = 1
 shadow_enabled = true
 spot_range = 8.471206
 spot_angle = 56.532692
@@ -926,6 +929,7 @@ spot_angle = 56.532692
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 8.098846, 3.2210011, -0.34363365)
 light_energy = 4.38
 light_volumetric_fog_energy = 6.0
+light_bake_mode = 1
 shadow_enabled = true
 spot_range = 8.471206
 spot_angle = 56.532692
@@ -968,6 +972,7 @@ transform = Transform3D(1.1759868, 0, -0.0058803214, 0, 1.2, 0, 0.0055678408, 0,
 
 [node name="Player" parent="." unique_id=1484211140 instance=ExtResource("13_bernf")]
 transform = Transform3D(0.2780319, 0, -0.9605719, 0, 1, 0, 0.9605719, 0, 0.2780319, -130.1589, 0.10088, 2.4300053)
+visible = true
 
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=1750905476]
 layer = 19
@@ -1236,6 +1241,7 @@ light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
 light_energy = 0.2
 light_volumetric_fog_energy = 4.094
 light_size = 0.56
+light_bake_mode = 1
 shadow_enabled = true
 shadow_normal_bias = 2.0
 shadow_blur = 1.571
@@ -1249,6 +1255,7 @@ light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
 light_energy = 0.2
 light_volumetric_fog_energy = 4.094
 light_size = 0.56
+light_bake_mode = 1
 shadow_enabled = true
 shadow_normal_bias = 2.0
 shadow_blur = 1.571
@@ -1260,6 +1267,7 @@ spot_angle_attenuation = 1.3660438
 transform = Transform3D(0.9090909, 0, -1.4901161e-08, 0, 0.9090908, 0, 1.4901161e-08, 0, 0.9090909, 0.55408096, 0.06255585, -0.19935608)
 light_energy = 0.8
 light_volumetric_fog_energy = 9.0
+light_bake_mode = 1
 shadow_enabled = true
 omni_range = 3.0
 
@@ -1267,6 +1275,7 @@ omni_range = 3.0
 transform = Transform3D(0.9090909, 0, -1.4901161e-08, 0, 0.9090908, 0, 1.4901161e-08, 0, 0.9090909, -0.45925903, 0.051342726, -0.17526245)
 light_energy = 0.8
 light_volumetric_fog_energy = 9.0
+light_bake_mode = 1
 shadow_enabled = true
 omni_range = 3.0
 
@@ -1274,6 +1283,7 @@ omni_range = 3.0
 transform = Transform3D(0.99207705, 0, 1.8626451e-08, 0, 0.992077, 0, -1.8626451e-08, 0, 0.99207705, -0.8305936, 0.084718764, 0.07650757)
 light_energy = 0.544
 light_volumetric_fog_energy = 5.089
+light_bake_mode = 1
 shadow_enabled = true
 omni_range = 4.0
 omni_attenuation = 0.75
@@ -1282,6 +1292,7 @@ omni_attenuation = 0.75
 transform = Transform3D(0.99207705, 0, 2.2351742e-08, 0, 0.992077, 0, -2.2351742e-08, 0, 0.99207705, 0.8649521, 0.023569226, 0.1491394)
 light_energy = 0.544
 light_volumetric_fog_energy = 5.089
+light_bake_mode = 1
 shadow_enabled = true
 omni_range = 4.0
 omni_attenuation = 0.75
@@ -1289,12 +1300,14 @@ omni_attenuation = 0.75
 [node name="OmniLight3D3" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=1761828631]
 transform = Transform3D(1, 0, 1.5020165e-08, 0, 1, 0, -1.5020165e-08, 0, 1, 0.53504276, 0.09786862, 4.7115173)
 light_color = Color(0.8666667, 0, 0, 1)
+light_bake_mode = 1
 shadow_enabled = true
 omni_range = 66.767
 
 [node name="OmniLight3D4" type="OmniLight3D" parent="toyotaCrownModel2/CarLights" unique_id=160777005]
 transform = Transform3D(1, 0, 1.5020165e-08, 0, 1, 0, -1.5020165e-08, 0, 1, -0.45422554, 0.09786862, 4.6692505)
 light_color = Color(0.8666667, 0, 0, 1)
+light_bake_mode = 1
 shadow_enabled = true
 omni_range = 66.767
 
@@ -1912,10 +1925,9 @@ omni_range = 2.893
 
 [node name="Pickup" type="Node3D" parent="FlashlightItem" unique_id=1235122218]
 script = ExtResource("station_flashlight_pickup")
-visual_target_path = NodePath("..")
-interaction_message = "Picked up flashlight."
 pickup_dialogue_resource = ExtResource("18_forest_dialogue")
 pickup_dialogue_cue = "gas_station_flashlight_pickup"
+interaction_message = "Picked up flashlight."
 
 [node name="GasEntrance" type="Node3D" parent="." unique_id=1706779948]
 transform = Transform3D(0.5853213, 0, -1.3626107, 0, 1.4, 0, 1.27177, 0, 0.62713, 147.02072, 2.0946684, 49.036102)
@@ -1950,16 +1962,19 @@ transform = Transform3D(1.1781021, 0, -0.22820051, 0, 1.2, 0, 0.22820051, 0, 1.1
 
 [node name="SpotLight3D" type="SpotLight3D" parent="welcomeSign" unique_id=669655748]
 transform = Transform3D(0.6901827, 0.13554868, -0.7108266, 0.7174481, -2.510447e-08, 0.69661194, 0.09442481, -0.9907707, -0.09724916, -1.3223114, 2.6063373, -2.3535252)
+visible = false
 light_energy = 0.368
 spot_range = 4.482
 
 [node name="SpotLight3D2" type="SpotLight3D" parent="welcomeSign" unique_id=897654332]
 transform = Transform3D(0.69661194, 3.1360653e-08, -0.7174481, 0.7174481, -3.0449876e-08, 0.69661194, 0, -1, -4.371139e-08, -1.3223114, 2.6063373, -1.467741)
+visible = false
 light_energy = 0.368
 spot_range = 4.482
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="welcomeSign" unique_id=1193828195]
 transform = Transform3D(0.67411023, -0.25211075, -0.6942734, 0.7174481, -3.0449876e-08, 0.69661194, -0.17562337, -0.9676984, 0.18087637, -1.3223114, 2.6063373, -0.64229393)
+visible = false
 light_energy = 0.368
 shadow_enabled = true
 spot_range = 4.482
@@ -1969,6 +1984,15 @@ spot_range = 4.482
 [node name="CollisionShape3D" type="CollisionShape3D" parent="welcomeSign/StaticBody3D" unique_id=484663336]
 transform = Transform3D(0.197482, 0, 0, 0, 0, 0.19748203, 0, -0.19748205, 0, 0.035232544, 1.1438904, -1.5794468)
 shape = SubResource("BoxShape3D_1y1pg")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="welcomeSign" unique_id=96075578]
+transform = Transform3D(0.8333333, 0, -1.4901161e-08, 0, 0.83333325, 0, 1.4901161e-08, 0, 0.8333333, -0.31249237, 1.7686405, -1.6007013)
+light_color = Color(0.94874865, 0.95847017, 0.786022, 1)
+light_energy = 0.005
+light_size = 3.0
+light_bake_mode = 1
+distance_fade_enabled = true
+distance_fade_shadow = 42.4
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]
