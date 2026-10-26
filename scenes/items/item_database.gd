@@ -39,6 +39,14 @@ static func _ensure_initialized() -> void:
 	notebook_item.use_action_text = "READ NOTES"
 	register_item(notebook_item)
 
+	# Throwable distraction
+	var bottle_item := ItemData.new()
+	bottle_item.id = &"bottle"
+	bottle_item.name = "EMPTY BOTTLE"
+	bottle_item.description = "An empty glass medicine bottle. Press G to throw it; breaking glass draws anything that hunts by sound. Carry up to three."
+	bottle_item.use_action_text = "THROW BOTTLE"
+	register_item(bottle_item)
+
 
 static func register_item(item: ItemData) -> void:
 	if item == null or item.id.is_empty():

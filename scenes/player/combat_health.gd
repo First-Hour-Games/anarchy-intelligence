@@ -65,6 +65,9 @@ func take_damage(amount: float, attacker: Node3D = null) -> void:
 	health_changed.emit(health)
 	_refresh()
 	if health == 0.0:
+		var spot := get_parent().get("hiding_spot") as Node3D
+		if is_instance_valid(spot):
+			spot.force_out()
 		is_dead = true
 		get_parent().set_physics_process(false)
 		get_parent().set_process_unhandled_input(false)

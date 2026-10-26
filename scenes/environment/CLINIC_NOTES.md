@@ -16,7 +16,7 @@
 - `tests/civic_block_smoke.gd` checks material availability and capsule clearance for the promenade, clinic entrance, medicine room and service passages. Run with `-- --capture` in a rendered session to save review images to the workspace root.
 - This is an environment-polish pass: shops remain closed exterior shells, phone booth is decorative, and the medicine quest is not implemented.
 
-- Map instance: Buildings/NeighborhoodClinic at (245, 0, 251), east of CivicBlock.
+- Map instance: Buildings/NeighborhoodClinic at (245, 0, 251), east of the downtown (Buildings/Downtown).
 - Enterable open doorway faces the crossroad; clinic driveway center is x=263 and has a matching curb opening.
 - Existing tree instances and player/story scripts are unchanged.
 - Inspector `preview_hide_roof` hides only the clinic roof in the editor.

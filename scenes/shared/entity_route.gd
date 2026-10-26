@@ -27,7 +27,9 @@ func direction(actor: CharacterBody3D, nav_map: RID, destination: Vector3, delta
 	previous_position = actor.global_position
 	var crossing := cursor < committed.size() and committed[cursor]
 	var moved_goal := goal.distance_to(destination) > 1.0
-	if goal == Vector3.INF or (not crossing and retry_time <= 0.0 and (moved_goal or stuck_time > 0.8 or cursor >= points.size())):
+	# A crossing is kept even when the goal moves, but not when it has stopped making progress.
+	var replan := (not crossing and (moved_goal or stuck_time > 0.8 or cursor >= points.size())) or stuck_time > 2.0
+	if goal == Vector3.INF or (retry_time <= 0.0 and replan):
 		build(actor, nav_map, destination)
 		retry_time = 0.4
 		stuck_time = 0.0
@@ -57,12 +59,15 @@ func build(actor: CharacterBody3D, nav_map: RID, destination: Vector3) -> void:
 			if gate.direct:
 				points.append(point)
 				committed.append(true)
-			else:
-				_append_path(nav_map, from, point)
+			elif not _append_path(nav_map, from, point):
+				# No navigation mesh yet (it bakes after the level loads): walking the direct
+				# gates from here would head straight through walls, so wait and plan again.
+				return
 			from = point
 	_append_path(nav_map, from, destination)
 
-func _append_path(nav_map: RID, from: Vector3, to: Vector3) -> void:
+## Adds the navigation mesh's path; false when there is none to follow.
+func _append_path(nav_map: RID, from: Vector3, to: Vector3) -> bool:
 	# Voxelized walkable surfaces sit above the physical floor. Query just
 	# above the feet so a landing selects its floor, not a lower stair sliver.
 	var query_lift := Vector3.UP * 0.6
@@ -70,3 +75,4 @@ func _append_path(nav_map: RID, from: Vector3, to: Vector3) -> void:
 	for point: Vector3 in path:
 		points.append(point)
 		committed.append(false)
+	return not path.is_empty()

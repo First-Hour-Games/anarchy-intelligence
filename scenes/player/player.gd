@@ -110,6 +110,12 @@ var current_footstep_surface: StringName = &"dirt"
 @export var metal_footsteps: Array[AudioStream] = []
 @export var custom_surface_sounds: Dictionary = {}
 
+@export_category("Throwing")
+@export_range(2.0, 25.0, 0.5) var throw_speed: float = 11.0
+@export_range(0.0, 8.0, 0.25) var throw_lift: float = 2.5
+
+const THROWN_BOTTLE := preload("res://scenes/items/thrown_bottle.gd")
+
 @onready var head: Node3D = $Head
 @onready var camera: Camera3D = $Head/Camera3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
@@ -143,6 +149,8 @@ var _footstep_random := RandomNumberGenerator.new()
 var _last_footstep_index: int = -1
 var _footstep_player_index: int = 0
 var is_frozen: bool = false
+## The HidingSpot the player is currently inside, or null.
+var hiding_spot: Node3D = null
 
 
 func _enter_tree() -> void:
@@ -242,6 +250,36 @@ func has_item(item_id: Variant) -> bool:
 	return false
 
 
+func is_hidden() -> bool:
+	return is_instance_valid(hiding_spot)
+
+
+## Regenerates stamina while the player's own physics is paused (e.g. hiding).
+func recover_stamina(delta: float) -> void:
+	_update_stamina(delta, false)
+
+
+## Throws one carried bottle from the camera. Returns false when none is carried.
+func throw_bottle() -> bool:
+	if not is_instance_valid(inventory) or not inventory.remove_one(PlayerInventory.BOTTLE_ITEM):
+		return false
+	var bottle := THROWN_BOTTLE.new() as RigidBody3D
+	get_tree().current_scene.add_child(bottle)
+	var forward := -camera.global_basis.z
+	var release := camera.global_position + forward * 0.45 + Vector3.DOWN * 0.1
+	# Facing a wall up close, release the bottle in front of it rather than beyond it.
+	var reach := PhysicsRayQueryParameters3D.create(camera.global_position, release)
+	reach.exclude = [get_rid()]
+	var blocked := get_world_3d().direct_space_state.intersect_ray(reach)
+	if not blocked.is_empty():
+		release = blocked.position - forward * 0.08
+	bottle.global_position = release
+	bottle.add_collision_exception_with(self)
+	bottle.linear_velocity = forward * throw_speed + Vector3.UP * throw_lift
+	bottle.angular_velocity = Vector3(randf_range(-9.0, 9.0), randf_range(-4.0, 4.0), randf_range(-9.0, 9.0))
+	return true
+
+
 func proceed() -> void:
 	var barrier := get_tree().current_scene.find_child("BarrierTree", true, false)
 	if is_instance_valid(barrier) and barrier.has_method(&"proceed"):
@@ -259,6 +297,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"flashlight_toggle") and not event.is_echo():
 		if is_instance_valid(inventory) and is_instance_valid(flashlight) and inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
 			flashlight.toggle()
+			get_viewport().set_input_as_handled()
+			return
+
+	if event.is_action_pressed(&"throw_item") and not event.is_echo():
+		if throw_bottle():
 			get_viewport().set_input_as_handled()
 			return
 

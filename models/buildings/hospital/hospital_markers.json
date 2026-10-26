@@ -1,0 +1,996 @@
+{
+ "hiding_spots": [
+  {
+   "name": "RecordsLocker_1",
+   "kind": "locker",
+   "position": [
+    12.31,
+    0.12,
+    -6.6
+   ],
+   "yaw": -90
+  },
+  {
+   "name": "RecordsLocker_2",
+   "kind": "locker",
+   "position": [
+    12.31,
+    0.12,
+    -7.25
+   ],
+   "yaw": -90
+  },
+  {
+   "name": "RecordsLocker_3",
+   "kind": "locker",
+   "position": [
+    12.31,
+    0.12,
+    -7.9
+   ],
+   "yaw": -90
+  },
+  {
+   "name": "ChangingLocker_1",
+   "kind": "locker",
+   "position": [
+    -3.8,
+    0.12,
+    -7.6
+   ],
+   "yaw": 90
+  },
+  {
+   "name": "ChangingLocker_2",
+   "kind": "locker",
+   "position": [
+    -3.8,
+    0.12,
+    -8.25
+   ],
+   "yaw": 90
+  },
+  {
+   "name": "ProcedureCloset",
+   "kind": "closet",
+   "position": [
+    0.98,
+    0.12,
+    -2.645
+   ],
+   "yaw": 0
+  },
+  {
+   "name": "WardBed_1",
+   "kind": "bed",
+   "position": [
+    1.0,
+    0.12,
+    -8.2
+   ],
+   "yaw": 90
+  },
+  {
+   "name": "WardBed_2",
+   "kind": "bed",
+   "position": [
+    3.9,
+    0.12,
+    -8.2
+   ],
+   "yaw": 90
+  }
+ ],
+ "bottles": [
+  {
+   "name": "Bottle_StoresShelf",
+   "position": [
+    -18.2,
+    1.02,
+    -9.05
+   ]
+  },
+  {
+   "name": "Bottle_OfficeDesk",
+   "position": [
+    -9.0,
+    0.87,
+    -8.7
+   ]
+  },
+  {
+   "name": "Bottle_LinenShelf",
+   "position": [
+    -0.6,
+    1.02,
+    -9.0
+   ]
+  },
+  {
+   "name": "Bottle_NurseCounter",
+   "position": [
+    7.6,
+    1.19,
+    -2.6
+   ]
+  },
+  {
+   "name": "Bottle_LoungeCounter",
+   "position": [
+    13.1,
+    1.02,
+    -6.3
+   ]
+  }
+ ],
+ "documents": {
+  "register": [
+   -10.6,
+   1.2425,
+   -3.62
+  ],
+  "evacuation": [
+   9.2,
+   0.8925,
+   -8.95
+  ],
+  "supply": [
+   -19.2,
+   1.4425,
+   -9.05
+  ]
+ },
+ "props": [
+  {
+   "name": "P_ExamChair",
+   "model": "res://assets/local_licensed/clinic_hospital/bed_1.glb",
+   "target_height": 1.1,
+   "position": [
+    3.75,
+    0.12,
+    -0.95
+   ],
+   "yaw": 90,
+   "block": true,
+   "foot": [
+    0.6464912280701756,
+    1.1,
+    1.6982456140350877
+   ]
+  },
+  {
+   "name": "P_SurgicalLamp",
+   "model": "res://assets/local_licensed/clinic_hospital/overhead_light.glb",
+   "target_height": 0.8,
+   "position": [
+    3.75,
+    2.1,
+    -1.45
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    1.885714285714286,
+    0.8,
+    1.3081632653061226
+   ]
+  },
+  {
+   "name": "P_ProcedureTrolley",
+   "model": "res://assets/local_licensed/clinic_hospital/tray_1.glb",
+   "target_height": 0.8,
+   "position": [
+    4.95,
+    0.12,
+    -0.55
+   ],
+   "yaw": 0,
+   "block": true,
+   "foot": [
+    0.5464788732394367,
+    0.8,
+    0.29295774647887324
+   ]
+  },
+  {
+   "name": "P_StoresBaseCabinet",
+   "model": "res://assets/local_licensed/clinic_hospital/cupboard_bottom.glb",
+   "target_height": 0.9,
+   "position": [
+    -14.928,
+    0.12,
+    -6.6
+   ],
+   "yaw": -90,
+   "block": true,
+   "foot": [
+    0.9849056603773585,
+    0.9,
+    0.5055152394775037
+   ]
+  },
+  {
+   "name": "P_StoresHutch",
+   "model": "res://assets/local_licensed/clinic_hospital/cupboard_top.glb",
+   "target_height": 0.65,
+   "position": [
+    -14.873,
+    1.02,
+    -6.6
+   ],
+   "yaw": -90,
+   "block": false,
+   "foot": [
+    0.9881048387096775,
+    0.65,
+    0.39576612903225805
+   ]
+  },
+  {
+   "name": "P_HubStretcher",
+   "model": "res://assets/local_licensed/clinic_hospital/bed_4.glb",
+   "target_height": 0.9,
+   "position": [
+    -2.86,
+    0.12,
+    -1.92
+   ],
+   "yaw": 90,
+   "block": true,
+   "foot": [
+    0.7364885496183207,
+    0.9,
+    2.1764885496183206
+   ]
+  },
+  {
+   "name": "P_NurseMonitorCart",
+   "model": "res://assets/local_licensed/clinic_hospital/machine_1.glb",
+   "target_height": 1.1,
+   "position": [
+    5.95,
+    0.12,
+    -0.68
+   ],
+   "yaw": 180,
+   "block": true,
+   "foot": [
+    0.9982930298719774,
+    1.1,
+    0.6446657183499289
+   ]
+  },
+  {
+   "name": "P_StoredEquipmentStand",
+   "model": "res://assets/local_licensed/clinic_hospital/machine_2.glb",
+   "target_height": 1.2,
+   "position": [
+    -3.73,
+    0.12,
+    -8.93
+   ],
+   "yaw": 0,
+   "block": true,
+   "foot": [
+    0.7358083832335329,
+    1.2,
+    0.724311377245509
+   ]
+  },
+  {
+   "name": "P_WardBed3Decor",
+   "model": "res://models/props/hospital/ward_bed.glb",
+   "target_height": null,
+   "position": [
+    6.8,
+    0.12,
+    -8.2
+   ],
+   "yaw": 90,
+   "block": true,
+   "foot": [
+    2.08,
+    1.08,
+    0.94
+   ]
+  },
+  {
+   "name": "P_ReceptionChair",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    -10.6,
+    0.12,
+    -4.65
+   ],
+   "yaw": 0,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_OfficeChair",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    -9.4,
+    0.12,
+    -8.1
+   ],
+   "yaw": 180,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_NurseChair",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    8.2,
+    0.12,
+    -2.1
+   ],
+   "yaw": 180,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_RecordsChair",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    9.0,
+    0.12,
+    -8.15
+   ],
+   "yaw": 180,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_LoungeChair_1",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    14.55,
+    0.12,
+    -6.55
+   ],
+   "yaw": 180,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_LoungeChair_2",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    14.55,
+    0.12,
+    -8.25
+   ],
+   "yaw": 0,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_ShelterChair",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/chair.glb",
+   "target_height": 0.9,
+   "position": [
+    -13.9,
+    0.12,
+    -3.9
+   ],
+   "yaw": 90,
+   "block": true,
+   "foot": [
+    0.3829787234042554,
+    0.9,
+    0.3829787234042554
+   ]
+  },
+  {
+   "name": "P_LobbyDeadPlant",
+   "model": "res://assets/local_licensed/furniture_kit/Models/GLTF format/pottedPlant.glb",
+   "target_height": 1.0,
+   "position": [
+    -12.15,
+    0.12,
+    -0.85
+   ],
+   "yaw": 0,
+   "block": true,
+   "foot": [
+    0.3241590214067278,
+    1.0,
+    0.36850152905198774
+   ]
+  },
+  {
+   "name": "P_GauzeOnReception",
+   "model": "res://assets/local_licensed/clinic_medical/Med_1.glb",
+   "target_height": 0.06,
+   "position": [
+    -9.6,
+    1.22,
+    -3.62
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.24484243935615507,
+    0.06,
+    0.14282475629109045
+   ]
+  },
+  {
+   "name": "P_PapersOnReception",
+   "model": "res://assets/local_licensed/clinic_medical/Med_19.glb",
+   "target_height": 0.01,
+   "position": [
+    -11.1,
+    1.22,
+    -3.6
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.32176811594202903,
+    0.01,
+    0.16486956521739132
+   ]
+  },
+  {
+   "name": "P_PillJarNurse",
+   "model": "res://assets/local_licensed/clinic_medical/Med_9.glb",
+   "target_height": 0.1,
+   "position": [
+    8.9,
+    1.19,
+    -2.62
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.05954604691572545,
+    0.1,
+    0.05663553431798436
+   ]
+  },
+  {
+   "name": "P_BloodBagNurse",
+   "model": "res://assets/local_licensed/clinic_medical/Med_16.glb",
+   "target_height": 0.2,
+   "position": [
+    8.45,
+    1.19,
+    -2.8
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.11339758274745242,
+    0.2,
+    0.013697764436369383
+   ]
+  },
+  {
+   "name": "P_StoresBox",
+   "model": "res://assets/local_licensed/clinic_medical/Med_14.glb",
+   "target_height": 0.35,
+   "position": [
+    -16.0,
+    0.12,
+    -8.85
+   ],
+   "yaw": 0,
+   "block": true,
+   "foot": [
+    0.26249999999999996,
+    0.35,
+    0.349406108597285
+   ]
+  },
+  {
+   "name": "P_StoresCarton",
+   "model": "res://assets/local_licensed/clinic_medical/Med_15.glb",
+   "target_height": 0.25,
+   "position": [
+    -17.6,
+    1.62,
+    -7.1
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.10656114540916853,
+    0.25,
+    0.13391567056350978
+   ]
+  },
+  {
+   "name": "P_StoresAntiseptic",
+   "model": "res://assets/local_licensed/clinic_medical/Med_3.glb",
+   "target_height": 0.18,
+   "position": [
+    -15.125,
+    1.02,
+    -6.3
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.0773267716535433,
+    0.18,
+    0.040984251968503936
+   ]
+  },
+  {
+   "name": "P_WardPillBottle",
+   "model": "res://assets/local_licensed/clinic_medical/Med_13.glb",
+   "target_height": 0.09,
+   "position": [
+    3.1,
+    0.92,
+    -8.95
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.05043513623424156,
+    0.09,
+    0.0436762911752745
+   ]
+  },
+  {
+   "name": "P_RecordsPapers",
+   "model": "res://assets/local_licensed/clinic_medical/Med_20.glb",
+   "target_height": 0.01,
+   "position": [
+    8.6,
+    0.87,
+    -8.9
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.2861662198391421,
+    0.01,
+    0.12032171581769438
+   ]
+  },
+  {
+   "name": "P_LinenWhiteJar",
+   "model": "res://assets/local_licensed/clinic_medical/Med_18.glb",
+   "target_height": 0.1,
+   "position": [
+    -1.6,
+    1.42,
+    -9.0
+   ],
+   "yaw": 0,
+   "block": false,
+   "foot": [
+    0.04495281328395651,
+    0.1,
+    0.04495281328395651
+   ]
+  }
+ ],
+ "lights": [
+  {
+   "name": "L_ReceptionFlicker",
+   "mode": "flicker",
+   "spot": false,
+   "position": [
+    -10.2,
+    2.86,
+    -3.2
+   ],
+   "color": [
+    0.78,
+    0.86,
+    0.74
+   ],
+   "energy": 1.0,
+   "range": 7.0
+  },
+  {
+   "name": "L_ShelterLantern",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    -13.05,
+    1.0,
+    -3.6
+   ],
+   "color": [
+    1.0,
+    0.72,
+    0.42
+   ],
+   "energy": 0.6,
+   "range": 6.0
+  },
+  {
+   "name": "L_EntranceExit",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    -10.2,
+    2.75,
+    -0.42
+   ],
+   "color": [
+    1.0,
+    0.12,
+    0.08
+   ],
+   "energy": 0.5,
+   "range": 4.0
+  },
+  {
+   "name": "L_VendingGlow",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    -2.75,
+    1.3,
+    -1.3
+   ],
+   "color": [
+    0.55,
+    0.75,
+    1.0
+   ],
+   "energy": 0.35,
+   "range": 3.5
+  },
+  {
+   "name": "L_TowerHallExit",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    -4.2,
+    2.6,
+    -3.9
+   ],
+   "color": [
+    1.0,
+    0.12,
+    0.08
+   ],
+   "energy": 0.4,
+   "range": 4.0
+  },
+  {
+   "name": "L_CorridorRedWest",
+   "mode": "pulse",
+   "spot": false,
+   "position": [
+    2.5,
+    2.86,
+    -4.15
+   ],
+   "color": [
+    1.0,
+    0.1,
+    0.06
+   ],
+   "energy": 0.6,
+   "range": 5.0
+  },
+  {
+   "name": "L_CorridorStrobe",
+   "mode": "strobe",
+   "spot": false,
+   "position": [
+    6.0,
+    2.86,
+    -4.15
+   ],
+   "color": [
+    0.8,
+    0.88,
+    0.8
+   ],
+   "energy": 1.4,
+   "range": 7.0
+  },
+  {
+   "name": "L_CorridorRedEast",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    14.8,
+    2.86,
+    -4.15
+   ],
+   "color": [
+    1.0,
+    0.12,
+    0.08
+   ],
+   "energy": 0.6,
+   "range": 5.0
+  },
+  {
+   "name": "L_CorridorEndMoon",
+   "mode": "steady",
+   "spot": true,
+   "position": [
+    17.55,
+    1.3,
+    -3.84
+   ],
+   "color": [
+    0.55,
+    0.65,
+    0.95
+   ],
+   "energy": 2.0,
+   "range": 14.0,
+   "angle": 50.0,
+   "direction": [
+    -1.0,
+    -0.176,
+    0.0
+   ],
+   "shadow": true
+  },
+  {
+   "name": "L_NurseFlicker",
+   "mode": "dying",
+   "spot": false,
+   "position": [
+    7.8,
+    2.86,
+    -1.6
+   ],
+   "color": [
+    0.8,
+    0.88,
+    0.8
+   ],
+   "energy": 0.8,
+   "range": 5.0
+  },
+  {
+   "name": "L_DayRoomMoonEast",
+   "mode": "steady",
+   "spot": true,
+   "position": [
+    17.55,
+    1.3,
+    -1.17
+   ],
+   "color": [
+    0.55,
+    0.65,
+    0.95
+   ],
+   "energy": 1.6,
+   "range": 9.0,
+   "angle": 45.0,
+   "direction": [
+    -1.0,
+    -0.35,
+    0.0
+   ],
+   "shadow": false
+  },
+  {
+   "name": "L_DayRoomTV",
+   "mode": "noise",
+   "spot": false,
+   "position": [
+    16.95,
+    0.95,
+    -2.45
+   ],
+   "color": [
+    0.8,
+    0.85,
+    0.95
+   ],
+   "energy": 0.3,
+   "range": 3.0
+  },
+  {
+   "name": "L_WardMoonB1",
+   "mode": "steady",
+   "spot": true,
+   "position": [
+    1.59,
+    1.3,
+    -9.2
+   ],
+   "color": [
+    0.55,
+    0.65,
+    0.95
+   ],
+   "energy": 1.2,
+   "range": 6.0,
+   "angle": 40.0,
+   "direction": [
+    0.0,
+    -0.35,
+    1.0
+   ],
+   "shadow": false
+  },
+  {
+   "name": "L_WardMoonB3",
+   "mode": "steady",
+   "spot": true,
+   "position": [
+    6.53,
+    1.3,
+    -9.2
+   ],
+   "color": [
+    0.55,
+    0.65,
+    0.95
+   ],
+   "energy": 1.4,
+   "range": 6.0,
+   "angle": 40.0,
+   "direction": [
+    -0.707,
+    -0.2,
+    0.707
+   ],
+   "shadow": true
+  },
+  {
+   "name": "L_WardExit",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    1.5,
+    2.6,
+    -5.45
+   ],
+   "color": [
+    1.0,
+    0.12,
+    0.08
+   ],
+   "energy": 0.35,
+   "range": 3.5
+  },
+  {
+   "name": "L_RecordsDeskLamp",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    9.55,
+    1.25,
+    -9.05
+   ],
+   "color": [
+    1.0,
+    0.85,
+    0.55
+   ],
+   "energy": 0.5,
+   "range": 3.0
+  },
+  {
+   "name": "L_RecordsMoonB5",
+   "mode": "steady",
+   "spot": true,
+   "position": [
+    11.475,
+    1.3,
+    -9.2
+   ],
+   "color": [
+    0.55,
+    0.65,
+    0.95
+   ],
+   "energy": 1.0,
+   "range": 6.0,
+   "angle": 40.0,
+   "direction": [
+    0.0,
+    -0.2,
+    1.0
+   ],
+   "shadow": false
+  },
+  {
+   "name": "L_LoungeMoonEast",
+   "mode": "steady",
+   "spot": true,
+   "position": [
+    17.55,
+    1.3,
+    -6.0
+   ],
+   "color": [
+    0.55,
+    0.65,
+    0.95
+   ],
+   "energy": 1.4,
+   "range": 8.0,
+   "angle": 45.0,
+   "direction": [
+    -1.0,
+    -0.2,
+    0.0
+   ],
+   "shadow": false
+  },
+  {
+   "name": "L_LoungeFridgeGlow",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    13.4,
+    0.95,
+    -8.4
+   ],
+   "color": [
+    0.9,
+    0.95,
+    1.0
+   ],
+   "energy": 0.25,
+   "range": 2.5
+  },
+  {
+   "name": "L_StoresExit",
+   "mode": "steady",
+   "spot": false,
+   "position": [
+    -17.0,
+    2.6,
+    -5.45
+   ],
+   "color": [
+    1.0,
+    0.12,
+    0.08
+   ],
+   "energy": 0.25,
+   "range": 3.0
+  }
+ ],
+ "clawman_spawn": {
+  "position": [
+   12.5,
+   0.12,
+   -4.15
+  ],
+  "yaw": 90
+ }
+}

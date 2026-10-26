@@ -4,3 +4,6 @@
 
 # Local playable exports and their build logs.
 /builds/
+
+# Blender's automatic backups of the previous save.
+*.blend1

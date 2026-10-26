@@ -187,6 +187,9 @@ func _target_is_visible(max_distance: float, require_line_of_sight: bool) -> boo
 	var receiver := target.get_node_or_null("CombatHealth")
 	if receiver and receiver.get("is_dead") == true:
 		return false
+	# Players inside a HidingSpot cannot be seen.
+	if target.has_method(&"is_hidden") and target.is_hidden():
+		return false
 	if not require_line_of_sight:
 		return true
 	var eye := target.get_node_or_null("Head/Camera3D") as Node3D

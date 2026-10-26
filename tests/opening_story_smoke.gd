@@ -28,15 +28,21 @@ func run() -> void:
 	check(map.get_node("Buildings/NeighborhoodHospital/Source") != null, "User hospital replaces clinic")
 	check(not map.get_node("Wrapper").enabled and not map.get_node("Clawman").enabled, "Later encounters wait for progression")
 	var player := map.get_node("Player") as FirstPersonPlayer
-	var house := map.get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
+	var house := map.get_node("Buildings/ResidentialLots/CarrieHouse") as Node3D
 	var doc := house.get_node("CarrieDocument") as Node3D
 	var door_note := house.get_node("EntranceNote") as Node3D
-	check(door_note != null and str(door_note.get("body")) == "My notebook is on the second floor, under something...\n\n- Carrie", "Entrance note directs player to notebook inside")
-	check(bool(door_note.get_meta("wall_mounted", false)) and not house.has_node("EntranceNotePost") and "second floor" in str(door_note.get("body")), "Entrance note is wall mounted and directs player upstairs")
-	check(doc.position.y > 3.9 and house.has_node("AtticNotebookCrate"), "Notebook is hidden on an attic crate")
+	check(door_note != null and str(door_note.get("body")) == "My notebook is upstairs, on my desk.\n\n- Carrie", "Entrance note directs player to notebook inside")
+	check(bool(door_note.get_meta("wall_mounted", false)) and not house.has_node("EntranceNotePost") and "upstairs" in str(door_note.get("body")), "Entrance note is wall mounted and directs player upstairs")
+	var on_desk: Vector3 = house.call("local_point", &"notebook")
+	var desk := house.get_node("Source/CarrieDesk") as Node3D
+	check(doc.position.distance_to(on_desk) < 0.01 and doc.position.y > 4.3 and doc.global_position.distance_to(desk.global_position) < 1.0, "Notebook lies on the desk in Carrie's room")
+	check("isn't me" in str(doc.get("body")), "The notebook's last page warns about the voice")
 	check(doc.has_node("CarrieNotebook/Pages") and doc.has_node("CarrieNotebook/Bookmark"), "Notebook has a distinct reusable 3D asset")
+	var wrapper := map.get_node("Wrapper") as CharacterBody3D
+	check(wrapper.seated and wrapper.global_position.distance_to(house.call("point", &"wrapper_post")) < 0.05, "The Wrapper sits in Carrie's living-room armchair")
+	var porch: Vector3 = house.call("point", &"porch")
 	player.global_position = door_note.global_position + door_note.global_basis.z * 1.4
-	player.global_position.y = house.global_position.y + 0.1
+	player.global_position.y = porch.y + 0.1
 	player.velocity = Vector3.ZERO
 	await physics_frame
 	check(door_note.can_interact(player), "Entrance note can be read from outside the house")
@@ -44,11 +50,26 @@ func run() -> void:
 	check(story.stage == 0 and not player.inventory.has_item(PlayerInventory.NOTEBOOK_ITEM), "Entrance note does not skip finding the notebook")
 	story.close_document()
 	player.inventory.add_item(PlayerInventory.FLASHLIGHT_ITEM)
-	check(story.stage == 1 and map.get_node("Wrapper").enabled, "Flashlight advances objective and activates Wrapper")
+	check(story.stage == 1 and not wrapper.enabled, "Flashlight advances objective; the Wrapper waits in Carrie's house")
+	# The story reacts once a frame, not once a physics step.
+	player.global_position = house.call("point", &"hall") + Vector3.UP * 0.05
+	player.camera.look_at(house.call("point", &"stairs_bottom") + Vector3.UP * 1.5)
+	for i in 2:
+		await process_frame
+	check(not wrapper.enabled and story.checkpoint.origin.distance_to(porch + Vector3.UP * 0.35) < 0.01, "Walking in sets a porch checkpoint; the Wrapper sits still until Thomas has seen it")
+	player.camera.look_at(wrapper.global_position + Vector3.UP)
+	for i in 2:
+		await process_frame
+	check(wrapper.enabled and story.spoken.has("wrapper_seen"), "Seeing the Wrapper in its chair wakes it")
+	player.global_position = house.call("point", &"stairs_top") + Vector3.UP * 0.05
+	for i in 2:
+		await process_frame
+	check(story.spoken.has("carrie_voice"), "Upstairs, Carrie's voice calls from her room")
 	story.open_document(&"carrie", "Carrie's notebook", "Hospital is safe.")
-	check(story.stage == 2 and player.is_frozen and map.get_node("Wrapper").suspended, "Notebook advances story and reading protects player")
+	check(story.stage == 2 and player.is_frozen and wrapper.suspended, "Notebook advances story and reading protects player")
+	check(wrapper.global_position.distance_to(house.call("point", &"stairs_bottom")) < 0.05 and not wrapper.seated, "Reading the notebook sends the Wrapper to the foot of the main stair")
 	story.close_document()
-	check(not player.is_frozen and not map.get_node("Wrapper").suspended, "Closing document resumes exploration")
+	check(not player.is_frozen and not wrapper.suspended and wrapper.enabled, "Closing document resumes exploration")
 	story.open_document(&"evacuation", "Evacuation notice", "Carrie escaped.")
 	story.close_document()
 	check(story.stage == 2, "Finding evacuation early does not skip registration")
@@ -57,7 +78,7 @@ func run() -> void:
 	check(story.stage == 5, "Both hospital clues complete chapter in either order")
 	check(map.get_node("Clawman").enabled, "Clawman remains active while exploring the hospital")
 	var health := player.get_node("CombatHealth")
-	check(health.spawn.origin.distance_to(house.to_global(Vector3(11.75, 0.35, 12.5))) < 0.01, "Notebook establishes retry checkpoint")
+	check(health.spawn.origin.distance_to(porch + Vector3.UP * 0.35) < 0.01, "Notebook establishes retry checkpoint")
 	story.open_document(&"journal", "Journal", "Collected clues")
 	story.close_document()
 	check(not story.discovered.has("journal"), "Journal rereading does not create a duplicate clue")
@@ -73,16 +94,19 @@ func run() -> void:
 	await create_timer(1.0).timeout
 	var route := NavigationServer3D.map_get_path(nav_map, hospital.to_global(Vector3(-10.2, 0.2, -3)), hospital.to_global(Vector3(11, 0.2, -6.5)), true)
 	check(route.size() > 1 and route[route.size() - 1].distance_to(hospital.to_global(Vector3(11, 0.2, -6.5))) < 2, "Hospital staff room is reachable on the navigation mesh")
-	player.global_position = house.to_global(Vector3(13, 3.65, 7))
+	# Standing in front of the desk chair.
+	player.global_position = house.to_global(Vector3(on_desk.x, float(house.markers.floors.UPPER), on_desk.z - 1.1))
 	player.velocity = Vector3.ZERO
 	await physics_frame
-	check(doc.can_interact(player), "Notebook can be read in its upstairs hiding place")
+	check(doc.can_interact(player), "Notebook can be read at Carrie's desk")
 	var blocked := PhysicsRayQueryParameters3D.create(hospital.to_global(Vector3(-5, 1.5, -3)), hospital.to_global(Vector3(-5, 1.5, -7)))
 	check(not space.intersect_ray(blocked).is_empty(), "Hospital partitions provide real cover")
 	player.freeze()
-	var wrapper := map.get_node("Wrapper") as CharacterBody3D
 	wrapper.enabled = true
-	player.global_position = wrapper.global_position + Vector3(0, 0.2, 6)
+	wrapper.attack_cooldown = 100.0
+	# Watched from the hall, the Wrapper waiting at the foot of the main stair keeps still.
+	wrapper.call("place", Transform3D(Basis.IDENTITY, house.call("point", &"stairs_bottom")))
+	player.global_position = house.call("point", &"hall") + Vector3.UP * 0.05
 	player.camera.look_at(wrapper.global_position + Vector3.UP)
 	var before := wrapper.global_position
 	for i in 20:
@@ -117,6 +141,13 @@ func run() -> void:
 	check(int(saved.stage) == 5 and saved.flashlight and saved.discovered.has("carrie"), "Save retains chapter stage, flashlight and clues")
 	DirAccess.remove_absolute(story.progress_save_path)
 	story.persist_progress = false
+	# The debug jump replays Carrie's house from the porch without saving.
+	root.get_node("DebugMenu").call("apply_map_checkpoint", map, "carrie_house")
+	for i in 2:
+		await process_frame
+	check(story.stage == 1 and not story.persist_progress and wrapper.seated and not wrapper.enabled
+			and not story.discovered.has("carrie") and not story.spoken.has("carrie_voice")
+			and player.global_position.distance_to(porch) < 0.5, "Debug jump replays Carrie's house from the porch without saving")
 	print("Opening story failures: ", failures)
 	map.queue_free()
 	await process_frame

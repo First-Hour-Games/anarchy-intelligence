@@ -1,0 +1,78 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/environment/carrie_house.tscn" id="2_house"]
+[ext_resource type="Shader" uid="uid://c5cotxt4fso8o" path="res://shaders/snow_ground.gdshader" id="3_ground_shader"]
+[ext_resource type="Texture2D" uid="uid://detx1afnfnjle" path="res://img/materials/ground037/Ground037_1K-JPG_Color.jpg" id="4_ground_color"]
+[ext_resource type="Texture2D" uid="uid://b8m0kbbtveqq6" path="res://img/materials/ground037/Ground037_1K-JPG_NormalGL.jpg" id="5_ground_normal"]
+[ext_resource type="Texture2D" uid="uid://cbhgf76ivjms1" path="res://img/materials/ground037/Ground037_1K-JPG_Roughness.jpg" id="6_ground_rough"]
+[ext_resource type="Texture2D" uid="uid://wq8pib4bt6ef" path="res://img/materials/ground037/Ground037_1K-JPG_AmbientOcclusion.jpg" id="7_ground_ao"]
+[ext_resource type="Texture2D" uid="uid://hs1kaxan3hmh" path="res://img/materials/winter_leaves/winter_leaves_diff_4k.jpg" id="8_ground_detail"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dusk"]
+sky_top_color = Color(0.07, 0.09, 0.13, 1)
+sky_horizon_color = Color(0.3, 0.32, 0.36, 1)
+ground_bottom_color = Color(0.025, 0.03, 0.04, 1)
+ground_horizon_color = Color(0.18, 0.19, 0.21, 1)
+
+[sub_resource type="Sky" id="Sky_dusk"]
+sky_material = SubResource("ProceduralSkyMaterial_dusk")
+
+[sub_resource type="Environment" id="Environment_dusk"]
+background_mode = 2
+sky = SubResource("Sky_dusk")
+ambient_light_source = 3
+ambient_light_color = Color(0.5, 0.56, 0.66, 1)
+ambient_light_energy = 0.32
+tonemap_mode = 2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ground"]
+render_priority = 0
+shader = ExtResource("3_ground_shader")
+shader_parameter/albedo_texture = ExtResource("4_ground_color")
+shader_parameter/normal_texture = ExtResource("5_ground_normal")
+shader_parameter/roughness_texture = ExtResource("6_ground_rough")
+shader_parameter/ao_texture = ExtResource("7_ground_ao")
+shader_parameter/detail_albedo_texture = ExtResource("8_ground_detail")
+shader_parameter/tiling = 11.0
+shader_parameter/randomize_rotation = 0.0
+shader_parameter/height_scale = 0.0
+shader_parameter/detail_strength = 0.52
+shader_parameter/ground_tint = Color(0.86, 0.85, 0.78, 1)
+shader_parameter/ground_saturation = 0.68
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(80, 80)
+subdivide_width = 16
+subdivide_depth = 16
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(80, 1, 80)
+
+[node name="CarrieHouseTest" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dusk")
+
+[node name="Moonlight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, 0.2958759, -0.4030264, 0, 0.8060529, 0.5917517, 0.5, -0.5124726, 0.6980613, 0, 0, 0)
+light_color = Color(0.7, 0.78, 0.95, 1)
+light_energy = 0.7
+shadow_enabled = true
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("ShaderMaterial_ground")
+
+[node name="GroundCollision" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundCollision"]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="CarrieHouse" parent="." instance=ExtResource("2_house")]
+ground_collision_path = NodePath("../GroundCollision")
+ground_mesh_path = NodePath("../Ground")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0.05, 9)

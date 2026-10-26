@@ -1,0 +1,2433 @@
+{
+ "buildings": [
+  {
+   "id": "Hotel",
+   "kind": "hotel",
+   "row": "north",
+   "objects": [
+    "Hotel",
+    "Hotel_Glass",
+    "Hotel_Details"
+   ],
+   "footprint": [
+    135.0,
+    157.0,
+    196.5,
+    216.5
+   ],
+   "height": 18.799999999999997
+  },
+  {
+   "id": "Variety",
+   "kind": "shop",
+   "row": "north",
+   "objects": [
+    "Variety",
+    "Variety_Glass",
+    "Variety_Details"
+   ],
+   "footprint": [
+    157.0,
+    171.0,
+    200.5,
+    216.5
+   ],
+   "height": 8.8
+  },
+  {
+   "id": "PostOffice",
+   "kind": "civic",
+   "row": "north",
+   "objects": [
+    "PostOffice",
+    "PostOffice_Glass",
+    "PostOffice_Details"
+   ],
+   "footprint": [
+    174.5,
+    196.5,
+    197.5,
+    213.5
+   ],
+   "height": 10.0
+  },
+  {
+   "id": "RadioBlock",
+   "kind": "apartments",
+   "row": "north",
+   "objects": [
+    "RadioBlock",
+    "RadioBlock_Glass",
+    "RadioBlock_Details"
+   ],
+   "footprint": [
+    196.5,
+    220.5,
+    200.5,
+    216.5
+   ],
+   "height": 11.9
+  },
+  {
+   "id": "Diner",
+   "kind": "diner",
+   "row": "north",
+   "objects": [
+    "Diner",
+    "Diner_Glass",
+    "Diner_Details"
+   ],
+   "footprint": [
+    224.5,
+    240.5,
+    201.5,
+    212.5
+   ],
+   "height": 4.6
+  },
+  {
+   "id": "Bank",
+   "kind": "bank",
+   "row": "south",
+   "objects": [
+    "Bank",
+    "Bank_Glass",
+    "Bank_Details"
+   ],
+   "footprint": [
+    108.6,
+    124.6,
+    234.0,
+    254.0
+   ],
+   "height": 13.7
+  },
+  {
+   "id": "Hardware",
+   "kind": "shop",
+   "row": "south",
+   "objects": [
+    "Hardware",
+    "Hardware_Glass",
+    "Hardware_Details"
+   ],
+   "footprint": [
+    124.6,
+    137.25,
+    234.0,
+    252.0
+   ],
+   "height": 8.8
+  },
+  {
+   "id": "Alder",
+   "kind": "apartments",
+   "row": "south",
+   "objects": [
+    "Alder",
+    "Alder_Glass",
+    "Alder_Details"
+   ],
+   "footprint": [
+    140.75,
+    167.25,
+    234.0,
+    256.0
+   ],
+   "height": 15.100000000000001
+  },
+  {
+   "id": "Aurora",
+   "kind": "cinema",
+   "row": "south",
+   "objects": [
+    "Aurora",
+    "Aurora_Glass",
+    "Aurora_Details"
+   ],
+   "footprint": [
+    170.75,
+    186.75,
+    234.0,
+    262.0
+   ],
+   "height": 14.6
+  },
+  {
+   "id": "Bakery",
+   "kind": "shop",
+   "row": "south",
+   "objects": [
+    "Bakery",
+    "Bakery_Glass",
+    "Bakery_Details"
+   ],
+   "footprint": [
+    186.75,
+    199.25,
+    234.0,
+    252.0
+   ],
+   "height": 8.8
+  },
+  {
+   "id": "Police",
+   "kind": "civic",
+   "row": "south",
+   "objects": [
+    "Police",
+    "Police_Glass",
+    "Police_Details"
+   ],
+   "footprint": [
+    202.75,
+    222.0,
+    234.0,
+    254.0
+   ],
+   "height": 12.2
+  }
+ ],
+ "colliders": [
+  {
+   "name": "Hotel",
+   "centre": [
+    146.0,
+    9.399999999999999,
+    206.5
+   ],
+   "size": [
+    22.0,
+    18.799999999999997,
+    20.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Variety",
+   "centre": [
+    164.0,
+    4.4,
+    208.5
+   ],
+   "size": [
+    14.0,
+    8.8,
+    16.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "PostOfficeStep0",
+   "centre": [
+    185.5,
+    0.15000000000000002,
+    215.0
+   ],
+   "size": [
+    8.0,
+    0.30000000000000004,
+    3.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "PostOfficeStep1",
+   "centre": [
+    185.5,
+    0.23500000000000001,
+    214.825
+   ],
+   "size": [
+    7.800000000000011,
+    0.47000000000000003,
+    2.6500000000000057
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "PostOfficeStep2",
+   "centre": [
+    185.5,
+    0.32,
+    214.65
+   ],
+   "size": [
+    7.600000000000023,
+    0.64,
+    2.3000000000000114
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "PostOffice",
+   "centre": [
+    185.5,
+    5.0,
+    205.5
+   ],
+   "size": [
+    22.0,
+    10.0,
+    16.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "RadioBlock",
+   "centre": [
+    208.5,
+    5.95,
+    208.5
+   ],
+   "size": [
+    24.0,
+    11.9,
+    16.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Diner",
+   "centre": [
+    232.5,
+    2.3,
+    207.0
+   ],
+   "size": [
+    16.0,
+    4.6,
+    11.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Bank",
+   "centre": [
+    118.19999999999999,
+    6.85,
+    244.0
+   ],
+   "size": [
+    12.799999999999997,
+    13.7,
+    20.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "BankSide",
+   "centre": [
+    110.19999999999999,
+    6.85,
+    245.6
+   ],
+   "size": [
+    3.200000000000003,
+    13.7,
+    16.80000000000001
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "BankCorner",
+   "centre": [
+    110.44241728610513,
+    6.85,
+    235.918172688013
+   ],
+   "size": [
+    4.525483399593895,
+    13.7,
+    0.8000000000000114
+   ],
+   "yaw": -135.0000000000001
+  },
+  {
+   "name": "Hardware",
+   "centre": [
+    130.925,
+    4.4,
+    243.0
+   ],
+   "size": [
+    12.650000000000006,
+    8.8,
+    18.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Alder",
+   "centre": [
+    154.0,
+    7.550000000000001,
+    245.0
+   ],
+   "size": [
+    26.5,
+    15.100000000000001,
+    22.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "AuroraBooth",
+   "centre": [
+    178.75,
+    1.2,
+    233.825
+   ],
+   "size": [
+    1.8000000000000114,
+    2.4,
+    0.3499999999999943
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Aurora",
+   "centre": [
+    178.75,
+    7.3,
+    248.0
+   ],
+   "size": [
+    16.0,
+    14.6,
+    28.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Bakery",
+   "centre": [
+    193.0,
+    4.4,
+    243.0
+   ],
+   "size": [
+    12.5,
+    8.8,
+    18.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Police",
+   "centre": [
+    212.375,
+    6.1,
+    244.0
+   ],
+   "size": [
+    19.25,
+    12.2,
+    20.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Sidewalk",
+   "centre": [
+    189.6,
+    0.05,
+    218.75
+   ],
+   "size": [
+    170.8,
+    0.1,
+    4.5
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Sidewalk",
+   "centre": [
+    163.1,
+    0.05,
+    231.6
+   ],
+   "size": [
+    117.80000000000001,
+    0.1,
+    4.800000000000011
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Sidewalk",
+   "centre": [
+    106.39999999999999,
+    0.05,
+    253.25
+   ],
+   "size": [
+    4.400000000000006,
+    0.1,
+    38.5
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Sidewalk",
+   "centre": [
+    244.6,
+    0.05,
+    238.6
+   ],
+   "size": [
+    45.19999999999999,
+    0.1,
+    18.80000000000001
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Sidewalk",
+   "centre": [
+    185.5,
+    0.05,
+    215.0
+   ],
+   "size": [
+    22.0,
+    0.1,
+    3.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Sidewalk",
+   "centre": [
+    232.5,
+    0.05,
+    214.5
+   ],
+   "size": [
+    16.0,
+    0.1,
+    4.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    145.5,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    151.5,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    159.0,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    178.0,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    192.0,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    201.0,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    214.0,
+    0.7,
+    220.15
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    119.5,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.1599999999999966,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    125.5,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.1599999999999966,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    145.5,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    152.0,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    166.0,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    175.0,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    190.5,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    196.0,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "Meter",
+   "centre": [
+    219.0,
+    0.7,
+    229.85
+   ],
+   "size": [
+    0.160000000000025,
+    1.4,
+    0.160000000000025
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "NewspaperBox",
+   "centre": [
+    154.2,
+    0.475,
+    220.0
+   ],
+   "size": [
+    0.4800000000000182,
+    0.95,
+    0.39999999999997726
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "NewspaperBox",
+   "centre": [
+    155.0,
+    0.475,
+    220.0
+   ],
+   "size": [
+    0.4800000000000182,
+    0.95,
+    0.39999999999997726
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "NewspaperBox",
+   "centre": [
+    238.7,
+    0.475,
+    220.0
+   ],
+   "size": [
+    0.4800000000000182,
+    0.95,
+    0.39999999999997726
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "NewspaperBox",
+   "centre": [
+    180.0,
+    0.475,
+    230.0
+   ],
+   "size": [
+    0.4800000000000182,
+    0.95,
+    0.39999999999997726
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "LotFence",
+   "centre": [
+    117.875,
+    0.6,
+    216.35
+   ],
+   "size": [
+    18.349999999999994,
+    1.2,
+    0.10000000000002274
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "LotFence",
+   "centre": [
+    133.425,
+    0.6,
+    216.35
+   ],
+   "size": [
+    2.950000000000017,
+    1.2,
+    0.10000000000002274
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "LotFence",
+   "centre": [
+    108.75,
+    0.6,
+    209.825
+   ],
+   "size": [
+    0.09999999999999432,
+    1.2,
+    13.150000000000006
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "LotFence",
+   "centre": [
+    246.325,
+    0.6,
+    216.35
+   ],
+   "size": [
+    11.450000000000017,
+    1.2,
+    0.10000000000002274
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "LotFence",
+   "centre": [
+    259.925,
+    0.6,
+    216.35
+   ],
+   "size": [
+    3.9500000000000455,
+    1.2,
+    0.10000000000002274
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "EatSign",
+   "centre": [
+    243.2,
+    1.65,
+    215.95
+   ],
+   "size": [
+    0.19999999999998863,
+    3.3,
+    0.19999999999998863
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "SignalPole",
+   "centre": [
+    106.3,
+    3.05,
+    230.4
+   ],
+   "size": [
+    0.4000000000000057,
+    6.1,
+    0.39999999999997726
+   ],
+   "yaw": 0.0
+  }
+ ],
+ "occluders": [
+  {
+   "name": "Hotel",
+   "centre": [
+    146.0,
+    9.149999999999999,
+    206.5
+   ],
+   "size": [
+    21.0,
+    18.299999999999997,
+    19.0
+   ]
+  },
+  {
+   "name": "Variety",
+   "centre": [
+    164.0,
+    4.15,
+    208.5
+   ],
+   "size": [
+    13.0,
+    8.3,
+    15.0
+   ]
+  },
+  {
+   "name": "PostOffice",
+   "centre": [
+    185.5,
+    4.75,
+    205.5
+   ],
+   "size": [
+    21.0,
+    9.5,
+    15.0
+   ]
+  },
+  {
+   "name": "RadioBlock",
+   "centre": [
+    208.5,
+    5.7,
+    208.5
+   ],
+   "size": [
+    23.0,
+    11.4,
+    15.0
+   ]
+  },
+  {
+   "name": "Diner",
+   "centre": [
+    232.5,
+    2.05,
+    207.0
+   ],
+   "size": [
+    15.0,
+    4.1,
+    10.0
+   ]
+  },
+  {
+   "name": "Bank",
+   "centre": [
+    116.6,
+    6.6,
+    244.0
+   ],
+   "size": [
+    15.0,
+    13.2,
+    19.0
+   ]
+  },
+  {
+   "name": "Hardware",
+   "centre": [
+    130.925,
+    4.15,
+    243.0
+   ],
+   "size": [
+    11.650000000000006,
+    8.3,
+    17.0
+   ]
+  },
+  {
+   "name": "Alder",
+   "centre": [
+    154.0,
+    7.300000000000001,
+    245.0
+   ],
+   "size": [
+    25.5,
+    14.600000000000001,
+    21.0
+   ]
+  },
+  {
+   "name": "Aurora",
+   "centre": [
+    178.75,
+    7.05,
+    248.0
+   ],
+   "size": [
+    15.0,
+    14.1,
+    27.0
+   ]
+  },
+  {
+   "name": "Bakery",
+   "centre": [
+    193.0,
+    4.15,
+    243.0
+   ],
+   "size": [
+    11.5,
+    8.3,
+    17.0
+   ]
+  },
+  {
+   "name": "Police",
+   "centre": [
+    212.375,
+    5.85,
+    244.0
+   ],
+   "size": [
+    18.25,
+    11.7,
+    19.0
+   ]
+  }
+ ],
+ "signs": [
+  {
+   "building": "Hotel",
+   "text": "HOTEL",
+   "position": [
+    146.0,
+    3.27,
+    219.52
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.3,
+   "width": 5.0,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Hotel",
+   "text": "HOTEL NORTHWOOD",
+   "position": [
+    146.0,
+    20.75,
+    215.72
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 2.0,
+   "width": 19.6,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.82,
+    0.45
+   ],
+   "dead_letter": 11
+  },
+  {
+   "building": "Hotel",
+   "text": "HOTEL NORTHWOOD",
+   "position": [
+    134.96,
+    13.6,
+    206.5
+   ],
+   "facing": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "height": 1.5,
+   "width": 13.0,
+   "style": "ghost",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Hotel",
+   "text": "60 ROOMS  STEAM HEAT",
+   "position": [
+    134.96,
+    10.6,
+    206.5
+   ],
+   "facing": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "height": 0.9,
+   "width": 13.0,
+   "style": "ghost",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Variety",
+   "text": "VARIETY STORE",
+   "position": [
+    164.0,
+    3.82,
+    216.575
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.5,
+   "width": 12.700000000000001,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "PostOffice",
+   "text": "NORTHWOOD POST OFFICE",
+   "position": [
+    185.5,
+    8.8,
+    213.55
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.45,
+   "width": 20.5,
+   "style": "carved",
+   "colour": [
+    0.48,
+    0.46,
+    0.41
+   ]
+  },
+  {
+   "building": "RadioBlock",
+   "text": "RADIO & TV",
+   "position": [
+    201.54,
+    3.82,
+    216.575
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.5,
+   "width": 8.780000000000001,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "RadioBlock",
+   "text": "BOOKS",
+   "position": [
+    215.46,
+    3.82,
+    216.575
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.5,
+   "width": 8.780000000000001,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "RadioBlock",
+   "text": "APARTMENTS",
+   "position": [
+    208.5,
+    3.72,
+    216.56
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.36,
+   "width": 2.2,
+   "style": "painted",
+   "colour": [
+    0.04,
+    0.04,
+    0.045
+   ]
+  },
+  {
+   "building": "Diner",
+   "text": "POLAR STAR",
+   "position": [
+    233.4,
+    6.35,
+    212.11
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.85,
+   "width": 11.0,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.24,
+    0.18
+   ]
+  },
+  {
+   "building": "Diner",
+   "text": "DINER",
+   "position": [
+    233.4,
+    5.45,
+    212.11
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.45,
+   "width": 4.0,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.82,
+    0.35
+   ]
+  },
+  {
+   "building": "Bank",
+   "text": "CICELY SAVINGS BANK",
+   "position": [
+    118.19999999999999,
+    12.769999999999998,
+    233.95
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.42,
+   "width": 11.8,
+   "style": "carved",
+   "colour": [
+    0.48,
+    0.46,
+    0.41
+   ]
+  },
+  {
+   "building": "Hardware",
+   "text": "LINDQVIST HARDWARE",
+   "position": [
+    130.925,
+    3.82,
+    233.925
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.5,
+   "width": 11.350000000000007,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Alder",
+   "text": "PHARMACY",
+   "position": [
+    161.685,
+    3.82,
+    233.925
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.5,
+   "width": 9.83,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Alder",
+   "text": "LAUNDROMAT",
+   "position": [
+    146.315,
+    3.82,
+    233.925
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.5,
+   "width": 9.83,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Alder",
+   "text": "THE ALDER",
+   "position": [
+    154.0,
+    3.72,
+    233.94
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.36,
+   "width": 2.2,
+   "style": "painted",
+   "colour": [
+    0.04,
+    0.04,
+    0.045
+   ]
+  },
+  {
+   "building": "Aurora",
+   "text": "CLOSED",
+   "position": [
+    178.75,
+    4.7,
+    231.17
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.62,
+   "width": 12.0,
+   "style": "marquee",
+   "colour": [
+    0.04,
+    0.04,
+    0.045
+   ]
+  },
+  {
+   "building": "Aurora",
+   "text": "UNTIL FURTHER NOTICE",
+   "position": [
+    178.75,
+    3.95,
+    231.17
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.42,
+   "width": 12.0,
+   "style": "marquee",
+   "colour": [
+    0.04,
+    0.04,
+    0.045
+   ]
+  },
+  {
+   "building": "Aurora",
+   "text": "AURORA",
+   "position": [
+    185.58,
+    4.45,
+    232.6
+   ],
+   "facing": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "height": 0.55,
+   "width": 2.0,
+   "style": "marquee",
+   "colour": [
+    0.04,
+    0.04,
+    0.045
+   ]
+  },
+  {
+   "building": "Aurora",
+   "text": "AURORA",
+   "position": [
+    171.92,
+    4.45,
+    232.6
+   ],
+   "facing": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "height": 0.55,
+   "width": 2.0,
+   "style": "marquee",
+   "colour": [
+    0.04,
+    0.04,
+    0.045
+   ]
+  },
+  {
+   "building": "Aurora",
+   "text": "A\nU\nR\nO\nR\nA",
+   "position": [
+    179.08,
+    9.925,
+    233.0
+   ],
+   "facing": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "height": 0.95,
+   "width": 1.4,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.36,
+    0.62
+   ],
+   "pitch": 1.25
+  },
+  {
+   "building": "Aurora",
+   "text": "A\nU\nR\nO\nR\nA",
+   "position": [
+    178.42,
+    9.925,
+    233.0
+   ],
+   "facing": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "height": 0.95,
+   "width": 1.4,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.36,
+    0.62
+   ],
+   "pitch": 1.25
+  },
+  {
+   "building": "Bakery",
+   "text": "BAKERY",
+   "position": [
+    196.125,
+    3.82,
+    233.925
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.5,
+   "width": 4.950000000000001,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Bakery",
+   "text": "BARBER",
+   "position": [
+    189.875,
+    3.82,
+    233.925
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.5,
+   "width": 4.950000000000001,
+   "style": "painted",
+   "colour": [
+    0.84,
+    0.79,
+    0.65
+   ]
+  },
+  {
+   "building": "Police",
+   "text": "CICELY POLICE",
+   "position": [
+    212.375,
+    3.95,
+    233.92
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.55,
+   "width": 9.0,
+   "style": "raised",
+   "colour": [
+    0.98,
+    0.95,
+    0.85
+   ]
+  },
+  {
+   "building": "CornerLot",
+   "text": "PARK",
+   "position": [
+    126.4,
+    2.3,
+    216.22
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.32,
+   "width": 0.8,
+   "style": "painted",
+   "colour": [
+    0.98,
+    0.95,
+    0.85
+   ]
+  },
+  {
+   "building": "DinerLot",
+   "text": "E\nA\nT",
+   "position": [
+    243.2,
+    4.95,
+    216.17999999999998
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "height": 0.75,
+   "width": 1.2,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.24,
+    0.18
+   ],
+   "pitch": 0.95
+  },
+  {
+   "building": "DinerLot",
+   "text": "E\nA\nT",
+   "position": [
+    243.2,
+    4.95,
+    215.72
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "height": 0.75,
+   "width": 1.2,
+   "style": "neon",
+   "colour": [
+    1.0,
+    0.24,
+    0.18
+   ],
+   "pitch": 0.95
+  }
+ ],
+ "lights": [
+  {
+   "building": "Hotel",
+   "position": [
+    146.0,
+    2.7,
+    218.0
+   ],
+   "colour": [
+    1.0,
+    0.74,
+    0.42
+   ],
+   "energy": 0.6,
+   "range": 6.0,
+   "group": ""
+  },
+  {
+   "building": "Hotel",
+   "position": [
+    146.0,
+    20.349999999999998,
+    218.1
+   ],
+   "colour": [
+    1.0,
+    0.82,
+    0.45
+   ],
+   "energy": 1.0,
+   "range": 14.0,
+   "group": "neon"
+  },
+  {
+   "building": "PostOffice",
+   "position": [
+    183.95,
+    3.24,
+    214.1
+   ],
+   "colour": [
+    1.0,
+    0.74,
+    0.42
+   ],
+   "energy": 0.45,
+   "range": 5.0,
+   "group": ""
+  },
+  {
+   "building": "PostOffice",
+   "position": [
+    187.05,
+    3.24,
+    214.1
+   ],
+   "colour": [
+    1.0,
+    0.74,
+    0.42
+   ],
+   "energy": 0.45,
+   "range": 5.0,
+   "group": ""
+  },
+  {
+   "building": "Diner",
+   "position": [
+    232.5,
+    5.5,
+    214.5
+   ],
+   "colour": [
+    1.0,
+    0.24,
+    0.18
+   ],
+   "energy": 1.0,
+   "range": 9.0,
+   "group": "neon"
+  },
+  {
+   "building": "Diner",
+   "position": [
+    232.5,
+    2.3,
+    214.1
+   ],
+   "colour": [
+    1.0,
+    0.74,
+    0.42
+   ],
+   "energy": 0.8,
+   "range": 7.0,
+   "group": ""
+  },
+  {
+   "building": "Bank",
+   "position": [
+    109.35147186257613,
+    3.6,
+    234.75147186257612
+   ],
+   "colour": [
+    1.0,
+    0.74,
+    0.42
+   ],
+   "energy": 0.35,
+   "range": 5.0,
+   "group": ""
+  },
+  {
+   "building": "Aurora",
+   "position": [
+    178.75,
+    3.1,
+    232.0
+   ],
+   "colour": [
+    1.0,
+    0.82,
+    0.45
+   ],
+   "energy": 1.2,
+   "range": 9.0,
+   "group": "marquee"
+  },
+  {
+   "building": "Aurora",
+   "position": [
+    178.75,
+    10.0,
+    231.4
+   ],
+   "colour": [
+    1.0,
+    0.36,
+    0.62
+   ],
+   "energy": 1.4,
+   "range": 10.0,
+   "group": "neon"
+  },
+  {
+   "building": "Police",
+   "position": [
+    214.575,
+    2.7,
+    233.55
+   ],
+   "colour": [
+    0.4,
+    0.62,
+    1.0
+   ],
+   "energy": 0.5,
+   "range": 4.5,
+   "group": ""
+  },
+  {
+   "building": "Police",
+   "position": [
+    210.175,
+    2.7,
+    233.55
+   ],
+   "colour": [
+    0.4,
+    0.62,
+    1.0
+   ],
+   "energy": 0.5,
+   "range": 4.5,
+   "group": ""
+  },
+  {
+   "building": "DinerLot",
+   "position": [
+    243.2,
+    5.0,
+    217.54999999999998
+   ],
+   "colour": [
+    1.0,
+    0.24,
+    0.18
+   ],
+   "energy": 0.9,
+   "range": 7.0,
+   "group": "neon"
+  }
+ ],
+ "cars": [
+  {
+   "scene": "Car",
+   "position": [
+    112.19999999999999,
+    0.08,
+    206.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "scene": "SUV",
+   "position": [
+    117.6,
+    0.08,
+    206.0
+   ],
+   "yaw": 187.0
+  },
+  {
+   "scene": "Taxi",
+   "position": [
+    244.1,
+    0.08,
+    204.5
+   ],
+   "yaw": 180.0
+  },
+  {
+   "scene": "Police Car",
+   "position": [
+    211.0,
+    0.1,
+    227.85
+   ],
+   "yaw": 90.0
+  },
+  {
+   "scene": "Taxi",
+   "position": [
+    147.0,
+    0.1,
+    222.15
+   ],
+   "yaw": -90.0
+  }
+ ],
+ "paving_top": 0.13,
+ "signal": {
+  "head": [
+   100.4,
+   5.619999999999999,
+   225.2
+  ],
+  "amber": "SignalAmber",
+  "red": "SignalRed"
+ },
+ "objects": {
+  "glass": [
+   "Alder_Glass",
+   "Aurora_Glass",
+   "Bakery_Glass",
+   "Bank_Glass",
+   "Diner_Glass",
+   "Hardware_Glass",
+   "Hotel_Glass",
+   "Police_Glass",
+   "PostOffice_Glass",
+   "RadioBlock_Glass",
+   "Variety_Glass"
+  ],
+  "details": [
+   "Alder_Details",
+   "Aurora_Details",
+   "Bakery_Details",
+   "Bank_Details",
+   "Diner_Details",
+   "Hardware_Details",
+   "Hotel_Details",
+   "Police_Details",
+   "PostOffice_Details",
+   "RadioBlock_Details",
+   "Variety_Details"
+  ]
+ },
+ "furniture": [
+  {
+   "kind": "bench",
+   "position": [
+    166.5,
+    219.95
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "trash",
+   "position": [
+    168.6,
+    220.05
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "bench",
+   "position": [
+    235.0,
+    219.95
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "trash",
+   "position": [
+    237.1,
+    220.05
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "bench",
+   "position": [
+    131.5,
+    230.05
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "trash",
+   "position": [
+    133.6,
+    229.95
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "bench",
+   "position": [
+    211.0,
+    230.05
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "trash",
+   "position": [
+    213.1,
+    229.95
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "mailbox",
+   "position": [
+    180.5,
+    220.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "phone",
+   "position": [
+    137.7,
+    217.4
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "hydrant",
+   "position": [
+    148.6,
+    220.3
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "hydrant",
+   "position": [
+    217.4,
+    220.3
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "hydrant",
+   "position": [
+    135.6,
+    229.7
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "hydrant",
+   "position": [
+    204.4,
+    229.7
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "newspaper",
+   "position": [
+    154.2,
+    220.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "newspaper",
+   "position": [
+    155.0,
+    220.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "newspaper",
+   "position": [
+    238.7,
+    220.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "newspaper",
+   "position": [
+    180.0,
+    230.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "traffic_lights_ahead",
+   "position": [
+    226.0,
+    220.35
+   ],
+   "yaw": 90.0
+  },
+  {
+   "kind": "no_parking",
+   "position": [
+    258.0,
+    230.1
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "bench",
+   "position": [
+    239.0,
+    241.7
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "trash",
+   "position": [
+    241.0,
+    241.7
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "phone",
+   "position": [
+    230.0,
+    234.6
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "hydrant",
+   "position": [
+    237.0,
+    230.55
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "dumpster",
+   "position": [
+    145.0,
+    266.6
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "dumpster",
+   "position": [
+    176.0,
+    266.6
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "dumpster",
+   "position": [
+    208.5,
+    266.6
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    116.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    140.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    163.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    186.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    209.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    232.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    262.0,
+    220.15
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    114.5,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    139.0,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    161.0,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    183.0,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    206.0,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    231.0,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "lamp",
+   "position": [
+    249.5,
+    229.85
+   ],
+   "yaw": 180.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    122.0,
+    220.15
+   ],
+   "yaw": 194.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    174.5,
+    220.15
+   ],
+   "yaw": 336.5
+  },
+  {
+   "kind": "tree",
+   "position": [
+    197.0,
+    220.15
+   ],
+   "yaw": 89.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    221.0,
+    220.15
+   ],
+   "yaw": 257.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    247.0,
+    220.15
+   ],
+   "yaw": 139.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    129.0,
+    229.85
+   ],
+   "yaw": 93.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    156.0,
+    229.85
+   ],
+   "yaw": 12.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    187.0,
+    229.85
+   ],
+   "yaw": 79.0
+  },
+  {
+   "kind": "tree",
+   "position": [
+    215.0,
+    229.85
+   ],
+   "yaw": 35.0
+  }
+ ],
+ "points": {
+  "corner_north": [
+   107.6,
+   0.1,
+   219.0
+  ],
+  "corner_south": [
+   107.6,
+   0.1,
+   231.5
+  ],
+  "north_walk_west": [
+   110.0,
+   0.1,
+   218.3
+  ],
+  "north_walk_east": [
+   270.0,
+   0.1,
+   218.3
+  ],
+  "south_walk_west": [
+   110.0,
+   0.1,
+   232.4
+  ],
+  "south_walk_east": [
+   220.0,
+   0.1,
+   232.4
+  ],
+  "hospital_path": [
+   255.2,
+   0.1,
+   233.0
+  ],
+  "hospital_door": [
+   255.2,
+   0.1,
+   247.0
+  ],
+  "service_lane_west": [
+   109.0,
+   0.0,
+   270.0
+  ],
+  "service_lane_east": [
+   237.0,
+   0.0,
+   270.0
+  ],
+  "alley_139_street": [
+   139.0,
+   0.0,
+   234.5
+  ],
+  "alley_139_lane": [
+   139.0,
+   0.0,
+   270.0
+  ],
+  "alley_169_street": [
+   169.0,
+   0.0,
+   234.5
+  ],
+  "alley_169_lane": [
+   169.0,
+   0.0,
+   270.0
+  ],
+  "alley_201_street": [
+   201.0,
+   0.0,
+   234.5
+  ],
+  "alley_201_lane": [
+   201.0,
+   0.0,
+   270.0
+  ]
+ },
+ "corner_street_sign": [
+  106.4,
+  218.6
+ ],
+ "corner_stop_sign": [
+  106.4,
+  232.6
+ ],
+ "sidewalk_top": 0.13
+}
