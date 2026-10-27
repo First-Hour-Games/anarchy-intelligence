@@ -67,6 +67,9 @@ func take_damage(amount: float, attacker: Node3D = null) -> void:
 	if health > 0.0:
 		InputDevice.rumble_pad(0.35, 0.65, 0.25)
 	if health == 0.0:
+		var spot := get_parent().get("hiding_spot") as Node3D
+		if is_instance_valid(spot):
+			spot.force_out()
 		is_dead = true
 		InputDevice.rumble_pad(0.8, 1.0, 0.7)
 		get_parent().set_physics_process(false)

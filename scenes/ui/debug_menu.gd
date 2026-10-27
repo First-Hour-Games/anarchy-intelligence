@@ -7,6 +7,7 @@ const SCENES: Array[Dictionary] = [
 	{"name": "Starting forest", "path": "res://scenes/chapters/main/starting_forest.tscn"},
 ]
 const FOREST_PATH := "res://scenes/chapters/main/starting_forest.tscn"
+const MAP_PATH := "res://scenes/chapters/main/map.tscn"
 
 var opened := false
 var _previous_mouse: Input.MouseMode
@@ -95,6 +96,12 @@ func _build_menu() -> void:
 	_add_button(column, "Before the log: test the climb", _jump_to_checkpoint.bind("before_log"))
 	_add_button(column, "After climbing the log: continue on foot", _jump_to_checkpoint.bind("after_log"))
 	_add_button(column, "In front of the gas station", _jump_to_checkpoint.bind("gas_station"))
+	var map_checkpoints := Label.new()
+	map_checkpoints.text = "MAP CHECKPOINTS (keeps saved progress)"
+	map_checkpoints.add_theme_font_size_override("font_size", 14)
+	column.add_child(map_checkpoints)
+	_add_button(column, "Carrie's house: the Wrapper in the armchair (replay, doesn't save)", _jump_to_map_checkpoint.bind("carrie_house"))
+	_add_button(column, "Hospital entrance: Clawman, hiding spots, bottles", _jump_to_map_checkpoint.bind("hospital"))
 	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
@@ -184,6 +191,56 @@ func _jump_to_checkpoint(checkpoint: String) -> void:
 		_pending_checkpoint = ""
 
 
+func _jump_to_map_checkpoint(checkpoint: String) -> void:
+	if not _loading_path.is_empty():
+		return
+	var scene := get_tree().current_scene
+	if scene != null and scene.scene_file_path == MAP_PATH:
+		set_open(false)
+		apply_map_checkpoint(scene, checkpoint)
+		return
+	_pending_checkpoint = checkpoint
+	jump_to_scene(MAP_PATH)
+	if _loading_path.is_empty():
+		_pending_checkpoint = ""
+
+
+## Hospital: places the player inside the entrance, facing down the corridor. Walking in advances
+## the story to the hospital stage as normal play would.
+## Carrie's house: places the player on the porch, facing the open front door, with the story set
+## back to finding Carrie's notebook so the house plays again. Saving stops for that session.
+func apply_map_checkpoint(scene: Node, checkpoint: String) -> void:
+	var player := scene.get_node_or_null("Player") as FirstPersonPlayer
+	if player == null:
+		return
+	if player.is_hidden():
+		player.hiding_spot.call("force_out")
+	var target := Vector3.INF
+	match checkpoint:
+		"hospital":
+			var hospital := scene.get_node_or_null("Buildings/NeighborhoodHospital") as Node3D
+			if hospital == null:
+				return
+			if not player.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+				player.inventory.add_item(PlayerInventory.FLASHLIGHT_ITEM)
+			player.global_position = hospital.to_global(Vector3(-10.2, 0.2, -2.6))
+			target = hospital.to_global(Vector3(5, 0.2, -4.15))
+		"carrie_house":
+			var house := scene.get_node_or_null("Buildings/ResidentialLots/CarrieHouse") as Node3D
+			var story := scene.get_node_or_null("OpeningStory")
+			if house == null or story == null:
+				return
+			story.call("debug_replay_house")
+			player.global_position = house.call("point", &"porch") + Vector3.UP * 0.1
+			target = house.call("point", &"front_door")
+		_:
+			return
+	player.velocity = Vector3.ZERO
+	player.look_at(Vector3(target.x, player.global_position.y, target.z), Vector3.UP)
+	player.head.rotation.x = 0.0
+	player.snap_to_ground.call_deferred()
+
+
 func jump_to_scene(path: String) -> void:
 	if not OS.is_debug_build() or not _loading_path.is_empty():
 		return
@@ -249,3 +306,6 @@ func _on_scene_changed() -> void:
 				scene.call("debug_jump_to_gas_station")
 			elif scene.has_method("debug_jump_to_log"):
 				scene.call("debug_jump_to_log", checkpoint == "after_log")
+		elif scene != null and scene.scene_file_path == MAP_PATH:
+			# Wait one frame so the story's saved-checkpoint restore has already run.
+			apply_map_checkpoint.call_deferred(scene, checkpoint)

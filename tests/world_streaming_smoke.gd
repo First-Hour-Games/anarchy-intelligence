@@ -119,6 +119,7 @@ func run() -> void:
 	await process_frame
 	await process_frame
 	check(stream.active_section == forest, "forest registers with streaming manager")
+	check(stream.preserve_authored_tree_spacing, "saved forest connection preserves authored tree density")
 	var player := forest.get_node("Player") as FirstPersonPlayer
 	player.set_physics_process(false)
 	player.unfreeze()
@@ -202,7 +203,7 @@ func run() -> void:
 	player.position.z = 68
 	await process_frame
 	check(current_scene == residence, "small seam movements do not oscillate scenes")
-	player.position.z = stream.seam_position.z + stream.unload_distance + 10.0
+	player.position.z = stream.seam_position.z + maxf(stream.unload_distance, stream.preload_distance + stream.crossing_hysteresis) + 10.0
 	check(await wait_for(func(): return not is_instance_id_valid(forest_id)), "forest unloads after leaving overlap")
 	check(not paused and not player.is_frozen, "streaming never pauses or freezes the player")
 	check_building_layout(residence, saved_buildings, "forest unloading")
@@ -252,6 +253,7 @@ func run() -> void:
 	await process_frame
 	await process_frame
 	var direct_player := direct.get_node("Player") as FirstPersonPlayer
+	check(stream.preserve_authored_tree_spacing, "saved residence connection preserves authored tree density")
 	direct_player.set_physics_process(false)
 	direct_player.unfreeze()
 	direct_player.position = Vector3(127, 0.15, 85)

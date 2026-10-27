@@ -12,6 +12,12 @@ extends WorldEnvironment
 @export var gameplay_environment: Environment
 @export var editor_environment: Environment
 @export_node_path("DirectionalLight3D") var preview_light_path: NodePath
+## Hidden while editing with the preview, shown in game. The player's distance fog is a
+## full-screen quad, so in the editor it would also fog the editor viewport's camera.
+@export var editor_hidden_nodes: Array[NodePath] = [
+	NodePath("../Player/Head/Camera3D/DistanceFog"),
+	NodePath("../AtmosphereProps/GroundFog"),
+]
 
 var _runtime_overhead_preview_active: bool = false
 
@@ -38,3 +44,9 @@ func _apply_environment() -> void:
 	var preview_light := get_node_or_null(preview_light_path) as DirectionalLight3D
 	if preview_light:
 		preview_light.visible = use_editor_preview
+
+	var hide_for_editor := Engine.is_editor_hint() and preview_active_in_editor
+	for path in editor_hidden_nodes:
+		var node := get_node_or_null(path) as Node3D
+		if node:
+			node.visible = not hide_for_editor

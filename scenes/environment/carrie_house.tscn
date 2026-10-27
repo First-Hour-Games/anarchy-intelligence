@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/environment/carrie_house.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://models/buildings/carrie_house/carrie_house.gltf" id="2_house"]
+
+[node name="CarrieHouse" type="Node3D"]
+script = ExtResource("1_script")
+metadata/skip_neighborhood_decoration = true
+
+[node name="Source" parent="." instance=ExtResource("2_house")]
+
+[node name="Entrance" type="Marker3D" parent="."]
+position = Vector3(2.2, 0, 4.6)

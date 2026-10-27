@@ -9,13 +9,13 @@ func run() -> void:
 	root.add_child(map)
 	current_scene = map
 	await create_timer(1.0).timeout
-	var house := map.get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
+	var house := map.get_node("Buildings/ResidentialLots/CarrieHouse") as Node3D
 	var nav := house.get_world_3d().navigation_map
 	NavigationServer3D.map_force_update(nav)
-	for z: float in [7.5, 8.6, 10.6, 12.5, 16.0]:
-		var point := house.to_global(Vector3(11.75, 0.25, z))
-		print("HOUSE ", z, " point ", point, " closest ", NavigationServer3D.map_get_closest_point(nav, point))
-	var route := NavigationServer3D.map_get_path(nav, house.to_global(Vector3(11.75, 0.25, 16)), house.to_global(Vector3(11.75, 0.25, 7.5)), true)
+	for id: StringName in [&"yard_front", &"porch", &"front_door", &"hall", &"stairs_bottom", &"stairs_top", &"back_stair_bottom"]:
+		var point: Vector3 = house.call("point", id)
+		print("HOUSE ", id, " point ", point, " closest ", NavigationServer3D.map_get_closest_point(nav, point))
+	var route := NavigationServer3D.map_get_path(nav, house.call("point", &"yard_front"), house.call("point", &"hall"), true)
 	print("HOUSE ROUTE ", route)
 	for node: Node in map.find_children("*", "Node3D", true, false):
 		if str(node.name).begins_with("ACUnit") or str(node.name) == "CondenserPad":

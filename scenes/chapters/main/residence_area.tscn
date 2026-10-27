@@ -199,8 +199,8 @@ shape = SubResource("ResidenceGroundCollision")
 [node name="ForestStreamConnection" type="Node3D" parent="." unique_id=327179256]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126.8, 3, 69)
 script = ExtResource("stream_connection")
-unload_distance = 100.0
-preserve_authored_tree_spacing = null
+unload_distance = 180.0
+preserve_authored_tree_spacing = true
 editor_neighbor_scene = "res://scenes/chapters/main/starting_forest.tscn"
 
 [node name="ResidenceBoundary" parent="." unique_id=871427646 instance=ExtResource("residence_boundary")]

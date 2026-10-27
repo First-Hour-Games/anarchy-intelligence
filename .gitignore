@@ -14,3 +14,5 @@ __pycache__/
 /debug-captures/
 /models/source/**/*_preview.png
 /models/source/**/*_preview.png.import
+# Blender's automatic backups of the previous save.
+*.blend1

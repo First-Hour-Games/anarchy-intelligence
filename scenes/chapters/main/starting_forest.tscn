@@ -2043,8 +2043,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126.8, 3, 69)
 collision_layer = 0
 monitoring = false
 script = ExtResource("residence_transition")
-unload_distance = 100.0
-preserve_authored_tree_spacing = null
+unload_distance = 180.0
+preserve_authored_tree_spacing = true
 editor_neighbor_scene = "res://scenes/chapters/main/residence_area.tscn"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ResidenceTransitionZone" unique_id=1515761547]

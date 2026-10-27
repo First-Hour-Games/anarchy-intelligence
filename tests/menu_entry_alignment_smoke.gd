@@ -23,11 +23,12 @@ func run() -> void:
 	current_scene = map
 	await create_timer(1.0).timeout
 	var player := map.get_node("Player") as FirstPersonPlayer
-	var house := map.get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
+	var house := map.get_node("Buildings/ResidentialLots/CarrieHouse") as Node3D
 	var nav := house.get_world_3d().navigation_map
 	NavigationServer3D.map_force_update(nav)
-	var outside := house.to_global(Vector3(11.75, 0.25, 16))
-	var inside := house.to_global(Vector3(11.75, 0.25, 7.5))
+	var outside: Vector3 = house.call("point", &"yard_front") + Vector3.UP * 0.25
+	# Deep enough in the hall that the Wrapper, stopping at arm's length, is still past the door.
+	var inside: Vector3 = house.call("point", &"hall") - house.global_basis.z * 1.6 + Vector3.UP * 0.25
 	var route := NavigationServer3D.map_get_path(nav, outside, inside, true)
 	var reached := not route.is_empty() and Vector2(route[-1].x - inside.x, route[-1].z - inside.z).length() < 0.25
 	check(reached, "Corner house interior connects to exterior navigation")
@@ -41,7 +42,7 @@ func run() -> void:
 		await physics_frame
 	var local := house.to_local(wrapper.global_position)
 	print("Wrapper house position ", local)
-	check(local.z < 9.25, "Wrapper physically walks through the corner house door")
+	check(local.z < -0.2, "Wrapper physically walks through the corner house door")
 	var civic := map.get_node("Buildings/CivicFinishing")
 	var supported: int = 0
 	var total: int = 0
@@ -57,24 +58,21 @@ func run() -> void:
 				print("UNSUPPORTED ", child.name, " ", foot)
 	check(total > 10 and supported == total, "Every civic ground prop rests on a supporting surface")
 	var hospital := map.get_node("Buildings/NeighborhoodHospital") as Node3D
-	for name: String in ["ReceptionDesk", "RecordsDesk", "PrivacyScreen", "SupplyShelfUpright"]:
-		var box := hospital.get_node(name) as CSGBox3D
-		check(is_equal_approx(box.position.y - box.size.y * 0.5, 0.12), name + " rests on hospital floor")
+	# The furnished interior is part of the exported model; its floors sit at the hospital floor height.
+	for area: String in ["West", "Lobby", "Core", "EastA", "EastB"]:
+		var floor_mesh := hospital.get_node_or_null("Source/GroundFloor_" + area) as MeshInstance3D
+		check(floor_mesh != null and absf(Alignment.world_bounds(floor_mesh).end.y - 0.12) < 0.002, "GroundFloor_" + area + " is level with the hospital floor")
 	var aligned_medical: int = 0
 	var medical_total: int = 0
 	for child: Node in hospital.get_children():
-		if child is Node3D and child.has_meta("target_height"):
+		if child is Node3D and child.has_meta("target_height") and child.has_meta("support_y"):
 			medical_total += 1
 			var bottom := Alignment.world_bounds(child).position.y
-			var height := float(child.get_meta("target_height"))
-			var correct := is_equal_approx(bottom, 0.12)
-			if is_equal_approx(height, 0.65):
-				correct = is_equal_approx(bottom, 1.02)
-			elif is_equal_approx(height, 0.22):
-				correct = is_equal_approx(bottom, 0.59) or is_equal_approx(bottom, 1.19) or is_equal_approx(bottom, 1.79)
-			if correct:
+			if absf(bottom - float(child.get_meta("support_y"))) < 0.01:
 				aligned_medical += 1
-	check(medical_total >= 20 and aligned_medical == medical_total, "All hospital furniture and bottles sit on floor, cabinet or shelves")
+			else:
+				print("MISALIGNED ", child.name, " bottom ", bottom, " support ", child.get_meta("support_y"))
+	check(medical_total >= 20 and aligned_medical == medical_total, "All hospital pack props sit on their floor, counter, cabinet or shelf")
 	player.unfreeze()
 	var pause_menu := root.get_node("PauseMenu")
 	pause_menu.set_open(true)

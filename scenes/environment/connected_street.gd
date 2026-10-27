@@ -71,7 +71,7 @@ func _build_turnaround() -> void:
 	generated.add_child(bulb)
 	bulb.position = Vector3(-129, 0, 125)
 	preload("res://scenes/environment/turnaround_geometry.gd").build(bulb, 10.0, 3.0, asphalt, concrete)
-	var hero := get_node("../Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
+	var hero := get_node("../Buildings/ResidentialLots/CarrieHouse") as Node3D
 	var entrance := hero.get_node("Entrance") as Marker3D
 	var porch := entrance.global_position
 	porch.y = 0
