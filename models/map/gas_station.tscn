@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://8dh7hdnj5fj7" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Roughness.png" id="4_kdt4a"]
 [ext_resource type="Texture2D" uid="uid://u5k0wra73hcl" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_NormalGL.jpg" id="5_jxaea"]
 [ext_resource type="Texture2D" uid="uid://26s3bwaqkewn" path="res://img/materials/asphalt/Road015C_1K-JPG_Roughness.jpg" id="5_xsro1"]
-[ext_resource type="ArrayMesh" uid="uid://cheri30j27fcd" path="res://models/props/metalFences/fence1.tres" id="6_kdt4a"]
+[ext_resource type="ArrayMesh" uid="uid://bjxb06i7m0d0q" path="res://models/props/metalFences/fence1.tres" id="6_kdt4a"]
 [ext_resource type="FontFile" uid="uid://20wc1uekvtjp" path="res://fonts/Kuigaf.ttf" id="12_81mmf"]
 [ext_resource type="Script" uid="uid://c0y8ypnbgqljc" path="res://scenes/environment/neon_sign.gd" id="13_neon_sign"]
 [ext_resource type="AudioStream" uid="uid://c4imf1tiobflc" path="res://sounds/chapters/intro/neonBuzz.mp3" id="14_neon_loop"]
@@ -221,6 +221,12 @@ size = Vector3(1.248291, 2.0582886, 1.2011719)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2kybi"]
 size = Vector3(2.689209, 2.2978516, 0.85839844)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_b1y3t"]
+size = Vector3(2.689209, 2.2978516, 0.85839844)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ahlcv"]
+size = Vector3(4.463257, 2.2978516, 0.85839844)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mrsj0"]
 resource_name = "Island_Cooler_L72in_Mat"
@@ -717,7 +723,7 @@ area_range = 9.471
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=1560766250]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -20, 0.1, 26.435501)
 material_override = SubResource("StandardMaterial3D_4raly")
-polygon = PackedVector2Array(4, 26, 4, 45, 36, 45, 36, 27)
+polygon = PackedVector2Array(4, 26, 4, 49, 36, 49, 36, 27)
 
 [node name="Fence1" type="MeshInstance3D" parent="." unique_id=841152302]
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -2.794776)
@@ -752,6 +758,94 @@ mesh = ExtResource("6_kdt4a")
 transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
 shape = SubResource("BoxShape3D_jpyye")
 
+[node name="Fence5" type="MeshInstance3D" parent="." unique_id=1237756321]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -20.314775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence5" unique_id=721449467]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence5/StaticBody3D" unique_id=1800494098]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence11" type="MeshInstance3D" parent="." unique_id=368685890]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.35, 1.485, 0, 5.9010375e-08, 0, 1.35, -5.9010375e-08, 13.739086, 1.3394564, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence11" unique_id=351582970]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence11/StaticBody3D" unique_id=435092823]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence12" type="MeshInstance3D" parent="." unique_id=190469339]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.35, 1.485, 0, 5.9010375e-08, 0, 1.35, -5.9010375e-08, 9.419086, 1.3394562, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence12" unique_id=726108510]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence12/StaticBody3D" unique_id=844503801]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence13" type="MeshInstance3D" parent="." unique_id=1719655511]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.35, 1.485, 0, 5.9010375e-08, 0, 1.35, -5.9010375e-08, 5.099086, 1.3394561, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence13" unique_id=1714759737]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence13/StaticBody3D" unique_id=1662878461]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence14" type="MeshInstance3D" parent="." unique_id=448667937]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.8318348, 1.485, 0, 8.007204e-08, 0, 1.35, -8.007204e-08, 0.027186222, 1.3394558, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence14" unique_id=2091223441]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence14/StaticBody3D" unique_id=1877352409]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence15" type="MeshInstance3D" parent="." unique_id=1356378529]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.35, 1.485, 0, 5.9010375e-08, 0, 1.35, -5.9010375e-08, -5.0259137, 1.3394556, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence15" unique_id=803693738]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence15/StaticBody3D" unique_id=983772310]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence16" type="MeshInstance3D" parent="." unique_id=304530056]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.35, 1.485, 0, 5.9010375e-08, 0, 1.35, -5.9010375e-08, -9.345914, 1.3394555, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence16" unique_id=1240703635]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence16/StaticBody3D" unique_id=339181084]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence17" type="MeshInstance3D" parent="." unique_id=2116007730]
+transform = Transform3D(-6.491141e-08, 5.9010375e-08, 1.35, 1.485, 0, 5.9010375e-08, 0, 1.35, -5.9010375e-08, -13.665914, 1.3394552, -22.474775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence17" unique_id=971299380]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence17/StaticBody3D" unique_id=1620070422]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
 [node name="Fence2" type="MeshInstance3D" parent="." unique_id=1877248571]
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 15.899086, 1.3394566, -7.194776)
 material_override = ExtResource("28_fence_cutout")
@@ -760,6 +854,61 @@ mesh = ExtResource("6_kdt4a")
 [node name="StaticBody3D" type="StaticBody3D" parent="Fence2" unique_id=2081829233]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Fence2/StaticBody3D" unique_id=951691418]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence6" type="MeshInstance3D" parent="." unique_id=1963285460]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, -15.929645, 1.3394551, -2.794776)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence6" unique_id=1585458002]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence6/StaticBody3D" unique_id=1225575224]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence7" type="MeshInstance3D" parent="." unique_id=1292051455]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, -15.929645, 1.3394551, -11.594776)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence7" unique_id=919886016]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence7/StaticBody3D" unique_id=1119048835]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence8" type="MeshInstance3D" parent="." unique_id=302745293]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, -15.929645, 1.3394551, -15.994776)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence8" unique_id=1135750111]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence8/StaticBody3D" unique_id=1272947124]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence9" type="MeshInstance3D" parent="." unique_id=1818094418]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, -15.929645, 1.3394551, -20.314775)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence9" unique_id=1959363775]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence9/StaticBody3D" unique_id=165145820]
+transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
+shape = SubResource("BoxShape3D_jpyye")
+
+[node name="Fence10" type="MeshInstance3D" parent="." unique_id=520354657]
+transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, -15.929645, 1.3394551, -7.194776)
+material_override = ExtResource("28_fence_cutout")
+mesh = ExtResource("6_kdt4a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence10" unique_id=879991952]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fence10/StaticBody3D" unique_id=240398284]
 transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357, 0, 0, 0, 0.99995357, 0.14999348, 0, -3.33786e-06)
 shape = SubResource("BoxShape3D_jpyye")
 
@@ -857,6 +1006,7 @@ omni_attenuation = -0.455
 
 [node name="StationWindow" type="CSGPolygon3D" parent="stationV3" unique_id=1388899311]
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, 2.64951, 0.8241737, -7.2015314)
+transparency = 0.25
 use_collision = true
 polygon = PackedVector2Array(-0.3, 0, -0.3, 2, 3, 2, 3, 0)
 depth = 0.02
@@ -864,6 +1014,7 @@ material = SubResource("ShaderMaterial_frosted_glass")
 
 [node name="StationWindow2" type="CSGPolygon3D" parent="stationV3" unique_id=1602881132]
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -5.358607, 0.8241737, -7.2015314)
+transparency = 0.25
 use_collision = true
 polygon = PackedVector2Array(-0.3, 0, -0.3, 2, 3, 2, 3, 0)
 depth = 0.02
@@ -1001,6 +1152,15 @@ transform = Transform3D(1.4128551, 0, 0.27828205, 0, 1.44, 0, -0.27828205, 0, 1.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64892584, 0)
 shape = SubResource("BoxShape3D_2kybi")
 
+[node name="gasStationShelf5" parent="." unique_id=2126185200 instance=ExtResource("17_m3mms")]
+transform = Transform3D(1.184279, 0, -0.81919694, 0, 1.4399999, 0, 0.81919694, 0, 1.184279, 5.558524, 0.50000024, -8.77707)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="gasStationShelf5" unique_id=1057859538]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="gasStationShelf5/StaticBody3D" unique_id=821104809]
+transform = Transform3D(0.82134855, 0, 0.57042664, 0, 1, 0, -0.57042664, 0, 0.82134855, -0.5195837, 0.6489259, -0.22623704)
+shape = SubResource("BoxShape3D_b1y3t")
+
 [node name="gasStationShelf4" parent="." unique_id=1663162249 instance=ExtResource("17_m3mms")]
 transform = Transform3D(0.66157, -1.2790331, -1.21181785e-08, -6.0429805e-08, -1.7613583e-08, -1.4400002, 1.2790332, 0.66156995, -6.1766876e-08, 7.059007, 0.95782936, -14.731443)
 
@@ -1008,8 +1168,8 @@ transform = Transform3D(0.66157, -1.2790331, -1.21181785e-08, -6.0429805e-08, -1
 transform = Transform3D(1.0574019, 0, 0, 0, 1, 0, 0, 0, 4.2104545, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="gasStationShelf4/StaticBody3D" unique_id=565401916]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64892584, 0)
-shape = SubResource("BoxShape3D_2kybi")
+transform = Transform3D(1, 0, -4.2632564e-14, 0, 1, 7.1054274e-15, -7.727152e-14, -6.217249e-15, 0.99999464, -0.8870249, 0.6489258, 0)
+shape = SubResource("BoxShape3D_ahlcv")
 
 [node name="gasStationShelf2" parent="." unique_id=605910037 instance=ExtResource("17_m3mms")]
 transform = Transform3D(1.4030235, 0, 0.32423007, 0, 1.44, 0, -0.32423007, 0, 1.4030235, -3.082544, 0.5, -8.990129)
@@ -1089,11 +1249,14 @@ shape = SubResource("BoxShape3D_k7hkw")
 [node name="Sketchfab_Scene" parent="." unique_id=688747980 instance=ExtResource("32_1t1yw")]
 transform = Transform3D(2.1608481, 0, 0.8011184, 0, 2.3045726, 0, -0.8011184, 0, 2.1608481, -2.3386357, 0.46888873, -7.189484)
 
+[node name="Sketchfab_Scene3" parent="." unique_id=525693557 instance=ExtResource("32_1t1yw")]
+transform = Transform3D(0.14591008, 0, 2.2999487, 0, 2.3045723, 0, -2.2999487, 0, 0.14591008, 4.035184, 0.46888873, -14.682274)
+
 [node name="Sketchfab_Scene2" parent="." unique_id=692475635 instance=ExtResource("33_b1y3t")]
 transform = Transform3D(0.013185174, -0.0046997177, -0.00025259927, 0, -0.000751384, 0.013979822, -0.004706502, -0.0131661715, -0.0007076521, 0.37075686, 0.5946469, -8.8575325)
 
 [node name="Metal Door_006" type="MeshInstance3D" parent="." unique_id=1843065046]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 5.9966373, 2.2151783, -16.68668)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 5.9966373, 2.2151783, -16.718737)
 mesh = SubResource("ArrayMesh_332lj")
 
 [node name="Door Handle_023" type="MeshInstance3D" parent="Metal Door_006" unique_id=2000982148]
@@ -1101,5 +1264,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7914543, -0.25493187, 0)
 mesh = SubResource("ArrayMesh_r6cjq")
 
 [node name="Metal Doorframe_004" type="MeshInstance3D" parent="Metal Door_006" unique_id=1705299792]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43761206, 0.37699997, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43761206, 0.37699997, 0.019276937)
 mesh = SubResource("ArrayMesh_alvo3")

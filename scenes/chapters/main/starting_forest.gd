@@ -92,6 +92,17 @@ var _fog_material_instance: ShaderMaterial = null
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	if has_meta("streamed_section"):
+		# Return visits share the live player/audio and never replay the opening.
+		var streaming := get_node("/root/WorldStreaming")
+		player = streaming.shared_nodes.get("Player") as FirstPersonPlayer
+		visitor_bgm = streaming.shared_nodes.get("VisitorBGM") as AudioStreamPlayer
+		welcoming_hike_bgm = streaming.shared_nodes.get("WelcomingHikeBGM") as AudioStreamPlayer
+		_has_faded = true
+		delay_dialogue_until_fade = false
+		_setup_barrier_music_trigger()
+		_setup_fog_volume()
+		return
 
 	_setup_runtime_ambient_light()
 	_ensure_player_on_floor()
@@ -113,6 +124,22 @@ func _setup_runtime_ambient_light() -> void:
 	world_environment.environment = world_environment.environment.duplicate() as Environment
 	world_environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	world_environment.environment.ambient_light_color = Color.BLACK
+
+
+func debug_jump_to_gas_station() -> void:
+	if not OS.is_debug_build():
+		return
+	var destination := get_node_or_null("GasStationDebugSpawn") as Marker3D
+	if destination == null:
+		push_warning("Gas station debug checkpoint requires GasStationDebugSpawn.")
+		return
+	await debug_jump_to_log(true)
+	if not is_inside_tree() or not is_instance_valid(player) or not is_instance_valid(destination):
+		return
+	player.global_transform = destination.global_transform
+	player.velocity = Vector3.ZERO
+	player.head.rotation = Vector3.ZERO
+	player.unfreeze()
 
 
 func debug_jump_to_log(after_climb: bool = false) -> void:

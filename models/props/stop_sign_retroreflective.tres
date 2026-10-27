@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/retroreflective_sign.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://models/props/psx_-_stop_sign_0.png" id="2_albedo"]
+
+[resource]
+resource_name = "Stop sign reflective sheeting"
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_albedo")
+shader_parameter/roughness = 0.35
+shader_parameter/metallic = 0.65
+shader_parameter/retroreflection = 0.9

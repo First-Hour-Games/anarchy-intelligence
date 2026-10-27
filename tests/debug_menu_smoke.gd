@@ -77,6 +77,12 @@ func run_checks() -> void:
 	assert(menu.get("_pending_checkpoint") == "")
 	assert(not menu.opened and not paused)
 	var finished_forest := current_scene
+	await finished_forest.debug_jump_to_gas_station()
+	var gas_spawn := finished_forest.get_node("GasStationDebugSpawn") as Marker3D
+	assert(finished_forest.player.global_position.is_equal_approx(gas_spawn.global_position))
+	assert(finished_forest.player.velocity.is_zero_approx())
+	assert(not finished_forest.player.is_frozen)
+	assert(finished_forest.player.has_item(&"map"))
 	current_scene = null
 	finished_forest.queue_free()
 	await process_frame

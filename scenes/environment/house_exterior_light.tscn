@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[node name="ExteriorLight" type="OmniLight3D"]
+light_color = Color(1, 0.91, 0.78, 1)
+light_energy = 2.0
+light_volumetric_fog_energy = 0.15
+light_size = 0.08
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 0.8
+omni_range = 7.0
+omni_attenuation = 2.0
+distance_fade_enabled = true
+distance_fade_begin = 45.0
+distance_fade_shadow = 25.0
+distance_fade_length = 15.0

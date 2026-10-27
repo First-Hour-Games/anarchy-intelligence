@@ -94,6 +94,7 @@ func _build_menu() -> void:
 	column.add_child(checkpoints)
 	_add_button(column, "Before the log: test the climb", _jump_to_checkpoint.bind("before_log"))
 	_add_button(column, "After climbing the log: continue on foot", _jump_to_checkpoint.bind("after_log"))
+	_add_button(column, "In front of the gas station", _jump_to_checkpoint.bind("gas_station"))
 	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
@@ -243,5 +244,8 @@ func _on_scene_changed() -> void:
 		var checkpoint := _pending_checkpoint
 		_pending_checkpoint = ""
 		var scene := get_tree().current_scene
-		if scene != null and scene.scene_file_path == FOREST_PATH and scene.has_method("debug_jump_to_log"):
-			scene.call("debug_jump_to_log", checkpoint == "after_log")
+		if scene != null and scene.scene_file_path == FOREST_PATH:
+			if checkpoint == "gas_station" and scene.has_method("debug_jump_to_gas_station"):
+				scene.call("debug_jump_to_gas_station")
+			elif scene.has_method("debug_jump_to_log"):
+				scene.call("debug_jump_to_log", checkpoint == "after_log")

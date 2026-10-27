@@ -51,7 +51,13 @@ func get_preset_name() -> String:
 func _on_node_added(node: Node) -> void:
 	if node is Viewport or node is WorldEnvironment or node is Camera3D or node is Light3D:
 		# Scene scripts can assign/duplicate resources or configure lights in _ready.
-		_apply_node.call_deferred(node)
+		_apply_node_id.call_deferred(node.get_instance_id())
+
+
+func _apply_node_id(instance_id: int) -> void:
+	# Streamed sections may unload before a deferred graphics update runs.
+	if is_instance_id_valid(instance_id):
+		_apply_node(instance_from_id(instance_id) as Node)
 
 
 func _apply_tree(node: Node) -> void:

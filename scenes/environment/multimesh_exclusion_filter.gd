@@ -79,6 +79,8 @@ class_name MultiMeshExclusionFilter
 
 func _ready() -> void:
 	if not Engine.is_editor_hint() and auto_prune_on_ready:
+		if multimesh != null:
+			multimesh = multimesh.duplicate()
 		prune_instances()
 
 

@@ -2,6 +2,9 @@
 extends Node3D
 class_name ProceduralGrassGenerator
 
+signal grass_generated(stats: Dictionary)
+signal grass_cleared()
+
 ## Procedural Grass Generator for outdoor environments.
 ## Generates low grass and tall grass MultiMeshes with organic distribution,
 ## terrain height snapping, and strict exclusion of buildings, roads, and parking lots.
@@ -177,6 +180,7 @@ func clear_grass() -> void:
 			tall_inst.multimesh.buffer = PackedFloat32Array()
 
 	print("[ProceduralGrassGenerator] Grass instances cleared.")
+	grass_cleared.emit()
 
 
 ## Main generation entry point.
@@ -247,12 +251,14 @@ func generate_grass() -> Dictionary:
 	var elapsed: int = Time.get_ticks_msec() - start_time
 	print("[ProceduralGrassGenerator] Done in %d ms! Low grass: %d, Tall grass: %d" % [elapsed, low_count_generated, tall_count_generated])
 
-	return {
+	var stats := {
 		"low_grass_count": low_count_generated,
 		"tall_grass_count": tall_count_generated,
 		"exclusion_aabbs_count": exclusion_aabbs.size(),
 		"elapsed_ms": elapsed
 	}
+	grass_generated.emit(stats)
+	return stats
 
 
 ## Generates a single foliage layer into target_node's MultiMesh buffer.

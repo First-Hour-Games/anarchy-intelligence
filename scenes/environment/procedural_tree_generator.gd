@@ -8,6 +8,7 @@ class_name ProceduralTreeGenerator
 
 signal trees_generated(total_instances: int, filled_count: int, pruned_count: int)
 signal trees_cleared()
+signal tree_variation_changed()
 
 @export_group("Editor Actions")
 ## Click this checkbox in the Godot Inspector to fill in the empty clearing (where Welcome Center / buildings were previously located) and prune all colliding trees.
@@ -180,6 +181,7 @@ func randomize_existing_tree_variation() -> void:
 			instance.basis = world.basis.inverse() * _sample_tree_basis(node, rng)
 			mm.set_instance_transform(i, instance)
 		mm.emit_changed()
+	tree_variation_changed.emit()
 
 
 func _sample_tree_basis(node: MultiMeshInstance3D, rng: RandomNumberGenerator) -> Basis:
@@ -849,6 +851,10 @@ func _points_to_aabb(pts: PackedVector3Array) -> AABB:
 func _csg_to_aabb(csg: CSGShape3D) -> AABB:
 	if csg is CSGBox3D:
 		return AABB(-csg.size * 0.5, csg.size)
+	if csg is CSGCylinder3D:
+		# CSG meshes are not baked yet when a scene is inspected outside the tree.
+		var radius: float = csg.radius
+		return AABB(Vector3(-radius, -csg.height * 0.5, -radius), Vector3(radius * 2.0, csg.height, radius * 2.0))
 	var meshes := csg.get_meshes()
 	if meshes.size() > 1 and meshes[1] is Mesh:
 		return (meshes[1] as Mesh).get_aabb()

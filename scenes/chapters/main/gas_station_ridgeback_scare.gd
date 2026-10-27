@@ -9,9 +9,9 @@ const CONTACT_SOUND := preload("res://sounds/entities/death_scares/wrapper_kill.
 @export var turn_angle_degrees: float = 100.0
 @export var stare_duration: float = 1.0
 @export var stare_angle_degrees: float = 25.0
-@onready var player: FirstPersonPlayer = get_parent().get_node("Player")
+@onready var player: FirstPersonPlayer = get_tree().get_first_node_in_group("player") as FirstPersonPlayer
 @onready var ridge: CorruptedFriend = get_parent().get_node("THE_RIDGEBACK")
-@onready var pickup: FlashlightPickup = get_parent().get_node("FlashlightItem/Pickup")
+@onready var pickup: FlashlightPickup = get_parent().get_node_or_null("FlashlightItem/Pickup")
 var armed := false
 var revealed := false
 var stare_time := 0.0
@@ -24,8 +24,8 @@ func _ready() -> void:
 	ridge.activation_enabled = false
 	ridge.set_physics_process(false)
 	ridge.get_node("CollisionShape3D").set_deferred("disabled", true)
-	set_physics_process(enabled)
-	if enabled:
+	set_physics_process(enabled and pickup != null)
+	if enabled and pickup != null:
 		pickup.interacted.connect(_on_flashlight_picked_up)
 
 func _on_flashlight_picked_up(interactor: Node3D) -> void:

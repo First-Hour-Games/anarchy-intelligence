@@ -45,6 +45,7 @@ fov = 74.0
 [node name="Flashlight" parent="Head/Camera3D" unique_id=112258848 instance=ExtResource("4_flashlight")]
 
 [node name="DistanceFog" type="MeshInstance3D" parent="Head/Camera3D" unique_id=1982736450]
+visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
 cast_shadow = 0
 material_override = ExtResource("6_distance_fog_mat")

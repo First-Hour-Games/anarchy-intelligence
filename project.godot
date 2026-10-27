@@ -28,6 +28,7 @@ PauseMenu="*res://scenes/ui/pause_menu.gd"
 ItemPickupScreen="*res://scenes/ui/item_pickup/item_pickup_screen.tscn"
 DebugMenu="*res://scenes/ui/debug_menu.gd"
 SceneLoader="*res://scenes/shared/scene_loader.gd"
+WorldStreaming="*res://scenes/shared/world_streaming.gd"
 
 [dialogue_manager]
 

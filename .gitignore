@@ -2,6 +2,10 @@
 .godot/
 /android/
 
+# Generated Python bytecode from asset tools.
+__pycache__/
+*.pyc
+
 # Local playable exports and their build logs.
 /builds/
 

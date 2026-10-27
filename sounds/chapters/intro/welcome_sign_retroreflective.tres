@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/retroreflective_sign.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://sounds/chapters/intro/welcomeSign_roadSigns.png" id="2_albedo"]
+
+[resource]
+resource_name = "Welcome sign reflective sheeting"
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_albedo")
+shader_parameter/roughness = 0.38
+shader_parameter/metallic = 0.65
+shader_parameter/retroreflection = 0.9
+shader_parameter/reflective_uv_rect = Vector4(0.34, 0.0, 0.668, 0.723)
