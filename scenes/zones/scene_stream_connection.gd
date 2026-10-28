@@ -12,7 +12,7 @@ extends Node3D
 
 @export_group("Editor preview")
 ## Shows the saved neighbor so house placements can be checked against its buildings.
-@export var show_neighbor_in_editor := true:
+@export var show_neighbor_in_editor := false:
 	set(value):
 		show_neighbor_in_editor = value
 		_queue_editor_preview()

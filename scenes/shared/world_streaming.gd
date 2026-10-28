@@ -188,7 +188,10 @@ func _remember_pickups(section: Node3D) -> void:
 	_pickup_paths[section.scene_file_path] = paths
 
 func _save_state(section: Node3D) -> void:
-	var state := {"interactables": {}, "removed_pickups": [], "hidden_visuals": []}
+	var state := {"interactables": {}, "removed_pickups": [], "hidden_visuals": [], "one_shot_cutscenes": {}}
+	for cutscene in get_tree().get_nodes_in_group("streaming_one_shot"):
+		if section.is_ancestor_of(cutscene):
+			state.one_shot_cutscenes[section.get_path_to(cutscene)] = cutscene.has_played
 	for node in section.find_children("*", "InteractableBlock3D", true, false):
 		state.interactables[section.get_path_to(node)] = node.is_enabled
 	var pickup_paths: Dictionary = _pickup_paths.get(section.scene_file_path, {})
@@ -203,6 +206,10 @@ func _save_state(section: Node3D) -> void:
 
 func _restore_state(section: Node3D) -> void:
 	var state: Dictionary = _states.get(section.scene_file_path, {})
+	for path: NodePath in state.get("one_shot_cutscenes", {}):
+		var cutscene := section.get_node_or_null(path)
+		if cutscene != null:
+			cutscene.set("has_played", state.one_shot_cutscenes[path])
 	for path: NodePath in state.get("interactables", {}):
 		var node := section.get_node_or_null(path)
 		if node != null:

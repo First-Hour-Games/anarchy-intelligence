@@ -20,6 +20,9 @@ class_name MultiMeshExclusionFilter
 ## If true, automatically prunes instances when entering the scene tree at game start.
 @export var auto_prune_on_ready: bool = true
 
+## If true, automatically prunes instances when entering the scene tree in the Godot Editor.
+@export var auto_prune_in_editor: bool = false
+
 @export_group("Tree Collision Deduplication")
 ## If true, pruning will also delete tree instances that collide with higher-priority trees or self-clashes.
 @export var prune_tree_collisions: bool = true
@@ -81,6 +84,8 @@ func _ready() -> void:
 	if not Engine.is_editor_hint() and auto_prune_on_ready:
 		if multimesh != null:
 			multimesh = multimesh.duplicate()
+		prune_instances()
+	elif Engine.is_editor_hint() and auto_prune_in_editor:
 		prune_instances()
 
 
@@ -443,18 +448,84 @@ func prune_all_foliage(target_parent: Node = null) -> Dictionary:
 		printerr("[MultiMeshExclusionFilter] Cannot prune all foliage: no parent node found!")
 		return {}
 
+	if p.has_method(&"prune_all_trees_and_foliage"):
+		return p.call(&"prune_all_trees_and_foliage")
+
 	# 1. Prune AABB & downward on each child
 	for child in p.get_children():
-		if child is MultiMeshInstance3D and child.get_script() != null:
+		if child is MultiMeshInstance3D:
 			if child.has_method("prune_instances"):
-				# Disable tree clashes temporarily so we do AABB/downward first
-				var orig_clashes: bool = child.get("prune_tree_collisions")
+				var orig_clashes: bool = child.get("prune_tree_collisions") if "prune_tree_collisions" in child else false
 				child.set("prune_tree_collisions", false)
 				child.call("prune_instances")
 				child.set("prune_tree_collisions", orig_clashes)
+			else:
+				_prune_generic_multimesh(child)
+		elif child.has_method(&"prune_instances"):
+			child.call(&"prune_instances")
 
 	# 2. Resolve tree clashes across all trees with top_priority_node_name first
 	return resolve_all_tree_clashes(p)
+
+
+## Prunes a generic MultiMeshInstance3D against this filter's exclusion AABBs and OBB zones.
+func _prune_generic_multimesh(mmi: MultiMeshInstance3D) -> int:
+	if not is_instance_valid(mmi) or mmi.multimesh == null:
+		return 0
+	var mm: MultiMesh = mmi.multimesh
+	if mm.instance_count == 0 or mm.buffer.is_empty():
+		return 0
+
+	var aabbs := get_exclusion_aabbs()
+	var obb_zones := get_exclusion_zones()
+	if aabbs.is_empty() and obb_zones.is_empty():
+		return 0
+
+	var is_3d: bool = (mm.transform_format == MultiMesh.TRANSFORM_3D)
+	var stride: int = 12 if is_3d else 8
+	if mm.use_colors: stride += 4
+	if mm.use_custom_data: stride += 4
+
+	var count: int = mm.instance_count
+	var buf: PackedFloat32Array = mm.buffer
+	if buf.size() < count * stride:
+		return 0
+
+	var xform := mmi.global_transform
+	var new_buf := PackedFloat32Array()
+	var removed_count := 0
+	var kept_count := 0
+
+	for i in range(count):
+		var base := i * stride
+		var local_orig := Vector3(buf[base + 3], buf[base + 7], buf[base + 11]) if is_3d else Vector3(buf[base + 2], buf[base + 5], 0.0)
+		var gpos := xform * local_orig
+		var is_inside := false
+
+		for zone in obb_zones:
+			if zone.is_point_inside(gpos):
+				is_inside = true
+				break
+
+		if not is_inside:
+			for box in aabbs:
+				if _is_point_inside_aabb(gpos, box, margin):
+					is_inside = true
+					break
+
+		if is_inside:
+			removed_count += 1
+		else:
+			kept_count += 1
+			for s in range(stride):
+				new_buf.append(buf[base + s])
+
+	if removed_count > 0:
+		mm.instance_count = kept_count
+		mm.buffer = new_buf
+		mm.emit_changed()
+
+	return removed_count
 
 
 func _is_point_inside_aabb(pt: Vector3, box: AABB, pad: float) -> bool:

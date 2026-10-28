@@ -59,6 +59,7 @@ shader_parameter/detail_patch_scale = 18.0
 shader_parameter/detail_strength = 0.52
 shader_parameter/ground_tint = Color(0.86, 0.85, 0.78, 1)
 shader_parameter/ground_saturation = 0.68
+shader_parameter/cutout_rect = Vector4(0, 0, 0, 0)
 
 [sub_resource type="BoxShape3D" id="ResidenceGroundCollision"]
 size = Vector3(700, 1, 500)
@@ -199,8 +200,7 @@ shape = SubResource("ResidenceGroundCollision")
 [node name="ForestStreamConnection" type="Node3D" parent="." unique_id=327179256]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126.8, 3, 69)
 script = ExtResource("stream_connection")
-unload_distance = 180.0
-preserve_authored_tree_spacing = true
+show_neighbor_in_editor = false
 editor_neighbor_scene = "res://scenes/chapters/main/starting_forest.tscn"
 
 [node name="ResidenceBoundary" parent="." unique_id=871427646 instance=ExtResource("residence_boundary")]
