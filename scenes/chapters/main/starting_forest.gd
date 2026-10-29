@@ -40,11 +40,22 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 
 @export_category("Log Climb Music Transition")
 @export var barrier_tree_node: NodePath = NodePath("Interactables/BarrierTree")
-@export var welcoming_hike_stream: AudioStream = preload("res://music/welcomingHike.mp3")
+@export var welcoming_hike_stream: AudioStream = preload("res://music/welcomingHike.ogg")
 @export_range(0.1, 10.0, 0.1) var music_fade_out_duration: float = 1.8
 @export_range(0.1, 10.0, 0.1) var music_fade_in_duration: float = 2.4
 @export_range(0.0, 5.0, 0.1) var music_fade_in_delay: float = 0.4
 @export_range(-40.0, 6.0, 0.5) var welcoming_hike_volume_db: float = -12.0
+
+@export_category("Near Town Music")
+## Ambient track faded in, under the wind, the first time the player nears the gas station.
+@export var near_town_stream: AudioStream = preload("res://music/nearTown.ogg")
+## The player starts the music by coming within near_town_trigger_radius (horizontal) of this node.
+@export var near_town_trigger_node: NodePath = NodePath("GasStation")
+@export_range(5.0, 200.0, 1.0) var near_town_trigger_radius: float = 55.0
+@export_range(-40.0, 6.0, 0.5) var near_town_volume_db: float = -20.0
+@export_range(0.1, 20.0, 0.1) var near_town_fade_in_duration: float = 8.0
+## How quickly any hike/visitor music still playing fades out underneath it.
+@export_range(0.1, 10.0, 0.1) var near_town_fade_out_duration: float = 4.0
 
 @export_category("Log Fog Transition")
 @export var fog_volume_node: NodePath = NodePath("FogVolume")
@@ -58,6 +69,7 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 @onready var opening_balloon: BottomDialogueBalloon = get_node_or_null("BottomDialogueBalloon") as BottomDialogueBalloon
 @onready var visitor_bgm: AudioStreamPlayer = get_node_or_null("VisitorBGM") as AudioStreamPlayer
 @onready var welcoming_hike_bgm: AudioStreamPlayer = get_node_or_null("WelcomingHikeBGM") as AudioStreamPlayer
+@onready var near_town_bgm: AudioStreamPlayer = get_node_or_null("NearTownBGM") as AudioStreamPlayer
 @onready var fog_volume: FogVolume = get_node_or_null(fog_volume_node) as FogVolume
 
 var _fade_canvas: CanvasLayer = null
@@ -81,6 +93,7 @@ var _intro_ui_opacity := 1.0:
 				item.modulate = color
 var _has_switched_music: bool = false
 var _music_transition_tween: Tween = null
+var _near_town_tween: Tween = null
 
 var _is_fog_active: bool = false
 var _fog_cleared_at_gas_station := false
@@ -98,6 +111,7 @@ func _ready() -> void:
 		player = streaming.shared_nodes.get("Player") as FirstPersonPlayer
 		visitor_bgm = streaming.shared_nodes.get("VisitorBGM") as AudioStreamPlayer
 		welcoming_hike_bgm = streaming.shared_nodes.get("WelcomingHikeBGM") as AudioStreamPlayer
+		near_town_bgm = streaming.shared_nodes.get("NearTownBGM") as AudioStreamPlayer
 		_has_faded = true
 		delay_dialogue_until_fade = false
 		_setup_barrier_music_trigger()
@@ -108,8 +122,13 @@ func _ready() -> void:
 	_ensure_player_on_floor()
 	_setup_fade_ui()
 	_setup_welcoming_hike_player()
+	_setup_near_town_player()
 	_setup_barrier_music_trigger()
 	_setup_fog_volume()
+	if SaveGame.is_restoring(scene_file_path):
+		# Continue Game: SaveGame calls restore_save_state() once the scene is in the tree.
+		_skip_opening_for_restore()
+		return
 	_prepare_audio_players()
 
 	if auto_start_fade:
@@ -208,6 +227,7 @@ func _snap_player_deferred() -> void:
 
 func _process(_delta: float) -> void:
 	_update_intro_camera()
+	_check_near_town_trigger()
 
 
 func _is_player_past_barrier() -> bool:
@@ -285,7 +305,7 @@ func _collect_sound_effects() -> Array[Node]:
 
 	# Include any autoplay audio streams in the scene except VisitorBGM and WelcomingHikeBGM
 	for child in find_children("*", "AudioStreamPlayer", true, false):
-		if child != visitor_bgm and child != welcoming_hike_bgm and not result.has(child):
+		if child != visitor_bgm and child != welcoming_hike_bgm and child != near_town_bgm and not result.has(child):
 			if child.autoplay or child.playing:
 				result.append(child)
 
@@ -508,12 +528,14 @@ func _setup_welcoming_hike_player() -> void:
 		welcoming_hike_bgm = AudioStreamPlayer.new()
 		welcoming_hike_bgm.name = "WelcomingHikeBGM"
 		welcoming_hike_bgm.process_mode = Node.PROCESS_MODE_ALWAYS
-		welcoming_hike_bgm.stream = welcoming_hike_stream if welcoming_hike_stream != null else preload("res://music/welcomingHike.mp3")
+		welcoming_hike_bgm.stream = welcoming_hike_stream if welcoming_hike_stream != null else preload("res://music/welcomingHike.ogg")
 		welcoming_hike_bgm.volume_db = -80.0
 		welcoming_hike_bgm.bus = &"Music"
 		add_child(welcoming_hike_bgm)
 
-	if welcoming_hike_bgm.stream is AudioStreamMP3:
+	if welcoming_hike_bgm.stream is AudioStreamOggVorbis:
+		(welcoming_hike_bgm.stream as AudioStreamOggVorbis).loop = true
+	elif welcoming_hike_bgm.stream is AudioStreamMP3:
 		(welcoming_hike_bgm.stream as AudioStreamMP3).loop = true
 	if not welcoming_hike_bgm.finished.is_connected(welcoming_hike_bgm.play):
 		welcoming_hike_bgm.finished.connect(welcoming_hike_bgm.play)
@@ -541,7 +563,7 @@ func _on_climb_over_completed(_player: Node3D = null) -> void:
 
 
 func transition_to_welcoming_hike(fade_out_time: float = music_fade_out_duration, fade_in_time: float = music_fade_in_duration) -> void:
-	if _has_switched_music:
+	if _has_switched_music or _has_near_town_started():
 		return
 	_has_switched_music = true
 
@@ -614,6 +636,164 @@ func finish_music_transition_immediately() -> void:
 		welcoming_hike_bgm.volume_db = welcoming_hike_volume_db
 		if not welcoming_hike_bgm.playing:
 			welcoming_hike_bgm.play()
+
+
+func _setup_near_town_player() -> void:
+	if not is_instance_valid(near_town_bgm):
+		near_town_bgm = AudioStreamPlayer.new()
+		near_town_bgm.name = "NearTownBGM"
+		near_town_bgm.process_mode = Node.PROCESS_MODE_ALWAYS
+		near_town_bgm.volume_db = -80.0
+		near_town_bgm.bus = &"Music"
+		add_child(near_town_bgm)
+	if near_town_bgm.stream == null:
+		near_town_bgm.stream = near_town_stream
+	if near_town_bgm.stream is AudioStreamOggVorbis or near_town_bgm.stream is AudioStreamMP3:
+		near_town_bgm.stream.set("loop", true)
+	if not near_town_bgm.finished.is_connected(near_town_bgm.play):
+		near_town_bgm.finished.connect(near_town_bgm.play)
+
+
+# Stored on the shared player so a re-streamed forest section never replays it.
+func _has_near_town_started() -> bool:
+	return is_instance_valid(near_town_bgm) and bool(near_town_bgm.get_meta(&"near_town_started", false))
+
+
+func _check_near_town_trigger() -> void:
+	if not _has_faded or not is_instance_valid(player) or not is_instance_valid(near_town_bgm):
+		return
+	if _has_near_town_started():
+		return
+	var target := get_node_or_null(near_town_trigger_node) as Node3D
+	if not is_instance_valid(target):
+		return
+	var offset := player.global_position - target.global_position
+	if Vector2(offset.x, offset.z).length() <= near_town_trigger_radius:
+		start_near_town_music()
+
+
+func _set_player_linear_volume(value: float, audio: AudioStreamPlayer) -> void:
+	if is_instance_valid(audio):
+		audio.volume_db = linear_to_db(maxf(value, 0.0001))
+
+
+func start_near_town_music(fade_in_time: float = near_town_fade_in_duration) -> void:
+	_setup_near_town_player()
+	if _has_near_town_started():
+		return
+	near_town_bgm.set_meta(&"near_town_started", true)
+	# The forest music has had its moment; keep the log climb from bringing it back.
+	_has_switched_music = true
+	if is_instance_valid(_music_transition_tween) and _music_transition_tween.is_valid():
+		_music_transition_tween.kill()
+	if is_instance_valid(visitor_bgm):
+		if is_instance_valid(opening_balloon) and opening_balloon.dialogue_finished.is_connected(visitor_bgm.play):
+			opening_balloon.dialogue_finished.disconnect(visitor_bgm.play)
+		if visitor_bgm.finished.is_connected(visitor_bgm.play):
+			visitor_bgm.finished.disconnect(visitor_bgm.play)
+
+	if is_instance_valid(_near_town_tween) and _near_town_tween.is_valid():
+		_near_town_tween.kill()
+	_near_town_tween = create_tween().set_parallel(true)
+
+	for other: AudioStreamPlayer in [visitor_bgm, welcoming_hike_bgm]:
+		if not is_instance_valid(other) or not other.playing:
+			continue
+		_near_town_tween.tween_method(
+			_set_player_linear_volume.bind(other),
+			db_to_linear(other.volume_db),
+			0.0001,
+			near_town_fade_out_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_near_town_tween.tween_callback(other.stop).set_delay(near_town_fade_out_duration)
+
+	near_town_bgm.volume_db = -80.0
+	if not near_town_bgm.playing:
+		near_town_bgm.play()
+	_near_town_tween.tween_method(
+		_set_player_linear_volume.bind(near_town_bgm),
+		0.0001,
+		db_to_linear(near_town_volume_db),
+		fade_in_time
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+## Story state for gem saves (scenes/shared/save_game.gd).
+func get_save_state() -> Dictionary:
+	return {
+		"log_climbed": _has_switched_music or _is_player_past_barrier(),
+		"near_town_music": _has_near_town_started(),
+	}
+
+
+## Puts the forest back as it was when the game was saved: past the log (with its music,
+## silo ambience and closed-off barrier) and with the right background music playing.
+## SaveGame then restores pickups, items and the player's position.
+func restore_save_state(state: Dictionary) -> void:
+	_skip_opening_for_restore()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	if not is_inside_tree() or not is_instance_valid(player):
+		return
+	if bool(state.get("log_climbed", false)):
+		var barrier := get_node_or_null(barrier_tree_node) as InteractableBlock3D
+		if is_instance_valid(barrier) and barrier.is_enabled:
+			var post_dialogue := barrier.trigger_post_teleport_dialogue
+			barrier.trigger_post_teleport_dialogue = false
+			barrier.climb_over_barrier(player)
+			barrier.finish_climb_over_immediately()
+			barrier.trigger_post_teleport_dialogue = post_dialogue
+		transition_to_welcoming_hike()
+		finish_music_transition_immediately()
+		finish_fog_transition_immediately()
+	elif is_instance_valid(visitor_bgm) and not visitor_bgm.playing:
+		# The opening dialogue normally starts this; it was skipped.
+		visitor_bgm.volume_db = -3.0
+		visitor_bgm.play()
+	if bool(state.get("near_town_music", false)):
+		finish_near_town_immediately()
+
+
+## Continue Game: no black screen, subtitle, establishing shot or opening dialogue.
+func _skip_opening_for_restore() -> void:
+	if is_instance_valid(_fade_tween) and _fade_tween.is_valid():
+		_fade_tween.kill()
+	_restore_player_camera()
+	_is_fading = false
+	_has_faded = true
+	delay_dialogue_until_fade = false
+	if is_instance_valid(_fade_canvas):
+		_fade_canvas.queue_free()
+		_fade_canvas = null
+		_black_screen = null
+		subtitle_label = null
+	if is_instance_valid(opening_balloon):
+		opening_balloon.auto_start = false
+		opening_balloon.hide()
+		opening_balloon.queue_free()
+		opening_balloon = null
+
+
+## Starts nearTown at full volume with no fade, as if it had already faded in.
+func finish_near_town_immediately() -> void:
+	_setup_near_town_player()
+	near_town_bgm.set_meta(&"near_town_started", true)
+	_has_switched_music = true
+	for tween: Tween in [_music_transition_tween, _near_town_tween]:
+		if is_instance_valid(tween) and tween.is_valid():
+			tween.kill()
+	if is_instance_valid(visitor_bgm):
+		if is_instance_valid(opening_balloon) and opening_balloon.dialogue_finished.is_connected(visitor_bgm.play):
+			opening_balloon.dialogue_finished.disconnect(visitor_bgm.play)
+		if visitor_bgm.finished.is_connected(visitor_bgm.play):
+			visitor_bgm.finished.disconnect(visitor_bgm.play)
+	for other: AudioStreamPlayer in [visitor_bgm, welcoming_hike_bgm]:
+		if is_instance_valid(other):
+			other.stop()
+			other.volume_db = -80.0
+	near_town_bgm.volume_db = near_town_volume_db
+	if not near_town_bgm.playing:
+		near_town_bgm.play()
 
 
 func _setup_fog_volume() -> void:

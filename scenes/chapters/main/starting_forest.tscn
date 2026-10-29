@@ -28,7 +28,7 @@
 [ext_resource type="AudioStream" uid="uid://3wq0l7h20422" path="res://sounds/chapters/intro/lockedDoor.mp3" id="18_f8r3g"]
 [ext_resource type="Resource" uid="uid://cojogwthiwlq8" path="res://scenes/chapters/main/starting_forest.dialogue" id="18_forest_dialogue"]
 [ext_resource type="AudioStream" uid="uid://b8wwcc67fwdg5" path="res://sounds/ambience/forest/nightAmbience.mp3" id="19_ambience"]
-[ext_resource type="AudioStream" uid="uid://2gr2qmijragi" path="res://music/theVisitor.mp3" id="22_the_visitor"]
+[ext_resource type="AudioStream" uid="uid://2gr2qmijragi" path="res://music/theVisitor.ogg" id="22_the_visitor"]
 [ext_resource type="PackedScene" path="res://assets/local_licensed/trees_v1/trees_v1_tree_003.tscn" id="25_7ds25"]
 [ext_resource type="PackedScene" path="res://scenes/interaction/interactable_block.tscn" id="27_interactable_block"]
 [ext_resource type="Texture2D" uid="uid://cff32daeek7vw" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Color.jpg" id="28_16o3n"]
@@ -56,7 +56,7 @@
 [ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_1.tscn" id="50_3pch7"]
 [ext_resource type="FontFile" uid="uid://m1rgjvehr8j3" path="res://fonts/HelveticaNeueCondensed.ttf" id="51_helvetica"]
 [ext_resource type="PackedScene" uid="uid://dua8h30cdqr5t" path="res://scenes/environment/town_map_board.tscn" id="52_map_post"]
-[ext_resource type="AudioStream" uid="uid://x0oudfd18kan" path="res://music/welcomingHike.mp3" id="53_welcoming_hike"]
+[ext_resource type="AudioStream" uid="uid://x0oudfd18kan" path="res://music/welcomingHike.ogg" id="53_welcoming_hike"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="54_world_map"]
 [ext_resource type="Script" uid="uid://rg72wc8mxajv" path="res://scenes/atmosphere/forest_apparitions.gd" id="56_apparitions"]
 [ext_resource type="PackedScene" path="res://scenes/zones/tree_exclusion_zone.tscn" id="56_p6ceg"]
@@ -97,6 +97,9 @@
 [ext_resource type="Material" path="res://models/props/stop_sign_retroreflective.tres" id="stop_retro_material"]
 [ext_resource type="Material" path="res://sounds/chapters/intro/welcome_sign_retroreflective.tres" id="welcome_retro_material"]
 [ext_resource type="Script" uid="uid://dgfac2qq40bl6" path="res://scenes/chapters/main/wrapper_path_cutscene.gd" id="wrapper_path_cutscene"]
+[ext_resource type="AudioStream" uid="uid://bpkot8fgm107k" path="res://music/nearTown.ogg" id="near_town_music"]
+[ext_resource type="PackedScene" path="res://scenes/environment/bloody_footprint.tscn" id="bloody_footprint"]
+[ext_resource type="PackedScene" path="res://scenes/interaction/save_gem.tscn" id="save_gem"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -1352,6 +1355,12 @@ stream = ExtResource("53_welcoming_hike")
 volume_db = -80.0
 bus = &"Music"
 
+[node name="NearTownBGM" type="AudioStreamPlayer" parent="." unique_id=2023955570]
+process_mode = 3
+stream = ExtResource("near_town_music")
+volume_db = -80.0
+bus = &"Music"
+
 [node name="WorldMap" parent="." unique_id=862421942 instance=ExtResource("54_world_map")]
 
 [node name="tree_004" parent="." unique_id=1896254311 instance=ExtResource("25_7ds25")]
@@ -2265,14 +2274,92 @@ mesh = ExtResource("88_grgfc")
 [node name="CopCarSedan" parent="." unique_id=828135177 instance=ExtResource("95_egf34")]
 transform = Transform3D(-1.5503666, 0, 2.210512, 0, 2.6999996, 0, -2.210512, 0, -1.5503666, 129.94868, 1.0899088, 52)
 
+[node name="EngineLoop" type="AudioStreamPlayer3D" parent="CopCarSedan" unique_id=1407947882]
+process_mode = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+stream = ExtResource("28_engine_loop")
+volume_db = -10.0
+max_db = -3.0
+autoplay = true
+max_distance = 44.0
+bus = &"Outside"
+
 [node name="Dumpster2" parent="." unique_id=1975562706 instance=ExtResource("96_yotxs")]
 transform = Transform3D(-1.4772116, 0, -0.26047242, 0, 1.5, 0, 0.26047242, 0, -1.4772116, 137.2981, 0, 50.56271)
 
 [node name="TrashContainer2" parent="." unique_id=1180550719 instance=ExtResource("97_wq560")]
-transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 138, 0.161674, 55.4)
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 137.59909, 0.161674, 55.4)
+
+
+[node name="BloodyFootprintTest" type="Node3D" parent="." unique_id=1034870345]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 147.02072, 0.0725, 38.036102)
+
+[node name="Footprint1" parent="BloodyFootprintTest" unique_id=1568406638 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.992424, 0, -0.122857, 0, 1, 0, 0.122857, 0, 0.992424, 0.0995255, 0, -1.8)
+
+[node name="Footprint2" parent="BloodyFootprintTest" unique_id=462123121 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.992746, 0, 0.120234, 0, 1, 0, -0.120234, 0, 0.992746, -0.122827, 0, -2.45)
+left_foot = true
+
+[node name="Footprint3" parent="BloodyFootprintTest" unique_id=1856112826 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.994908, 0, -0.100791, 0, 1, 0, 0.100791, 0, 0.994908, 0.105971, 0, -3.1)
+
+[node name="Footprint4" parent="BloodyFootprintTest" unique_id=1272401177 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.998293, 0, 0.0584003, 0, 1, 0, -0.0584003, 0, 0.998293, -0.109777, 0, -3.75)
+left_foot = true
+
+[node name="Footprint5" parent="BloodyFootprintTest" unique_id=1051859979 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.988295, 0, -0.152555, 0, 1, 0, 0.152555, 0, 0.988295, 0.108009, 0, -4.4)
+
+[node name="Footprint6" parent="BloodyFootprintTest" unique_id=683628599 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.99822, 0, 0.0596397, 0, 1, 0, -0.0596397, 0, 0.99822, -0.122279, 0, -5.05)
+left_foot = true
+
+[node name="Footprint7" parent="BloodyFootprintTest" unique_id=1587715508 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.993665, 0, -0.112386, 0, 1, 0, 0.112386, 0, 0.993665, 0.119806, 0, -5.7)
+
+[node name="Footprint8" parent="BloodyFootprintTest" unique_id=1423637459 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.997867, 0, 0.0652779, 0, 1, 0, -0.0652779, 0, 0.997867, -0.118303, 0, -6.35)
+left_foot = true
+
+[node name="Footprint9" parent="BloodyFootprintTest" unique_id=1204517008 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.993956, 0, -0.109778, 0, 1, 0, 0.109778, 0, 0.993956, 0.11, 0, -7)
+
+[node name="Footprint10" parent="BloodyFootprintTest" unique_id=1941657082 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.997551, 0, 0.0699428, 0, 1, 0, -0.0699428, 0, 0.997551, -0.115, 0, -7.65)
+left_foot = true
+
+[node name="Footprint11" parent="BloodyFootprintTest" unique_id=1157988593 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.991562, 0, -0.129634, 0, 1, 0, 0.129634, 0, 0.991562, 0.11, 0.3565, -8.3)
+
+[node name="Footprint12" parent="BloodyFootprintTest" unique_id=1269429028 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.998201, 0, 0.059964, 0, 1, 0, -0.059964, 0, 0.998201, -0.115, 0.5725, -8.95)
+left_foot = true
+
+[node name="Footprint13" parent="BloodyFootprintTest" unique_id=433644667 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.995004, 0, -0.0998334, 0, 1, 0, 0.0998334, 0, 0.995004, 0.11, 0.5725, -9.6)
+
+[node name="Footprint14" parent="BloodyFootprintTest" unique_id=813242198 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.996802, 0, 0.0799147, 0, 1, 0, -0.0799147, 0, 0.996802, -0.115, 0.5725, -10.25)
+left_foot = true
+
+[node name="Footprint15" parent="BloodyFootprintTest" unique_id=1410474868 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.992809, 0, -0.119712, 0, 1, 0, 0.119712, 0, 0.992809, 0.11, 0.5725, -10.9)
+
+[node name="Footprint16" parent="BloodyFootprintTest" unique_id=1329736420 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.99875, 0, 0.0499792, 0, 1, 0, -0.0499792, 0, 0.99875, -0.115, 0.5725, -11.55)
+left_foot = true
+
+[node name="Footprint17" parent="BloodyFootprintTest" unique_id=953998398 instance=ExtResource("bloody_footprint")]
+transform = Transform3D(0.995953, 0, -0.0898785, 0, 1, 0, 0.0898785, 0, 0.995953, 0.11, 0.5725, -12.2)
+
+[node name="GasStationSaveGem" parent="." unique_id=300406649 instance=ExtResource("save_gem")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 147.02072, 0.0725, 45.0)
+location_name = "Gas Station"
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]
 [connection signal="finished" from="VisitorBGM" to="VisitorBGM" method="play"]
 [connection signal="finished" from="WelcomingHikeBGM" to="WelcomingHikeBGM" method="play"]
 [connection signal="finished" from="toyotaCrownModel2/EngineLoop" to="toyotaCrownModel2/EngineLoop" method="play"]
+[connection signal="finished" from="CopCarSedan/EngineLoop" to="CopCarSedan/EngineLoop" method="play"]

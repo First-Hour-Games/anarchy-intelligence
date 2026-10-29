@@ -11,6 +11,7 @@ from pathlib import Path
 import re
 
 from export_neighborhood_lots import export_lot, read_glb, write_glb
+import optimize_psx_industrial_pack
 
 
 DESTINATION = Path(__file__).resolve().parents[1] / "models/psx_industrial_pack"
@@ -117,6 +118,9 @@ def main():
     (DESTINATION / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     assert hashlib.sha256(args.source.read_bytes()).hexdigest() == manifest["source_sha256"]
     print(f"Exported {len(groups)} standalone models to {DESTINATION}")
+    # Share the two atlases, trim per-prop buffers, and add collision boxes.
+    for path in sorted(DESTINATION.glob("*.glb")):
+        optimize_psx_industrial_pack.optimize(path, DESTINATION)
 
 
 if __name__ == "__main__":

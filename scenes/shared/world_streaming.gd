@@ -9,7 +9,7 @@ const FOREST := "res://scenes/chapters/main/starting_forest.tscn"
 const RESIDENCE := "res://scenes/chapters/main/residence_area.tscn"
 const SHARED_NAMES := ["Player", "WorldEnvironment", "GroundPlane", "StaticBody3D",
 	"Streets", "Streets2", "DirectionalLight3D", "AspectRatioBars", "CRTOverlay",
-	"WorldMap", "NightAmbience", "VisitorBGM", "WelcomingHikeBGM"]
+	"WorldMap", "NightAmbience", "VisitorBGM", "WelcomingHikeBGM", "NearTownBGM"]
 
 var active_section: Node3D
 var shared_nodes: Dictionary = {}

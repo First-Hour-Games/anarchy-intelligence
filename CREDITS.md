@@ -58,6 +58,7 @@ licence and link are embedded in each file.
 | Old telephone | Termi1 | https://sketchfab.com/3d-models/old-telephone-5fec9138e8fe4f6aa023a99aa11de159 | Tutorial |
 | stairs | RVECH | https://sketchfab.com/3d-models/stairs-6560ab865d0f4374916a15ab538d87fb | Tutorial |
 | Table | yryabchenko | https://sketchfab.com/3d-models/table-1132fa2850a24917892733566bd68e74 | Tutorial |
+| Gem | TomaszObloj | https://sketchfab.com/3d-models/gem-ce73ada1698342d2bde0cb7b632a5b94 | Gas station; recoloured white and shiny |
 | Hourglass | Inuciian | https://sketchfab.com/3d-models/hourglass-50decbf440da4921907eb852e69a46ca | Unused, still exported |
 | Bush Test | Michele.Passerino | https://sketchfab.com/3d-models/bush-test-520dc8e3d01d4ddc8d97c710508f9f8b | Unused, still exported |
 | Snowy Car | maregajavier | https://sketchfab.com/3d-models/snowy-car-0186dc3ce18e49b9bae235ca5767b703 | Unused, still exported |
@@ -151,5 +152,5 @@ text-to-speech; record a real line.
 
   Untagged: the concrete, dirt, tile and wood footsteps, `sounds/ambience`, `sounds/player`,
   `sounds/dialogue` and `sounds/ui`.
-- **Music:** `dreamStairs.mp3`, `theVisitor.mp3`, `welcomingHike.mp3`, `intro1.wav`,
-  `menu.wav`, `tutorial.ogg`.
+- **Music:** `dreamStairs.ogg`, `theVisitor.ogg`, `welcomingHike.ogg`, `intro1.ogg`,
+  `menu.ogg`, `tutorial.ogg`.

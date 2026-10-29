@@ -26,7 +26,7 @@ const DEFAULT_BACKGROUND_COLOR := Color("454545")
 @export_category("Tutorial Music")
 @export_range(1.0, 15.0, 0.5) var tutorial_music_fade_duration := 7.5
 @export_range(-30.0, 0.0, 0.5) var tutorial_music_volume_db := -7.0
-@export var stairs_music: AudioStream = preload("res://music/dreamStairs.mp3")
+@export var stairs_music: AudioStream = preload("res://music/dreamStairs.ogg")
 @export_range(0.1, 10.0, 0.1) var tutorial_music_exit_fade_duration := 1.0
 @export_range(0.1, 10.0, 0.1) var stairs_music_fade_duration := 2.0
 @export_range(0.0, 10.0, 0.1) var stairs_music_silence_duration := 2.0

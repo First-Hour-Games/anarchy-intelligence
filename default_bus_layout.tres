@@ -51,7 +51,6 @@ cutoff_hz = 20000.0
 resource_name = "Small Store Room"
 room_size = 0.25
 damping = 0.65
-dry = 1.0
 wet = 0.12
 
 [resource]
@@ -108,11 +107,17 @@ bus/6/bypass_fx = false
 bus/6/volume_db = 0.0
 bus/6/send = &"Master"
 bus/7/name = &"OutdoorAmbience"
+bus/7/solo = false
+bus/7/mute = false
+bus/7/bypass_fx = false
 bus/7/volume_db = 0.0
 bus/7/send = &"Master"
 bus/7/effect/0/effect = SubResource("AudioEffectLowPassFilter_outdoor_ambience")
 bus/7/effect/0/enabled = false
 bus/8/name = &"InteriorAmbience"
+bus/8/solo = false
+bus/8/mute = false
+bus/8/bypass_fx = false
 bus/8/volume_db = 0.0
 bus/8/send = &"Master"
 bus/8/effect/0/effect = SubResource("AudioEffectReverb_interior_ambience")
