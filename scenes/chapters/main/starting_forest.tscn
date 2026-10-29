@@ -90,16 +90,22 @@
 [ext_resource type="PackedScene" path="res://models/map/cop_car_sedan.tscn" id="95_egf34"]
 [ext_resource type="PackedScene" uid="uid://ktyxywroqveq" path="res://models/psx_industrial_pack/dumpster.glb" id="96_yotxs"]
 [ext_resource type="PackedScene" uid="uid://c008bnjsauwng" path="res://models/psx_industrial_pack/trash_container.glb" id="97_wq560"]
+[ext_resource type="Texture2D" uid="uid://behq4v5nibim4" path="res://img/materials/footprints_bare/footprint_bare_right_albedo.png" id="100_6xerw"]
+[ext_resource type="Texture2D" uid="uid://q7qo0nkytse4" path="res://img/materials/footprints_bare/footprint_bare_right_normal.png" id="101_8t6rr"]
+[ext_resource type="Texture2D" uid="uid://bsewu5qjf0qg5" path="res://img/materials/footprints_bare/footprint_wet_orm.png" id="102_aw4bg"]
+[ext_resource type="Texture2D" uid="uid://cgcr2ocwogxvq" path="res://img/materials/footprints_bare/footprint_bare_left_albedo.png" id="103_75o2h"]
+[ext_resource type="Texture2D" uid="uid://dmwtcpp4eoeca" path="res://img/materials/footprints_bare/footprint_bare_left_normal.png" id="104_7ppi4"]
+[ext_resource type="PackedScene" path="res://scenes/environment/bloody_footprint.tscn" id="bloody_footprint"]
+[ext_resource type="Script" path="res://scenes/environment/bloody_footprint_trail.gd" id="bloody_footprint_trail"]
+[ext_resource type="AudioStream" uid="uid://bpkot8fgm107k" path="res://music/nearTown.ogg" id="near_town_music"]
 [ext_resource type="Script" uid="uid://bmwcfuam6crb1" path="res://scenes/zones/scene_stream_connection.gd" id="residence_transition"]
 [ext_resource type="Script" uid="uid://cagslsxg8jabo" path="res://scenes/chapters/main/gas_station_ridgeback_scare.gd" id="ridgeback_scare"]
+[ext_resource type="PackedScene" path="res://scenes/interaction/save_gem.tscn" id="save_gem"]
 [ext_resource type="Script" uid="uid://bg5e3egm0nydo" path="res://scenes/environment/retroreflective_sign.gd" id="sign_retro_script"]
 [ext_resource type="Script" uid="uid://bl3e8ydhkd3m4" path="res://scenes/items/flashlight_pickup.gd" id="station_flashlight_pickup"]
 [ext_resource type="Material" path="res://models/props/stop_sign_retroreflective.tres" id="stop_retro_material"]
 [ext_resource type="Material" path="res://sounds/chapters/intro/welcome_sign_retroreflective.tres" id="welcome_retro_material"]
 [ext_resource type="Script" uid="uid://dgfac2qq40bl6" path="res://scenes/chapters/main/wrapper_path_cutscene.gd" id="wrapper_path_cutscene"]
-[ext_resource type="AudioStream" uid="uid://bpkot8fgm107k" path="res://music/nearTown.ogg" id="near_town_music"]
-[ext_resource type="PackedScene" path="res://scenes/environment/bloody_footprint.tscn" id="bloody_footprint"]
-[ext_resource type="PackedScene" path="res://scenes/interaction/save_gem.tscn" id="save_gem"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
@@ -2290,71 +2296,139 @@ transform = Transform3D(-1.4772116, 0, -0.26047242, 0, 1.5, 0, 0.26047242, 0, -1
 [node name="TrashContainer2" parent="." unique_id=1180550719 instance=ExtResource("97_wq560")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 137.59909, 0.161674, 55.4)
 
-
 [node name="BloodyFootprintTest" type="Node3D" parent="." unique_id=1034870345]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 147.02072, 0.0725, 38.036102)
+transform = Transform3D(-0.061092183, 0, 0.99813205, 0, 1, 0, -0.99813205, 0, -0.061092183, 152.59253, 0.52854586, 46.82231)
+script = ExtResource("bloody_footprint_trail")
 
 [node name="Footprint1" parent="BloodyFootprintTest" unique_id=1568406638 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.992424, 0, -0.122857, 0, 1, 0, 0.122857, 0, 0.992424, 0.0995255, 0, -1.8)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint2" parent="BloodyFootprintTest" unique_id=462123121 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.992746, 0, 0.120234, 0, 1, 0, -0.120234, 0, 0.992746, -0.122827, 0, -2.45)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint3" parent="BloodyFootprintTest" unique_id=1856112826 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.994908, 0, -0.100791, 0, 1, 0, 0.100791, 0, 0.994908, 0.105971, 0, -3.1)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint4" parent="BloodyFootprintTest" unique_id=1272401177 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.998293, 0, 0.0584003, 0, 1, 0, -0.0584003, 0, 0.998293, -0.109777, 0, -3.75)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint5" parent="BloodyFootprintTest" unique_id=1051859979 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.988295, 0, -0.152555, 0, 1, 0, 0.152555, 0, 0.988295, 0.108009, 0, -4.4)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint6" parent="BloodyFootprintTest" unique_id=683628599 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.99822, 0, 0.0596397, 0, 1, 0, -0.0596397, 0, 0.99822, -0.122279, 0, -5.05)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint7" parent="BloodyFootprintTest" unique_id=1587715508 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.993665, 0, -0.112386, 0, 1, 0, 0.112386, 0, 0.993665, 0.119806, 0, -5.7)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint8" parent="BloodyFootprintTest" unique_id=1423637459 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.997867, 0, 0.0652779, 0, 1, 0, -0.0652779, 0, 0.997867, -0.118303, 0, -6.35)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint9" parent="BloodyFootprintTest" unique_id=1204517008 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.993956, 0, -0.109778, 0, 1, 0, 0.109778, 0, 0.993956, 0.11, 0, -7)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint10" parent="BloodyFootprintTest" unique_id=1941657082 instance=ExtResource("bloody_footprint")]
 transform = Transform3D(0.997551, 0, 0.0699428, 0, 1, 0, -0.0699428, 0, 0.997551, -0.115, 0, -7.65)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint11" parent="BloodyFootprintTest" unique_id=1157988593 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.991562, 0, -0.129634, 0, 1, 0, 0.129634, 0, 0.991562, 0.11, 0.3565, -8.3)
+transform = Transform3D(0.991562, 0, -0.129634, 0, 1, 0, 0.129634, 0, 0.991562, 0.11, 0, -8.3)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint12" parent="BloodyFootprintTest" unique_id=1269429028 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.998201, 0, 0.059964, 0, 1, 0, -0.059964, 0, 0.998201, -0.115, 0.5725, -8.95)
+transform = Transform3D(0.998201, 0, 0.059964, 0, 1, 0, -0.059964, 0, 0.998201, -0.115, 0, -8.95)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint13" parent="BloodyFootprintTest" unique_id=433644667 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.995004, 0, -0.0998334, 0, 1, 0, 0.0998334, 0, 0.995004, 0.11, 0.5725, -9.6)
+transform = Transform3D(0.995004, 0, -0.0998334, 0, 1, 0, 0.0998334, 0, 0.995004, 0.11, 0, -9.6)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint14" parent="BloodyFootprintTest" unique_id=813242198 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.996802, 0, 0.0799147, 0, 1, 0, -0.0799147, 0, 0.996802, -0.115, 0.5725, -10.25)
+transform = Transform3D(0.996802, 0, 0.0799147, 0, 1, 0, -0.0799147, 0, 0.996802, -0.115, 0, -10.25)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint15" parent="BloodyFootprintTest" unique_id=1410474868 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.992809, 0, -0.119712, 0, 1, 0, 0.119712, 0, 0.992809, 0.11, 0.5725, -10.9)
+transform = Transform3D(0.992809, 0, -0.119712, 0, 1, 0, 0.119712, 0, 0.992809, 0.11, 0, -10.9)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="Footprint16" parent="BloodyFootprintTest" unique_id=1329736420 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.99875, 0, 0.0499792, 0, 1, 0, -0.0499792, 0, 0.99875, -0.115, 0.5725, -11.55)
+transform = Transform3D(0.99875, 0, 0.0499792, 0, 1, 0, -0.0499792, 0, 0.99875, -0.115, 0, -11.55)
+texture_albedo = ExtResource("103_75o2h")
+texture_normal = ExtResource("104_7ppi4")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 left_foot = true
 
 [node name="Footprint17" parent="BloodyFootprintTest" unique_id=953998398 instance=ExtResource("bloody_footprint")]
-transform = Transform3D(0.995953, 0, -0.0898785, 0, 1, 0, 0.0898785, 0, 0.995953, 0.11, 0.5725, -12.2)
+transform = Transform3D(0.995953, 0, -0.0898785, 0, 1, 0, 0.0898785, 0, 0.995953, 0.11, 0, -12.2)
+texture_albedo = ExtResource("100_6xerw")
+texture_normal = ExtResource("101_8t6rr")
+texture_orm = ExtResource("102_aw4bg")
+modulate = Color(0.36, 0.012, 0.012, 1)
 
 [node name="GasStationSaveGem" parent="." unique_id=300406649 instance=ExtResource("save_gem")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 147.02072, 0.0725, 45.0)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 147.02072, 0.0725, 45)
 location_name = "Gas Station"
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]

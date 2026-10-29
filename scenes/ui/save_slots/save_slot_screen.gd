@@ -15,16 +15,27 @@ const FONT: Font = preload("res://fonts/EuropeanTeletextNuevo.ttf")
 const CRT_SHADER: Shader = preload("res://shaders/crt.gdshader")
 const MOVE_SOUND: AudioStream = preload("res://sounds/ui/move.mp3")
 const CLICK_SOUND: AudioStream = preload("res://sounds/ui/click.mp3")
-const RED := Color(0.64, 0.0, 0.0)
-const INK := Color(0.07, 0.0, 0.0)
-const BAR_TEXT := Color(0.74, 0.03, 0.03)
-const WHITE := Color(0.95, 0.93, 0.93)
+const SAVE_LOOP: AudioStream = preload("res://music/saveLoop.ogg")
+const SILENT_DB := -80.0
+## CRT blue background, white lines and bars, a pale yellow for the selection.
+const BLUE := Color(0.03, 0.15, 0.62)
+const LINE := Color(0.93, 0.95, 1.0)
+const SELECT := Color(1.0, 0.95, 0.66)
+const BAR_TEXT := Color(0.02, 0.09, 0.42)
+const FADE_TO_BLUE_SECONDS := 0.7
+const CONTENT_FADE_SECONDS := 0.3
 const BOTTOM := 4
 
 var mode: Mode = Mode.SAVE
 var on_choose: Callable
 ## Pauses the game while open (saving from a gem).
 var pause_game: bool = false
+## Fades the game out to blue before the files appear (saving from a gem).
+var fade_in: bool = false
+## saveLoop.ogg fades in to this volume while the screen is open.
+var music_volume_db: float = -8.0
+var music_fade_in: float = 1.5
+var music_fade_out: float = 0.8
 
 var _selected: int = 0
 ## The file column to go back to when moving up from the bottom bar.
@@ -41,14 +52,22 @@ var _bottom_label: Label
 var _move_player: AudioStreamPlayer
 var _click_player: AudioStreamPlayer
 var _was_paused: bool = false
+var _background_layers: Array[CanvasItem] = []
+var _content: Control
+var _music_player: AudioStreamPlayer
+var _music_tween: Tween
+var _closing: bool = false
+## Music that was already playing, faded down under the save loop: player -> its volume_db.
+var _ducked: Dictionary = {}
 
 
 ## Opens the screen on top of everything. In LOAD mode it starts on the newest file.
-static func open(parent: Node, screen_mode: Mode, choose: Callable, pause: bool = false) -> SaveSlotScreen:
+static func open(parent: Node, screen_mode: Mode, choose: Callable, pause: bool = false, fade: bool = false) -> SaveSlotScreen:
 	var screen := SaveSlotScreen.new()
 	screen.mode = screen_mode
 	screen.on_choose = choose
 	screen.pause_game = pause
+	screen.fade_in = fade
 	parent.add_child(screen)
 	return screen
 
@@ -63,19 +82,90 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_move_player = _sound(MOVE_SOUND)
 	_click_player = _sound(CLICK_SOUND)
+	_start_music()
 	_build()
 	_selected = _newest_slot() if mode == Mode.LOAD else _first_empty_slot()
 	_refresh()
+	if fade_in:
+		_play_fade_in()
+
+
+## The game fades to the blue screen first, then the files appear.
+func _play_fade_in() -> void:
+	_busy = true
+	for layer_item in _background_layers:
+		layer_item.modulate.a = 0.0
+	_content.modulate.a = 0.0
+	var tween := create_tween()
+	tween.set_parallel(true)
+	for layer_item in _background_layers:
+		tween.tween_property(layer_item, "modulate:a", 1.0, FADE_TO_BLUE_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.chain().tween_property(_content, "modulate:a", 1.0, CONTENT_FADE_SECONDS)
+	await tween.finished
+	_busy = false
 
 
 func close() -> void:
+	if _closing:
+		return
+	_closing = true
+	_busy = true
+	visible = false
 	if pause_game:
 		get_tree().paused = _was_paused
 	closed.emit()
+	await _fade_music_out().finished
 	queue_free()
 
 
+## The save loop fades in over the game's music, which dips out underneath it.
+func _start_music() -> void:
+	for node in get_tree().root.find_children("*", "AudioStreamPlayer", true, false):
+		var other := node as AudioStreamPlayer
+		if other.playing and other.bus == &"Music":
+			_ducked[other] = other.volume_db
+	var stream := SAVE_LOOP.duplicate() as AudioStream
+	if stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
+	_music_player = _sound(stream)
+	_music_player.bus = &"Music"
+	_music_player.volume_db = SILENT_DB
+	_fade_music_in()
+
+
+func _fade_music_in() -> void:
+	if _music_tween != null and _music_tween.is_valid():
+		_music_tween.kill()
+	if not _music_player.playing:
+		_music_player.play()
+	_music_tween = create_tween().set_parallel()
+	_music_tween.tween_property(_music_player, "volume_db", music_volume_db, music_fade_in) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	for other in _ducked:
+		if is_instance_valid(other):
+			_music_tween.tween_property(other, "volume_db", SILENT_DB, music_fade_in) \
+				.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+
+## Fades the save loop out and brings the ducked music back to where it was.
+func _fade_music_out(restore: bool = true) -> Tween:
+	if _music_tween != null and _music_tween.is_valid():
+		_music_tween.kill()
+	_music_tween = create_tween().set_parallel()
+	_music_tween.tween_property(_music_player, "volume_db", SILENT_DB, music_fade_out) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	if restore:
+		for other in _ducked:
+			if is_instance_valid(other):
+				_music_tween.tween_property(other, "volume_db", float(_ducked[other]), music_fade_out) \
+					.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_music_tween.chain().tween_callback(_music_player.stop)
+	return _music_tween
+
+
 func _input(event: InputEvent) -> void:
+	if _closing:
+		return
 	if _busy or Time.get_ticks_msec() < _input_ready_at:
 		get_viewport().set_input_as_handled()
 		return
@@ -126,9 +216,12 @@ func _activate() -> void:
 			return
 		_busy = true
 		_header_labels[slot].text = "LOADING"
+		# The loaded section brings its own music; don't bring the menu's back.
+		_fade_music_out(false)
 		if not await _choose(slot):
 			_busy = false
 			_header_labels[slot].text = "LOAD FAILED"
+			_fade_music_in()
 		return
 	if SaveGame.has_save(slot) and _confirm_slot != slot:
 		_confirm_slot = slot
@@ -159,11 +252,10 @@ func _refresh() -> void:
 		var data := SaveGame.read_slot(slot)
 		_style_bar(_headers[slot], selected)
 		_header_labels[slot].text = "OVERWRITE?" if _confirm_slot == slot else "FILE %02d" % (slot + 1)
-		_header_labels[slot].add_theme_color_override("font_color", INK if selected else BAR_TEXT)
 		_style_frame(_cards[slot], selected)
 		_fill_card(slot, data, selected)
 	_style_frame(_bottom, _selected == BOTTOM, 2)
-	_bottom_label.add_theme_color_override("font_color", WHITE if _selected == BOTTOM else INK)
+	_bottom_label.add_theme_color_override("font_color", SELECT if _selected == BOTTOM else LINE)
 
 
 func _fill_card(slot: int, data: Dictionary, selected: bool) -> void:
@@ -171,7 +263,7 @@ func _fill_card(slot: int, data: Dictionary, selected: bool) -> void:
 	for child in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
-	var color := WHITE if selected else INK
+	var color := SELECT if selected else LINE
 	if data.is_empty():
 		body.add_child(_spacer(1.0))
 		body.add_child(_label("NO DATA", 24, color))
@@ -193,7 +285,7 @@ func _fill_card(slot: int, data: Dictionary, selected: bool) -> void:
 		picture.texture = texture
 		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		picture.modulate = Color.WHITE if selected else Color(0.55, 0.45, 0.45)
+		picture.modulate = Color.WHITE if selected else Color(0.5, 0.56, 0.72)
 		body.add_child(_thumbnail_frame(picture, selected))
 	else:
 		var cross := CrossBox.new()
@@ -208,10 +300,11 @@ func _build() -> void:
 	add_child(root)
 
 	var background := ColorRect.new()
-	background.color = RED
+	background.color = BLUE
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(background)
+	_background_layers.append(background)
 
 	var vignette := TextureRect.new()
 	var gradient := Gradient.new()
@@ -228,11 +321,13 @@ func _build() -> void:
 	vignette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(vignette)
+	_background_layers.append(vignette)
 
 	var marks := PlusGrid.new()
 	marks.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	marks.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(marks)
+	_background_layers.append(marks)
 
 	var content := VBoxContainer.new()
 	content.anchor_left = 0.095
@@ -241,6 +336,7 @@ func _build() -> void:
 	content.anchor_bottom = 0.82
 	content.add_theme_constant_override("separation", 20)
 	root.add_child(content)
+	_content = content
 
 	var title := PanelContainer.new()
 	_style_bar(title, false)
@@ -281,7 +377,7 @@ func _build() -> void:
 	_bottom.mouse_filter = Control.MOUSE_FILTER_STOP
 	_bottom.mouse_entered.connect(_on_hover.bind(BOTTOM))
 	_bottom.gui_input.connect(_on_click.bind(BOTTOM))
-	_bottom_label = _label("CONTINUE WITHOUT SAVING" if mode == Mode.SAVE else "BACK", 26, INK)
+	_bottom_label = _label("CANCEL SAVING" if mode == Mode.SAVE else "BACK", 26, LINE)
 	_bottom.add_child(_bottom_label)
 	content.add_child(_bottom)
 
@@ -320,7 +416,7 @@ func _thumbnail_frame(inner: Control, selected: bool) -> Control:
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0.0)
-	style.border_color = WHITE if selected else INK
+	style.border_color = SELECT if selected else LINE
 	style.set_border_width_all(3)
 	frame.add_theme_stylebox_override("panel", style)
 	inner.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -331,7 +427,7 @@ func _thumbnail_frame(inner: Control, selected: bool) -> Control:
 
 func _style_bar(panel: PanelContainer, selected: bool) -> void:
 	var style := StyleBoxFlat.new()
-	style.bg_color = WHITE if selected else INK
+	style.bg_color = SELECT if selected else LINE
 	style.content_margin_top = 2
 	style.content_margin_bottom = 2
 	panel.add_theme_stylebox_override("panel", style)
@@ -339,8 +435,8 @@ func _style_bar(panel: PanelContainer, selected: bool) -> void:
 
 func _style_frame(panel: PanelContainer, selected: bool, width: int = 3) -> void:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(1, 1, 1, 0.04) if selected else Color(0, 0, 0, 0)
-	style.border_color = WHITE if selected else INK
+	style.bg_color = Color(1.0, 0.95, 0.66, 0.06) if selected else Color(0, 0, 0, 0)
+	style.border_color = SELECT if selected else LINE
 	style.set_border_width_all(width)
 	style.set_content_margin_all(18)
 	style.content_margin_top = 6
@@ -417,7 +513,7 @@ class PlusGrid extends Control:
 
 ## The empty-file picture: a crossed-out box with folded corners.
 class CrossBox extends Control:
-	var color: Color = Color.BLACK
+	var color: Color = Color.WHITE
 
 	func _draw() -> void:
 		var inset := 16.0

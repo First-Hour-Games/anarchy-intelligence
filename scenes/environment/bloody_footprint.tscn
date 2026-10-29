@@ -3,6 +3,6 @@
 [ext_resource type="Script" path="res://scenes/environment/bloody_footprint.gd" id="1_footprint"]
 
 [node name="BloodyFootprint" type="Decal"]
-size = Vector3(0.36, 0.6, 0.36)
+size = Vector3(0.506, 0.6, 0.506)
 normal_fade = 0.3
 script = ExtResource("1_footprint")

@@ -63,7 +63,7 @@ func interact(interactor: Node3D) -> void:
 		if done:
 			_flash = 1.0
 		return done
-	var screen := SaveSlotScreen.open(get_tree().root, SaveSlotScreen.Mode.SAVE, save_here, true)
+	var screen := SaveSlotScreen.open(get_tree().root, SaveSlotScreen.Mode.SAVE, save_here, true, true)
 	screen.closed.connect(_on_screen_closed.bind(player))
 	interacted.emit(interactor)
 
