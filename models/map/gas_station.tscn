@@ -35,9 +35,8 @@
 [ext_resource type="PackedScene" uid="uid://cpi3r47vlhu4c" path="res://models/props/gasStation/caution_wet_floor__cleaning_sign_v2.glb" id="33_b1y3t"]
 [ext_resource type="Texture2D" uid="uid://dolwgi5r17228" path="res://models/props/gasStation/gasStationEntrance_metal_doors.png" id="34_b1y3t"]
 [ext_resource type="PackedScene" uid="uid://bp2wv4auqf5es" path="res://models/buildings/gasStation/rusty_freezer.glb" id="35_ahlcv"]
-
 [ext_resource type="PackedScene" path="res://scenes/zones/ambient_sound_zone.tscn" id="36_ambient_zone"]
-[ext_resource type="AudioStream" path="res://sounds/ambience/forest/factoryAmbience.mp3" id="37_factory_ambience"]
+[ext_resource type="AudioStream" uid="uid://cqqw6igvsfapf" path="res://sounds/ambience/forest/factoryAmbience.mp3" id="37_factory_ambience"]
 
 [sub_resource type="Shader" id="Shader_ubpjv"]
 code = "shader_type spatial;
@@ -727,7 +726,9 @@ area_range = 9.471
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=1560766250]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -20, 0.1, 26.435501)
 material_override = SubResource("StandardMaterial3D_4raly")
+use_collision = true
 polygon = PackedVector2Array(4, 26, 4, 49, 36, 49, 36, 27)
+metadata/surface = "concrete"
 
 [node name="Fence1" type="MeshInstance3D" parent="." unique_id=841152302]
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 14.334187, 1.3394566, -2.794776)
@@ -982,14 +983,9 @@ light_size = 0.417
 omni_range = 8.729
 omni_attenuation = -0.455
 
-[node name="InteriorAmbienceZone" parent="." instance=ExtResource("36_ambient_zone")]
-position = Vector3(-0.004728, 2.88, -11.394415)
+[node name="InteriorAmbienceZone" parent="." unique_id=1559050471 instance=ExtResource("36_ambient_zone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004728, 2.88, -11.394415)
 stream = ExtResource("37_factory_ambience")
-volume_db = -12.0
-size = Vector3(16.8, 5.4, 10.8)
-interior_fade_distance = 2.5
-entrance_width = 2.4
-exterior_bleed_distance = 2.5
 
 [node name="stationV3" parent="." unique_id=85918364 instance=ExtResource("15_xsro1")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.0047283173, 0, 3.005585)
