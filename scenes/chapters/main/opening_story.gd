@@ -2,9 +2,26 @@ extends Node
 
 const DOCUMENT := preload("res://scenes/items/story_document.gd")
 const NOTEBOOK_VISUAL := preload("res://scenes/items/carrie_notebook.tscn")
+## Calls Thomas from Carrie's empty room when he comes upstairs (a placeholder recording; see
+## sounds/chapters/main/SOURCE.md).
+const VOICE_SOUND := preload("res://sounds/chapters/main/carrie_voice_placeholder.wav")
+## The lines Thomas and the voice say in Carrie's house, cleared when the house is replayed.
+const HOUSE_LINES: Array[String] = ["house", "wrapper_seen", "wrapper_rule", "carrie_voice", "empty_room",
+	"notebook_hint", "carrie_read", "carrie_warning", "wrapper_stairs"]
 const SAVE_PATH := "user://opening_story_v1.json"
+## Carrie's house (scenes/environment/carrie_house.gd), relative to the map: it names the places
+## the story uses, such as the door note, the notebook and the porch.
+const CARRIE_HOUSE := NodePath("Buildings/ResidentialLots/CarrieHouse")
 @export var persist_progress: bool = true
 @export var progress_save_path: String = SAVE_PATH
+## Editor play runs only: start the chapter at one part instead of the saved progress, to work on
+## it without playing up to it. Such a run never reads or writes the save, and a corner label says
+## so. Exported games, tests and tools always start from the save. Set back to "Saved progress"
+## when done.
+@export_enum("Saved progress", "Fresh start", "Carrie's house", "Hospital") var editor_start: int = 0
+const EDITOR_STARTS: Array[String] = ["", "a fresh start", "Carrie's house", "the hospital entrance"]
+## The editor's play buttons attach its debugger; tests and tools that load the map run without one.
+var _editor_play: bool = OS.has_feature("editor") and EngineDebugger.is_active()
 const OBJECTIVES: Array[String] = [
 	"Search the gas station for someone who can help.",
 	"Find Carrie's notebook on the second floor.",
@@ -28,6 +45,9 @@ var checkpoint := Transform3D.IDENTITY
 var document_open: bool = false
 var target_position := Vector3(158, 0, 38.7)
 var _flashlight_seen: bool = false
+## The Wrapper sits still in Carrie's armchair until Thomas has seen it there, or goes upstairs.
+var _wrapper_awake: bool = false
+var _wrapper_seen: bool = false
 var _restored: bool = false
 var restart_button: Button
 
@@ -37,10 +57,16 @@ func _ready() -> void:
 	player = get_parent().get_node("Player") as FirstPersonPlayer
 	_build_hud()
 	_build_documents()
+	_place_wrapper.call_deferred()
 	checkpoint = player.global_transform
 	player.inventory.inventory_changed.connect(_inventory_changed)
 	if is_instance_valid(player) and is_instance_valid(player.inventory) and not player.inventory.has_item(PlayerInventory.MAP_ITEM):
 		player.inventory.add_item(PlayerInventory.MAP_ITEM)
+	var editor_jump := _editor_play and editor_start != 0
+	if editor_jump:
+		# A run that starts somewhere else never touches the real save.
+		persist_progress = false
+		_show_editor_start()
 	_restore()
 	_refresh_objective()
 	if not _restored:
@@ -48,6 +74,18 @@ func _ready() -> void:
 		narrate_once("barrier", "The road is blocked. I'll have to walk. Maybe someone at the gas station can help.")
 	call_deferred("_sync_encounters")
 	call_deferred("_refresh_objective")
+	if editor_jump and editor_start >= 2:
+		DebugMenu.apply_map_checkpoint.call_deferred(get_parent(), "carrie_house" if editor_start == 2 else "hospital")
+
+## The corner note on an editor run that starts away from the saved progress.
+func _show_editor_start() -> void:
+	var note := Label.new()
+	note.text = "EDITOR START: %s - NOT SAVING" % EDITOR_STARTS[editor_start].to_upper()
+	note.add_theme_font_size_override("font_size", 13)
+	note.modulate = Color(1.0, 1.0, 1.0, 0.6)
+	note.position = Vector2(12, 8)
+	subtitle.get_parent().add_child(note)
+	print("Opening chapter: editor start at %s, progress not saved." % EDITOR_STARTS[editor_start])
 
 func _build_hud() -> void:
 	var canvas := CanvasLayer.new()
@@ -113,35 +151,31 @@ func _build_hud() -> void:
 	reader.hide()
 
 func _build_documents() -> void:
-	var house := get_parent().get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
-	_document(house, Vector3(10.5, 1.45, 12.55), &"door_note", "A note at Carrie's door", "My notebook is on the second floor, under something...\n\n- Carrie", Color(0.76, 0.7, 0.53))
+	var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
+	var note_point: Vector3 = house.call("local_point", &"door_note")
+	_document(house, note_point, &"door_note", "A note at Carrie's door", "My notebook is upstairs, on my desk.\n\n- Carrie", Color(0.76, 0.7, 0.53))
 	_mount_entrance_note.call_deferred(house)
-	# Hide the notebook in the upstairs storage corner.
-	_document(house, Vector3(14.0, 3.9952, 7.0), &"carrie", "Carrie's notebook", "They are telling everyone to go to the hospital. They say it is safe there. I can't stay in this house any longer.\n\nIf anyone comes looking for me, that's where I've gone.\n\n— Carrie", Color(0.31, 0.18, 0.12))
-	var table := CSGBox3D.new()
-	table.name = "AtticNotebookCrate"
-	table.position = Vector3(14.0, 3.7712, 7.0)
-	table.size = Vector3(0.6, 0.4, 0.5)
-	table.use_collision = true
-	var wood := StandardMaterial3D.new()
-	wood.albedo_color = Color(0.24, 0.17, 0.11)
-	table.material = wood
-	house.add_child(table)
+	# Carrie's notebook lies on the desk in her room.
+	var notebook_point: Vector3 = house.call("local_point", &"notebook")
+	_document(house, notebook_point, &"carrie", "Carrie's notebook", "They are telling everyone to go to the hospital. They say it is safe there. I can't stay in this house any longer.\n\nIf anyone comes looking for me, that's where I've gone.\n\n— Carrie\n\n[On the last page, pressed hard into the paper:]\nIf you hear me calling, it isn't me.", Color(0.31, 0.18, 0.12))
 	var hospital := get_parent().get_node("Buildings/NeighborhoodHospital") as Node3D
-	_document(hospital, Vector3(-14, 1.3425, -1.9), &"register", "Emergency shelter registration", "TEMPORARY SHELTER — ARRIVALS\n\nCarrie — admitted to the treatment ward. Personal belongings retained.\n\nLater entry: Shelter closed. Remaining residents transferred with the evacuation party. See staff records for departure instructions.", Color(0.73, 0.68, 0.48))
-	_document(hospital, Vector3(11, 1.0425, -7.6), &"evacuation", "Evacuation notice", "THE HOSPITAL IS NO LONGER SAFE.\n\nMove residents out before nightfall. The last group, including Carrie, departed with the evacuation party.\n\nDo not follow voices calling from empty rooms.\n\n[The destination has been torn from the page.]", Color(0.76, 0.74, 0.64))
-	_document(hospital, Vector3(-12, 1.82, -8.3), &"supply", "Medical stores log", "Most supplies went with the evacuation.\n\nKeep footsteps quiet. Something responds to movement in the corridor. Keep still when it is near and use the partitions for cover.", Color(0.57, 0.65, 0.58))
+	_document(hospital, hospital.call("document_point", &"register"), &"register", "Emergency shelter registration", "TEMPORARY SHELTER — ARRIVALS\n\nCarrie — admitted to the treatment ward. Personal belongings retained.\n\nLater entry: Shelter closed. Remaining residents transferred with the evacuation party. See staff records for departure instructions.", Color(0.73, 0.68, 0.48))
+	_document(hospital, hospital.call("document_point", &"evacuation"), &"evacuation", "Evacuation notice", "THE HOSPITAL IS NO LONGER SAFE.\n\nMove residents out before nightfall. The last group, including Carrie, departed with the evacuation party.\n\nDo not follow voices calling from empty rooms.\n\n[The destination has been torn from the page.]", Color(0.76, 0.74, 0.64))
+	_document(hospital, hospital.call("document_point", &"supply"), &"supply", "Medical stores log", "Most supplies went with the evacuation.\n\nKeep footsteps quiet. Something responds to movement in the corridor. Keep still when it is near and use the partitions for cover.\n\nIt goes wherever glass breaks. Throw an empty bottle to lead it away.\n\nIt never searches the lockers, closets or beds... unless it watched you climb in.", Color(0.57, 0.65, 0.58))
 
 func _mount_entrance_note(house: Node3D) -> void:
 	for i in 3:
 		await get_tree().physics_frame
 	var note := house.get_node("EntranceNote") as Node3D
-	var ray := PhysicsRayQueryParameters3D.create(house.to_global(Vector3(10.5, 1.45, 13)), house.to_global(Vector3(10.5, 1.45, 7)))
+	# Cast at the front wall through the note's spot (the house's +Z faces the porch).
+	var spot: Vector3 = house.call("local_point", &"door_note")
+	var ray := PhysicsRayQueryParameters3D.create(house.to_global(spot + Vector3.BACK), house.to_global(spot + Vector3.FORWARD))
 	ray.exclude = [player.get_rid()]
 	var hit := house.get_world_3d().direct_space_state.intersect_ray(ray)
 	if not hit.is_empty():
 		var normal: Vector3 = hit.normal
-		note.global_position = hit.position + normal * 0.012
+		# Clear of the siding, which has no collision of its own.
+		note.global_position = hit.position + normal * 0.035
 		note.look_at(note.global_position + normal, Vector3.UP, true)
 		note.set_meta("wall_mounted", true)
 
@@ -180,7 +214,7 @@ func _document(parent: Node3D, point: Vector3, id: StringName, title: String, wo
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.position.y = 0.22
 	if id == &"door_note":
-		label.text = "NOTEBOOK ON\nSECOND FLOOR\nUNDER SOMETHING...\n- Carrie"
+		label.text = "MY NOTEBOOK IS\nUPSTAIRS,\nON MY DESK\n- Carrie"
 		label.font_size = 26
 		label.pixel_size = 0.0007
 		label.billboard = BaseMaterial3D.BILLBOARD_DISABLED
@@ -200,9 +234,9 @@ func _process(delta: float) -> void:
 			subtitle_time = maxf(4.0, subtitle.text.length() * 0.055)
 	var p := player.global_position
 	_near("station", p, Vector3(153, 0, 35), 12, "Nobody here either. A flashlight would help with those dark houses.")
-	var house := get_parent().get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
-	_near("house", p, house.to_global(Vector3(11.75, 0, 12)), 9, "Carrie? It's Thomas. What happened here? This place is a mess.")
-	_near("notebook_hint", p, house.to_global(Vector3(14, 3.57, 7)), 2.5, "A notebook tucked away up here. That's Carrie's handwriting.")
+	var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
+	_near("house", p, house.call("point", &"porch"), 9, "Carrie? It's Thomas. What happened here? This place is a mess.")
+	_near("notebook_hint", p, house.call("point", &"notebook"), 2.5, "Her notebook, on the desk. That's Carrie's handwriting.")
 	_near("hospital", p, Vector3(255.2, 0, 247), 7, "They were sheltering people here. So why is it empty?")
 	_near("old_street", p, Vector3(100, 0, 80), 14, "I used to walk this way after school. I've never heard it this quiet.")
 	_near("west_road", p, Vector3(30, 0, 125), 16, "Carrie's house is at the end of this road. I hope she stayed inside.")
@@ -215,9 +249,30 @@ func _process(delta: float) -> void:
 		_refresh_objective()
 		_sync_encounters()
 		_save()
+	# Carrie's house: getting caught in it restarts at the porch. The Wrapper sits still in its chair
+	# until Thomas has seen it there (it gets up the moment he looks away), or goes upstairs without
+	# looking.
+	var inside := bool(house.call("contains_route_point", p))
+	var upstairs := inside and bool(house.call("is_upstairs", p))
+	var porch_checkpoint: Vector3 = house.call("point", &"porch") + Vector3.UP * 0.35
+	if stage == 1 and inside and checkpoint.origin.distance_to(porch_checkpoint) > 0.01:
+		_set_checkpoint(porch_checkpoint)
 	var wrapper := get_parent().get_node("Wrapper") as Node3D
-	if stage >= 1 and p.distance_to(wrapper.global_position) < 20:
+	var watching := p.distance_to(wrapper.global_position) < 20 and bool(wrapper.call("is_watched_by_player"))
+	if stage == 1 and inside and watching and bool(wrapper.get("seated")):
+		_wrapper_seen = true
+		narrate_once("wrapper_seen", "Someone's sitting in there, facing the TV... That isn't Carrie.")
+	if stage == 1 and inside and not _wrapper_awake and (_wrapper_seen or upstairs):
+		_wrapper_awake = true
+		_sync_encounters()
+	if stage >= 1 and watching and not bool(wrapper.get("seated")) and p.distance_to(wrapper.global_position) < 12:
 		narrate_once("wrapper_rule", "That thing was farther away a moment ago. It moves when I look away.")
+	if stage == 1 and upstairs:
+		_carrie_calls(house)
+	if stage == 1 and spoken.has("carrie_voice") and p.distance_to(house.call("point", &"carrie_room")) < 1.6:
+		narrate_once("empty_room", "Carrie? ...There's nobody here. But I heard her.")
+	if stage == 2 and upstairs and watching:
+		narrate_once("wrapper_stairs", "It's waiting at the bottom of the stairs. The back stairs go down to the kitchen.")
 	var ridge := get_parent().get_node("THE_RIDGEBACK") as Node3D
 	if ridge.visible and p.distance_to(ridge.global_position) < 17:
 		narrate_once("ridge", "Something's watching me. It keeps its distance... but it's following.")
@@ -228,11 +283,66 @@ func _near(id: String, p: Vector3, point: Vector3, radius: float, words: String)
 	if p.distance_to(point) < radius:
 		narrate_once(id, words)
 
-func narrate_once(id: String, words: String) -> void:
+## Queues a subtitle line once per playthrough. An interrupting line (a sound heard right now) shows
+## at once, ahead of anything queued.
+func narrate_once(id: String, words: String, speaker: String = "Thomas", interrupt: bool = false) -> void:
 	if spoken.has(id):
 		return
 	spoken[id] = true
-	subtitle_queue.append("Thomas: " + words)
+	if interrupt:
+		subtitle_queue.push_front(speaker + ": " + words)
+		subtitle_time = 0.0
+	else:
+		subtitle_queue.append(speaker + ": " + words)
+
+## The Wrapper waits in Carrie's living-room armchair, facing the dead TV.
+func _place_wrapper() -> void:
+	var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
+	var wrapper := get_parent().get_node("Wrapper") as Node3D
+	wrapper.connect("returned_to_post", _wrapper_returned)
+	var post: Vector3 = house.call("point", &"wrapper_post")
+	var facing: Vector3 = (house.call("point", &"tv") - post) * Vector3(1, 0, 1)
+	wrapper.call("set_post", Transform3D(Basis.looking_at(facing), post), house.call("point", &"wrapper_seat"))
+
+## Back in its chair (Thomas was caught and starts again): it sits still until he sees it again.
+func _wrapper_returned() -> void:
+	_wrapper_awake = false
+	_wrapper_seen = false
+	_sync_encounters()
+
+## Upstairs, a voice like Carrie's calls Thomas from her room, which is empty.
+func _carrie_calls(house: Node3D) -> void:
+	if spoken.has("carrie_voice"):
+		return
+	narrate_once("carrie_voice", "Thomas? I'm in here...", "Carrie's voice", true)
+	var sound := AudioStreamPlayer3D.new()
+	sound.stream = VOICE_SOUND
+	sound.bus = &"Reverb"
+	# A little low: nearly her voice, not quite.
+	sound.pitch_scale = 0.92
+	house.add_child(sound)
+	sound.global_position = house.call("point", &"voice")
+	sound.finished.connect(sound.queue_free)
+	sound.play()
+
+## Debug: Carrie's house again from the porch, as just after finding the flashlight. Saving stops
+## for the rest of the session, so this never sets the real progress back.
+func debug_replay_house() -> void:
+	persist_progress = false
+	stage = 1
+	_flashlight_seen = true
+	discovered.erase("carrie")
+	for id: String in HOUSE_LINES:
+		spoken.erase(id)
+	if player.inventory.has_item(PlayerInventory.NOTEBOOK_ITEM):
+		player.inventory.remove_one(PlayerInventory.NOTEBOOK_ITEM)
+	if not player.inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+		player.inventory.add_item(PlayerInventory.FLASHLIGHT_ITEM)
+	var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
+	_set_checkpoint(house.call("point", &"porch") + Vector3.UP * 0.35)
+	get_parent().get_node("Wrapper").call("reset_enemy")
+	_refresh_objective()
+	_sync_encounters()
 
 func _inventory_changed() -> void:
 	if _flashlight_seen or not player.inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM):
@@ -267,8 +377,14 @@ func open_document(id: StringName, title: String, words: String) -> void:
 				player.inventory.add_item(PlayerInventory.NOTEBOOK_ITEM)
 				stage = maxi(stage, 2)
 				narrate_once("carrie_read", "The hospital. She thought it was safe. Maybe she's still there.")
-				var house := get_parent().get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
-				_set_checkpoint(house.to_global(Vector3(11.75, 0.35, 12.5)))
+				narrate_once("carrie_warning", "If that wasn't her calling me... then what was it?")
+				var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
+				var porch: Vector3 = house.call("point", &"porch")
+				_set_checkpoint(porch + Vector3.UP * 0.35)
+				# While Thomas reads, the Wrapper goes to wait at the foot of the main stair.
+				var foot: Vector3 = house.call("point", &"stairs_bottom")
+				var climb: Vector3 = (house.call("point", &"stairs_top") - foot) * Vector3(1, 0, 1)
+				get_parent().get_node("Wrapper").call("place", Transform3D(Basis.looking_at(climb), foot))
 			&"register":
 				stage = maxi(stage, 4)
 				narrate_once("register_read", "She made it here. They evacuated her... the staff records might say where.")
@@ -286,7 +402,9 @@ func close_document() -> void:
 		return
 	document_open = false
 	reader.hide()
-	player.unfreeze()
+	# A hidden player stays frozen until they leave the hiding spot.
+	if not player.is_hidden():
+		player.unfreeze()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	get_tree().set_group("story_mob", "suspended", false)
 	_sync_encounters()
@@ -307,14 +425,18 @@ func _refresh_objective() -> void:
 	match stage:
 		0: target_position = Vector3(158, 0, 38.7)
 		1:
-			var house := get_parent().get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
-			target_position = house.to_global(Vector3(11.75, 0, 10.25))
+			var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
+			target_position = house.call("point", &"front_door")
 		2, 3: target_position = Vector3(255.2, 0, 249)
-		4: target_position = Vector3(234, 0, 258.6)
+		4:
+			var hospital := get_parent().get_node("Buildings/NeighborhoodHospital") as Node3D
+			target_position = hospital.to_global(hospital.call("document_point", &"evacuation")) * Vector3(1, 0, 1)
 		5: target_position = Vector3.ZERO
 
 func _sync_encounters() -> void:
-	get_parent().get_node("Wrapper").set("enabled", stage >= 1)
+	# Before the notebook, the Wrapper only moves once Thomas is inside Carrie's house; after it,
+	# it follows him through town.
+	get_parent().get_node("Wrapper").set("enabled", stage >= 2 or (stage >= 1 and _wrapper_awake))
 	get_parent().get_node("Clawman").set("enabled", stage >= 3)
 	var ridge := get_parent().get_node("THE_RIDGEBACK") as Node3D
 	ridge.set("activation_enabled", _flashlight_seen)

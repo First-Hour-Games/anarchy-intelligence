@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/props/gem/gem.glb" id="1_gem"]
+
+[node name="Gem" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_gem")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.123, 0)

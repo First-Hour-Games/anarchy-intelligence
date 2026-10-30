@@ -30,6 +30,7 @@ func run() -> void:
 	var screen = load("res://scenes/ui/item_pickup/item_pickup_screen.gd").instance
 	check(player.inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM), "Pickup adds the flashlight to inventory")
 	check(screen.is_active and player.is_frozen, "Pickup inspection opens and temporarily freezes the player")
+	check(forest.get_node_or_null("FlashlightPickupDialogue") == null, "Pickup dialogue waits for confirmation")
 	check(not world_flashlight.visible, "Collected world model and its lights are hidden without the scare")
 	var preview := screen._model_pivot.get_child(0) as Node3D
 	check(preview.scene_file_path == "res://scenes/items/flashlight_preview.tscn", "Pickup inspection uses the visual-only flashlight preview")
@@ -40,8 +41,21 @@ func run() -> void:
 	await create_timer(0.4).timeout
 	screen.close()
 	await create_timer(0.4).timeout
-	check(not screen.is_active and not player.is_frozen, "Confirming pickup returns control to the player")
+	check(not screen.is_active, "Confirming pickup closes the inspection")
 	check(player.flashlight.is_enabled(), "Confirming pickup equips and switches on the flashlight")
+	var dialogue := forest.get_node_or_null("FlashlightPickupDialogue") as BottomDialogueBalloon
+	check(dialogue != null and player.is_frozen, "Confirmation starts dialogue and keeps the player still")
+	if dialogue != null:
+		check(dialogue.dialogue_line != null and dialogue.dialogue_line.character == "Thomas" and dialogue.dialogue_line.text == "This could help me navigate in the dark easier.", "Thomas says the requested flashlight pickup line")
+		if dialogue.dialogue_line != null:
+			dialogue.finish_opening_animation()
+			await process_frame
+			if dialogue.dialogue_label.is_typing:
+				dialogue.dialogue_label.skip_typing()
+			await process_frame
+			dialogue.next(dialogue.dialogue_line.next_id)
+		await create_timer(0.5).timeout
+	check(not player.is_frozen, "Finishing pickup dialogue returns control to the player")
 	for turn in 4:
 		player.rotation.y += PI
 		await create_timer(0.15).timeout

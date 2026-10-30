@@ -1,0 +1,113 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/map/cop_car_sedan.glb" id="1_sedan"]
+
+[node name="CopCarSedan" instance=ExtResource("1_sedan")]
+
+[node name="CarLights" type="Node3D" parent="."]
+
+[node name="HeadlightLeft" type="SpotLight3D" parent="CarLights"]
+transform = Transform3D(-0.99820054, 0, -0.059964, 0, 1, 0, 0.059964, 0, -0.99820054, -0.3, -0.106, 1.205)
+light_color = Color(0.94764113, 1, 0.9333369, 1)
+light_energy = 2.731
+light_volumetric_fog_energy = 1.089
+light_size = 0.067
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 40.466
+spot_attenuation = 0.59
+spot_angle = 26.61
+spot_angle_attenuation = 1.3660432
+
+[node name="HeadlightRight" type="SpotLight3D" parent="CarLights"]
+transform = Transform3D(-0.992674, 0, 0.120822, 0, 1, 0, -0.120822, 0, -0.992674, 0.3, -0.106, 1.205)
+light_color = Color(0.94764113, 1, 0.9333369, 1)
+light_energy = 2.731
+light_volumetric_fog_energy = 1.089
+light_size = 0.067
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 40.466
+spot_attenuation = 0.59
+spot_angle = 26.61
+spot_angle_attenuation = 1.3660432
+
+[node name="HeadlightFillLeft" type="SpotLight3D" parent="CarLights"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.3, -0.106, 1.205)
+light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
+light_energy = 0.2
+light_volumetric_fog_energy = 4.094
+light_size = 0.56
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 52.132
+spot_angle = 70.0
+spot_angle_attenuation = 1.3660438
+
+[node name="HeadlightFillRight" type="SpotLight3D" parent="CarLights"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.3, -0.106, 1.205)
+light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
+light_energy = 0.2
+light_volumetric_fog_energy = 4.094
+light_size = 0.56
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 2.0
+shadow_blur = 1.571
+spot_range = 52.132
+spot_angle = 70.0
+spot_angle_attenuation = 1.3660438
+
+[node name="HeadlightGlowLeft" type="OmniLight3D" parent="CarLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.106, 1.215)
+light_energy = 0.8
+light_volumetric_fog_energy = 9.0
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 3.0
+
+[node name="HeadlightGlowRight" type="OmniLight3D" parent="CarLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.106, 1.215)
+light_energy = 0.8
+light_volumetric_fog_energy = 9.0
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 3.0
+
+[node name="FrontCornerGlowLeft" type="OmniLight3D" parent="CarLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.414, -0.106, 1.105)
+light_energy = 0.544
+light_volumetric_fog_energy = 5.089
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 4.0
+omni_attenuation = 0.75
+
+[node name="FrontCornerGlowRight" type="OmniLight3D" parent="CarLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.414, -0.106, 1.105)
+light_energy = 0.544
+light_volumetric_fog_energy = 5.089
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 4.0
+omni_attenuation = 0.75
+
+[node name="TaillightLeft" type="OmniLight3D" parent="CarLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.365, -0.145, -1.25)
+light_color = Color(0.8666667, 0, 0, 1)
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 66.767
+
+[node name="TaillightRight" type="OmniLight3D" parent="CarLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.365, -0.145, -1.25)
+light_color = Color(0.8666667, 0, 0, 1)
+light_bake_mode = 1
+shadow_enabled = true
+omni_range = 66.767

@@ -8,6 +8,9 @@ const EMPTY_ITEM: StringName = &""
 const FLASHLIGHT_ITEM: StringName = &"flashlight"
 const MAP_ITEM: StringName = &"map"
 const NOTEBOOK_ITEM: StringName = &"notebook"
+const BOTTLE_ITEM: StringName = &"bottle"
+## Items that share one slot and track how many are carried.
+const STACK_LIMITS: Dictionary = {BOTTLE_ITEM: 3}
 const INK := Color(0.015, 0.015, 0.015, 0.80)
 const MUTED := Color(0.50, 0.50, 0.50)
 const WHITE := Color(1.0, 1.0, 1.0)
@@ -18,6 +21,7 @@ const MENU_FONT: Font = preload("res://fonts/EuropeanTeletextNuevo.ttf")
 @export var unselected_style: StyleBoxFlat
 var selected_slot_index: int = 0
 var _items: Array[StringName] = [EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM, EMPTY_ITEM]
+var _counts: Dictionary = {}
 var is_open: bool = false
 var _was_paused: bool = false
 var _previous_mouse: Input.MouseMode
@@ -47,15 +51,43 @@ func _ready() -> void:
 	_update_hud()
 
 func add_item(item_id: StringName) -> bool:
-	if item_id == EMPTY_ITEM or has_item(item_id):
+	if item_id == EMPTY_ITEM:
 		return false
+	if has_item(item_id):
+		if get_count(item_id) >= int(STACK_LIMITS.get(item_id, 1)):
+			return false
+		_counts[item_id] = get_count(item_id) + 1
+		_update_hud()
+		inventory_changed.emit()
+		return true
 	for slot in SLOT_COUNT:
 		if _items[slot] == EMPTY_ITEM:
 			_items[slot] = item_id
+			_counts[item_id] = 1
 			select_slot(slot)
 			inventory_changed.emit()
 			return true
 	return false
+
+## Removes one of a stackable item, clearing its slot when the last is used.
+func remove_one(item_id: StringName) -> bool:
+	if not has_item(item_id):
+		return false
+	_counts[item_id] = get_count(item_id) - 1
+	if get_count(item_id) <= 0:
+		_counts.erase(item_id)
+		_items[_items.find(item_id)] = EMPTY_ITEM
+	_update_hud()
+	inventory_changed.emit()
+	return true
+
+func get_count(item_id: StringName) -> int:
+	return int(_counts.get(item_id, 0))
+
+func can_carry_more(item_id: StringName) -> bool:
+	if has_item(item_id):
+		return get_count(item_id) < int(STACK_LIMITS.get(item_id, 1))
+	return not is_full()
 
 func has_item(item_id: StringName) -> bool:
 	return _items.has(item_id)
@@ -103,6 +135,7 @@ func _input(event: InputEvent) -> void:
 				or _player.is_frozen
 				or get_tree().paused
 				or (story != null and bool(story.get("document_open")))
+				or _is_world_map_open()
 				or (health != null and bool(health.get("is_dead")))
 			)
 			if not cannot_open:
@@ -113,6 +146,8 @@ func _input(event: InputEvent) -> void:
 			set_open(false)
 		elif event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 			select_relative(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
+		elif _is_stick_navigation(event):
+			return  # left stick keeps walking while the inventory is open; D-pad picks slots
 		elif event.is_action_pressed("ui_left"):
 			select_relative(-1)
 		elif event.is_action_pressed("ui_right"):
@@ -122,6 +157,18 @@ func _input(event: InputEvent) -> void:
 		else:
 			return
 		get_viewport().set_input_as_handled()
+
+## Gamepad B both opens the inventory and closes the map; let the map have it.
+func _is_world_map_open() -> bool:
+	for map_overlay: Node in get_tree().get_nodes_in_group("world_map"):
+		if map_overlay.has_method(&"is_map_open") and bool(map_overlay.call(&"is_map_open")):
+			return true
+	return false
+
+
+func _is_stick_navigation(event: InputEvent) -> bool:
+	return event is InputEventAction and event.device == InputDevice.SYNTHETIC_DEVICE_ID
+
 
 func set_open(value: bool, animate: bool = true) -> void:
 	if value == is_open:
@@ -486,7 +533,7 @@ func _update_hud() -> void:
 		image.visible = image.texture != null
 		var fallback := card.get_node("Fallback") as Label
 		fallback.visible = not image.visible
-		fallback.text = "CARRIE'S\nNOTES" if item == NOTEBOOK_ITEM else data.name
+		fallback.text = "CARRIE'S\nNOTES" if item == NOTEBOOK_ITEM else _get_item_display_name(item) if STACK_LIMITS.has(item) else data.name
 	var item := get_selected_item()
 	_title.text = "EMPTY" if occupied.is_empty() else _get_item_display_name(item)
 	_counter.text = "" if occupied.is_empty() else "%02d / %02d" % [selected + 1, occupied.size()]
@@ -516,10 +563,14 @@ func _use_selected() -> void:
 			var story := get_tree().get_first_node_in_group("opening_story")
 			if story != null:
 				story.open_document(&"journal", "Thomas's journal", "\n\n".join(story.journal))
+		BOTTLE_ITEM:
+			set_open(false, false)
+			_player.throw_bottle()
 
 func _get_item_display_name(item: StringName) -> String:
 	match item:
 		FLASHLIGHT_ITEM: return "FLASHLIGHT"
 		MAP_ITEM: return "TOWN MAP"
 		NOTEBOOK_ITEM: return "CARRIE'S NOTES"
+		BOTTLE_ITEM: return "EMPTY BOTTLE x%d" % get_count(item)
 		_: return "EMPTY" if item == EMPTY_ITEM else str(item).to_upper()

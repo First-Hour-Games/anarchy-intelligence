@@ -2,6 +2,9 @@
 extends Node3D
 class_name ProceduralGrassGenerator
 
+signal grass_generated(stats: Dictionary)
+signal grass_cleared()
+
 ## Procedural Grass Generator for outdoor environments.
 ## Generates low grass and tall grass MultiMeshes with organic distribution,
 ## terrain height snapping, and strict exclusion of buildings, roads, and parking lots.
@@ -130,12 +133,24 @@ class_name ProceduralGrassGenerator
 ## If true, regenerates grass on _ready() even if instances are already baked in the scene.
 @export var force_regenerate_on_ready: bool = false
 
+## If true, automatically prunes grass instances when entering the scene tree in the Godot Editor.
+@export var auto_prune_in_editor: bool = false
+
 ## Click this checkbox in the Inspector to generate/regenerate grass immediately.
 @export var click_to_generate_now: bool = false:
 	set(val):
 		if val:
 			generate_grass()
 			click_to_generate_now = false
+			notify_property_list_changed()
+
+## Click this checkbox in the Inspector to prune grass instances inside exclusion zones/buildings immediately in editor view.
+@export var click_to_prune_now: bool = false:
+	set(val):
+		if val:
+			var p_count := prune_instances()
+			print("[ProceduralGrassGenerator] Pruned %d grass instances inside exclusion zones." % p_count)
+			click_to_prune_now = false
 			notify_property_list_changed()
 
 ## Click this checkbox in the Inspector to clear all grass instances.
@@ -149,6 +164,8 @@ class_name ProceduralGrassGenerator
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
+		if auto_prune_in_editor:
+			prune_instances()
 		return
 
 	if generate_on_ready:
@@ -177,6 +194,90 @@ func clear_grass() -> void:
 			tall_inst.multimesh.buffer = PackedFloat32Array()
 
 	print("[ProceduralGrassGenerator] Grass instances cleared.")
+	grass_cleared.emit()
+
+
+## Prunes instances from managed LowGrass and TallGrass MultiMeshes that fall inside exclusion zones.
+## Returns total instances pruned.
+func prune_instances() -> int:
+	var low_inst := get_low_grass_node()
+	var tall_inst := get_tall_grass_node()
+	var exclusion_boxes := get_exclusion_aabbs()
+	var obb_zones := _get_exclusion_zones()
+	var pruned_total := 0
+
+	var targets: Array[MultiMeshInstance3D] = []
+	if is_instance_valid(low_inst): targets.append(low_inst)
+	if is_instance_valid(tall_inst): targets.append(tall_inst)
+
+	for node: MultiMeshInstance3D in targets:
+		if node.multimesh == null:
+			continue
+		var mm: MultiMesh = node.multimesh
+		if mm.instance_count == 0 or mm.buffer.is_empty():
+			continue
+
+		var is_3d: bool = (mm.transform_format == MultiMesh.TRANSFORM_3D)
+		var stride: int = 12 if is_3d else 8
+		if mm.use_colors: stride += 4
+		if mm.use_custom_data: stride += 4
+
+		var count := mm.instance_count
+		var buf := mm.buffer
+		if buf.size() < count * stride:
+			continue
+
+		var node_xform: Transform3D = node.global_transform
+		var new_buf := PackedFloat32Array()
+		var kept := 0
+		var removed := 0
+
+		for i in range(count):
+			var base := i * stride
+			var local_orig := Vector3(buf[base + 3], buf[base + 7], buf[base + 11]) if is_3d else Vector3(buf[base + 2], buf[base + 5], 0.0)
+			var gpos: Vector3 = node_xform * local_orig
+			var is_rejected := false
+
+			# 1. OBB zones check
+			for zone in obb_zones:
+				if zone.is_point_inside(gpos):
+					is_rejected = true
+					break
+
+			# 2. AABB exclusion check
+			if not is_rejected:
+				if _is_point_in_exclusion_aabbs(gpos, exclusion_boxes):
+					is_rejected = true
+
+			if is_rejected:
+				removed += 1
+			else:
+				kept += 1
+				for s in range(stride):
+					new_buf.append(buf[base + s])
+
+		if removed > 0:
+			mm.instance_count = kept
+			mm.buffer = new_buf
+			mm.emit_changed()
+			pruned_total += removed
+
+	if pruned_total > 0:
+		print("[ProceduralGrassGenerator] Pruned %d grass instances inside exclusion zones." % pruned_total)
+	return pruned_total
+
+
+func _get_exclusion_zones() -> Array[Node3D]:
+	var zones: Array[Node3D] = []
+	if is_inside_tree():
+		for g in [&"tree_exclusion_zone"]:
+			for gnode in get_tree().get_nodes_in_group(g):
+				if gnode is Node3D and gnode.has_method(&"is_point_inside") and not zones.has(gnode):
+					var exclude_gr: bool = gnode.get("exclude_grass") if "exclude_grass" in gnode else false
+					var trees_only: bool = gnode.get("filter_trees_only") if "filter_trees_only" in gnode else true
+					if exclude_gr or not trees_only:
+						zones.append(gnode as Node3D)
+	return zones
 
 
 ## Main generation entry point.
@@ -247,12 +348,14 @@ func generate_grass() -> Dictionary:
 	var elapsed: int = Time.get_ticks_msec() - start_time
 	print("[ProceduralGrassGenerator] Done in %d ms! Low grass: %d, Tall grass: %d" % [elapsed, low_count_generated, tall_count_generated])
 
-	return {
+	var stats := {
 		"low_grass_count": low_count_generated,
 		"tall_grass_count": tall_count_generated,
 		"exclusion_aabbs_count": exclusion_aabbs.size(),
 		"elapsed_ms": elapsed
 	}
+	grass_generated.emit(stats)
+	return stats
 
 
 ## Generates a single foliage layer into target_node's MultiMesh buffer.

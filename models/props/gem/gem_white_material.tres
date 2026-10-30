@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "GemWhite"
+albedo_color = Color(0.96, 0.97, 1, 1)
+metallic = 0.25
+metallic_specular = 1.0
+roughness = 0.05
+emission_enabled = true
+emission = Color(0.85, 0.9, 1, 1)
+emission_energy_multiplier = 0.6
+clearcoat_enabled = true
+clearcoat = 1.0
+clearcoat_roughness = 0.0
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.2

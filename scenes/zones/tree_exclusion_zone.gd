@@ -14,6 +14,8 @@ signal trees_pruned(zone: TreeExclusionZone3D, removed_count: int)
 	set(val):
 		size = val
 		_update_preview()
+		if Engine.is_editor_hint() and auto_prune_in_editor:
+			prune_trees_and_foliage()
 
 ## Extra padding/margin around the exclusion box (in meters).
 @export_range(0.0, 10.0, 0.1) var margin: float = 0.5
@@ -39,6 +41,9 @@ signal trees_pruned(zone: TreeExclusionZone3D, removed_count: int)
 @export_group("Pruning Settings")
 ## If true, automatically prunes tree MultiMeshes when this zone enters the scene tree at runtime.
 @export var auto_prune_on_ready: bool = true
+
+## If true, automatically prunes tree and foliage MultiMeshes when this zone enters the scene tree in the Godot Editor.
+@export var auto_prune_in_editor: bool = false
 
 ## If true, only targets MultiMeshInstance3D nodes identified as trees (via name keywords or is_tree_node).
 ## If false, prunes any MultiMeshInstance3D found within target scope.
@@ -76,6 +81,27 @@ signal trees_pruned(zone: TreeExclusionZone3D, removed_count: int)
 			click_to_prune_now = false
 			notify_property_list_changed()
 
+## Click this checkbox in the Godot Inspector to prune BOTH trees and foliage MultiMeshes within this zone immediately in the editor.
+@export var click_to_prune_trees_and_foliage_now: bool = false:
+	set(val):
+		if val:
+			var res := prune_trees_and_foliage()
+			var rem: int = res.get("total_instances_removed", 0)
+			var mod: int = res.get("modified_nodes", 0)
+			print("[TreeExclusionZone3D] '%s': Pruned %d tree & foliage instances across %d MultiMesh nodes." % [name, rem, mod])
+			click_to_prune_trees_and_foliage_now = false
+			notify_property_list_changed()
+
+## Click this checkbox in the Godot Inspector to prune foliage MultiMeshes only (non-trees, e.g. grass, bushes) within this zone.
+@export var click_to_prune_foliage_now: bool = false:
+	set(val):
+		if val:
+			var res := prune_foliage_only()
+			var rem: int = res.get("total_instances_removed", 0)
+			print("[TreeExclusionZone3D] '%s': Pruned %d foliage instances." % [name, rem])
+			click_to_prune_foliage_now = false
+			notify_property_list_changed()
+
 ## Click this checkbox in the Godot Inspector to prune trees across ALL TreeExclusionZone3D nodes in the active scene.
 @export var click_to_prune_all_zones: bool = false:
 	set(val):
@@ -87,6 +113,17 @@ signal trees_pruned(zone: TreeExclusionZone3D, removed_count: int)
 			click_to_prune_all_zones = false
 			notify_property_list_changed()
 
+## Click this checkbox in the Godot Inspector to prune trees and foliage across ALL TreeExclusionZone3D nodes in the active scene.
+@export var click_to_prune_all_zones_foliage: bool = false:
+	set(val):
+		if val:
+			var res := prune_all_zones_trees_and_foliage()
+			var grand_total: int = res.get("grand_total_removed", 0)
+			var total_z: int = res.get("total_zones", 0)
+			print("[TreeExclusionZone3D] Pruned %d total instances across %d exclusion zones." % [grand_total, total_z])
+			click_to_prune_all_zones_foliage = false
+			notify_property_list_changed()
+
 
 var _editor_mesh_instance: MeshInstance3D = null
 
@@ -96,6 +133,8 @@ func _ready() -> void:
 
 	if Engine.is_editor_hint():
 		_update_preview()
+		if auto_prune_in_editor:
+			prune_trees_and_foliage()
 		return
 
 	# Runtime behavior
@@ -195,6 +234,82 @@ func prune_trees(custom_root: Node = null) -> Dictionary:
 func prune_all_zones() -> Dictionary:
 	var scene_root := _get_scene_root()
 	return TreeExclusionZone3D.prune_all_zones_in_tree(scene_root)
+
+
+## Prunes BOTH trees and foliage MultiMeshes within this zone's bounds.
+func prune_trees_and_foliage(custom_root: Node = null) -> Dictionary:
+	var orig_filter := filter_trees_only
+	filter_trees_only = false
+	var res := prune_trees(custom_root)
+	filter_trees_only = orig_filter
+	return res
+
+
+## Prunes foliage MultiMeshes ONLY (non-trees, e.g. grass, bushes) within this zone's bounds.
+func prune_foliage_only(custom_root: Node = null) -> Dictionary:
+	var candidates := _collect_target_multimeshes(custom_root)
+	var total_removed := 0
+	var modified_nodes := 0
+	var node_details: Dictionary = {}
+
+	for mmi in candidates:
+		if not is_instance_valid(mmi) or mmi.multimesh == null:
+			continue
+
+		if _is_tree_multimesh(mmi):
+			continue
+
+		var removed := _prune_multimesh(mmi)
+		if removed > 0:
+			total_removed += removed
+			modified_nodes += 1
+			node_details[mmi.name] = removed
+
+	trees_pruned.emit(self, total_removed)
+	return {
+		"zone_name": name,
+		"total_scanned_nodes": candidates.size(),
+		"modified_nodes": modified_nodes,
+		"total_instances_removed": total_removed,
+		"details": node_details
+	}
+
+
+## Prunes trees and foliage across all TreeExclusionZone3D nodes in the active scene tree.
+func prune_all_zones_trees_and_foliage() -> Dictionary:
+	var scene_root := _get_scene_root()
+	return TreeExclusionZone3D.prune_all_zones_trees_and_foliage_in_tree(scene_root)
+
+
+## Static helper to prune all TreeExclusionZone3D zones for trees and foliage in a node hierarchy or scene tree.
+static func prune_all_zones_trees_and_foliage_in_tree(tree_or_scene: Node) -> Dictionary:
+	var total_zones := 0
+	var grand_total_removed := 0
+	var zone_results: Dictionary = {}
+
+	if not is_instance_valid(tree_or_scene):
+		return {"total_zones": 0, "grand_total_removed": 0, "zone_results": zone_results}
+
+	var zones: Array[Node] = []
+	if tree_or_scene.get_tree() != null:
+		zones = tree_or_scene.get_tree().get_nodes_in_group(&"tree_exclusion_zone")
+
+	if zones.is_empty():
+		_find_zones_recursive(tree_or_scene, zones)
+
+	for z in zones:
+		if z is TreeExclusionZone3D:
+			total_zones += 1
+			var res: Dictionary = (z as TreeExclusionZone3D).prune_trees_and_foliage(tree_or_scene)
+			var rem: int = res.get("total_instances_removed", 0)
+			grand_total_removed += rem
+			zone_results[z.name] = res
+
+	return {
+		"total_zones": total_zones,
+		"grand_total_removed": grand_total_removed,
+		"zone_results": zone_results
+	}
 
 
 ## Static helper to prune all TreeExclusionZone3D zones found in a node hierarchy or scene tree.

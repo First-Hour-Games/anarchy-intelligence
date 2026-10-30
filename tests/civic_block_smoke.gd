@@ -22,22 +22,26 @@ func run_test() -> void:
 	await physics_frame
 	var finishing := map.get_node("Buildings/CivicFinishing")
 	var streetlights := map.find_children("StreetlightGlow_*", "OmniLight3D", true, false)
-	check(streetlights.size() == 31, "31 working neighborhood streetlights")
+	# The downtown beside the hospital lights its own sidewalks; the decorator lights the rest.
+	check(streetlights.size() == 29, "29 working neighborhood streetlights")
 	for light: OmniLight3D in streetlights:
 		check(light.light_energy > 0.0, "Streetlight powered " + light.name)
 	var streets := map.get_node("RemainingStreetConnections")
-	check(streets.crossings.size() == 22, "22 remaining residential lots connected")
-	var clinic := map.get_node("Buildings/NeighborhoodClinic/Interior")
-	check(clinic.has_node("Roof") and clinic.get_node("Roof").get_child_count() >= 7, "Clinic pitched roof built completely")
+	check(streets.crossings.size() == 17, "17 remaining residential lots connected")
+	check(map.has_node("Buildings/NeighborhoodHospital/Source") and map.has_node("Buildings/Downtown/Source"),
+			"Hospital and downtown in place")
 	check(finishing.get_child_count() > 40, "Urban dressing instantiated")
 	var missing_texture := false
-	for node in finishing.find_children("*", "MeshInstance3D", true, false):
-		var mesh := node as MeshInstance3D
-		if mesh.material_override != null:
+	for prop: Node in finishing.get_children():
+		if not prop.is_in_group("grounded_urban_prop"):
 			continue
-		for i in mesh.mesh.get_surface_count():
-			var material := mesh.mesh.surface_get_material(i) as StandardMaterial3D
-			missing_texture = missing_texture or material == null or material.albedo_texture == null
+		for node in prop.find_children("*", "MeshInstance3D", true, false):
+			var mesh := node as MeshInstance3D
+			if mesh.material_override != null:
+				continue
+			for i in mesh.mesh.get_surface_count():
+				var material := mesh.mesh.surface_get_material(i) as StandardMaterial3D
+				missing_texture = missing_texture or material == null or material.albedo_texture == null
 	check(not missing_texture, "Imported urban meshes retain textures")
 	var space := map.get_world_3d().direct_space_state
 	var entrance_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(150.8, 1.2, 32), Vector3(150.8, 1.2, 37)))
@@ -54,19 +58,17 @@ func run_test() -> void:
 	var capsule := CapsuleShape3D.new()
 	capsule.radius = 0.35
 	capsule.height = 1.8
-	for segment: Array in [[Vector3(114, 1.05, 233), Vector3(253, 1.05, 233)], [Vector3(245, 1.05, 233), Vector3(245, 1.05, 254.85)], [Vector3(245, 1.05, 254.85), Vector3(248, 1.05, 254.85)], [Vector3(245, 1.05, 254.85), Vector3(242, 1.05, 254.85)], [Vector3(139, 1.05, 234), Vector3(139, 1.05, 270)], [Vector3(169, 1.05, 234), Vector3(169, 1.05, 270)], [Vector3(201, 1.05, 234), Vector3(201, 1.05, 270)], [Vector3(109, 1.05, 270), Vector3(237, 1.05, 270)]]:
+	for segment: Array in [[Vector3(114, 1.05, 233), Vector3(253, 1.05, 233)], [Vector3(255.2, 1.05, 233), Vector3(255.2, 1.05, 252.5)], [Vector3(245, 1.05, 254.85), Vector3(248, 1.05, 254.85)], [Vector3(245, 1.05, 254.85), Vector3(242, 1.05, 254.85)], [Vector3(139, 1.05, 234), Vector3(139, 1.05, 270)], [Vector3(169, 1.05, 234), Vector3(169, 1.05, 270)], [Vector3(201, 1.05, 234), Vector3(201, 1.05, 270)], [Vector3(109, 1.05, 270), Vector3(237, 1.05, 270)]]:
 		var query := PhysicsShapeQueryParameters3D.new()
 		query.shape = capsule
 		query.transform = Transform3D(Basis.IDENTITY, segment[0])
 		query.motion = segment[1] - segment[0]
 		var travel := space.cast_motion(query)
 		check(travel[0] > 0.99, "Walk clearance " + str(segment[0]) + " to " + str(segment[1]))
-	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(240, 1.5, 242), Vector3(240, 1.5, 247)))
-	check(not wall.is_empty(), "Clinic front window blocks movement")
-	var mounts := map.get_node("Buildings/CivicBlock").find_children("MountedBusinessSign", "Node3D", true, false)
-	check(mounts.size() == 4, "Four building-mounted business signs")
-	for mount in mounts:
-		check(mount.get_parent() is MeshInstance3D, "Sign follows building transform")
+	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(240, 1.5, 244), Vector3(240, 1.5, 252)))
+	check(not wall.is_empty(), "Hospital front blocks movement")
+	var lettering := map.get_node("Buildings/Downtown").find_children("*", "Label3D", true, false)
+	check(lettering.size() >= 28, "Downtown shopfronts carry their signs")
 	if "--capture" in OS.get_cmdline_user_args() and DisplayServer.get_name() != "headless":
 		for canvas in map.find_children("*", "CanvasLayer", true, false):
 			canvas.visible = false

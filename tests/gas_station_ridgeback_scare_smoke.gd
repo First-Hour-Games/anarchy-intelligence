@@ -20,6 +20,15 @@ func run() -> void:
 	await create_timer(0.4).timeout
 	assert(not screen.is_active)
 	assert(forest.player.flashlight.is_enabled(), "Reward confirmation must switch on the equipped flashlight")
+	var dialogue := forest.get_node_or_null("FlashlightPickupDialogue") as BottomDialogueBalloon
+	if dialogue != null:
+		dialogue.finish_opening_animation()
+		await process_frame
+		if dialogue.dialogue_label.is_typing:
+			dialogue.dialogue_label.skip_typing()
+		await process_frame
+		dialogue.next(dialogue.dialogue_line.next_id)
+		await create_timer(0.5).timeout
 	forest.player.unfreeze()
 	await physics_frame
 	assert(not scare.rushing, "Pickup alone must not reveal Ridgeback")

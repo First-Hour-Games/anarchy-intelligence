@@ -21,6 +21,9 @@ var input_ready_at: int = 0
 var can_continue: bool = false
 @export var progress_save_path: String = "user://opening_story_v1.json"
 var reset_label: Label
+## Opens the four save files (SaveSlotScreen); shown while any file exists.
+var load_label: Label
+var slots_open: bool = false
 var graphics_label: Label
 var reset_warning: ConfirmationDialog
 
@@ -34,8 +37,12 @@ func _ready() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	input_ready_at = Time.get_ticks_msec() + 250
-	can_continue = PauseMenu.has_started_chapter or FileAccess.file_exists(progress_save_path)
+	can_continue = SaveGame.has_any_save()
 	_build_reset_option()
+	load_label = options_label.duplicate() as Label
+	load_label.name = "LoadLabel"
+	options_label.get_parent().add_child(load_label)
+	options_label.get_parent().move_child(load_label, options_label.get_index())
 	graphics_label = quit_label.duplicate() as Label
 	graphics_label.name = "GraphicsLabel"
 	graphics_label.hide()
@@ -48,11 +55,7 @@ func _ready() -> void:
 	_apply_master_volume()
 	_apply_music_volume()
 
-	main_options = [
-		{"label": start_label, "action": _start_game},
-		{"label": options_label, "action": _open_options},
-		{"label": quit_label, "action": _quit_game}
-	]
+	_rebuild_main_options()
 	
 	sub_options = [
 		{"label": start_label, "action": _toggle_master_volume_step},
@@ -71,8 +74,39 @@ func _ready() -> void:
 		if not music_player.playing:
 			music_player.play()
 
+func _rebuild_main_options() -> void:
+	main_options = [{"label": start_label, "action": _start_game}]
+	if can_continue:
+		main_options.append({"label": load_label, "action": _open_load_screen})
+	main_options.append({"label": options_label, "action": _open_options})
+	main_options.append({"label": quit_label, "action": _quit_game})
+	selected_index = clampi(selected_index, 0, main_options.size() - 1)
+
+func _open_load_screen() -> void:
+	if slots_open or is_starting:
+		return
+	slots_open = true
+	var screen := SaveSlotScreen.open(self, SaveSlotScreen.Mode.LOAD, _load_slot)
+	screen.closed.connect(_on_load_screen_closed)
+
+func _on_load_screen_closed() -> void:
+	slots_open = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	input_ready_at = Time.get_ticks_msec() + 200
+
+func _load_slot(slot: int) -> bool:
+	is_starting = true
+	PauseMenu._save_settings()
+	if music_player:
+		music_player.stop()
+	var error: Error = await SaveGame.load_slot(slot)
+	if error != OK:
+		is_starting = false
+		return false
+	return true
+
 func _setup_mouse_listeners() -> void:
-	var all_labels: Array[Label] = [start_label, options_label, quit_label, graphics_label]
+	var all_labels: Array[Label] = [start_label, load_label, options_label, quit_label, graphics_label]
 	if is_instance_valid(reset_label):
 		all_labels.append(reset_label)
 
@@ -92,7 +126,7 @@ func _setup_mouse_listeners() -> void:
 		lbl.mouse_entered.connect(_on_label_mouse_entered.bind(idx))
 
 func _on_label_mouse_entered(idx: int) -> void:
-	if is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if selected_index == idx:
 		return
@@ -102,7 +136,7 @@ func _on_label_mouse_entered(idx: int) -> void:
 		_update_menu_display(true)
 
 func _on_label_gui_input(event: InputEvent, idx: int) -> void:
-	if is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		selected_index = idx
@@ -125,7 +159,7 @@ func _mark_input_handled() -> void:
 		get_viewport().set_input_as_handled()
 
 func _input(event: InputEvent) -> void:
-	if is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
 		return
 	if not event.is_pressed() or event.is_echo():
 		return
@@ -191,6 +225,7 @@ func _input(event: InputEvent) -> void:
 func _update_menu_display(play_sound: bool = true) -> void:
 	if is_in_options_menu:
 		start_label.show()
+		load_label.hide()
 		options_label.show()
 		reset_label.show()
 		graphics_label.show()
@@ -214,13 +249,14 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		graphics_label.hide()
 		quit_label.show()
 		
-		start_label.text = "Continue Game" if can_continue else "Start Game"
+		load_label.visible = can_continue
+		start_label.text = "New Game"
+		load_label.text = "Load Game"
 		options_label.text = "Options"
 		quit_label.text = "Quit"
 		
-		_apply_label_style(start_label, selected_index == 0)
-		_apply_label_style(options_label, selected_index == 1)
-		_apply_label_style(quit_label, selected_index == 2)
+		for i in main_options.size():
+			_apply_label_style(main_options[i]["label"], selected_index == i)
 
 	if play_sound and move_sfx_player:
 		move_sfx_player.play()
@@ -273,9 +309,7 @@ func _start_game() -> void:
 func _begin_start_game() -> void:
 	PauseMenu._save_settings()
 	get_tree().paused = false
-	if can_continue:
-		await SceneLoader.change_to("res://scenes/chapters/main/map.tscn")
-		return
+	SaveGame.start_new_game()
 	SceneLoader.prefetch("res://scenes/chapters/intro/intro.tscn")
 	print("Start Game selected!")
 	
@@ -322,7 +356,10 @@ func _toggle_music_volume_step() -> void:
 
 func _close_options() -> void:
 	is_in_options_menu = false
-	selected_index = 1
+	selected_index = 0
+	for i in main_options.size():
+		if main_options[i]["label"] == options_label:
+			selected_index = i
 	_setup_mouse_listeners()
 	_update_menu_display(false)
 
@@ -353,6 +390,13 @@ func _ask_reset_progress() -> void:
 	reset_warning.get_cancel_button().grab_focus()
 
 func _reset_progress() -> void:
+	if SaveGame.delete_all() != OK:
+		var gem_error := AcceptDialog.new()
+		gem_error.title = "Could not reset progress"
+		gem_error.dialog_text = "Your save could not be deleted. Your progress has been kept."
+		add_child(gem_error)
+		gem_error.popup_centered()
+		return
 	if FileAccess.file_exists(progress_save_path):
 		var result := DirAccess.remove_absolute(progress_save_path)
 		if result != OK:
@@ -364,6 +408,8 @@ func _reset_progress() -> void:
 			return
 	PauseMenu.has_started_chapter = false
 	can_continue = false
+	_rebuild_main_options()
+	_setup_mouse_listeners()
 	if not is_in_options_menu:
 		selected_index = 0
 	reset_warning.hide()

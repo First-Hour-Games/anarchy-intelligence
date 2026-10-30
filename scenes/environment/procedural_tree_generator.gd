@@ -8,6 +8,7 @@ class_name ProceduralTreeGenerator
 
 signal trees_generated(total_instances: int, filled_count: int, pruned_count: int)
 signal trees_cleared()
+signal tree_variation_changed()
 
 @export_group("Editor Actions")
 ## Click this checkbox in the Godot Inspector to fill in the empty clearing (where Welcome Center / buildings were previously located) and prune all colliding trees.
@@ -35,12 +36,38 @@ signal trees_cleared()
 			notify_property_list_changed()
 
 ## Click this checkbox in the Godot Inspector to prune only (removes trees colliding with buildings/roads, facing downward, or clashing).
+## If prune_foliage_as_well is true, this also prunes non-tree foliage MultiMeshes (grass, plants, etc.).
 @export var click_to_prune_now: bool = false:
 	set(val):
 		if val:
-			prune_all_trees()
+			if prune_foliage_as_well:
+				prune_all_trees_and_foliage()
+			else:
+				prune_all_trees()
 			click_to_prune_now = false
 			notify_property_list_changed()
+
+## Click this checkbox in the Godot Inspector to prune BOTH trees and all foliage MultiMeshes immediately in editor view.
+@export var click_to_prune_trees_and_foliage_now: bool = false:
+	set(val):
+		if val:
+			prune_all_trees_and_foliage()
+			click_to_prune_trees_and_foliage_now = false
+			notify_property_list_changed()
+
+## Click this checkbox in the Godot Inspector to prune foliage MultiMeshes only (grass, plants, bushes) immediately in editor view.
+@export var click_to_prune_all_foliage_now: bool = false:
+	set(val):
+		if val:
+			prune_all_foliage()
+			click_to_prune_all_foliage_now = false
+			notify_property_list_changed()
+
+## If true, automatically prunes trees and foliage when entering the scene tree in the Godot Editor.
+@export var auto_prune_in_editor: bool = false
+
+## If true, pruning operations will prune both tree MultiMeshes AND all other foliage MultiMeshes (grass, plants, etc.).
+@export var prune_foliage_as_well: bool = true
 
 ## Click this checkbox in the Godot Inspector to clear all tree instances from all managed tree MultiMeshes.
 @export var click_to_clear_now: bool = false:
@@ -180,6 +207,7 @@ func randomize_existing_tree_variation() -> void:
 			instance.basis = world.basis.inverse() * _sample_tree_basis(node, rng)
 			mm.set_instance_transform(i, instance)
 		mm.emit_changed()
+	tree_variation_changed.emit()
 
 
 func _sample_tree_basis(node: MultiMeshInstance3D, rng: RandomNumberGenerator) -> Basis:
@@ -192,7 +220,8 @@ func _sample_tree_basis(node: MultiMeshInstance3D, rng: RandomNumberGenerator) -
 
 
 func _ready() -> void:
-	pass
+	if Engine.is_editor_hint() and auto_prune_in_editor:
+		prune_all_trees_and_foliage()
 
 
 ## Fills the empty clearing where the Welcome Center was moved from, preserving valid existing trees and pruning collisions.
@@ -329,6 +358,147 @@ func prune_all_trees() -> Dictionary:
 		"pruned_total": pruned_total,
 		"final_total": kept_total
 	}
+
+
+## Prunes all non-tree foliage MultiMeshes (grass, plants, bushes, etc.) against exclusion AABBs, OBB zones, and downward orientation.
+func prune_all_foliage() -> Dictionary:
+	var foliage_nodes := _collect_foliage_multimeshes()
+	var exclusion_boxes := get_all_exclusion_aabbs()
+	var obb_zones := get_exclusion_zones()
+	var total_initial := 0
+	var total_kept := 0
+	var total_pruned := 0
+	var node_details: Dictionary = {}
+
+	for node in foliage_nodes:
+		var initial: int = node.multimesh.instance_count if node.multimesh else 0
+		total_initial += initial
+		var pruned := _prune_foliage_multimesh(node, exclusion_boxes, obb_zones)
+		total_pruned += pruned
+		total_kept += (initial - pruned)
+		if pruned > 0:
+			node_details[node.name] = pruned
+
+	# Also trigger ProceduralGrassGenerator children if present
+	for child in find_children("*", "ProceduralGrassGenerator", true, false):
+		if child.has_method(&"prune_instances"):
+			var p_count: int = child.call(&"prune_instances")
+			total_pruned += p_count
+
+	print("[ProceduralTreeGenerator] Foliage pruning complete: Initial: %d, Kept: %d, Pruned: %d" % [total_initial, total_kept, total_pruned])
+	return {
+		"initial_total": total_initial,
+		"kept_total": total_kept,
+		"pruned_total": total_pruned,
+		"details": node_details
+	}
+
+
+## Prunes BOTH trees and foliage MultiMeshes against exclusion bounds, downward orientation, and tree collisions.
+func prune_all_trees_and_foliage() -> Dictionary:
+	var tree_stats := prune_all_trees()
+	var foliage_stats := prune_all_foliage()
+	var total_pruned: int = tree_stats.get("pruned_total", 0) + foliage_stats.get("pruned_total", 0)
+	print("[ProceduralTreeGenerator] Trees & Foliage pruning complete: %d total instances removed (%d trees, %d foliage)" % [
+		total_pruned, tree_stats.get("pruned_total", 0), foliage_stats.get("pruned_total", 0)
+	])
+	return {
+		"trees": tree_stats,
+		"foliage": foliage_stats,
+		"total_pruned": total_pruned
+	}
+
+
+## Collects all non-tree foliage MultiMeshInstance3D nodes (grass, bushes, plants, etc.).
+func _collect_foliage_multimeshes() -> Array[MultiMeshInstance3D]:
+	var results: Array[MultiMeshInstance3D] = []
+	var search_root: Node = self
+	_collect_foliage_multimeshes_recursive(search_root, results)
+	if results.is_empty() and get_parent() != null:
+		_collect_foliage_multimeshes_recursive(get_parent(), results)
+	return results
+
+
+func _collect_foliage_multimeshes_recursive(node: Node, results: Array[MultiMeshInstance3D]) -> void:
+	if not is_instance_valid(node):
+		return
+	for child in node.get_children():
+		if child is MultiMeshInstance3D:
+			var lname := child.name.to_lower()
+			if not (lname.contains("tree") or lname.begins_with("treemulti")):
+				if not results.has(child):
+					results.append(child as MultiMeshInstance3D)
+		_collect_foliage_multimeshes_recursive(child, results)
+
+
+## Prunes a single foliage MultiMeshInstance3D against exclusion AABBs, OBB zones, and downward orientation.
+func _prune_foliage_multimesh(node: MultiMeshInstance3D, exclusion_boxes: Array[AABB], obb_zones: Array[Node3D]) -> int:
+	var mm := node.multimesh
+	if not mm or mm.instance_count == 0:
+		return 0
+	var buf := mm.buffer
+	if buf.is_empty():
+		return 0
+
+	var is_3d: bool = (mm.transform_format == MultiMesh.TRANSFORM_3D)
+	var stride: int = 12 if is_3d else 8
+	if mm.use_colors: stride += 4
+	if mm.use_custom_data: stride += 4
+
+	var count := mm.instance_count
+	var node_xform := _get_node_global_xform(node)
+	var model_up := get_mesh_up_vector(mm.mesh)
+	var new_buf := PackedFloat32Array()
+	var kept := 0
+	var removed := 0
+
+	for i in range(count):
+		var base := i * stride
+		var is_rejected := false
+
+		# 1. Orientation check
+		if is_3d and model_up != Vector3.ZERO:
+			var local_dir := Vector3(
+				buf[base + 0] * model_up.x + buf[base + 1] * model_up.y + buf[base + 2] * model_up.z,
+				buf[base + 4] * model_up.x + buf[base + 5] * model_up.y + buf[base + 6] * model_up.z,
+				buf[base + 8] * model_up.x + buf[base + 9] * model_up.y + buf[base + 10] * model_up.z
+			)
+			var world_dir := node_xform.basis * local_dir
+			if world_dir.y < -0.05:
+				removed += 1
+				continue
+
+		var local_orig := Vector3(buf[base + 3], buf[base + 7], buf[base + 11]) if is_3d else Vector3(buf[base + 2], buf[base + 5], 0.0)
+		var gpos := node_xform * local_orig
+
+		# 2. OBB zones check
+		for zone in obb_zones:
+			if zone.is_point_inside(gpos):
+				is_rejected = true
+				break
+		if is_rejected:
+			removed += 1
+			continue
+
+		# 3. AABB exclusion check
+		for box in exclusion_boxes:
+			if _is_point_inside_aabb(gpos, box, exclusion_margin):
+				is_rejected = true
+				break
+		if is_rejected:
+			removed += 1
+			continue
+
+		kept += 1
+		for s in range(stride):
+			new_buf.append(buf[base + s])
+
+	if removed > 0:
+		mm.instance_count = kept
+		mm.buffer = new_buf
+		mm.emit_changed()
+
+	return removed
 
 
 ## Clears all instances from all managed tree MultiMeshes.
@@ -849,6 +1019,10 @@ func _points_to_aabb(pts: PackedVector3Array) -> AABB:
 func _csg_to_aabb(csg: CSGShape3D) -> AABB:
 	if csg is CSGBox3D:
 		return AABB(-csg.size * 0.5, csg.size)
+	if csg is CSGCylinder3D:
+		# CSG meshes are not baked yet when a scene is inspected outside the tree.
+		var radius: float = csg.radius
+		return AABB(Vector3(-radius, -csg.height * 0.5, -radius), Vector3(radius * 2.0, csg.height, radius * 2.0))
 	var meshes := csg.get_meshes()
 	if meshes.size() > 1 and meshes[1] is Mesh:
 		return (meshes[1] as Mesh).get_aabb()

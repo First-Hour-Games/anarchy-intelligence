@@ -78,12 +78,13 @@ const PERIMETER_COUNTS := [45, 45, 30, 25]
 ## deriving clearance rects, so scattered props keep clear of shoulders/sidewalks.
 const ROAD_CLEARANCE_PADDING := 12.0
 const CULDESAC_TREE_CLEARANCE_RADIUS := 22.0
+## The downtown beside the hospital lights its own sidewalks (scenes/environment/civic_finishing.gd).
 const STREETLIGHTS := [
 	Vector3(-90.0, 0.0, 114.0), Vector3(-20.0, 0.0, 114.0), Vector3(50.0, 0.0, 114.0),
 	Vector3(-55.0, 0.0, 136.0), Vector3(15.0, 0.0, 136.0), Vector3(75.0, 0.0, 136.0),
 	Vector3(90.0, 0.0, 60.0), Vector3(90.0, 0.0, 175.0), Vector3(90.0, 0.0, 300.0),
 	Vector3(110.0, 0.0, 90.0), Vector3(110.0, 0.0, 195.0),
-	Vector3(160.0, 0.0, 214.0), Vector3(240.0, 0.0, 214.0), Vector3(20.0, 0.0, 236.0),
+	Vector3(20.0, 0.0, 236.0),
 	Vector3(-210, 0, -7), Vector3(-155, 0, 7), Vector3(-100, 0, -7),
 	Vector3(-45, 0, 7), Vector3(10, 0, -7), Vector3(65, 0, 7),
 	Vector3(120, 0, -7), Vector3(180, 0, -7), Vector3(235, 0, 7),
@@ -94,7 +95,7 @@ const STREETLIGHTS := [
 const STREETLIGHT_ROTATIONS := [
 	PI, PI, PI, 0.0, 0.0, 0.0,
 	-PI * 0.5, -PI * 0.5, -PI * 0.5, PI * 0.5, PI * 0.5,
-	PI, PI, 0.0,
+	0.0,
 	PI, 0.0, PI, 0.0, PI, 0.0, PI, PI, 0.0,
 	-PI * 0.5, PI * 0.5, -PI * 0.5, PI * 0.5, -PI * 0.5,
 	PI, PI, PI,
@@ -108,8 +109,11 @@ const UTILITY_POLES := [
 const STOP_SIGNS := [
 	Vector3(91.0, 0.0, 10.0),
 	Vector3(91.0, 0.0, 115.0), Vector3(109.0, 0.0, 135.0),
-	Vector3(91.0, 0.0, 215.0), Vector3(109.0, 0.0, 235.0),
+	Vector3(91.0, 0.0, 215.0), Vector3(106.4, 0.0, 232.6),
 ]
+## The downtown's buildings, lots and sidewalks (tools/blender/downtown/plan.py): lot dressing for
+## the house on its corner stays out of it.
+const DOWNTOWN_AREA := Rect2(104.0, 194.0, 172.0, 82.0)
 
 @export_group("Generation")
 @export_range(0.0, 5.0, 0.05) var streetlight_energy: float = 2.2:
@@ -355,7 +359,7 @@ func _get_driveway_material() -> StandardMaterial3D:
 
 
 func _spawn_driveway(generated_root: Node3D, house: Node3D, side: float, node_name: String) -> void:
-	if _has_connected_drive(house):
+	if _has_connected_drive(house) or _in_downtown(house.global_transform * Vector3(side * 9.5, 0.0, 6.5)):
 		return
 	var mesh_instance := MeshInstance3D.new()
 	mesh_instance.name = node_name
@@ -470,7 +474,7 @@ func _add_street_furniture(generated_root: Node3D) -> void:
 	_spawn_world_scene(
 		generated_root,
 		CITY_MODEL_ROOT + "road-sign-street.glb",
-		Vector3(109.0, 0.0, 215.0),
+		Vector3(106.4, 0.0, 218.6),
 		0.0,
 		5.5,
 		"CrossroadStreetSign"
@@ -495,14 +499,11 @@ func _spawn_tree(
 	var maximum_tree_index := 5 if yard_tree else TREE_SCENE_PATHS.size() - 1
 	var scene_path: String = TREE_SCENE_PATHS[random.randi_range(0, maximum_tree_index)]
 	var scale_factor := _tree_scale_for_path(scene_path, random, yard_tree)
-	_spawn_world_scene(
-		generated_root,
-		scene_path,
-		position,
-		random.randf_range(-PI, PI),
-		scale_factor,
-		node_name
-	)
+	var rotation_y := random.randf_range(-PI, PI)
+	# Draw the numbers first either way, so every other lot keeps its dressing.
+	if yard_tree and _in_downtown(position):
+		return
+	_spawn_world_scene(generated_root, scene_path, position, rotation_y, scale_factor, node_name)
 
 
 func _tree_scale_for_path(
@@ -535,6 +536,8 @@ func _spawn_lot_scene(
 	rotation_y: float,
 	node_name: String
 ) -> void:
+	if _in_downtown(house.global_transform * local_position):
+		return
 	var packed := _get_scene(scene_path)
 	if packed == null:
 		return
@@ -611,7 +614,7 @@ func _spawn_house_prop(
 	node_name: String
 ) -> void:
 	var template := templates.get(prop_name) as MeshTemplate
-	if template == null:
+	if template == null or _in_downtown(house.global_transform * local_position):
 		return
 	var wrapper := Node3D.new()
 	wrapper.name = node_name
@@ -654,6 +657,10 @@ func _update_road_clearances() -> void:
 				_culdesac_clearance_centers.append(Vector2(position.x, position.z))
 	else:
 		push_warning("Neighborhood decorator could not find cul-de-sacs at %s." % culdesacs_path)
+
+
+func _in_downtown(point: Vector3) -> bool:
+	return DOWNTOWN_AREA.has_point(Vector2(point.x, point.z))
 
 
 func _inside_road_clearance(point: Vector3) -> bool:

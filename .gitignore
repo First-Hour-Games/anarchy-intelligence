@@ -2,5 +2,17 @@
 .godot/
 /android/
 
+# Generated Python bytecode from asset tools.
+__pycache__/
+*.pyc
+
 # Local playable exports and their build logs.
 /builds/
+
+# Local investigation output and generated reference captures.
+/scratch/
+/debug-captures/
+/models/source/**/*_preview.png
+/models/source/**/*_preview.png.import
+# Blender's automatic backups of the previous save.
+*.blend1

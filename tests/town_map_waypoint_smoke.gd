@@ -50,7 +50,7 @@ func _run() -> void:
 	player.inventory.add_item(&"map")
 	check(player.inventory.has_item(&"map"), "Town map added to inventory")
 	check(display.has_town_map(), "has_town_map() returns true with map in inventory")
-	check(display.map_texture.get_size() == Vector2(2376, 1836), "Final PDF map imported at full resolution")
+	check(display.image_reference_size == Vector2(2376, 1836), "Calibration uses the original artwork resolution regardless of import size")
 
 	display._unhandled_input(toggle_event)
 	check(display.is_map_open(), "Pressing M with map in inventory OPENS map")
@@ -68,20 +68,30 @@ func _run() -> void:
 	display._unhandled_input(cancel_event)
 	check(not display.is_map_open(), "ESC key (ui_cancel) closes map")
 
-	# Test 4: The waypoint follows the real road junction and turnaround positions.
+	# Test 4: Preserve the original coordinate mapping. The illustrated welcome
+	# center is not a reliable survey anchor for the current forest layout.
 	display.set_map_open(true)
 	var panel_rect := display._calculate_panel_rect()
 	check(panel_rect.size.x > 100.0 and panel_rect.size.y > 100.0, "Panel rect properly sized on screen")
-	var road := forest.get_node("Streets/MainRoad") as Node3D
+	display._map_rect = Rect2(Vector2.ZERO, display.image_reference_size)
 	var locations := [
-		{"world": Vector2(-270, road.global_position.z), "pixel": Vector2(210.806, 229.696), "name": "Forest road near welcome center"},
-		{"world": Vector2(100, road.global_position.z), "pixel": Vector2(1481.259, 229.696), "name": "Forest main road junction"},
+		{"world": Vector2.ZERO, "pixel": Vector2(1137.893,229.696)},
+		{"world": Vector2(100,0), "pixel": Vector2(1481.259,229.696)},
 	]
 	for location: Dictionary in locations:
-		var world: Vector2 = location["world"]
-		var expected: Vector2 = location["pixel"]
-		var map_pixel: Vector2 = display.map_origin + world * display.world_scale
-		check(map_pixel.distance_to(expected) < 2.0, "Waypoint matches PDF artwork: " + location["name"])
+		var map_pixel: Vector2 = display._world_to_map(location.world)
+		check(map_pixel.distance_to(location.pixel) < 2.0, "Original map coordinates remain unchanged")
+	var start := display._world_to_map(Vector2(0,10))
+	var midpoint := display._world_to_map(Vector2(50,10))
+	var end := display._world_to_map(Vector2(100,10))
+	check(midpoint.distance_to((start + end) * 0.5) < 2.0, "Player movement maps consistently without landmark-based distortion")
+	var original_texture := display.map_texture
+	var world_position := Vector2(148,55)
+	var before_resize := display._world_to_map(world_position)
+	display.map_texture = ImageTexture.create_from_image(Image.create(512, 396, false, Image.FORMAT_RGBA8))
+	check(display._world_to_map(world_position) == before_resize, "Reducing texture resolution does not shift the player marker")
+	display.map_texture = original_texture
+	display._map_rect = panel_rect
 
 	# Test 5: Verify drawing renders without errors
 	display.queue_redraw()
