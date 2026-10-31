@@ -132,6 +132,26 @@ func get_prompt_world_position() -> Vector3:
 	return to_global(prompt_offset)
 
 
+func get_prompt_world_position_for(interactor: Node3D) -> Vector3:
+	if not proximity_prompt or not is_instance_valid(interactor):
+		return get_prompt_world_position()
+	var local_player := to_local(interactor.global_position)
+	var half := Vector2(size.x, size.z) * 0.5
+	var point := Vector2(local_player.x, local_player.z).clamp(-half, half)
+	# Clamping finds the closest perimeter point from outside the footprint.
+	# From inside, move to the closest of its four edges instead.
+	if absf(local_player.x) <= half.x and absf(local_player.z) <= half.y:
+		var edge_distances := half - point.abs()
+		if edge_distances.x < edge_distances.y:
+			point.x = half.x if point.x >= 0.0 else -half.x
+		else:
+			point.y = half.y if point.y >= 0.0 else -half.y
+	var world_point := to_global(Vector3(point.x, 0.0, point.y))
+	var eye := interactor.get_node_or_null("Head/Camera3D") as Node3D
+	world_point.y = eye.global_position.y if eye != null else interactor.global_position.y
+	return world_point
+
+
 func can_interact(interactor: Node3D) -> bool:
 	if not is_enabled or _is_dialogue_active or _is_cooling_down or _is_climbing_over:
 		return false

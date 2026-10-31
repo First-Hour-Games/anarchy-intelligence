@@ -47,6 +47,14 @@ static func _ensure_initialized() -> void:
 	bottle_item.use_action_text = "THROW BOTTLE"
 	register_item(bottle_item)
 
+	var fence_key := ItemData.new()
+	fence_key.id = &"fence_key"
+	fence_key.name = "FENCE KEY"
+	fence_key.description = "A small metal key. It may fit the lock on the metal fence gate. Used automatically when interacting with the locked gate."
+	fence_key.model_scene = preload("res://scenes/items/fence_key_preview.tscn")
+	fence_key.use_action_text = "USE AT LOCKED GATE"
+	register_item(fence_key)
+
 
 static func register_item(item: ItemData) -> void:
 	if item == null or item.id.is_empty():

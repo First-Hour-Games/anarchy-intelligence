@@ -10,6 +10,10 @@ extends Node3D
 
 const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf")
 
+@export_category("Flashlight Pallet Swap")
+@export_node_path("Node3D") var pallet_block_path: NodePath = NodePath("Pallet2Block")
+@export_node_path("Node3D") var pallet_after_path: NodePath = NodePath("Pallet2After")
+
 @export_category("Intro Fade")
 @export var auto_start_fade: bool = true
 @export_range(0.5, 10.0, 0.05) var fade_duration: float = 3.75
@@ -52,7 +56,7 @@ const SUBTITLE_FONT: FontFile = preload("res://fonts/HelveticaNeueCondensed.ttf"
 ## The player starts the music by coming within near_town_trigger_radius (horizontal) of this node.
 @export var near_town_trigger_node: NodePath = NodePath("GasStation")
 @export_range(5.0, 200.0, 1.0) var near_town_trigger_radius: float = 55.0
-@export_range(-40.0, 6.0, 0.5) var near_town_volume_db: float = -20.0
+@export_range(-40.0, 6.0, 0.5) var near_town_volume_db: float = -16.478175
 @export_range(0.1, 20.0, 0.1) var near_town_fade_in_duration: float = 8.0
 ## How quickly any hike/visitor music still playing fades out underneath it.
 @export_range(0.1, 10.0, 0.1) var near_town_fade_out_duration: float = 4.0
@@ -94,6 +98,7 @@ var _intro_ui_opacity := 1.0:
 var _has_switched_music: bool = false
 var _music_transition_tween: Tween = null
 var _near_town_tween: Tween = null
+var _flashlight_pallet_swapped: bool = false
 
 var _is_fog_active: bool = false
 var _fog_cleared_at_gas_station := false
@@ -112,12 +117,14 @@ func _ready() -> void:
 		visitor_bgm = streaming.shared_nodes.get("VisitorBGM") as AudioStreamPlayer
 		welcoming_hike_bgm = streaming.shared_nodes.get("WelcomingHikeBGM") as AudioStreamPlayer
 		near_town_bgm = streaming.shared_nodes.get("NearTownBGM") as AudioStreamPlayer
+		_setup_flashlight_pallet_swap()
 		_has_faded = true
 		delay_dialogue_until_fade = false
 		_setup_barrier_music_trigger()
 		_setup_fog_volume()
 		return
 
+	_setup_flashlight_pallet_swap()
 	_setup_runtime_ambient_light()
 	_ensure_player_on_floor()
 	_setup_fade_ui()
@@ -133,6 +140,28 @@ func _ready() -> void:
 
 	if auto_start_fade:
 		start_intro_fade()
+
+
+func _setup_flashlight_pallet_swap() -> void:
+	if is_instance_valid(player) and is_instance_valid(player.inventory):
+		if not player.inventory.inventory_changed.is_connected(_update_flashlight_pallet_swap):
+			player.inventory.inventory_changed.connect(_update_flashlight_pallet_swap)
+	_update_flashlight_pallet_swap()
+
+
+func _update_flashlight_pallet_swap() -> void:
+	if is_instance_valid(player) and player.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+		_flashlight_pallet_swapped = true
+	_set_pallet_active(get_node_or_null(pallet_block_path) as Node3D, not _flashlight_pallet_swapped)
+	_set_pallet_active(get_node_or_null(pallet_after_path) as Node3D, _flashlight_pallet_swapped)
+
+
+func _set_pallet_active(pallet: Node3D, active: bool) -> void:
+	if pallet == null:
+		return
+	pallet.visible = active
+	for shape: CollisionShape3D in pallet.find_children("*", "CollisionShape3D", true, false):
+		shape.set_deferred("disabled", not active)
 
 
 func _setup_runtime_ambient_light() -> void:
@@ -716,6 +745,28 @@ func start_near_town_music(fade_in_time: float = near_town_fade_in_duration) -> 
 		db_to_linear(near_town_volume_db),
 		fade_in_time
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _on_wrapper_cutscene_started() -> void:
+	# Cancel any ongoing nearTown fade-in before handing over to the buildup.
+	if is_instance_valid(_near_town_tween) and _near_town_tween.is_valid():
+		_near_town_tween.kill()
+	if is_instance_valid(near_town_bgm):
+		near_town_bgm.set_meta(&"near_town_started", true)
+	_has_switched_music = true
+	var fading_players: Array[AudioStreamPlayer] = []
+	for audio: AudioStreamPlayer in [near_town_bgm, visitor_bgm, welcoming_hike_bgm]:
+		if is_instance_valid(audio) and audio.playing:
+			fading_players.append(audio)
+	if fading_players.is_empty():
+		return
+	_near_town_tween = create_tween().set_parallel(true)
+	_near_town_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	for audio in fading_players:
+		_near_town_tween.tween_method(
+			_set_player_linear_volume.bind(audio), db_to_linear(audio.volume_db), 0.0001, near_town_fade_out_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_near_town_tween.tween_callback(audio.stop).set_delay(near_town_fade_out_duration)
 
 
 ## Story state for gem saves (scenes/shared/save_game.gd).

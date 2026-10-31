@@ -77,6 +77,8 @@ func read_slot(slot: int) -> Dictionary:
 	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(slot_path(slot)))
 	if not data is Dictionary or int(data.get("version", 0)) != VERSION:
 		return {}
+	if str(data.get("gem", "")) == "GasStationSaveGem" and str(data.get("location", "")) == "Gas Station":
+		data["location"] = "Town Entrance"
 	return data
 
 
@@ -213,7 +215,7 @@ func _migrate_legacy_save() -> void:
 	if data is Dictionary:
 		data["saved_label"] = str(data.get("saved_at", "")).replace("T", " ").substr(2, 14).replace("-", "/")
 		data["area"] = AREA_NAMES.get(str(data.get("scene", "")), "")
-		data["location"] = "Gas Station" if str(data.get("gem", "")) == "GasStationSaveGem" else ""
+		data["location"] = "Town Entrance" if str(data.get("gem", "")) == "GasStationSaveGem" else ""
 		var file := FileAccess.open(slot_path(0), FileAccess.WRITE)
 		if file != null:
 			file.store_string(JSON.stringify(data, "\t"))
@@ -295,9 +297,14 @@ func _restore_player(player: FirstPersonPlayer, state: Dictionary) -> void:
 
 ## The same section state WorldStreaming keeps when a section unloads, as plain paths.
 func _capture_section(section: Node) -> Dictionary:
-	var state := {"pickups_present": [], "interactables": {}, "one_shot_cutscenes": {}}
+	var state := {"pickups_present": [], "inventory_pickups_present": [], "metal_gates": {}, "interactables": {}, "one_shot_cutscenes": {}}
 	for node in section.find_children("*", "FlashlightPickup", true, false):
 		state.pickups_present.append(str(section.get_path_to(node)))
+	for node in section.find_children("*", "InventoryPickup", true, false):
+		if not node.is_queued_for_deletion():
+			state.inventory_pickups_present.append(str(section.get_path_to(node)))
+	for gate in section.find_children("*", "RiggedMetalGate", true, false):
+		state.metal_gates[str(section.get_path_to(gate))] = gate.get_save_state()
 	for node in section.find_children("*", "InteractableBlock3D", true, false):
 		state.interactables[str(section.get_path_to(node))] = node.get("is_enabled")
 	for cutscene in get_tree().get_nodes_in_group("streaming_one_shot"):
@@ -316,6 +323,12 @@ func _restore_section(section: Node, state: Dictionary) -> void:
 			if visual != null and visual != section:
 				visual.hide()
 			node.queue_free()
+	if state.has("inventory_pickups_present"):
+		var present: Array = state.inventory_pickups_present
+		for node in section.find_children("*", "InventoryPickup", true, false):
+			if not present.has(str(section.get_path_to(node))):
+				node.hide()
+				node.queue_free()
 	var interactables: Dictionary = state.get("interactables", {})
 	for path: String in interactables:
 		var node := section.get_node_or_null(NodePath(path))
@@ -326,6 +339,10 @@ func _restore_section(section: Node, state: Dictionary) -> void:
 		var node := section.get_node_or_null(NodePath(path))
 		if node != null:
 			node.set("has_played", cutscenes[path])
+	for path: String in state.get("metal_gates", {}):
+		var gate := section.get_node_or_null(NodePath(path))
+		if gate != null:
+			gate.restore_save_state(state.metal_gates[path])
 
 
 func _set_respawn(player: FirstPersonPlayer, respawn: Transform3D) -> void:

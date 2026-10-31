@@ -9,6 +9,7 @@ const FLASHLIGHT_ITEM: StringName = &"flashlight"
 const MAP_ITEM: StringName = &"map"
 const NOTEBOOK_ITEM: StringName = &"notebook"
 const BOTTLE_ITEM: StringName = &"bottle"
+const FENCE_KEY_ITEM: StringName = &"fence_key"
 ## Items that share one slot and track how many are carried.
 const STACK_LIMITS: Dictionary = {BOTTLE_ITEM: 3}
 const INK := Color(0.015, 0.015, 0.015, 0.80)
@@ -158,7 +159,7 @@ func _input(event: InputEvent) -> void:
 			return
 		get_viewport().set_input_as_handled()
 
-## Gamepad B both opens the inventory and closes the map; let the map have it.
+## Keep inventory input from opening another overlay while the map is open.
 func _is_world_map_open() -> bool:
 	for map_overlay: Node in get_tree().get_nodes_in_group("world_map"):
 		if map_overlay.has_method(&"is_map_open") and bool(map_overlay.call(&"is_map_open")):
@@ -538,7 +539,7 @@ func _update_hud() -> void:
 	_title.text = "EMPTY" if occupied.is_empty() else _get_item_display_name(item)
 	_counter.text = "" if occupied.is_empty() else "%02d / %02d" % [selected + 1, occupied.size()]
 	_use.text = "USE" if item == EMPTY_ITEM else ItemDatabase.get_item(item).use_action_text
-	_use.disabled = item == EMPTY_ITEM
+	_use.disabled = item == EMPTY_ITEM or item == FENCE_KEY_ITEM
 	var health := _player.get_node_or_null("CombatHealth")
 	var ratio := clampf(float(health.get("health")) / maxf(float(health.get("max_health")), 0.01), 0.0, 1.0) if health != null else 1.0
 	var row := 5 if ratio <= 0.0 else 0 if ratio >= 0.8 else 1 if ratio >= 0.6 else 2 if ratio >= 0.4 else 3 if ratio >= 0.2 else 4
@@ -573,4 +574,5 @@ func _get_item_display_name(item: StringName) -> String:
 		MAP_ITEM: return "TOWN MAP"
 		NOTEBOOK_ITEM: return "CARRIE'S NOTES"
 		BOTTLE_ITEM: return "EMPTY BOTTLE x%d" % get_count(item)
+		FENCE_KEY_ITEM: return "FENCE KEY"
 		_: return "EMPTY" if item == EMPTY_ITEM else str(item).to_upper()

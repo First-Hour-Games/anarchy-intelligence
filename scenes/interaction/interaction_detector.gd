@@ -5,11 +5,35 @@ class_name InteractionDetector extends Node
 @onready var viewmodel: HandViewmodel = player.get_node("HandViewmodel") as HandViewmodel
 
 var current_interactable: Interactable3D
+var _pinned_interactable: Interactable3D
+var _pinned_prompt_position: Vector3
 
 
 func _process(_delta: float) -> void:
+	if not is_instance_valid(_pinned_interactable) or not _pinned_interactable.can_interact(player):
+		_pinned_interactable = null
+	elif not viewmodel.interaction_prompt_should_show and viewmodel.interaction_prompt.modulate.a <= 0.01:
+		# A completed look-away fade ends this placement, just like leaving range.
+		_pinned_interactable = null
 	current_interactable = _find_nearest_interactable()
+	if is_instance_valid(current_interactable) and current_interactable.proximity_prompt \
+			and current_interactable != _pinned_interactable:
+		var next_position := current_interactable.get_prompt_world_position_for(player)
+		if _is_prompt_position_visible(next_position):
+			_pinned_interactable = current_interactable
+			_pinned_prompt_position = next_position
 	_update_prompt()
+
+
+func _is_prompt_position_visible(world_position: Vector3) -> bool:
+	return not camera.is_position_behind(world_position) \
+		and _get_gameplay_screen_rect().has_point(camera.unproject_position(world_position))
+
+
+func _get_prompt_position(interactable: Interactable3D) -> Vector3:
+	if interactable == _pinned_interactable:
+		return _pinned_prompt_position
+	return interactable.get_prompt_world_position_for(player)
 
 
 func try_interact() -> bool:
@@ -28,10 +52,10 @@ func _find_nearest_interactable() -> Interactable3D:
 		var interactable := candidate as Interactable3D
 		if not is_instance_valid(interactable) or not interactable.can_interact(player):
 			continue
-		var prompt_world_position := interactable.get_prompt_world_position()
-		if camera.is_position_behind(prompt_world_position):
+		var prompt_world_position := _get_prompt_position(interactable)
+		if not interactable.proximity_prompt and camera.is_position_behind(prompt_world_position):
 			continue
-		if not _get_gameplay_screen_rect().has_point(camera.unproject_position(prompt_world_position)):
+		if not interactable.proximity_prompt and not _get_gameplay_screen_rect().has_point(camera.unproject_position(prompt_world_position)):
 			continue
 		var distance := player.global_position.distance_to(prompt_world_position)
 		if distance < nearest_distance:
@@ -45,7 +69,7 @@ func _update_prompt() -> void:
 		viewmodel.set_interaction_prompt(false)
 		return
 
-	var prompt_world_position := current_interactable.get_prompt_world_position()
+	var prompt_world_position := _get_prompt_position(current_interactable)
 	if camera.is_position_behind(prompt_world_position):
 		viewmodel.set_interaction_prompt(false)
 		return

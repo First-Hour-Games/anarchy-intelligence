@@ -1,6 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 [ext_resource type="Script" path="res://scenes/monsters/story_entity.gd" id="1"]
 [ext_resource type="PackedScene" path="res://models/enemies/the_wrapper/MonsterPSX.fbx" id="2"]
+[ext_resource type="Script" path="res://scenes/monsters/wrapper_visual.gd" id="3_visual"]
+[ext_resource type="Script" path="res://scenes/monsters/wrapper_hunt_audio.gd" id="4_hunt"]
+[ext_resource type="AudioStream" path="res://sounds/entities/wrapper/wrapperHunt.mp3" id="5_hunt_stream"]
 [sub_resource type="CapsuleShape3D" id="shape"]
 radius = 0.4
 height = 1.9
@@ -11,9 +14,15 @@ movement_speed = 1.05
 territory_radius = 26.0
 [node name="Visual" parent="." instance=ExtResource("2")]
 rotation = Vector3(0, 3.1415927, 0)
+script = ExtResource("3_visual")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.95, 0)
 shape = SubResource("shape")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.8
 target_desired_distance = 1.4
+[node name="HuntAudio" type="AudioStreamPlayer" parent="."]
+script = ExtResource("4_hunt")
+stream = ExtResource("5_hunt_stream")
+volume_db = -80.0
+bus = &"Music"

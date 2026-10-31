@@ -1,16 +1,26 @@
 class_name PlayerFlashlight
 extends Node3D
 
-## Camera-mounted flashlight presentation. The beam follows the camera while the
-## held model has a small amount of independent weight, bob, and look lag.
+## Camera-mounted flashlight with weighted rotational follow shared by the beam and
+## held model, plus independent hand bob and small look impulses.
 
 signal toggled(is_on: bool)
 
 @export_category("Presentation")
+@export var show_held_model: bool = false
 @export var held_position: Vector3 = Vector3(0.31, -0.24, -0.58)
 @export var lowered_position: Vector3 = Vector3(0.34, -0.52, -0.43)
 @export var held_rotation_degrees: Vector3 = Vector3(-6.0, -8.0, -8.0)
 @export var raise_speed: float = 13.0
+
+@export_category("Camera Follow")
+@export var rotation_follow_enabled: bool = true
+## Higher values catch up faster. Exponential smoothing remains stable across frame rates.
+@export_range(1.0, 30.0, 0.5) var rotation_follow_speed: float = 9.0
+## Limits how far the beam can trail a fast camera turn.
+@export_range(0.0, 45.0, 0.5) var max_rotation_lag_degrees: float = 14.0
+## Reset after teleports instead of sweeping the beam through the world.
+@export_range(0.1, 20.0, 0.1) var follow_teleport_distance: float = 3.0
 
 @export_category("Held Motion")
 @export var movement_bob: Vector2 = Vector2(0.012, 0.015)
@@ -28,9 +38,15 @@ var _is_on: bool = false
 var _presentation: float = 0.0
 var _movement_phase: float = 0.0
 var _look_lag := Vector2.ZERO
+var _follow_rotation := Quaternion.IDENTITY
+var _rest_rotation := Quaternion.IDENTITY
+var _previous_camera_position := Vector3.ZERO
+var _previous_camera_top_level: bool = false
 
 
 func _ready() -> void:
+	_rest_rotation = quaternion
+	_reset_camera_follow()
 	beam.visible = false
 	spill.visible = false
 	model_pivot.visible = false
@@ -53,7 +69,8 @@ func set_enabled(should_enable: bool) -> void:
 	beam.visible = should_enable
 	spill.visible = should_enable
 	if should_enable:
-		model_pivot.visible = true
+		_reset_camera_follow()
+		model_pivot.visible = show_held_model
 	toggled.emit(_is_on)
 
 
@@ -68,6 +85,7 @@ func add_look_impulse(relative_motion: Vector2) -> void:
 
 
 func _process(delta: float) -> void:
+	_update_camera_follow(delta)
 	var target_presentation := 1.0 if _is_on else 0.0
 	var presentation_weight := 1.0 - exp(-raise_speed * delta)
 	_presentation = lerpf(_presentation, target_presentation, presentation_weight)
@@ -95,5 +113,38 @@ func _process(delta: float) -> void:
 	target_rotation.x += _look_lag.y * 55.0
 	model_pivot.rotation_degrees = target_rotation
 
-	if not _is_on and _presentation < 0.01:
+	if not show_held_model or (not _is_on and _presentation < 0.01):
 		model_pivot.visible = false
+
+
+func _reset_camera_follow() -> void:
+	var camera := get_parent() as Node3D
+	if camera == null:
+		return
+	_follow_rotation = camera.global_basis.orthonormalized().get_rotation_quaternion() * _rest_rotation
+	_previous_camera_position = camera.global_position
+	_previous_camera_top_level = camera.top_level
+	quaternion = _rest_rotation
+
+
+func _update_camera_follow(delta: float) -> void:
+	var camera := get_parent() as Node3D
+	if camera == null:
+		return
+	if not rotation_follow_enabled or not _is_on \
+			or camera.global_position.distance_to(_previous_camera_position) > follow_teleport_distance \
+			or camera.top_level != _previous_camera_top_level:
+		_reset_camera_follow()
+		return
+	var camera_rotation := camera.global_basis.orthonormalized().get_rotation_quaternion()
+	var target := camera_rotation * _rest_rotation
+	var angle := _follow_rotation.angle_to(target)
+	var max_angle := deg_to_rad(max_rotation_lag_degrees)
+	if angle > max_angle and angle > 0.00001:
+		_follow_rotation = _follow_rotation.slerp(target, 1.0 - max_angle / angle).normalized()
+	var weight := 1.0 - exp(-rotation_follow_speed * maxf(delta, 0.0))
+	_follow_rotation = _follow_rotation.slerp(target, weight).normalized()
+	# Counteract the camera parent's instant turn, then let the shared root catch up.
+	quaternion = (camera_rotation.inverse() * _follow_rotation).normalized()
+	_previous_camera_position = camera.global_position
+	_previous_camera_top_level = camera.top_level

@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://models/props/freekey_1.png" id="1_orm"]
+[ext_resource type="Texture2D" path="res://models/props/freekey_2.png" id="2_normal"]
+
+[resource]
+resource_name = "Polished Silver Fence Key"
+albedo_color = Color(0.82, 0.86, 0.91, 1)
+metallic = 0.55
+metallic_specular = 0.65
+roughness = 0.22
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("2_normal")
+ao_enabled = true
+ao_texture = ExtResource("1_orm")
+ao_texture_channel = 0
+ao_light_affect = 0.0

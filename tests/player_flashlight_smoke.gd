@@ -32,9 +32,12 @@ func _run() -> void:
 	passed = passed and inventory.add_item(PlayerInventory.FLASHLIGHT_ITEM)
 	passed = passed and inventory.get_selected_item() == PlayerInventory.FLASHLIGHT_ITEM
 	player._unhandled_input(toggle_event)
-	passed = passed and flashlight.is_enabled() and beam.visible and model_pivot.visible
+	passed = passed and flashlight.is_enabled() and beam.visible and not model_pivot.visible
 
 	inventory.select_slot(1)
+	# Slot browsing no longer switches the flashlight off; its toggle owns that state.
+	passed = passed and flashlight.is_enabled() and beam.visible
+	player._unhandled_input(toggle_event)
 	flashlight._process(1.0)
 	passed = passed and not flashlight.is_enabled() and not beam.visible and not model_pivot.visible
 

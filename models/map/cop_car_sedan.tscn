@@ -1,12 +1,13 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dvuwjdag7754f"]
 
-[ext_resource type="PackedScene" path="res://models/map/cop_car_sedan.glb" id="1_sedan"]
+[ext_resource type="PackedScene" uid="uid://csob3qy2ldc1m" path="res://models/map/cop_car_sedan.glb" id="1_sedan"]
 
-[node name="CopCarSedan" instance=ExtResource("1_sedan")]
+[node name="CopCarSedan" unique_id=832342907 instance=ExtResource("1_sedan")]
 
-[node name="CarLights" type="Node3D" parent="."]
+[node name="CarLights" type="Node3D" parent="." index="1" unique_id=1817955753]
+visible = false
 
-[node name="HeadlightLeft" type="SpotLight3D" parent="CarLights"]
+[node name="HeadlightLeft" type="SpotLight3D" parent="CarLights" index="0" unique_id=2038529662]
 transform = Transform3D(-0.99820054, 0, -0.059964, 0, 1, 0, 0.059964, 0, -0.99820054, -0.3, -0.106, 1.205)
 light_color = Color(0.94764113, 1, 0.9333369, 1)
 light_energy = 2.731
@@ -21,7 +22,7 @@ spot_attenuation = 0.59
 spot_angle = 26.61
 spot_angle_attenuation = 1.3660432
 
-[node name="HeadlightRight" type="SpotLight3D" parent="CarLights"]
+[node name="HeadlightRight" type="SpotLight3D" parent="CarLights" index="1" unique_id=893229582]
 transform = Transform3D(-0.992674, 0, 0.120822, 0, 1, 0, -0.120822, 0, -0.992674, 0.3, -0.106, 1.205)
 light_color = Color(0.94764113, 1, 0.9333369, 1)
 light_energy = 2.731
@@ -36,7 +37,7 @@ spot_attenuation = 0.59
 spot_angle = 26.61
 spot_angle_attenuation = 1.3660432
 
-[node name="HeadlightFillLeft" type="SpotLight3D" parent="CarLights"]
+[node name="HeadlightFillLeft" type="SpotLight3D" parent="CarLights" index="2" unique_id=639767414]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.3, -0.106, 1.205)
 light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
 light_energy = 0.2
@@ -50,7 +51,7 @@ spot_range = 52.132
 spot_angle = 70.0
 spot_angle_attenuation = 1.3660438
 
-[node name="HeadlightFillRight" type="SpotLight3D" parent="CarLights"]
+[node name="HeadlightFillRight" type="SpotLight3D" parent="CarLights" index="3" unique_id=776557877]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0.3, -0.106, 1.205)
 light_color = Color(0.6580249, 0.67548084, 0.6712068, 1)
 light_energy = 0.2
@@ -64,7 +65,7 @@ spot_range = 52.132
 spot_angle = 70.0
 spot_angle_attenuation = 1.3660438
 
-[node name="HeadlightGlowLeft" type="OmniLight3D" parent="CarLights"]
+[node name="HeadlightGlowLeft" type="OmniLight3D" parent="CarLights" index="4" unique_id=1820342809]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.106, 1.215)
 light_energy = 0.8
 light_volumetric_fog_energy = 9.0
@@ -72,7 +73,7 @@ light_bake_mode = 1
 shadow_enabled = true
 omni_range = 3.0
 
-[node name="HeadlightGlowRight" type="OmniLight3D" parent="CarLights"]
+[node name="HeadlightGlowRight" type="OmniLight3D" parent="CarLights" index="5" unique_id=200666402]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.106, 1.215)
 light_energy = 0.8
 light_volumetric_fog_energy = 9.0
@@ -80,7 +81,7 @@ light_bake_mode = 1
 shadow_enabled = true
 omni_range = 3.0
 
-[node name="FrontCornerGlowLeft" type="OmniLight3D" parent="CarLights"]
+[node name="FrontCornerGlowLeft" type="OmniLight3D" parent="CarLights" index="6" unique_id=831699234]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.414, -0.106, 1.105)
 light_energy = 0.544
 light_volumetric_fog_energy = 5.089
@@ -89,7 +90,7 @@ shadow_enabled = true
 omni_range = 4.0
 omni_attenuation = 0.75
 
-[node name="FrontCornerGlowRight" type="OmniLight3D" parent="CarLights"]
+[node name="FrontCornerGlowRight" type="OmniLight3D" parent="CarLights" index="7" unique_id=955607438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.414, -0.106, 1.105)
 light_energy = 0.544
 light_volumetric_fog_energy = 5.089
@@ -98,14 +99,14 @@ shadow_enabled = true
 omni_range = 4.0
 omni_attenuation = 0.75
 
-[node name="TaillightLeft" type="OmniLight3D" parent="CarLights"]
+[node name="TaillightLeft" type="OmniLight3D" parent="CarLights" index="8" unique_id=1648769332]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.365, -0.145, -1.25)
 light_color = Color(0.8666667, 0, 0, 1)
 light_bake_mode = 1
 shadow_enabled = true
 omni_range = 66.767
 
-[node name="TaillightRight" type="OmniLight3D" parent="CarLights"]
+[node name="TaillightRight" type="OmniLight3D" parent="CarLights" index="9" unique_id=2083245131]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.365, -0.145, -1.25)
 light_color = Color(0.8666667, 0, 0, 1)
 light_bake_mode = 1

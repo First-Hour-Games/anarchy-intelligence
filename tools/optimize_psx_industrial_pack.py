@@ -6,11 +6,12 @@ This rewrites each GLB in place so that it:
 
 * references the two shared atlas PNGs by URI instead of embedding them,
 * keeps only the vertex/index data its own meshes use,
-* gains a "<Name>Collision-convcolonly" box mesh, which Godot's importer turns
+* gives larger props a "<Name>Collision-convcolonly" box mesh, which Godot's importer turns
   into a StaticBody3D with a box-shaped collision hull (the box itself is not
   rendered). The box is the tight bounds of the prop's meshes in its root space.
 
-Safe to run again: already-optimized files are left as they are.
+Small floor clutter stays nonblocking. Running again also removes previously
+generated collision from props in NO_COLLISION.
 
 Usage: python tools/optimize_psx_industrial_pack.py [pack_directory]
 """
@@ -32,7 +33,12 @@ IDENTITY = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 COLLISION_SUFFIX = "Collision-convcolonly"
 MIN_THICKNESS = 0.02
 # The showcase is the pack's whole display lineup; one box would wall off ~13 x 10 m.
-NO_COLLISION = {"showcase.glb"}  # Keep flat props (sheets, planks) from producing a zero-width hull.
+NO_COLLISION = {
+    "showcase.glb",
+    "brick.glb", "brick_cement.glb", "pile_debris.glb", "pile_trash.glb",
+    "plank.glb", "plank_wide.glb", "metal_sheet.glb", "metal_pipe.glb",
+    "tire.glb", "rock.glb", "jerrycan.glb", "pallet.glb",
+}
 
 
 def multiply(left, right):
@@ -79,7 +85,22 @@ def optimize(path, pack):
     wants_collision = path.name not in NO_COLLISION
     has_collision = any(document["nodes"][c]["name"].endswith(COLLISION_SUFFIX)
                         for c in root.get("children", []))
-    if (has_collision or not wants_collision) and all("uri" in image for image in document.get("images", [])):
+    removed_collision = not wants_collision and has_collision
+    if removed_collision:
+        # Remove generated collision nodes, preserving all visual nodes and their
+        # references. Mesh/accessor indices stay stable for byte verification below.
+        removed = {i for i, node in enumerate(document["nodes"])
+                   if node["name"].endswith(COLLISION_SUFFIX)}
+        remap = {old: new for new, old in enumerate(
+            i for i in range(len(document["nodes"])) if i not in removed)}
+        document["nodes"] = [node for i, node in enumerate(document["nodes"]) if i not in removed]
+        for node in document["nodes"]:
+            if "children" in node:
+                node["children"] = [remap[i] for i in node["children"] if i not in removed]
+        for scene in document["scenes"]:
+            scene["nodes"] = [remap[i] for i in scene["nodes"] if i not in removed]
+        has_collision = False
+    if not removed_collision and (has_collision or not wants_collision) and all("uri" in image for image in document.get("images", [])):
         return None
 
     # 1. Point images at the shared atlas files.
@@ -198,6 +219,10 @@ def main():
     total_before = total_after = 0
     for path in sorted(pack.glob("*.glb")):
         result = optimize(path, pack)
+        if manifest and path.name in NO_COLLISION:
+            for asset in manifest["assets"]:
+                if asset["file"] == path.name:
+                    asset.pop("collision_box", None)
         if result is None:
             print(f"{path.name}: already optimized")
             continue

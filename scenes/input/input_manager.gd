@@ -13,9 +13,10 @@ class_name InputDevice extends Node
 ##   firing ui_up/ui_down on every tiny stick movement), and while the mouse cursor is
 ##   visible the right stick drives it and RT clicks, so mouse-only UI (inspection
 ##   hotspots, click-to-continue screens) works on a controller.
+##   Inspection reserves the left stick for its cursor instead of menu navigation.
 ## - `rumble()` helper that only vibrates when the player is actually on a gamepad.
 ##
-## Bindings live in Project Settings > Input Map (move_*, look_*, jump, sprint, crouch,
+## Bindings live in Project Settings > Input Map (move_*, look_*, sprint, crouch,
 ## pause, interact, ...), so they can be remapped in the editor like any other action.
 
 signal device_changed(is_gamepad: bool)
@@ -29,7 +30,6 @@ const SYNTHETIC_DEVICE_ID := 7331
 ## Prompt glyphs per action. Keep these short; they are shown inside [ ] brackets.
 const KEYBOARD_GLYPHS := {
 	&"interact": "E",
-	&"jump": "SPACE",
 	&"sprint": "SHIFT",
 	&"crouch": "CTRL",
 	&"pause": "ESC",
@@ -41,15 +41,14 @@ const KEYBOARD_GLYPHS := {
 	&"story_journal": "J",
 }
 const GAMEPAD_GLYPHS := {
-	&"interact": "X",
-	&"jump": "A",
+	&"interact": "A",
 	&"sprint": "L3",
 	&"crouch": "R3",
 	&"pause": "MENU",
 	&"ui_accept": "A",
 	&"ui_cancel": "B",
-	&"map_toggle": "Y",
-	&"inventory_toggle": "B",
+	&"map_toggle": "D-PAD UP",
+	&"inventory_toggle": "D-PAD DOWN",
 	&"flashlight_toggle": "RB",
 	&"story_journal": "VIEW",
 }
@@ -78,7 +77,7 @@ var nav_release_threshold: float = 0.4
 var nav_initial_delay: float = 0.5
 var nav_repeat_interval: float = 0.22
 
-## Right-stick virtual cursor (only while the mouse cursor is visible).
+## Virtual cursor: right stick normally, left stick during inspection.
 var cursor_enabled: bool = true
 var cursor_deadzone: float = 0.2
 ## Fraction of the screen height travelled per second at full stick deflection.
@@ -94,6 +93,16 @@ var _ignore_mouse_motion_until_msec: int = 0
 var _nav_direction: StringName = &""
 var _nav_timer: float = 0.0
 var _cursor_click_held: bool = false
+var _inspection_cursor_owner: WeakRef = null
+
+
+func set_inspection_cursor_owner(view: Node) -> void:
+	_inspection_cursor_owner = weakref(view)
+
+
+func _inspection_cursor_active() -> bool:
+	var view: Node = _inspection_cursor_owner.get_ref() if _inspection_cursor_owner != null else null
+	return view != null and view.is_controller_cursor_active()
 
 
 # ---------------------------------------------------------------- static helpers
@@ -141,6 +150,7 @@ func _ready() -> void:
 	_remove_left_stick_from_ui_navigation()
 	_ensure_dpad_ui_navigation()
 	_make_face_buttons_accept()
+	_ensure_gamepad_cancel()
 	# window_input fires for every event before any node sees it, so detection works
 	# even when a script marks the event as handled.
 	get_tree().root.window_input.connect(_on_window_input)
@@ -154,7 +164,7 @@ func is_gamepad() -> bool:
 	return device == Device.GAMEPAD
 
 
-## Short prompt label for an action on the current device, e.g. "E" / "X".
+## Short prompt label for an action on the current device, e.g. "E" / "A".
 func glyph(action: StringName) -> String:
 	var table: Dictionary = GAMEPAD_GLYPHS if is_gamepad() else KEYBOARD_GLYPHS
 	return String(table.get(action, String(action).to_upper()))
@@ -267,6 +277,18 @@ func _remove_left_stick_from_ui_navigation() -> void:
 				InputMap.action_erase_event(action, event)
 
 
+func _ensure_gamepad_cancel() -> void:
+	if not InputMap.has_action(&"ui_cancel"):
+		InputMap.add_action(&"ui_cancel")
+	for event: InputEvent in InputMap.action_get_events(&"ui_cancel"):
+		if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.device == -1:
+			return
+	var back := InputEventJoypadButton.new()
+	back.device = -1
+	back.button_index = JOY_BUTTON_B
+	InputMap.action_add_event(&"ui_cancel", back)
+
+
 func _make_face_buttons_accept() -> void:
 	if not InputMap.has_action(&"ui_accept"):
 		return
@@ -301,7 +323,7 @@ func _ensure_dpad_ui_navigation() -> void:
 func _update_stick_navigation(delta: float) -> void:
 	# Only navigate when some UI owns the cursor (menus, inventory, dialogue choices),
 	# never while the player is walking around with the stick.
-	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or _inspection_cursor_active():
 		_nav_direction = &""
 		return
 
@@ -355,9 +377,10 @@ func _update_virtual_cursor(delta: float) -> void:
 	if viewport == null:
 		return
 
+	var inspection := _inspection_cursor_active()
 	var stick := Vector2(
-		Input.get_joy_axis(active_joypad, JOY_AXIS_RIGHT_X),
-		Input.get_joy_axis(active_joypad, JOY_AXIS_RIGHT_Y)
+		Input.get_joy_axis(active_joypad, JOY_AXIS_LEFT_X if inspection else JOY_AXIS_RIGHT_X),
+		Input.get_joy_axis(active_joypad, JOY_AXIS_LEFT_Y if inspection else JOY_AXIS_RIGHT_Y)
 	)
 	if stick.length() > cursor_deadzone:
 		var strength := inverse_lerp(cursor_deadzone, 1.0, minf(stick.length(), 1.0))

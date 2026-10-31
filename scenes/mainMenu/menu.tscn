@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cqh0dqb2c5gmc" path="res://img/menu/title.png" id="1_v2lfg"]
 [ext_resource type="Script" uid="uid://b8urfnsyn4v7a" path="res://scenes/mainMenu/menu.gd" id="2_menu_script"]
-[ext_resource type="AudioStream" uid="uid://cyu0y4q4kwr06" path="res://music/menu.ogg" id="3_menu_music"]
+[ext_resource type="AudioStream" uid="uid://bpnwresobcrv3" path="res://music/newMenu.ogg" id="3_menu_music"]
 [ext_resource type="AudioStream" uid="uid://urf2yt03a8pc" path="res://sounds/ui/move.mp3" id="4_move_sfx"]
 [ext_resource type="AudioStream" uid="uid://widkiefi8p70" path="res://sounds/ui/click.mp3" id="5_click_sfx"]
 [ext_resource type="FontFile" uid="uid://m1rgjvehr8j3" path="res://fonts/HelveticaNeueCondensed.ttf" id="5_e61u0"]
@@ -189,7 +189,7 @@ vertical_alignment = 1
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=314159269]
 stream = ExtResource("3_menu_music")
-volume_db = -1.0
+volume_db = -6.498775
 bus = &"Music"
 
 [node name="MoveSfxPlayer" type="AudioStreamPlayer" parent="." unique_id=314159270]

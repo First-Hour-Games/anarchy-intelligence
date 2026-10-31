@@ -10,8 +10,14 @@ signal cutscene_finished
 @export var path_markers: Array[NodePath] = []
 @export_range(0.1, 10.0, 0.1) var walk_speed: float = 1.5
 @export var walk_animation: StringName = &"MonsterPSX_Rig|Walk_Nervous"
+@export_range(0.1, 3.0, 0.05) var walk_animation_speed: float = 1.0
 ## Matches Node3D.look_at's model-front convention for imported models facing +Z.
 @export var model_faces_positive_z := false
+
+@export_group("Music")
+## Starts with the appearance and continues after the walk, using the stream's loop settings.
+@export var buildup_music: AudioStream
+@export_range(-40.0, 6.0, 0.5) var buildup_volume_db: float = -6.0
 
 @export_group("View Requirement")
 ## The front windows the player should be looking toward before the walk begins.
@@ -28,6 +34,8 @@ var _animation_player: AnimationPlayer
 var _route: PackedVector3Array
 var _next_marker := 1
 var _waiting_player: FirstPersonPlayer
+var _buildup_player: AudioStreamPlayer
+var _buildup_fade: Tween
 
 
 func _ready() -> void:
@@ -94,6 +102,7 @@ func _try_start() -> void:
 	_face_toward(_route[1])
 	_play_walk_animation()
 	_wrapper.show()
+	_play_buildup_music()
 	set_physics_process(true)
 	cutscene_started.emit()
 
@@ -150,8 +159,31 @@ func _play_walk_animation() -> void:
 	var library := AnimationLibrary.new()
 	library.add_animation(&"walk", animation)
 	_animation_player.add_animation_library(&"cutscene", library)
-	_animation_player.play(&"cutscene/walk")
+	_animation_player.play(&"cutscene/walk", -1.0, walk_animation_speed)
 	_animation_player.advance(0.0)
+
+
+func _play_buildup_music() -> void:
+	if buildup_music == null:
+		return
+	_buildup_player = AudioStreamPlayer.new()
+	_buildup_player.name = "BuildupMusic"
+	_buildup_player.stream = buildup_music
+	_buildup_player.bus = &"Music"
+	_buildup_player.volume_db = buildup_volume_db
+	_buildup_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_buildup_player)
+	_buildup_player.play()
+
+
+func fade_out_buildup_music(duration: float = 2.5) -> void:
+	if not is_instance_valid(_buildup_player) or not _buildup_player.playing:
+		return
+	if _buildup_fade != null and _buildup_fade.is_running():
+		return
+	_buildup_fade = create_tween()
+	_buildup_fade.tween_property(_buildup_player, "volume_linear", 0.0, maxf(duration, 0.0))
+	_buildup_fade.tween_callback(_buildup_player.stop)
 
 
 func _finish() -> void:

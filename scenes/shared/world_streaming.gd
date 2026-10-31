@@ -185,10 +185,14 @@ func _remember_pickups(section: Node3D) -> void:
 	for node in section.find_children("*", "FlashlightPickup", true, false):
 		var visual: Node = node.get_node_or_null(node.visual_target_path)
 		paths[section.get_path_to(node)] = section.get_path_to(visual) if visual != null else NodePath()
+	for node in section.find_children("*", "InventoryPickup", true, false):
+		paths[section.get_path_to(node)] = section.get_path_to(node)
 	_pickup_paths[section.scene_file_path] = paths
 
 func _save_state(section: Node3D) -> void:
-	var state := {"interactables": {}, "removed_pickups": [], "hidden_visuals": [], "one_shot_cutscenes": {}}
+	var state := {"interactables": {}, "removed_pickups": [], "hidden_visuals": [], "one_shot_cutscenes": {}, "metal_gates": {}}
+	for gate in section.find_children("*", "RiggedMetalGate", true, false):
+		state.metal_gates[section.get_path_to(gate)] = gate.get_save_state()
 	for cutscene in get_tree().get_nodes_in_group("streaming_one_shot"):
 		if section.is_ancestor_of(cutscene):
 			state.one_shot_cutscenes[section.get_path_to(cutscene)] = cutscene.has_played
@@ -222,6 +226,10 @@ func _restore_state(section: Node3D) -> void:
 		var visual := section.get_node_or_null(path) as Node3D
 		if visual != null:
 			visual.hide()
+	for path: NodePath in state.get("metal_gates", {}):
+		var gate := section.get_node_or_null(path)
+		if gate != null:
+			gate.restore_save_state(state.metal_gates[path])
 	if section.scene_file_path == FOREST:
 		section.set("_has_switched_music", state.get("hike_started", false))
 

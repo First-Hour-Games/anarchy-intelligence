@@ -33,7 +33,7 @@ func _run() -> void:
 	await process_frame
 	await physics_frame
 
-	var gem := forest.get_node_or_null("GasStationSaveGem") as SaveGem
+	var gem: Variant = forest.get_node_or_null("GasStationSaveGem")
 	check(gem != null, "GasStationSaveGem is in the starting forest")
 	var player := forest.get_node_or_null("Player") as FirstPersonPlayer
 	check(player != null, "player found")
@@ -41,7 +41,7 @@ func _run() -> void:
 		quit(1)
 		return
 	check(gem.glow is OmniLight3D and gem.glow.light_energy > 0.0, "gem has a lit OmniLight3D glow")
-	var start_height := gem.model.position.y
+	var start_height: float = gem.model.position.y
 	for i in 20:
 		await process_frame
 	check(gem.model.position.y > 0.5, "gem floats above the ground")
@@ -53,7 +53,7 @@ func _run() -> void:
 	check(bool(save_game.call("save_at", gem, player, 2, null)), "saving into file 03 works")
 	check(bool(save_game.call("has_save", 2)) and not bool(save_game.call("has_save", 0)), "only file 03 is written")
 	var data: Dictionary = save_game.call("read_slot", 2)
-	check(str(data.get("location", "")) == "Gas Station", "file records the gem's location name")
+	check(str(data.get("location", "")) == "Town Entrance", "file records the gem's location name")
 	check(str(data.get("area", "")) == "Starting Forest", "file records the area")
 	check(not str(data.get("saved_label", "")).is_empty(), "file records the save date")
 	check(str(data.get("scene", "")) == forest.scene_file_path, "save records the forest scene")
@@ -70,7 +70,7 @@ func _run() -> void:
 	await process_frame
 	check(pickup_count == 0 or forest.find_children("*", "FlashlightPickup", true, false).is_empty(), "taken pickups are removed on restore")
 
-	var screen := SaveSlotScreen.open(root, SaveSlotScreen.Mode.LOAD, func(_slot: int) -> bool: return false)
+	var screen: Variant = (load("res://scenes/ui/save_slots/save_slot_screen.gd") as GDScript).open(root, 1, func(_slot: int) -> bool: return false)
 	await process_frame
 	check(screen.get("_headers").size() == 4, "file screen shows four files")
 	check(int(screen.get("_selected")) == 2, "load screen starts on the newest file")

@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://models/props/metalFences/rigged_metal_gate.gd" id="1_gate"]
+[ext_resource type="PackedScene" path="res://models/props/metalFences/simple_metal_fence_2.0.glb" id="2_model"]
+[ext_resource type="PackedScene" path="res://scenes/interaction/interactable_block.tscn" id="3_interactable"]
+
+[sub_resource type="BoxShape3D" id="GatePanelShape"]
+size = Vector3(3.52209, 3.02057, 0.23891)
+
+[sub_resource type="BoxShape3D" id="GatePostShape"]
+size = Vector3(0.21751, 3.05578, 0.21751)
+
+[node name="MetalFenceGate" type="Node3D"]
+script = ExtResource("1_gate")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+position = Vector3(0, 1.527893, 0)
+scale = Vector3(0.00295151, 0.00295151, 0.00295151)
+
+[node name="GatePostCollision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GatePostCollision"]
+position = Vector3(-1.6416, 1.527893, 0)
+shape = SubResource("GatePostShape")
+
+[node name="GateLeafCollision" type="AnimatableBody3D" parent="."]
+sync_to_physics = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GateLeafCollision"]
+position = Vector3(0, 1.511951, 0)
+shape = SubResource("GatePanelShape")
+
+[node name="Interactable" parent="." instance=ExtResource("3_interactable")]
+position = Vector3(0.7, 1.4, 0)
+size = Vector3(0.4, 0.4, 0.4)
+interaction_distance = 2.5
+interaction_message = "Opened or closed the metal gate."
+next_scene_path = ""

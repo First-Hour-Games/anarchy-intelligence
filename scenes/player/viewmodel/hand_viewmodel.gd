@@ -5,7 +5,7 @@ class_name HandViewmodel extends CanvasLayer
 
 const SOURCE_SIZE := Vector2(1774.0, 887.0)
 const INTERACT_PROMPT_KEYBOARD := preload("res://img/player/InteractLabel.png")
-const INTERACT_PROMPT_GAMEPAD := preload("res://img/controller/pad_interact.png")
+const INTERACT_PROMPT_GAMEPAD := preload("res://img/controller/pad_interact_a.svg")
 
 @export_category("Layout")
 @export_range(0.5, 1.2, 0.01) var viewmodel_scale: float = 0.84
@@ -79,7 +79,7 @@ func _ready() -> void:
 	_update_heartbeat()
 	_update_stamina_bar()
 	stamina_hud.modulate.a = 0.0
-	# Interact prompt shows [E] on keyboard/mouse and (X) on a gamepad, switching live.
+	# Interact prompt shows [E] on keyboard/mouse and (A) on a gamepad, switching live.
 	InputDevice.bind(interaction_prompt, &"texture", INTERACT_PROMPT_KEYBOARD, INTERACT_PROMPT_GAMEPAD)
 	_bind_health.call_deferred()
 

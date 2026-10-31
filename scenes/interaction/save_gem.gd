@@ -4,7 +4,7 @@ extends Interactable3D
 ## one of four files (see SaveGame); dying returns the player to the last gem used. The player reappears at RespawnPoint, facing along its -Z,
 ## so keep that marker on open ground in front of the gem.
 
-## Shown on the save file, e.g. "GAS STATION". Leave the area empty to name it after the map.
+## Shown on the save file, e.g. "TOWN ENTRANCE". Leave the area empty to name it after the map.
 @export var location_name: String = ""
 @export var area_name: String = ""
 @export_range(0.2, 3.0, 0.05) var float_height: float = 1.1

@@ -7,6 +7,8 @@ signal returned_to_post
 @export var movement_speed: float = 1.25
 @export var territory_radius: float = 22.0
 @export var max_step_height: float = 0.4
+## The generator ambush disables this on its own instance so it can approach in view.
+@export var freeze_when_watched: bool = true
 ## Seconds the Clawman spends investigating a breaking bottle.
 @export var noise_memory: float = 7.0
 const ROUTE := preload("res://scenes/shared/entity_route.gd")
@@ -136,7 +138,7 @@ func _physics_process(delta: float) -> void:
 	var watched := (visible_player or (hidden and encounter_kind == 0)) and is_watched_by_player()
 	var should_move := false
 	if encounter_kind == 0:
-		should_move = in_territory and not watched
+		should_move = in_territory and (not freeze_when_watched or not watched)
 		# A hidden player is lost to it: it drifts back to its post, which leaves a way past.
 		last_heard = spawn.origin if hidden else player.global_position
 	else:
@@ -191,7 +193,7 @@ func _physics_process(delta: float) -> void:
 	# It only moves unwatched, so nobody sees it get up.
 	if seated and motion.length() > 0.1:
 		_set_seated(false)
-	if in_territory and distance < 1.65 and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0 and (encounter_kind == 1 or not watched):
+	if in_territory and distance < 1.65 and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0 and (encounter_kind == 1 or not freeze_when_watched or not watched):
 		strike_time = 0.9
 		strike_hit = false
 		attack_cooldown = 2.0
@@ -208,7 +210,7 @@ func _physics_process(delta: float) -> void:
 	if alert_time > 0.0:
 		motion = Vector3.ZERO
 	var visual := $Visual
-	if visual.has_method("play"):
+	if visual.has_method("play") and not seated:
 		visual.play("attack" if strike_time > 0.0 else "windup" if alert_time > 0.0 else "run" if motion.length() > 0.1 else "idle")
 	velocity.x = motion.x
 	velocity.z = motion.z

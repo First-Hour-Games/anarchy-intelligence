@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const SETTINGS_PATH := "user://audio_settings.cfg"
+const UI_AUDIO = preload("res://scenes/ui/ui_audio.gd")
 const PAUSE_MUSIC_BOOST: float = 1.30
 const MUSIC_TWEEN_DURATION: float = 0.4
 const DISTORTION_IN_DURATION: float = 0.32
@@ -57,6 +58,7 @@ func _ready() -> void:
 		if AudioServer.get_bus_index(bus) < 0:
 			AudioServer.add_bus()
 			AudioServer.set_bus_name(AudioServer.bus_count - 1, bus)
+	AudioServer.set_bus_send(AudioServer.get_bus_index("Effects"), "Master")
 	AudioServer.set_bus_send(AudioServer.get_bus_index("Footsteps"), "Reverb")
 	for bus: String in ["InGameFootage", "Reverb"]:
 		var index := AudioServer.get_bus_index(bus)
@@ -102,6 +104,8 @@ func _ready() -> void:
 
 
 func _route_audio(node: Node) -> void:
+	if node is AudioStreamPlayer and UI_AUDIO.configure(node):
+		return
 	if str(node.name).begins_with("Pause"):
 		return
 	if node is AudioStreamPlayer or node is AudioStreamPlayer3D or node is AudioStreamPlayer2D:
@@ -342,23 +346,21 @@ func _build_menu() -> void:
 	_pause_sfx_player = AudioStreamPlayer.new()
 	_pause_sfx_player.name = "PauseSfxPlayer"
 	_pause_sfx_player.volume_db = -6.0
-	_pause_sfx_player.bus = &"Master"
+	_pause_sfx_player.bus = &"Effects"
 	_pause_sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_pause_sfx_player)
 
 	_move_sfx_player = AudioStreamPlayer.new()
 	_move_sfx_player.name = "PauseMoveSfxPlayer"
 	_move_sfx_player.stream = preload("res://sounds/ui/move.mp3")
-	_move_sfx_player.volume_db = -10.0
-	_move_sfx_player.bus = &"Master"
+	UI_AUDIO.configure(_move_sfx_player)
 	_move_sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_move_sfx_player)
 
 	_click_sfx_player = AudioStreamPlayer.new()
 	_click_sfx_player.name = "PauseClickSfxPlayer"
 	_click_sfx_player.stream = preload("res://sounds/ui/click.mp3")
-	_click_sfx_player.volume_db = -10.0
-	_click_sfx_player.bus = &"Master"
+	UI_AUDIO.configure(_click_sfx_player)
 	_click_sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_click_sfx_player)
 

@@ -26,7 +26,8 @@ func _run() -> void:
 	await process_frame
 
 	var choose := func(_slot: int) -> bool: return false
-	var screen := SaveSlotScreen.open(root, SaveSlotScreen.Mode.SAVE, choose, true)
+	# Load after autoload initialization to avoid compiling SaveGame references too early.
+	var screen: Variant = (load("res://scenes/ui/save_slots/save_slot_screen.gd") as GDScript).open(root, 0, choose, true)
 	await process_frame
 	var music: AudioStreamPlayer = screen.get("_music_player")
 	check(music != null and music.playing, "save loop starts playing when the screen opens")
@@ -36,7 +37,7 @@ func _run() -> void:
 	check(music.stream.resource_path == "" and (music.stream as AudioStreamOggVorbis).loop, "save loop is a looping copy of saveLoop.ogg")
 	check(music.bus == &"Music", "save loop plays on the Music bus")
 	check(music.volume_db < -40.0, "save loop starts quiet")
-	await create_timer(screen.music_fade_in + 0.3, true, false, true).timeout
+	await screen._music_tween.finished
 	check(is_equal_approx(music.volume_db, screen.music_volume_db), "save loop fades in to music_volume_db")
 	check(bgm.volume_db < -60.0, "music already playing dips out under the save loop")
 	check(paused, "saving from a gem pauses the game")

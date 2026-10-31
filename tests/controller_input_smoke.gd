@@ -65,7 +65,7 @@ func run() -> void:
 		return
 
 	# --- Input map
-	for action: StringName in [&"move_forward", &"move_back", &"move_left", &"move_right", &"jump", &"sprint", &"crouch", &"pause"]:
+	for action: StringName in [&"move_forward", &"move_back", &"move_left", &"move_right", &"sprint", &"crouch", &"pause"]:
 		check(_has_key_event(action) and _has_joy_event(action), "%s has keyboard + gamepad bindings" % action)
 	for action: StringName in [&"look_up", &"look_down", &"look_left", &"look_right", &"gamepad_cursor_click"]:
 		check(_has_joy_event(action), "%s has gamepad binding" % action)
@@ -79,8 +79,8 @@ func run() -> void:
 			has_dpad = has_dpad or event is InputEventJoypadButton
 		check(not has_stick and has_dpad, "%s uses D-pad directly; stick nav is repeat-limited" % action)
 
-	# --- Requested layout: X interact, Y map, B inventory, L3 sprint, D-pad menus
-	var expect := {&"interact": JOY_BUTTON_X, &"map_toggle": JOY_BUTTON_Y, &"inventory_toggle": JOY_BUTTON_B, &"sprint": JOY_BUTTON_LEFT_STICK, &"pause": JOY_BUTTON_START}
+	# --- Requested layout: A interact, D-pad up map, D-pad down inventory
+	var expect := {&"interact": JOY_BUTTON_A, &"map_toggle": JOY_BUTTON_DPAD_UP, &"inventory_toggle": JOY_BUTTON_DPAD_DOWN, &"sprint": JOY_BUTTON_LEFT_STICK, &"pause": JOY_BUTTON_START}
 	for action: StringName in expect:
 		var found := false
 		for event in InputMap.action_get_events(action):
@@ -91,6 +91,11 @@ func run() -> void:
 		var probe := _joy_button(button)
 		check(probe.is_action_pressed(&"ui_accept"), "face button %d works as Enter" % button)
 
+	check(InputMap.action_get_events(&"jump").is_empty(), "jump has no keyboard or controller binding")
+	check(not _joy_button(JOY_BUTTON_B).is_action_pressed(&"inventory_toggle"), "B no longer opens inventory")
+	check(not _joy_button(JOY_BUTTON_Y).is_action_pressed(&"map_toggle"), "Y no longer opens map")
+	check(not _joy_button(JOY_BUTTON_X).is_action_pressed(&"interact"), "X no longer interacts")
+
 	# --- Device auto-detection
 	var switches: Array[bool] = []
 	manager.device_changed.connect(func(is_pad: bool) -> void: switches.append(is_pad))
@@ -98,7 +103,7 @@ func run() -> void:
 
 	var label := Label.new()
 	root.add_child(label)
-	manager.bind_property(label, &"text", "[ E ]", "[ X ]")
+	manager.bind_property(label, &"text", "[ E ]", "[ A ]")
 	check(label.text == "[ E ]", "bound prompt shows keyboard text initially")
 
 	_send(_joy_axis(JOY_AXIS_LEFT_X, 0.1))
@@ -109,8 +114,8 @@ func run() -> void:
 	_send(_joy_button(JOY_BUTTON_A, false))
 	await process_frame
 	check(manager.is_gamepad(), "pressing A switches to gamepad")
-	check(label.text == "[ X ]", "bound prompt swapped to gamepad text")
-	check(manager.glyph(&"interact") == "X" and manager.glyph(&"pause") == "MENU", "gamepad glyphs")
+	check(label.text == "[ A ]", "bound prompt swapped to gamepad text")
+	check(manager.glyph(&"interact") == "A" and manager.glyph(&"pause") == "MENU", "gamepad glyphs")
 
 	var motion := InputEventMouseMotion.new()
 	motion.relative = Vector2(1, 0)

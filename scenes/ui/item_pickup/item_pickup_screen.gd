@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const UI_AUDIO = preload("res://scenes/ui/ui_audio.gd")
+
 ## Silent Hill / Fatal Frame style item acquisition inspection screen.
 ## Side-by-side layout: Item showcase on the left, item name & description on the right.
 ## Blurs and dims the background while presenting the item graphic/model,
@@ -316,6 +318,8 @@ func _play_pickup_sound(item: ItemData) -> void:
 		_sfx_player.stream = item.pickup_sound
 	else:
 		_sfx_player.stream = preload("res://sounds/ui/move.mp3")
+	_sfx_player.volume_db = -6.0
+	UI_AUDIO.configure(_sfx_player)
 	_sfx_player.pitch_scale = randf_range(0.97, 1.03)
 	_sfx_player.play()
 
@@ -521,7 +525,7 @@ func _build_ui() -> void:
 	# Pickup SFX AudioPlayer
 	_sfx_player = AudioStreamPlayer.new()
 	_sfx_player.name = "PickupSfxPlayer"
-	_sfx_player.bus = &"Master"
+	_sfx_player.bus = &"Effects"
 	_sfx_player.volume_db = -6.0
 	_sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_sfx_player)

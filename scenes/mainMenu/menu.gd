@@ -70,7 +70,6 @@ func _ready() -> void:
 	
 	# Start background music
 	if music_player:
-		music_player.finished.connect(music_player.play)
 		if not music_player.playing:
 			music_player.play()
 
