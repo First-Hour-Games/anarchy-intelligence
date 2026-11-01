@@ -6,6 +6,7 @@ const MENU := preload("res://scenes/mainMenu/menu.tscn")
 @export var menu_fade_duration: float = 1.0
 @onready var black: ColorRect = $Black
 @onready var logo: TextureRect = $Black/Logo
+var _menu_reveal_tween: Tween
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
@@ -17,13 +18,11 @@ func _ready() -> void:
 
 func _show_menu() -> void:
 	var menu := MENU.instantiate()
+	menu.play_music_on_ready = false
 	get_tree().root.add_child(menu)
 	get_tree().current_scene = menu
 	menu.input_ready_at = Time.get_ticks_msec() + int(menu_fade_duration * 1000) + 250
-	var music: AudioStreamPlayer = menu.music_player
-	var target_volume := music.volume_db
-	music.volume_db = -80.0
-	var reveal := create_tween().set_parallel(true)
-	reveal.tween_property(black, "modulate:a", 0.0, menu_fade_duration)
-	reveal.tween_property(music, "volume_db", target_volume, menu_fade_duration)
-	reveal.finished.connect(queue_free)
+	_menu_reveal_tween = create_tween()
+	_menu_reveal_tween.tween_property(black, "modulate:a", 0.0, menu_fade_duration)
+	_menu_reveal_tween.finished.connect(menu.start_menu_music)
+	_menu_reveal_tween.finished.connect(queue_free)

@@ -19,6 +19,8 @@ var music_volume_percent: int = 80
 var is_starting: bool = false
 var input_ready_at: int = 0
 var can_continue: bool = false
+## Startup disables this until its black overlay has finished revealing the menu.
+@export var play_music_on_ready: bool = true
 @export var progress_save_path: String = "user://opening_story_v1.json"
 var reset_label: Label
 ## Opens the four save files (SaveSlotScreen); shown while any file exists.
@@ -68,10 +70,12 @@ func _ready() -> void:
 	_setup_mouse_listeners()
 	_update_menu_display(false)
 	
-	# Start background music
-	if music_player:
-		if not music_player.playing:
-			music_player.play()
+	if play_music_on_ready:
+		start_menu_music()
+
+func start_menu_music() -> void:
+	if not is_starting and is_instance_valid(music_player) and not music_player.playing:
+		music_player.play()
 
 func _rebuild_main_options() -> void:
 	main_options = [{"label": start_label, "action": _start_game}]
