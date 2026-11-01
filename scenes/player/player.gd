@@ -278,6 +278,19 @@ func recover_stamina(delta: float) -> void:
 	_update_stamina(delta, false)
 
 
+## Spend an action's full cost atomically and delay recovery like sprinting.
+func try_spend_stamina(amount: float) -> bool:
+	if amount <= 0.0 or stamina < amount:
+		return false
+	stamina = maxf(0.0, stamina - amount)
+	_stamina_regeneration_cooldown = stamina_regeneration_delay
+	if stamina <= 0.0:
+		_sprint_exhausted = true
+		is_sprinting = false
+	stamina_changed.emit(stamina, max_stamina)
+	return true
+
+
 ## Throws one carried bottle from the camera. Returns false when none is carried.
 func throw_bottle() -> bool:
 	if not is_instance_valid(inventory) or not inventory.remove_one(PlayerInventory.BOTTLE_ITEM):

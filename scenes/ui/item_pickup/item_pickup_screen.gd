@@ -229,6 +229,7 @@ func close() -> void:
 
 	var finished_item := _current_item
 	var finished_cb := _close_callback
+	var finished_mouse_mode := _previous_mouse_mode
 
 	_close_tween.chain().tween_callback(func():
 		if is_instance_valid(_overlay):
@@ -241,6 +242,8 @@ func close() -> void:
 		if is_instance_valid(_model_viewport):
 			_model_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 
+		# Restore the caller's mouse state before callbacks can open another UI.
+		Input.mouse_mode = finished_mouse_mode
 		closed.emit(finished_item)
 		if finished_cb.is_valid():
 			finished_cb.call()

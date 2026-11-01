@@ -119,6 +119,25 @@ func run() -> void:
 	section.add_child(legacy_pipe)
 	saves._restore_section(section, {"inventory_pickups_present": []})
 	check(not legacy_pipe.is_queued_for_deletion(), "older saves still allow picking up the newly added weapon")
+	weapon.set_equipped(true)
+	player.max_stamina = 240.0
+	player.stamina = player.max_stamina
+	weapon.set("_cooldown", 0.0)
+	var stamina_updates: Array[float] = []
+	player.stamina_changed.connect(func(value: float, _maximum: float) -> void: stamina_updates.append(value))
+	for swing in 4:
+		check(weapon.try_swing() and is_equal_approx(player.stamina, 240.0 - (swing + 1) * 60.0), "swing %d spends exactly a quarter of maximum stamina" % (swing + 1))
+		var after_swing := player.stamina
+		check(not weapon.try_swing() and player.stamina == after_swing, "cooldown rejection spends no additional stamina")
+		weapon.set("_cooldown", 0.0)
+	check(not weapon.try_swing() and player.stamina == 0.0, "empty stamina prevents another swing")
+	check(stamina_updates.size() == 4, "each successful swing updates the stamina HUD once")
+	player._update_stamina(player.stamina_regeneration_delay * 0.5, false)
+	check(player.stamina == 0.0, "swinging delays stamina regeneration")
+	player.stamina = 59.0
+	check(not weapon.try_swing() and player.stamina == 59.0, "less than a full swing cost cannot be spent")
+	player._update_stamina(player.stamina_regeneration_delay + 1.0, false)
+	check(weapon.try_swing(), "regaining enough stamina makes swinging available again")
 	player.queue_free()
 	section.queue_free()
 	await process_frame

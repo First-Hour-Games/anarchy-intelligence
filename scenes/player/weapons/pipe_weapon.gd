@@ -4,6 +4,8 @@ extends Node3D
 signal swung
 signal hit_landed(target: Node3D)
 
+const STAMINA_COST_FRACTION := 0.25
+
 @export_range(0.5, 3.0, 0.1) var reach: float = 1.8
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 0.8
 @export_range(0.1, 3.0, 0.1) var stagger_duration: float = 1.0
@@ -51,6 +53,7 @@ func can_swing() -> bool:
 	return equipped and _player.inventory.has_item(&"metal_pipe") and not _player.is_frozen \
 		and not get_tree().paused and not _camera.top_level and not _player.is_hidden() \
 		and not _player.inventory.is_open \
+		and _player.stamina >= _player.max_stamina * STAMINA_COST_FRACTION \
 		and (health == null or not bool(health.get("is_dead"))) and _cooldown <= 0.0
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -59,6 +62,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func try_swing() -> bool:
 	if not can_swing():
+		return false
+	if not _player.try_spend_stamina(_player.max_stamina * STAMINA_COST_FRACTION):
 		return false
 	_cooldown = swing_cooldown
 	_swing_time = 0.0
