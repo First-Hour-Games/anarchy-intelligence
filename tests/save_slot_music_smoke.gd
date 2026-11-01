@@ -25,7 +25,10 @@ func _run() -> void:
 	bgm.play()
 	await process_frame
 
-	var choose := func(_slot: int) -> bool: return false
+	var saved_slots: Array[int] = []
+	var choose := func(slot: int) -> bool:
+		saved_slots.append(slot)
+		return true
 	# Load after autoload initialization to avoid compiling SaveGame references too early.
 	var screen: Variant = (load("res://scenes/ui/save_slots/save_slot_screen.gd") as GDScript).open(root, 0, choose, true)
 	await process_frame
@@ -41,8 +44,19 @@ func _run() -> void:
 	check(is_equal_approx(music.volume_db, screen.music_volume_db), "save loop fades in to music_volume_db")
 	check(bgm.volume_db < -60.0, "music already playing dips out under the save loop")
 	check(paused, "saving from a gem pauses the game")
+	check(screen._bottom_label.text == "EXIT", "save screen uses the EXIT label")
+	screen._select(0)
+	# An occupied real save still uses the existing overwrite confirmation.
+	screen._confirm_slot = 0
+	screen._activate()
+	await process_frame
+	check(saved_slots == [0] and screen._header_labels[0].text == "SAVED", "successful save displays SAVED")
+	await create_timer(1.1, true, false, true).timeout
+	check(is_instance_valid(screen) and screen.visible and not screen._closing and not screen._busy, "successful save stays open and interactive beyond the old auto-close delay")
+	check(paused and music.playing, "game remains paused with save music until manual exit")
 
-	screen.close()
+	screen._select(screen.BOTTOM)
+	screen._activate()
 	await process_frame
 	check(not paused, "closing unpauses the game")
 	check(is_instance_valid(screen) and not screen.visible, "screen hides at once and stays to fade the music")

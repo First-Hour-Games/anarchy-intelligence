@@ -281,8 +281,8 @@ func _activate() -> void:
 		_confirm_slot = -1
 		_refresh()
 		_header_labels[slot].text = "SAVED"
-		await get_tree().create_timer(0.9, true, false, true).timeout
-		close()
+		_busy = false
+		_input_ready_at = Time.get_ticks_msec() + 200
 	else:
 		_busy = false
 		_header_labels[slot].text = "SAVE FAILED"
@@ -451,7 +451,7 @@ func _build() -> void:
 	_bottom.mouse_filter = Control.MOUSE_FILTER_STOP
 	_bottom.mouse_entered.connect(_on_hover.bind(BOTTOM))
 	_bottom.gui_input.connect(_on_click.bind(BOTTOM))
-	_bottom_label = _label("CANCEL SAVING" if mode == Mode.SAVE else "BACK", 21, LINE)
+	_bottom_label = _label("EXIT" if mode == Mode.SAVE else "BACK", 21, LINE)
 	_bottom.add_child(_bottom_label)
 	content.add_child(_bottom)
 
