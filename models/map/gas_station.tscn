@@ -650,6 +650,18 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_o33ek")
 
+[sub_resource type="BoxShape3D" id="CounterStraightCollision"]
+size = Vector3(1.8288, 0.92, 0.75)
+
+[sub_resource type="BoxShape3D" id="CounterCornerBackCollision"]
+size = Vector3(1.8288, 0.92, 0.75)
+
+[sub_resource type="BoxShape3D" id="CounterCornerSideCollision"]
+size = Vector3(0.7104, 0.92, 1.1188)
+
+[sub_resource type="BoxShape3D" id="FreezerBoxCollision"]
+size = Vector3(338.0363, 710.3035, 712.3344)
+
 [node name="Node3D" type="Node3D" unique_id=382333741]
 
 [node name="GasStationPlatform2" type="MeshInstance3D" parent="." unique_id=89436089]
@@ -1230,6 +1242,13 @@ shape = SubResource("BoxShape3D_k7hkw")
 transform = Transform3D(-4.8082526e-08, 0, 1.1, 0, 1.1, 0, -1.1, 0, -4.8082526e-08, 2.104699, 0.543, -7.110379)
 mesh = SubResource("ArrayMesh_hk73y")
 
+
+[node name="CollisionBody" type="StaticBody3D" parent="Counter_Straight_L72in"]
+
+[node name="BoxCollision" type="CollisionShape3D" parent="Counter_Straight_L72in/CollisionBody"]
+position = Vector3(0, 0.46, 0)
+shape = SubResource("CounterStraightCollision")
+
 [node name="Register_Classic_ROOT" type="Node3D" parent="Counter_Straight_L72in" unique_id=331931039]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0.507749, 0.92451805, 1.0658141e-15)
 
@@ -1268,9 +1287,27 @@ mesh = SubResource("ArrayMesh_k7qbu")
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 7.104043, 0.543, -9.752517)
 mesh = SubResource("ArrayMesh_hk73y")
 
+
+[node name="CollisionBody" type="StaticBody3D" parent="Counter_Straight_L72in2"]
+
+[node name="BoxCollision" type="CollisionShape3D" parent="Counter_Straight_L72in2/CollisionBody"]
+position = Vector3(0, 0.46, 0)
+shape = SubResource("CounterStraightCollision")
+
 [node name="Counter_Corner_Arm72in" type="MeshInstance3D" parent="." unique_id=550009528]
 transform = Transform3D(-1.1, 0, -1.6609539e-07, 0, 1.1, 0, 1.6609539e-07, 0, -1.1, 2.7, 0.543, -9.113503)
 mesh = SubResource("ArrayMesh_1t1yw")
+
+
+[node name="CollisionBody" type="StaticBody3D" parent="Counter_Corner_Arm72in"]
+
+[node name="BackCollision" type="CollisionShape3D" parent="Counter_Corner_Arm72in/CollisionBody"]
+position = Vector3(0, 0.46, 0.5594)
+shape = SubResource("CounterCornerBackCollision")
+
+[node name="SideCollision" type="CollisionShape3D" parent="Counter_Corner_Arm72in/CollisionBody"]
+position = Vector3(0.5592, 0.46, -0.375)
+shape = SubResource("CounterCornerSideCollision")
 
 [node name="Island_Cooler_L72in2" type="MeshInstance3D" parent="." unique_id=1082475856]
 transform = Transform3D(0.905396, 0, 0.9328762, 0, 1.3, 0, -0.9328762, 0, 0.905396, -6.7004275, 0.47284502, -11.129522)
@@ -1305,3 +1342,10 @@ mesh = SubResource("ArrayMesh_alvo3")
 
 [node name="Sketchfab_Scene5" parent="." unique_id=98336761 instance=ExtResource("35_ahlcv")]
 transform = Transform3D(-9.930693e-06, 0, -0.0039999876, 0, 0.0039999993, 0, 0.0039999876, 0, -9.930693e-06, -2.1136732, 0.3946004, -16.041077)
+
+
+[node name="CollisionBody" type="StaticBody3D" parent="Sketchfab_Scene5"]
+
+[node name="BoxCollision" type="CollisionShape3D" parent="Sketchfab_Scene5/CollisionBody"]
+position = Vector3(-8.93745, 327.35842, -256.1672)
+shape = SubResource("FreezerBoxCollision")
