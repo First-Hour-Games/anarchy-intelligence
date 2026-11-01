@@ -42,6 +42,8 @@ func run() -> void:
 	await frames()
 	check(zone.overlaps_body(player), "real player enters the authored generator trigger")
 	check(not zone.has_played and not wrapper.visible, "no key means no enemy activation")
+	var appearance_audio := wrapper.get_node("AppearanceAudio") as AudioStreamPlayer
+	check(not appearance_audio.playing, "appearance cue stays silent before activation")
 	player.inventory.add_item(PlayerInventory.FENCE_KEY_ITEM)
 	player.is_frozen = true
 	await frames()
@@ -60,6 +62,8 @@ func run() -> void:
 	check(zone.has_played and wrapper.visible and wrapper.enabled, "key arms the zone and enables the existing enemy")
 	await process_frame
 	check(wrapper.get_node("HuntAudio").playing, "generator ambush starts the nearby Wrapper hunt loop")
+	check(appearance_audio.playing and appearance_audio.stream.resource_path.ends_with("scaryMoment.ogg"), "ambush layers the new Ogg appearance cue over the hunt loop")
+	check(not (appearance_audio.stream as AudioStreamOggVorbis).loop and appearance_audio.volume_db > wrapper.get_node("HuntAudio").hunt_volume_db, "appearance cue plays once at a higher volume than the hunt loop")
 	check(wrapper.is_physics_processing() and wrapper.collision_layer != 0, "enemy physics and collision are restored")
 	check(not wrapper.freeze_when_watched, "this ambush approaches even while watched")
 	check(is_equal_approx(wrapper.movement_speed, 1.4) and is_equal_approx(wrapper.movement_speed, zone.ambush_movement_speed), "ambush movement is 50 percent slower than the previous 2.8 speed")
@@ -91,12 +95,14 @@ func run() -> void:
 	check(wrapper.spawn.is_equal_approx(post), "re-entering cannot teleport or restart the active enemy")
 	var state: Dictionary = root.get_node("SaveGame")._capture_section(forest)
 	check(state.one_shot_cutscenes.get("WrapperPopoutZone", false), "save records the activated encounter")
+	appearance_audio.stop()
 	zone._activated = false
 	wrapper.enabled = false
 	wrapper.hide()
 	root.get_node("SaveGame")._restore_section(forest, state)
 	await frames()
 	check(wrapper.enabled and wrapper.visible, "save restoration resumes the enemy rather than hiding it permanently")
+	check(not appearance_audio.playing, "save restoration does not replay the appearance cue")
 	var streaming := root.get_node("WorldStreaming")
 	streaming._save_state(forest)
 	zone._activated = false
@@ -105,6 +111,7 @@ func run() -> void:
 	streaming._restore_state(forest)
 	await frames()
 	check(wrapper.enabled and wrapper.visible, "streaming restoration resumes the activated enemy")
+	check(not appearance_audio.playing, "streaming restoration does not replay the appearance cue")
 	zone.has_played = false
 	zone._activated = false
 	wrapper.enabled = false

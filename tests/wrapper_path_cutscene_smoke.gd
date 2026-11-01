@@ -48,6 +48,8 @@ func run() -> void:
 	await frames()
 	check(not wrapper.visible and not wrapper.is_physics_processing(), "Wrapper starts hidden with its AI disabled")
 	check(cutscene._buildup_player == null, "buildup stays silent until the window appearance triggers")
+	var appearance_audio := wrapper.get_node("AppearanceAudio") as AudioStreamPlayer
+	check(not appearance_audio.playing, "scary moment stays silent until the Wrapper appears")
 	check(is_equal_approx(cutscene.walk_speed, 1.5 * 1.15), "window walk moves 15 percent faster")
 	check(wrapper.collision_layer == 0 and wrapper.collision_mask == 0, "cutscene Wrapper cannot block or attack the player")
 	player.global_position = inside
@@ -98,6 +100,8 @@ func run() -> void:
 	check(cutscene.has_played and cutscene.is_playing and wrapper.visible, "turning toward the front windows inside the zone reveals the Wrapper")
 	var music := cutscene._buildup_player as AudioStreamPlayer
 	check(music != null and music.playing, "buildup starts with the window appearance")
+	check(appearance_audio.playing and appearance_audio.stream.resource_path.ends_with("scaryMoment.ogg"), "window reveal overlaps scary moment with the existing buildup")
+	check(appearance_audio.volume_db > music.volume_db, "scary moment has volume priority over the buildup")
 	if music == null:
 		quit(1)
 		return

@@ -103,6 +103,9 @@ func _try_start() -> void:
 	_play_walk_animation()
 	_wrapper.show()
 	_play_buildup_music()
+	var appearance_audio := _wrapper.get_node_or_null("AppearanceAudio") as AudioStreamPlayer
+	if appearance_audio != null:
+		appearance_audio.play()
 	set_physics_process(true)
 	cutscene_started.emit()
 

@@ -71,6 +71,11 @@ func _try_activate() -> void:
 	# Live zone activation reveals the enemy immediately. The setter's deferred
 	# call remains for save restoration and is ignored once already activated.
 	_activate_enemy()
+	# A fresh reveal gets the cue; save/streaming activation stays silent.
+	if _activated:
+		var appearance_audio := _wrapper.get_node_or_null("AppearanceAudio") as AudioStreamPlayer
+		if appearance_audio != null:
+			appearance_audio.play()
 	set_physics_process(false)
 
 func _activate_enemy() -> void:
