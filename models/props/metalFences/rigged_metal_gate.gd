@@ -7,11 +7,12 @@ signal closed
 
 @export_category("Gate Motion")
 @export_range(10.0, 120.0, 1.0) var open_angle_degrees: float = 95.0
-@export_range(0.1, 3.0, 0.05) var swing_duration: float = 0.9
+@export_range(0.1, 3.0, 0.05) var swing_duration: float = 2.2
 @export var open_away_from_player: bool = true
 @export var gate_bone_name: StringName = &"Bone.001_01"
 
 @export_category("Lock")
+@export_range(1.0, 8.0, 0.5) var locked_shake_degrees: float = 3.0
 @export var starts_locked: bool = true
 @export var required_key: StringName = &"fence_key"
 @export_multiline var locked_dialogue: String = "The fence gate is secured with a lock. I need a key."
@@ -65,6 +66,7 @@ func toggle(player: Node3D = null) -> void:
 		var inventory := player.get_node_or_null("InventoryHUD") as PlayerInventory if is_instance_valid(player) else null
 		if inventory == null or not inventory.remove_one(required_key):
 			interactable.single_line_dialogue = locked_dialogue
+			_shake_locked(player)
 			return
 		is_locked = false
 	interactable.single_line_dialogue = ""
@@ -88,6 +90,25 @@ func toggle(player: Node3D = null) -> void:
 			opened.emit()
 		else:
 			closed.emit()
+	)
+
+func _shake_locked(player: Node3D) -> void:
+	var direction := 1.0
+	if is_instance_valid(player):
+		direction = 1.0 if to_local(player.global_position).z >= 0.0 else -1.0
+	var shake_angle := deg_to_rad(locked_shake_degrees) * direction
+	is_moving = true
+	_target_angle = 0.0
+	interactable.is_enabled = false
+	_motion = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	_motion.tween_method(_set_angle, 0.0, shake_angle, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_motion.tween_method(_set_angle, shake_angle, -shake_angle * 0.35, 0.10).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_motion.tween_method(_set_angle, -shake_angle * 0.35, shake_angle * 0.15, 0.08)
+	_motion.tween_method(_set_angle, shake_angle * 0.15, 0.0, 0.10).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_motion.finished.connect(func() -> void:
+		_set_angle(0.0)
+		is_moving = false
+		interactable.is_enabled = true
 	)
 
 func _set_angle(angle: float) -> void:

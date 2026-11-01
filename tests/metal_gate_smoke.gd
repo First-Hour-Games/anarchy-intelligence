@@ -44,6 +44,7 @@ func run() -> void:
 	check(not gate.is_open and not gate.is_moving, "gate starts closed")
 	check(not station.get_node("Fence2").visible and station.get_node("Fence2/StaticBody3D/CollisionShape3D").disabled, "old fence panel and collider are replaced only in Starting Forest")
 	check(not gate.leaf_body.sync_to_physics, "moving collision avoids inherited-scale synchronization")
+	check(gate.swing_duration >= 2.0, "gate defaults to a slow opening swing")
 	gate.swing_duration = 0.3
 	gate.interactable.cooldown = 0.0
 	var player := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as FirstPersonPlayer
@@ -58,14 +59,23 @@ func run() -> void:
 	check(not passage_clear(gate), "closed gate blocks player-sized capsule")
 	check(gate.is_locked, "gate starts locked")
 	detector._process(0.0)
-	check(detector.try_interact() and gate.is_locked and not gate.is_moving, "interaction without key keeps gate locked")
-	await process_frame
+	check(detector.try_interact() and gate.is_locked and gate.is_moving, "interaction without key shakes the locked gate")
+	await create_timer(0.08).timeout
+	check(gate._angle > 0.0 and not gate.interactable.is_enabled, "locked attempt pushes gate forward and blocks repeated activation")
+	check(gate.get_save_state().locked and is_zero_approx(gate.get_save_state().angle), "saving during shake keeps gate locked and closed")
+	await gate._motion.finished
+	check(gate.is_locked and not gate.is_open and not gate.is_moving and is_zero_approx(gate._angle), "locked shake settles fully closed")
+	check(gate.leaf_body.transform.is_equal_approx(Transform3D.IDENTITY), "locked shake restores collision")
 	var balloon: Node = null
 	for candidate in root.get_children():
 		if candidate is BottomDialogueBalloon:
 			balloon = candidate
 	check(balloon != null and balloon.dialogue_line != null and "lock" in balloon.dialogue_line.text, "locked gate shows Thomas's lock dialogue")
 	if balloon != null:
+		await create_timer(0.5).timeout
+		if balloon.dialogue_label.is_typing:
+			balloon.dialogue_label.skip_typing()
+		await process_frame
 		balloon._end_dialogue()
 		await create_timer(0.4).timeout
 	player.set_physics_process(false)
