@@ -10,6 +10,7 @@ const MAP_ITEM: StringName = &"map"
 const NOTEBOOK_ITEM: StringName = &"notebook"
 const BOTTLE_ITEM: StringName = &"bottle"
 const FENCE_KEY_ITEM: StringName = &"fence_key"
+const METAL_PIPE_ITEM: StringName = &"metal_pipe"
 ## Items that share one slot and track how many are carried.
 const STACK_LIMITS: Dictionary = {BOTTLE_ITEM: 3}
 const INK := Color(0.015, 0.015, 0.015, 0.80)
@@ -539,6 +540,9 @@ func _update_hud() -> void:
 	_title.text = "EMPTY" if occupied.is_empty() else _get_item_display_name(item)
 	_counter.text = "" if occupied.is_empty() else "%02d / %02d" % [selected + 1, occupied.size()]
 	_use.text = "USE" if item == EMPTY_ITEM else ItemDatabase.get_item(item).use_action_text
+	if item == METAL_PIPE_ITEM:
+		var weapon := _player.get_node_or_null("Head/Camera3D/PipeWeapon")
+		_use.text = "HOLSTER PIPE" if weapon != null and weapon.get("equipped") else "EQUIP PIPE"
 	_use.disabled = item == EMPTY_ITEM or item == FENCE_KEY_ITEM
 	var health := _player.get_node_or_null("CombatHealth")
 	var ratio := clampf(float(health.get("health")) / maxf(float(health.get("max_health")), 0.01), 0.0, 1.0) if health != null else 1.0
@@ -551,6 +555,11 @@ func _use_selected() -> void:
 	if item == EMPTY_ITEM:
 		return
 	match item:
+		METAL_PIPE_ITEM:
+			var weapon := _player.get_node_or_null("Head/Camera3D/PipeWeapon")
+			if weapon != null:
+				weapon.set_equipped(not bool(weapon.get("equipped")))
+				set_open(false, false)
 		FLASHLIGHT_ITEM:
 			set_open(false)
 			_player.flashlight.toggle()
@@ -575,4 +584,5 @@ func _get_item_display_name(item: StringName) -> String:
 		NOTEBOOK_ITEM: return "CARRIE'S NOTES"
 		BOTTLE_ITEM: return "EMPTY BOTTLE x%d" % get_count(item)
 		FENCE_KEY_ITEM: return "FENCE KEY"
+		METAL_PIPE_ITEM: return "METAL PIPE"
 		_: return "EMPTY" if item == EMPTY_ITEM else str(item).to_upper()

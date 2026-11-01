@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/player/weapons/pipe_weapon.gd" id="1_weapon"]
+[ext_resource type="Script" path="res://models/props/weapons/normalized_pipe.gd" id="2_model"]
+
+[node name="PipeWeapon" type="Node3D"]
+script = ExtResource("1_weapon")
+
+[node name="ModelPivot" type="Node3D" parent="."]
+visible = false
+position = Vector3(0.28, -0.3, -0.5)
+rotation_degrees = Vector3(-18, -12, -20)
+
+[node name="Model" type="Node3D" parent="ModelPivot"]
+script = ExtResource("2_model")
+grip_origin = true
+
+[node name="HeldLight" type="OmniLight3D" parent="ModelPivot"]
+position = Vector3(-0.15, 0.3, 0.3)
+light_energy = 0.6
+light_color = Color(0.8, 0.85, 1, 1)
+omni_range = 1.5
+cull_mask = 2

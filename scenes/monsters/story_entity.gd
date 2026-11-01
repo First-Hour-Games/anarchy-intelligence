@@ -24,6 +24,8 @@ var warning_cooldown: float = 0.0
 var strike_time: float = 0.0
 var strike_hit: bool = false
 var alert_time: float = 0.0
+var melee_stagger_time: float = 0.0
+var _melee_push := Vector3.ZERO
 ## A HidingSpot the Clawman watched the player enter; it goes there to pull them out.
 var hunted_spot: Node3D = null
 ## True while the Clawman walks to a breaking bottle, even if the player is outside its territory.
@@ -51,6 +53,8 @@ func reset_enemy() -> void:
 	attack_cooldown = 2.0
 	strike_time = 0.0
 	alert_time = 0.0
+	melee_stagger_time = 0.0
+	_melee_push = Vector3.ZERO
 	hunted_spot = null
 	investigating_noise = false
 	returning_to_post = false
@@ -123,8 +127,30 @@ func is_watched_by_player() -> bool:
 		return false
 	return player.get_viewport().get_visible_rect().has_point(player.camera.unproject_position(focus))
 
+func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) -> void:
+	if not enabled or suspended:
+		return
+	var away := global_position - from_position
+	away.y = 0.0
+	_melee_push = away.normalized() * push_speed
+	melee_stagger_time = maxf(melee_stagger_time, duration)
+	strike_time = 0.0
+	strike_hit = true
+	attack_cooldown = maxf(attack_cooldown, duration + 0.3)
+	navigation_route.reset()
+
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player) or not enabled or suspended:
+		return
+	if melee_stagger_time > 0.0:
+		melee_stagger_time = maxf(0.0, melee_stagger_time - delta)
+		velocity.x = _melee_push.x
+		velocity.z = _melee_push.z
+		velocity.y = velocity.y - 9.8 * delta if not is_on_floor() else 0.0
+		_melee_push = _melee_push.move_toward(Vector3.ZERO, delta * 5.0)
+		if $Visual.has_method("play"):
+			$Visual.play("idle")
+		move_and_slide()
 		return
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 	warning_cooldown = maxf(0.0, warning_cooldown - delta)

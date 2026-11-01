@@ -266,6 +266,9 @@ func _capture_player(player: FirstPersonPlayer) -> Dictionary:
 	for property in PLAYER_PROPERTIES:
 		state[property] = player.get(property)
 	var health := player.get_node_or_null("CombatHealth")
+	var weapon := player.get_node_or_null("Head/Camera3D/PipeWeapon")
+	if weapon != null:
+		state["pipe_equipped"] = bool(weapon.get("equipped"))
 	if health != null:
 		state["health"] = health.get("health")
 	return state
@@ -282,6 +285,9 @@ func _restore_player(player: FirstPersonPlayer, state: Dictionary) -> void:
 			if not player.inventory.add_item(id):
 				break
 	player.inventory.select_slot(int(state.get("selected_slot", 0)))
+	var weapon := player.get_node_or_null("Head/Camera3D/PipeWeapon")
+	if weapon != null:
+		weapon.set_equipped(bool(state.get("pipe_equipped", player.inventory.has_item(&"metal_pipe"))))
 	for property in PLAYER_PROPERTIES:
 		if state.has(property):
 			player.set(property, state[property])
@@ -298,6 +304,7 @@ func _restore_player(player: FirstPersonPlayer, state: Dictionary) -> void:
 ## The same section state WorldStreaming keeps when a section unloads, as plain paths.
 func _capture_section(section: Node) -> Dictionary:
 	var state := {"pickups_present": [], "inventory_pickups_present": [], "metal_gates": {}, "interactables": {}, "one_shot_cutscenes": {}}
+	state["inventory_pickups_version"] = 2
 	for node in section.find_children("*", "FlashlightPickup", true, false):
 		state.pickups_present.append(str(section.get_path_to(node)))
 	for node in section.find_children("*", "InventoryPickup", true, false):
@@ -326,6 +333,9 @@ func _restore_section(section: Node, state: Dictionary) -> void:
 	if state.has("inventory_pickups_present"):
 		var present: Array = state.inventory_pickups_present
 		for node in section.find_children("*", "InventoryPickup", true, false):
+			# Saves made before the pipe became a pickup must leave it available.
+			if node.get("item_id") == &"metal_pipe" and int(state.get("inventory_pickups_version", 1)) < 2:
+				continue
 			if not present.has(str(section.get_path_to(node))):
 				node.hide()
 				node.queue_free()

@@ -55,6 +55,14 @@ static func _ensure_initialized() -> void:
 	fence_key.use_action_text = "USE AT LOCKED GATE"
 	register_item(fence_key)
 
+	var pipe := ItemData.new()
+	pipe.id = &"metal_pipe"
+	pipe.name = "METAL PIPE"
+	pipe.description = "A heavy, rusted metal pipe. Left-click or press the right trigger to swing. A close hit staggers an enemy and interrupts its attack. Equip or holster it from the inventory."
+	pipe.model_scene = preload("res://scenes/items/metal_pipe_preview.tscn")
+	pipe.use_action_text = "EQUIP PIPE"
+	register_item(pipe)
+
 
 static func register_item(item: ItemData) -> void:
 	if item == null or item.id.is_empty():

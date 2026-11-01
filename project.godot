@@ -212,6 +212,13 @@ throw_item={
 ]
 }
 
+weapon_attack={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"button_index":1,"pressed":true)
+, Object(InputEventJoypadMotion,"axis":5,"axis_value":1.0)
+]
+}
+
 [internationalization]
 
 locale/translations_pot_files=PackedStringArray("res://scenes/chapters/intro/intro.dialogue", "res://scenes/chapters/tutorial/phone.dialogue", "res://scenes/chapters/main/starting_forest.dialogue")

@@ -102,7 +102,7 @@
 [ext_resource type="Texture2D" uid="uid://dmwtcpp4eoeca" path="res://img/materials/footprints_bare/footprint_bare_left_normal.png" id="104_7ppi4"]
 [ext_resource type="Texture2D" uid="uid://ct03kwh2jjcs4" path="res://img/materials/footprints_bare/footprint_bare_right_emission.png" id="104_75o2h"]
 [ext_resource type="Texture2D" uid="uid://3lo5g2f5bwwc" path="res://img/materials/footprints_bare/footprint_bare_left_emission.png" id="107_7ppi4"]
-[ext_resource type="PackedScene" uid="uid://cho7srdhmimkt" path="res://models/props/weapons/pipeWeapon.glb" id="111_qq8ls"]
+[ext_resource type="PackedScene" path="res://scenes/items/metal_pipe_pickup.tscn" id="111_qq8ls"]
 [ext_resource type="PackedScene" uid="uid://cu145nbknv1uy" path="res://models/psx_industrial_pack/brick_cement.glb" id="112_n7c7n"]
 [ext_resource type="PackedScene" uid="uid://b15d2wwl08n3i" path="res://models/psx_industrial_pack/crate_wood2.glb" id="113_l5whn"]
 [ext_resource type="PackedScene" uid="uid://bygjujm5v2sdo" path="res://models/psx_industrial_pack/generator_unit.glb" id="114_l5whn"]

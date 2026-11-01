@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/player/inventory/player_inventory.tscn" id="5_inventory"]
 [ext_resource type="Material" uid="uid://bpibkoo3tok4b" path="res://shaders/distance_fog_material.tres" id="6_distance_fog_mat"]
 
+[ext_resource type="PackedScene" path="res://scenes/player/weapons/pipe_weapon.tscn" id="pipe_weapon"]
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.35
 height = 1.8
@@ -43,6 +45,8 @@ current = true
 fov = 74.0
 
 [node name="Flashlight" parent="Head/Camera3D" unique_id=112258848 instance=ExtResource("4_flashlight")]
+
+[node name="PipeWeapon" parent="Head/Camera3D" instance=ExtResource("pipe_weapon")]
 
 [node name="DistanceFog" type="MeshInstance3D" parent="Head/Camera3D" unique_id=1982736450]
 visible = false
