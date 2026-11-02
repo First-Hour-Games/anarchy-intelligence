@@ -86,9 +86,9 @@
 [ext_resource type="Texture2D" uid="uid://cer5plb17ibtc" path="res://img/materials/asphalt/Road015C_1K-JPG_Color.jpg" id="84_v1rfr"]
 [ext_resource type="Texture2D" uid="uid://8bnlb1duhxgx" path="res://img/materials/asphalt/Road015C_1K-JPG_AmbientOcclusion.jpg" id="85_egf34"]
 [ext_resource type="Texture2D" uid="uid://dtqdvoscolwo6" path="res://img/materials/asphalt/Road015C_1K-JPG_Displacement.jpg" id="86_eppl6"]
-[ext_resource type="ArrayMesh" uid="uid://dnljfwj3hyrtn" path="res://models/map/gasStation/trash.tres" id="87_8qsml"]
+[ext_resource type="ArrayMesh" uid="uid://dkf10e27s67kb" path="res://models/map/gasStation/trash.tres" id="87_8qsml"]
 [ext_resource type="Texture2D" uid="uid://by0s5qrbkwqdv" path="res://img/materials/asphalt/Road015C_1K-JPG_NormalGL.jpg" id="87_yotxs"]
-[ext_resource type="ArrayMesh" uid="uid://b08flpgmnfkqj" path="res://models/map/gasStation/trash2.tres" id="88_grgfc"]
+[ext_resource type="ArrayMesh" uid="uid://dmhal70vqempp" path="res://models/map/gasStation/trash2.tres" id="88_grgfc"]
 [ext_resource type="Texture2D" uid="uid://26s3bwaqkewn" path="res://img/materials/asphalt/Road015C_1K-JPG_Roughness.jpg" id="88_wq560"]
 [ext_resource type="Texture2D" uid="uid://dxijsahkh7tst" path="res://assets/local_licensed/street_materials/textures/asphalt_02_diff_4k.jpg" id="89_uwxb6"]
 [ext_resource type="PackedScene" uid="uid://bicjllv0wc5co" path="res://models/props/truck_toyota_corsa_b.glb" id="91_7ppi4"]
@@ -581,6 +581,21 @@ roughness = 0.5
 emission_enabled = true
 emission = Color(0.85, 0.85, 0.82, 1)
 emission_energy_multiplier = 0.15
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4raly"]
+resource_name = "Concrete047A_1K-JPG_NORMAL"
+cull_mode = 2
+albedo_texture = ExtResource("28_16o3n")
+metallic_texture = ExtResource("29_tf0i6")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("29_tf0i6")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("30_y0hyv")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.4142108
+metadata/_gltf_primary_texture_coord = 0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_43khc"]
 resource_name = "Concrete047A_1K-JPG_NORMAL"
@@ -1089,7 +1104,6 @@ size = Vector3(12, 2.4, 1.5)
 dialogue_resource = ExtResource("18_forest_dialogue")
 dialogue_cue = "visitor_center_barrier"
 climb_banded_fade = true
-interaction_distance = 3.0
 proximity_prompt = true
 visual_target_path = NodePath("../../welcomeCenterTextured2")
 interaction_message = "Thomas: There is a big tree blocking the road."
@@ -1381,6 +1395,20 @@ material = SubResource("StandardMaterial3D_vbdqn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -294.4842, 0.105, 11.779953)
 size = Vector3(117.56701, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_vbdqn")
+
+[node name="Pavement" type="CSGPolygon3D" parent="Streets2" unique_id=897443347]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -301.4, 0.169, 4.32)
+material_override = SubResource("StandardMaterial3D_4raly")
+use_collision = true
+polygon = PackedVector2Array(0, 0, 0, 2.5, 36, 2.5, 36, 0)
+metadata/surface = "concrete"
+
+[node name="Pavement2" type="CSGPolygon3D" parent="Streets2" unique_id=191676159]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -324.15475, 0.16900045, 14.677206)
+material_override = SubResource("StandardMaterial3D_4raly")
+use_collision = true
+polygon = PackedVector2Array(0, 0, 0, 2.5, 36, 2.5, 36, 0)
+metadata/surface = "concrete"
 
 [node name="ParkingLot" type="Node3D" parent="." unique_id=612701265]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 153, 0, 0)
@@ -2230,6 +2258,21 @@ disabled = true
 [node name="CollisionShape3D" parent="GasStation/gasStationShelf4/StaticBody3D" parent_id_path=PackedInt32Array(382333741, 1676116272) index="0" unique_id=565401916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9144, 0)
 
+[node name="BoxCollision" parent="GasStation/Counter_Straight_L72in/CollisionBody" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46, 0)
+
+[node name="BoxCollision" parent="GasStation/Counter_Straight_L72in2/CollisionBody" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46, 0)
+
+[node name="BackCollision" parent="GasStation/Counter_Corner_Arm72in/CollisionBody" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46, 0.5594)
+
+[node name="SideCollision" parent="GasStation/Counter_Corner_Arm72in/CollisionBody" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5592, 0.46, -0.375)
+
+[node name="BoxCollision" parent="GasStation/Sketchfab_Scene5/CollisionBody" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.93745, 327.35843, -256.1672)
+
 [node name="Fence20" type="MeshInstance3D" parent="GasStation" unique_id=1463646253]
 transform = Transform3D(-6.491141e-08, -1.35, 0, 1.485, -5.9010375e-08, 0, 0, 0, 1.35, 14.334183, 1.3394566, -7.294777)
 material_override = ExtResource("68_q7kuc")
@@ -2242,7 +2285,7 @@ transform = Transform3D(0.99995357, -1.6235902e-12, 0, 1.6235902e-12, 0.99995357
 shape = SubResource("BoxShape3D_ag0la")
 
 [node name="MetalFenceGate" parent="GasStation" unique_id=757550912 instance=ExtResource("metal_fence_gate")]
-transform = Transform3D(-3.3220655e-08, 0, -0.76, 0, 0.995, 0, 0.76, 0, -3.3220655e-08, 14.334183, 0.066121, -19.494785)
+transform = Transform3D(-3.3220655e-08, 0, -0.76, 0, 0.995, 0, 0.76, 0, -3.3220655e-08, 14.316849, 0.066121, -19.492504)
 
 [node name="Sketchfab_Scene6" parent="GasStation" unique_id=776198852 instance=ExtResource("66_nj1ac")]
 transform = Transform3D(1.133849, 0.24491964, -7.399592e-11, -0.24491964, 1.133849, -3.8735206e-09, -7.4552275e-10, 3.801821e-09, 1.1599998, 5.7662964, 2.331, -5.715122)
@@ -2482,7 +2525,7 @@ monitorable = false
 script = ExtResource("wrapper_popout")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WrapperPopoutZone" unique_id=764417751]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8499908, 0, 0.29999924)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.849991, 0, 0.29999924)
 shape = SubResource("WrapperPopoutShape")
 
 [node name="WrapperCutscene" type="Node3D" parent="." unique_id=1872872012]
