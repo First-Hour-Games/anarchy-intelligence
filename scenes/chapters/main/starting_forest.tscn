@@ -1407,7 +1407,7 @@ metadata/surface = "concrete"
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -324.15475, 0.16900045, 14.677206)
 material_override = SubResource("StandardMaterial3D_4raly")
 use_collision = true
-polygon = PackedVector2Array(0, 0, 0, 2.5, 36, 2.5, 36, 0)
+polygon = PackedVector2Array(0, 0, 0, 2.5, 60, 2.5, 60, 0)
 metadata/surface = "concrete"
 
 [node name="ParkingLot" type="Node3D" parent="." unique_id=612701265]

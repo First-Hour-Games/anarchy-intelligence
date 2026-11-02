@@ -96,6 +96,21 @@ emission_enabled = true
 emission = Color(0.85, 0.85, 0.82, 1)
 emission_energy_multiplier = 0.15
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ub15k"]
+resource_name = "Concrete047A_1K-JPG_NORMAL"
+cull_mode = 2
+albedo_texture = ExtResource("27_ub15k")
+metallic_texture = ExtResource("28_3nmlo")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("28_3nmlo")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("29_l35sq")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.4142108
+metadata/_gltf_primary_texture_coord = 0
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("16_sky")
 shader_parameter/add_clouds = true
@@ -200,7 +215,6 @@ shape = SubResource("ResidenceGroundCollision")
 [node name="ForestStreamConnection" type="Node3D" parent="." unique_id=327179256]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126.8, 3, 69)
 script = ExtResource("stream_connection")
-show_neighbor_in_editor = false
 editor_neighbor_scene = "res://scenes/chapters/main/starting_forest.tscn"
 
 [node name="ResidenceBoundary" parent="." unique_id=871427646 instance=ExtResource("residence_boundary")]
@@ -279,6 +293,13 @@ material = SubResource("StandardMaterial3D_df30d")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -294.4842, 0.105, 11.779953)
 size = Vector3(117.56701, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_df30d")
+
+[node name="Pavement" type="CSGPolygon3D" parent="Streets2" unique_id=1806836319]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -301.4, 0.169, 4.32)
+material_override = SubResource("StandardMaterial3D_ub15k")
+use_collision = true
+polygon = PackedVector2Array(0, 0, 0, 2.5, 36, 2.5, 36, 0)
+metadata/surface = "concrete"
 
 [node name="ResidentialStreet" type="Node3D" parent="." unique_id=103184511]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.319298, 0, 135.65405)
@@ -435,6 +456,15 @@ size = Vector3(26, 24, 49)
 filter_trees_only = false
 exclude_grass = true
 
+[node name="Lot1_Ranch_1470sf_LOT3" parent="." unique_id=1740683115 instance=ExtResource("22_stn4k")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 107.7, 0, 140.0097)
+
+[node name="HouseVegetationExclusionZone" parent="Lot1_Ranch_1470sf_LOT3" unique_id=2045944979 instance=ExtResource("vegetation_exclusion")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -22.775)
+size = Vector3(26, 24, 49)
+filter_trees_only = false
+exclude_grass = true
+
 [node name="Lot2_Cottage_1250sf_LOT2" parent="." unique_id=1611725894 instance=ExtResource("23_y6w01")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.705, 0, 131.5)
 
@@ -453,6 +483,15 @@ size = Vector3(26, 24, 49)
 filter_trees_only = false
 exclude_grass = true
 
+[node name="Lot8_CraftsmanTwoStory_2489sf_2415_LOT3" parent="." unique_id=1400963154 instance=ExtResource("24_2hmer")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 59.7, 0, 140.025)
+
+[node name="HouseVegetationExclusionZone" parent="Lot8_CraftsmanTwoStory_2489sf_2415_LOT3" unique_id=1075099419 instance=ExtResource("vegetation_exclusion")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -22.775)
+size = Vector3(26, 24, 49)
+filter_trees_only = false
+exclude_grass = true
+
 [node name="Lot11_CraftsmanRanch_1733sf_2427_LOT2" parent="." unique_id=1185426577 instance=ExtResource("24_y6w01")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.71, 0, 131.5)
 
@@ -462,7 +501,16 @@ size = Vector3(26, 24, 49)
 filter_trees_only = false
 exclude_grass = true
 
+[node name="Lot11_CraftsmanRanch_1733sf_2427_LOT3" parent="." unique_id=2081866618 instance=ExtResource("24_y6w01")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 83.701, 0, 140.011)
+
+[node name="HouseVegetationExclusionZone" parent="Lot11_CraftsmanRanch_1733sf_2427_LOT3" unique_id=2083781825 instance=ExtResource("vegetation_exclusion")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -22.775)
+size = Vector3(26, 24, 49)
+filter_trees_only = false
+exclude_grass = true
+
 [node name="Path" type="CSGPolygon3D" parent="." unique_id=754527760]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 122.700005, 0.199, 42.600006)
 material_override = SubResource("StandardMaterial3D_01gfn")
-polygon = PackedVector2Array(0, -89.1, 0, 1, 1.2, 1, 1.2, -89.1)
+polygon = PackedVector2Array(0, -89.1, 0, -0.7, 1.2, -0.6, 1.2, -89.1)
