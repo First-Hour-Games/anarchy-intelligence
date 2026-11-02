@@ -293,7 +293,7 @@ func _restore_player(player: FirstPersonPlayer, state: Dictionary) -> void:
 			player.set(property, state[property])
 	player.stamina_changed.emit(player.stamina, player.max_stamina)
 	if is_instance_valid(player.flashlight):
-		player.flashlight.set_enabled(bool(state.get("flashlight_on", false)))
+		player.flashlight.set_enabled(bool(state.get("flashlight_on", false)), false)
 	var health := player.get_node_or_null("CombatHealth")
 	if health != null and state.has("health"):
 		health.set("health", minf(float(state.health), float(health.get("max_health"))))

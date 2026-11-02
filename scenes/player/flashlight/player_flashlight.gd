@@ -6,6 +6,10 @@ extends Node3D
 
 signal toggled(is_on: bool)
 
+@export_category("Toggle Sounds")
+@export var turn_on_sound: AudioStream = preload("res://sounds/player/flashlightTurnOn.ogg")
+@export var turn_off_sound: AudioStream = preload("res://sounds/player/flashlightTurnOff.ogg")
+
 @export_category("Presentation")
 @export var show_held_model: bool = false
 @export var held_position: Vector3 = Vector3(0.31, -0.24, -0.58)
@@ -32,6 +36,7 @@ signal toggled(is_on: bool)
 @onready var model_pivot: Node3D = $ModelPivot
 @onready var beam: SpotLight3D = $Beam
 @onready var spill: OmniLight3D = $Spill
+@onready var toggle_audio: AudioStreamPlayer = $ToggleAudio
 @onready var player: CharacterBody3D = get_node_or_null("../../..") as CharacterBody3D
 
 var _is_on: bool = false
@@ -62,7 +67,9 @@ func toggle() -> void:
 	set_enabled(not _is_on)
 
 
-func set_enabled(should_enable: bool) -> void:
+func set_enabled(should_enable: bool, play_sound: bool = true) -> void:
+	if not play_sound and is_instance_valid(toggle_audio):
+		toggle_audio.stop()
 	if should_enable == _is_on:
 		return
 	_is_on = should_enable
@@ -71,6 +78,11 @@ func set_enabled(should_enable: bool) -> void:
 	if should_enable:
 		_reset_camera_follow()
 		model_pivot.visible = show_held_model
+	if play_sound and is_instance_valid(toggle_audio):
+		toggle_audio.stop()
+		toggle_audio.stream = turn_on_sound if should_enable else turn_off_sound
+		if toggle_audio.stream != null:
+			toggle_audio.play()
 	toggled.emit(_is_on)
 
 

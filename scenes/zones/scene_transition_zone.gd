@@ -84,7 +84,7 @@ func _transition(player: FirstPersonPlayer) -> void:
 		for property in state:
 			next_player.set(property, state[property])
 		next_player.stamina_changed.emit(next_player.stamina, next_player.max_stamina)
-		next_player.flashlight.set_enabled(flashlight_on)
+		next_player.flashlight.set_enabled(flashlight_on, false)
 		var next_health := next_player.get_node_or_null("CombatHealth")
 		if next_health != null:
 			next_health.health = minf(health, next_health.max_health)
