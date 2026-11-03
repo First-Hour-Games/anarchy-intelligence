@@ -16,3 +16,5 @@ __pycache__/
 /models/source/**/*_preview.png.import
 # Blender's automatic backups of the previous save.
 *.blend1
+# The Ridgeback build's copy of the vendor file with the new clips keyed on, regenerated every build.
+/models/source/the_ridgeback/THE_RIDGEBACK_animated.blend

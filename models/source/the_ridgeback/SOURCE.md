@@ -35,18 +35,33 @@ The runtime model is at:
 
 `res://models/enemies/the_ridgeback/THE_RIDGEBACK.glb`
 
-It is rebuilt from the vendor FBX via `tools/blender/build_the_ridgeback.py`
-rather than shipped as the raw FBX, because the vendor FBX's "PSX_ManThing"
-material ships with no texture wired up (the artist provides eight
-interchangeable skins as loose PNGs instead of baking one in). The build
-script imports the FBX in Blender, wires the `flesh` skin onto the
-material's base color, and re-exports as a GLB. No mesh, rig, or animation
-data is altered. Rebuild with Blender 5.2:
+It is rebuilt by `tools/blender/build_the_ridgeback.py` from the vendor
+`THE_RIDGEBACK.blend`, which holds the mesh, the creator's control rig (IK
+hands and feet with elbow and knee poles) and the five original clips. The
+vendor material ships with no texture wired up (the artist provides eight
+interchangeable skins as loose PNGs instead of baking one in), so the build
+wires the `flesh` skin onto it. It then keys this project's own clips onto the
+same rig from `tools/blender/ridgeback/clips.py` and exports the mesh and rig
+with every clip, original and new. The mesh and rig are not altered.
+
+Every new clip must pass the joint check in `tools/blender/ridgeback/anatomy.py`
+(no joint past the twist and bend ranges a body like this one can take, nothing
+through the floor), or the build stops before exporting. Rebuild with Blender
+5.2, then reimport in Godot:
 
 ```powershell
 & "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe" `
-  --background --python tools/blender/build_the_ridgeback.py
+  --background --factory-startup --disable-autoexec --python tools/blender/build_the_ridgeback.py
 ```
+
+The build also saves `THE_RIDGEBACK_animated.blend` here, the vendor file with
+the new clips keyed on, for looking at them in Blender. It is regenerated on
+every build: change `clips.py` and rebuild rather than editing it.
+
+To review clips without leaving Blender, `tools/blender/ridgeback/preview.py`
+renders contact sheets, or front and side MP4s with `--video <folder>`, and
+`anatomy.py` prints every clip's joint report. Both take clip names to limit
+the run.
 
 The texture variants under `textures/` are alternate skins (blood, burnt,
 dirt, flesh, frost, pale, rot, tar) for the same mesh; only `flesh` is
@@ -54,6 +69,12 @@ wired up by default. Swap it for one of the others by editing
 `DEFAULT_SKIN` in the build script and rebuilding, or by replacing the
 material's texture directly in Godot.
 
-The FBX carries a rig (`PSX_Rig`) with five baked animation clips:
-`ManThing_IDLE`, `ManThing_WALK`, `ManThing_CHASE`, `ManThing_NOTICE`, and
-`ManThing_ATTACK`. Nothing in the project plays these yet.
+The creator's rig (`PSX_Rig`) carries five baked clips: `ManThing_IDLE`,
+`ManThing_WALK`, `ManThing_CHASE`, `ManThing_NOTICE`, and `ManThing_ATTACK`.
+The game plays them only when the visual's `use_authored_clips` is off
+(`scenes/monsters/the_ridgeback/ridgeback_visual.gd`). By default it plays the
+project's clips: a four-legged set (`fours_scream`, `fours_lurk`, `fours_prowl`,
+`fours_gallop`, `fours_crouch`, `fours_pounce`, `fours_hit`, `fours_death`,
+with `fours_drop` and `fours_rise` between footings) and a standing one
+(`idle`, `watch`, `walk`, `run`, `scream`, `windup`, `attack`, `hit`, `death`),
+chosen with the visual's `four_legged`.

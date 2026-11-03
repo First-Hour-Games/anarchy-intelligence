@@ -1,6 +1,10 @@
 extends CanvasLayer
 ## A staged attacker close-up rendered in the same World3D as gameplay.
+## Emitted once the close-up has faded to black; CombatHealth then shows the game over.
 signal finished
+const CRT_SHADER := preload("res://shaders/crt.gdshader")
+## The black bars round the TV's 4:3 picture on wide screens, in every chapter scene.
+const SCREEN_BARS := &"AspectRatioBars"
 const SOUNDS := {
 	"wrapper": preload("res://sounds/entities/death_scares/wrapper_kill.wav"),
 	"clawman": preload("res://sounds/entities/death_scares/clawman_kill.wav"),
@@ -15,7 +19,6 @@ var camera: Camera3D
 var actor: Node3D
 var actor_mount: Node3D
 var audio: AudioStreamPlayer
-var retry_button: Button
 var hidden_layers: Array[CanvasLayer] = []
 var stopped_mobs: Dictionary = {}
 var entity_kind: String
@@ -23,16 +26,18 @@ var head_skeleton: Skeleton3D
 var head_bone: int = -1
 
 func start(attacker: Node3D) -> void:
-	layer = 110
+	# Under the CRT (100) and the save screen (99), so both still filter and cover it.
+	layer = 98
 	entity_kind = "ridgeback" if attacker is CorruptedFriend else "clawman" if int(attacker.get("encounter_kind")) == 1 else "wrapper"
 	for mob: Node in get_tree().get_nodes_in_group("corrupted_friend"):
 		stopped_mobs[mob] = mob.process_mode
 		mob.process_mode = Node.PROCESS_MODE_DISABLED
 	var scene := get_tree().current_scene
 	if scene:
+		# The HUD goes; the CRT the whole game is seen through, and the bars round its 4:3 picture, stay.
 		for node: Node in scene.find_children("*", "CanvasLayer", true, false):
 			var canvas := node as CanvasLayer
-			if canvas != self and canvas.visible:
+			if canvas != self and canvas.visible and not holds_crt(canvas) and canvas.name != SCREEN_BARS:
 				hidden_layers.append(canvas)
 				canvas.hide()
 	viewport = get_viewport()
@@ -115,7 +120,7 @@ func start(attacker: Node3D) -> void:
 	tween.tween_interval(0.85)
 	tween.tween_property(audio, "volume_db", -60.0, 0.4)
 	tween.parallel().tween_property(picture, "color", Color.BLACK, 0.4)
-	tween.tween_callback(_show_retry)
+	tween.tween_callback(_finish)
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(head_skeleton) and is_instance_valid(camera):
@@ -123,25 +128,17 @@ func _process(_delta: float) -> void:
 		camera.position.y = face.y + 0.02
 		camera.look_at(stage.to_global(face))
 
-func _show_retry() -> void:
+func _finish() -> void:
 	audio.stop()
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 20)
-	center.add_child(column)
-	var title := Label.new()
-	title.text = "CAUGHT"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 38)
-	column.add_child(title)
-	retry_button = Button.new()
-	retry_button.text = "RETRY FROM CHECKPOINT"
-	retry_button.pressed.connect(func() -> void: finished.emit())
-	column.add_child(retry_button)
-	retry_button.grab_focus()
+	finished.emit()
+
+## True for the layer that holds the gameplay CRT filter, found the way SaveSlotScreen finds it.
+static func holds_crt(canvas: CanvasLayer) -> bool:
+	for node: Node in canvas.find_children("*", "ColorRect", true, false):
+		var material := (node as ColorRect).material as ShaderMaterial
+		if material != null and material.shader == CRT_SHADER:
+			return true
+	return false
 
 func restore_world() -> void:
 	if is_instance_valid(previous_camera):
