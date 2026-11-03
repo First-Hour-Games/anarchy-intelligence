@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cx3ad8f3k2q1m"]
+
+[ext_resource type="Script" path="res://models/map/residence/streetlight_array.gd" id="1_script"]
+
+[node name="StreetlightArray" type="Node3D"]
+script = ExtResource("1_script")
