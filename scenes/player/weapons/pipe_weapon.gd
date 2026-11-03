@@ -137,5 +137,5 @@ func _process(_delta: float) -> void:
 	var swing := sin(clampf((_swing_time - 0.06) / 0.49, 0.0, 1.0) * PI) if _swing_time >= 0.0 else 0.0
 	# The scene places the complete Blender rig. Only attacks offset that placement.
 	model_pivot.transform = _rest_transform
-	model_pivot.position += Vector3(-0.36, 0.08, -0.12) * swing
-	model_pivot.basis = Basis.from_euler(Vector3(-65, 35, 60) * (PI / 180.0) * swing) * _rest_transform.basis
+	model_pivot.position += Vector3(-0.18, -0.1, 0.0) * swing
+	model_pivot.basis = Basis.from_euler(Vector3(0, 0, 20) * (PI / 180.0) * swing) * _rest_transform.basis
