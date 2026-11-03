@@ -300,6 +300,7 @@ func _place_wrapper() -> void:
 	var house := get_parent().get_node(CARRIE_HOUSE) as Node3D
 	var wrapper := get_parent().get_node("Wrapper") as Node3D
 	wrapper.connect("returned_to_post", _wrapper_returned)
+	wrapper.connect("died", _save)
 	var post: Vector3 = house.call("point", &"wrapper_post")
 	var facing: Vector3 = (house.call("point", &"tv") - post) * Vector3(1, 0, 1)
 	wrapper.call("set_post", Transform3D(Basis.looking_at(facing), post), house.call("point", &"wrapper_seat"))
@@ -477,7 +478,11 @@ func _save() -> void:
 	var file := FileAccess.open(progress_save_path, FileAccess.WRITE)
 	if file == null:
 		return
-	file.store_string(JSON.stringify({"stage": stage, "discovered": discovered, "spoken": spoken, "journal": journal, "flashlight": _flashlight_seen, "checkpoint": [checkpoint.origin.x, checkpoint.origin.y, checkpoint.origin.z]}))
+	var progress := {"stage": stage, "discovered": discovered, "spoken": spoken, "journal": journal, "flashlight": _flashlight_seen, "checkpoint": [checkpoint.origin.x, checkpoint.origin.y, checkpoint.origin.z]}
+	var wrapper := get_parent().get_node_or_null("Wrapper") as Node3D
+	if wrapper != null and bool(wrapper.get("dead")):
+		progress["wrapper_corpse"] = [wrapper.global_position.x, wrapper.global_position.y, wrapper.global_position.z, wrapper.global_rotation.y]
+	file.store_string(JSON.stringify(progress))
 
 func _restore() -> void:
 	if not persist_progress:
@@ -500,6 +505,10 @@ func _restore() -> void:
 		var pickup := get_parent().get_node_or_null("AtmosphereProps/DroppedFlashlight")
 		if pickup != null:
 			pickup.queue_free()
+	var corpse: Array = data.get("wrapper_corpse", [])
+	var wrapper := get_parent().get_node_or_null("Wrapper")
+	if corpse.size() == 4 and wrapper != null:
+		wrapper.call("restore_dead", Vector3(float(corpse[0]), float(corpse[1]), float(corpse[2])), float(corpse[3]))
 	var point: Array = data.get("checkpoint", [])
 	if point.size() == 3:
 		_set_checkpoint(Vector3(float(point[0]), float(point[1]), float(point[2])))

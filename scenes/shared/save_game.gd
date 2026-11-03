@@ -317,6 +317,10 @@ func _capture_section(section: Node) -> Dictionary:
 	for cutscene in get_tree().get_nodes_in_group("streaming_one_shot"):
 		if section.is_ancestor_of(cutscene):
 			state.one_shot_cutscenes[str(section.get_path_to(cutscene))] = cutscene.get("has_played")
+	state["dead_story_mobs"] = {}
+	for mob in get_tree().get_nodes_in_group("story_mob"):
+		if section.is_ancestor_of(mob) and bool(mob.get("dead")):
+			state.dead_story_mobs[str(section.get_path_to(mob))] = _transform_to_array(mob.global_transform)
 	return state
 
 
@@ -353,6 +357,12 @@ func _restore_section(section: Node, state: Dictionary) -> void:
 		var gate := section.get_node_or_null(NodePath(path))
 		if gate != null:
 			gate.restore_save_state(state.metal_gates[path])
+	var dead_mobs: Dictionary = state.get("dead_story_mobs", {})
+	for path: String in dead_mobs:
+		var mob := section.get_node_or_null(NodePath(path))
+		var at: Array = dead_mobs[path]
+		if mob != null and mob.has_method("restore_dead") and at.size() >= 4:
+			mob.restore_dead(Vector3(float(at[0]), float(at[1]), float(at[2])), float(at[3]))
 
 
 func _set_respawn(player: FirstPersonPlayer, respawn: Transform3D) -> void:

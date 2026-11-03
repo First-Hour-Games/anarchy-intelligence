@@ -88,6 +88,9 @@ func _activate_enemy() -> void:
 	is_playing = true
 	# The window walk must never take control of the activated enemy later.
 	_first_appearance.set("has_played", true)
+	# A Wrapper killed before this save stays where it fell.
+	if bool(_wrapper.get("dead")):
+		return
 	var actor_scale := _wrapper.global_basis.get_scale()
 	var spawn_transform := Transform3D(_marker.global_basis.orthonormalized().scaled(actor_scale), _marker.global_position)
 	_wrapper.call("set_post", spawn_transform)

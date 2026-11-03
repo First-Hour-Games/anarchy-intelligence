@@ -198,6 +198,10 @@ func _save_state(section: Node3D) -> void:
 			state.one_shot_cutscenes[section.get_path_to(cutscene)] = cutscene.has_played
 	for node in section.find_children("*", "InteractableBlock3D", true, false):
 		state.interactables[section.get_path_to(node)] = node.is_enabled
+	state["dead_story_mobs"] = {}
+	for mob in get_tree().get_nodes_in_group("story_mob"):
+		if section.is_ancestor_of(mob) and bool(mob.get("dead")):
+			state.dead_story_mobs[section.get_path_to(mob)] = [mob.global_position, mob.global_rotation.y]
 	var pickup_paths: Dictionary = _pickup_paths.get(section.scene_file_path, {})
 	for path: NodePath in pickup_paths:
 		if not section.has_node(path):
@@ -230,6 +234,10 @@ func _restore_state(section: Node3D) -> void:
 		var gate := section.get_node_or_null(path)
 		if gate != null:
 			gate.restore_save_state(state.metal_gates[path])
+	for path: NodePath in state.get("dead_story_mobs", {}):
+		var mob := section.get_node_or_null(path)
+		if mob != null and mob.has_method("restore_dead"):
+			mob.restore_dead(state.dead_story_mobs[path][0], state.dead_story_mobs[path][1])
 	if section.scene_file_path == FOREST:
 		section.set("_has_switched_music", state.get("hike_started", false))
 
