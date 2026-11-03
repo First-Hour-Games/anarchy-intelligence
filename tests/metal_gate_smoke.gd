@@ -45,6 +45,8 @@ func run() -> void:
 	check(not station.get_node("Fence2").visible and station.get_node("Fence2/StaticBody3D/CollisionShape3D").disabled, "old fence panel and collider are replaced only in Starting Forest")
 	check(not gate.leaf_body.sync_to_physics, "moving collision avoids inherited-scale synchronization")
 	check(gate.swing_duration >= 2.0, "gate defaults to a slow opening swing")
+	check(gate.locked_audio_player != null and gate.locked_audio_player.stream != null and gate.locked_audio_player.stream.resource_path.ends_with("foley_metal_fence_hit_multiple_01.ogg"), "gate has locked foley sound configured")
+	check(gate.movement_audio_player != null and gate.movement_audio_player.stream != null and gate.movement_audio_player.stream.resource_path.ends_with("metal_small_gate_movement_w_rattle_wav.ogg"), "gate has movement sound configured")
 	gate.swing_duration = 0.3
 	gate.interactable.cooldown = 0.0
 	var player := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as FirstPersonPlayer
@@ -60,6 +62,7 @@ func run() -> void:
 	check(gate.is_locked, "gate starts locked")
 	detector._process(0.0)
 	check(detector.try_interact() and gate.is_locked and gate.is_moving, "interaction without key shakes the locked gate")
+	check(gate.locked_audio_player.playing, "locked attempt plays metal fence hit sound")
 	await create_timer(0.08).timeout
 	check(gate._angle > 0.0 and not gate.interactable.is_enabled, "locked attempt pushes gate forward and blocks repeated activation")
 	check(gate.get_save_state().locked and is_zero_approx(gate.get_save_state().angle), "saving during shake keeps gate locked and closed")
@@ -111,6 +114,7 @@ func run() -> void:
 	detector._process(0.0)
 	check(detector.current_interactable == gate.interactable and detector.try_interact(), "real player interaction opens gate")
 	check(not gate.is_locked and not player.has_item(PlayerInventory.FENCE_KEY_ITEM), "unlocking consumes exactly one key")
+	check(gate.movement_audio_player.playing, "unlocking and opening plays gate movement sound")
 	check(gate.is_moving and not gate.interactable.is_enabled, "swing blocks repeated activation")
 	await gate._motion.finished
 	await physics_frame
@@ -124,6 +128,7 @@ func run() -> void:
 	player.look_at(Vector3(gate.interactable.global_position.x, player.global_position.y, gate.interactable.global_position.z))
 	detector._process(0.0)
 	check(detector.current_interactable == gate.interactable and detector.try_interact(), "real player can close the opened gate")
+	check(gate.movement_audio_player.playing, "closing gate plays gate movement sound")
 	await gate._motion.finished
 	await physics_frame
 	check(not gate.is_open and passage_clear(gate) == false, "closed gate restores blocked passage")

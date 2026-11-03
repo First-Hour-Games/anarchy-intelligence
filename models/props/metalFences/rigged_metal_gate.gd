@@ -17,6 +17,14 @@ signal closed
 @export var required_key: StringName = &"fence_key"
 @export_multiline var locked_dialogue: String = "The fence gate is secured with a lock. I need a key."
 
+@export_category("Gate Audio")
+@export var locked_sound: AudioStream = preload("res://sounds/chapters/main/foley_metal_fence_hit_multiple_01.ogg")
+@export var movement_sound: AudioStream = preload("res://sounds/chapters/main/metal_small_gate_movement_w_rattle_wav.ogg")
+@export_range(-40.0, 10.0, 0.5) var locked_sound_volume_db: float = 0.0
+@export_range(-40.0, 10.0, 0.5) var movement_sound_volume_db: float = 0.0
+@export_range(1.0, 50.0, 0.5) var sound_max_distance: float = 25.0
+@export var sound_bus: StringName = &"Master"
+
 var is_open: bool = false
 var is_locked: bool = true
 var is_moving: bool = false
@@ -32,9 +40,12 @@ var _pending_save_state: Dictionary = {}
 
 @onready var leaf_body: AnimatableBody3D = $GateLeafCollision
 @onready var interactable: InteractableBlock3D = $Interactable
+@onready var locked_audio_player: AudioStreamPlayer3D = get_node_or_null("LockedAudio") as AudioStreamPlayer3D
+@onready var movement_audio_player: AudioStreamPlayer3D = get_node_or_null("MovementAudio") as AudioStreamPlayer3D
 
 func _ready() -> void:
 	is_locked = starts_locked
+	_setup_audio()
 	_skeleton = $Model.find_child("Skeleton3D", true, false) as Skeleton3D
 	if _skeleton == null:
 		push_error("Metal gate has no imported skeleton.")
@@ -59,6 +70,33 @@ func _ready() -> void:
 		restore_save_state(_pending_save_state)
 		_pending_save_state = {}
 
+func _setup_audio() -> void:
+	if locked_audio_player == null:
+		locked_audio_player = get_node_or_null("LockedAudio") as AudioStreamPlayer3D
+	if locked_audio_player == null:
+		locked_audio_player = AudioStreamPlayer3D.new()
+		locked_audio_player.name = "LockedAudio"
+		locked_audio_player.position = Vector3(0.7, 1.4, 0.0)
+		add_child(locked_audio_player)
+	if locked_sound != null:
+		locked_audio_player.stream = locked_sound
+	locked_audio_player.volume_db = locked_sound_volume_db
+	locked_audio_player.max_distance = sound_max_distance
+	locked_audio_player.bus = sound_bus
+
+	if movement_audio_player == null:
+		movement_audio_player = get_node_or_null("MovementAudio") as AudioStreamPlayer3D
+	if movement_audio_player == null:
+		movement_audio_player = AudioStreamPlayer3D.new()
+		movement_audio_player.name = "MovementAudio"
+		movement_audio_player.position = Vector3(0.0, 1.5, 0.0)
+		add_child(movement_audio_player)
+	if movement_sound != null:
+		movement_audio_player.stream = movement_sound
+	movement_audio_player.volume_db = movement_sound_volume_db
+	movement_audio_player.max_distance = sound_max_distance
+	movement_audio_player.bus = sound_bus
+
 func toggle(player: Node3D = null) -> void:
 	if is_moving or _bone < 0:
 		return
@@ -70,6 +108,7 @@ func toggle(player: Node3D = null) -> void:
 			return
 		is_locked = false
 	interactable.single_line_dialogue = ""
+	_play_movement_sound()
 	var opening := not is_open
 	var target := 0.0
 	if opening:
@@ -93,6 +132,7 @@ func toggle(player: Node3D = null) -> void:
 	)
 
 func _shake_locked(player: Node3D) -> void:
+	_play_locked_sound()
 	var direction := 1.0
 	if is_instance_valid(player):
 		direction = 1.0 if to_local(player.global_position).z >= 0.0 else -1.0
@@ -110,6 +150,14 @@ func _shake_locked(player: Node3D) -> void:
 		is_moving = false
 		interactable.is_enabled = true
 	)
+
+func _play_locked_sound() -> void:
+	if is_instance_valid(locked_audio_player) and locked_audio_player.stream != null:
+		locked_audio_player.play()
+
+func _play_movement_sound() -> void:
+	if is_instance_valid(movement_audio_player) and movement_audio_player.stream != null:
+		movement_audio_player.play()
 
 func _set_angle(angle: float) -> void:
 	_angle = angle

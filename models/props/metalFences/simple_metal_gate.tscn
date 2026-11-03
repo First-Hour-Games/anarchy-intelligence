@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://models/props/metalFences/rigged_metal_gate.gd" id="1_gate"]
 [ext_resource type="PackedScene" path="res://models/props/metalFences/simple_metal_fence_2.0.glb" id="2_model"]
 [ext_resource type="PackedScene" path="res://scenes/interaction/interactable_block.tscn" id="3_interactable"]
+[ext_resource type="AudioStream" uid="uid://c26cq6wgi2el6" path="res://sounds/chapters/main/foley_metal_fence_hit_multiple_01.ogg" id="4_locked_sfx"]
+[ext_resource type="AudioStream" uid="uid://bsqtkem2kgc7h" path="res://sounds/chapters/main/metal_small_gate_movement_w_rattle_wav.ogg" id="5_move_sfx"]
 
 [sub_resource type="BoxShape3D" id="GatePanelShape"]
 size = Vector3(3.52209, 3.02057, 0.23891)
@@ -12,6 +14,8 @@ size = Vector3(0.21751, 3.05578, 0.21751)
 
 [node name="MetalFenceGate" type="Node3D"]
 script = ExtResource("1_gate")
+locked_sound = ExtResource("4_locked_sfx")
+movement_sound = ExtResource("5_move_sfx")
 
 [node name="Model" parent="." instance=ExtResource("2_model")]
 position = Vector3(0, 1.527893, 0)
@@ -36,3 +40,13 @@ size = Vector3(0.4, 0.4, 0.4)
 interaction_distance = 2.5
 interaction_message = "Opened or closed the metal gate."
 next_scene_path = ""
+
+[node name="LockedAudio" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 1.4, 0)
+stream = ExtResource("4_locked_sfx")
+max_distance = 25.0
+
+[node name="MovementAudio" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+stream = ExtResource("5_move_sfx")
+max_distance = 25.0
