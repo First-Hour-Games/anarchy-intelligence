@@ -137,24 +137,33 @@ shape = SubResource("BoxShape3D_43khc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4, 1.15, -1)
 shape = SubResource("BoxShape3D_3glht")
 
-[node name="Hall_sideR_head0" parent="." index="6" unique_id=1674789444]
+[node name="Hall_sideR_head0" parent="." index="6" unique_id=1161099067]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.017216, 3.4, -3.2891986)
 
-[node name="Pedestal_front_R" parent="." index="10" unique_id=1455976359]
+[node name="Pedestal_front_R" parent="." index="10" unique_id=142202925]
 transform = Transform3D(1.0108794, 0, 0, 0, 1.0108794, 0, 0, 0, 1.0108794, 3.2, 0.4, 4.5)
 
-[node name="Walk_base_3" parent="." index="46" unique_id=1466980045]
+[node name="Roof_L" parent="." index="32" unique_id=610415255]
+material_override = ExtResource("5_roof_mat")
+
+[node name="Roof_R" parent="." index="33" unique_id=676369099]
+material_override = ExtResource("5_roof_mat")
+
+[node name="Walk_base_3" parent="." index="46" unique_id=1416133870]
 visible = false
 
-[node name="Walk_brace_3" parent="." index="51" unique_id=278762613]
+[node name="Walk_brace_3" parent="." index="51" unique_id=437505266]
 visible = false
 
-[node name="Walk_post_3" parent="." index="56" unique_id=982407617]
+[node name="Walk_post_3" parent="." index="56" unique_id=1366042458]
 visible = false
 
-[node name="Walkway_Slab" parent="." index="58" unique_id=1332119919]
+[node name="Walkway_Slab" parent="." index="58" unique_id=1440240236]
 visible = false
 metadata/surface = ""
+
+[node name="Wing_roof_back" parent="." index="62" unique_id=468630162]
+material_override = ExtResource("5_roof_mat")
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="." index="63" unique_id=1500487269]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.03001678, 7.0030184)
@@ -163,13 +172,3 @@ use_collision = true
 polygon = PackedVector2Array(-6, 0, -5, 23, 17, 23, 17, 3, 6, 3, 6, 0)
 depth = 0.2
 metadata/surface = "concrete"
-
-[node name="Roof_L" parent="." index="31"]
-material_override = ExtResource("5_roof_mat")
-
-[node name="Roof_R" parent="." index="32"]
-material_override = ExtResource("5_roof_mat")
-
-[node name="Wing_roof_back" parent="." index="61"]
-material_override = ExtResource("5_roof_mat")
-
