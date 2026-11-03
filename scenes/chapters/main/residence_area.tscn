@@ -21,6 +21,9 @@
 [ext_resource type="PackedScene" uid="uid://c33bs4ysd42n" path="res://models/map/honda_prelude.glb" id="28_3nmlo"]
 [ext_resource type="PackedScene" uid="uid://cytnvuk0mousg" path="res://models/map/panda.glb" id="29_l35sq"]
 [ext_resource type="PackedScene" uid="uid://beoshx3n784em" path="res://models/map/lincoln_town_car.glb" id="30_01gfn"]
+[ext_resource type="PackedScene" uid="uid://cx3ad8f3k2q1m" path="res://models/map/residence/streetlight_array.tscn" id="34_mf5vp"]
+[ext_resource type="PackedScene" uid="uid://cb8aey1jrw7x8" path="res://models/map/residence/streetlight.tscn" id="35_ahhmp"]
+[ext_resource type="Script" uid="uid://d2s6xt14p1r46" path="res://models/map/residence/streetlight.gd" id="36_r8nas"]
 [ext_resource type="Shader" uid="uid://c5t7wtls5mxk4" path="res://shaders/crt.gdshader" id="gameplay_ui_15_n1tha"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="gameplay_ui_54_world_map"]
 [ext_resource type="PackedScene" path="res://scenes/zones/map_boundary_zone.tscn" id="residence_boundary"]
@@ -30,7 +33,7 @@
 [ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="residence_player"]
 [ext_resource type="Script" uid="uid://xs5w0rlf2fp6" path="res://scenes/chapters/main/residence_area.gd" id="residence_script"]
 [ext_resource type="Script" uid="uid://bmwcfuam6crb1" path="res://scenes/zones/scene_stream_connection.gd" id="stream_connection"]
-[ext_resource type="Material" path="res://img/materials/tiles/tiles038_pavement.tres" id="tiles038_pavement"]
+[ext_resource type="Material" uid="uid://b8vd7pc8lsw2n" path="res://img/materials/tiles/tiles038_pavement.tres" id="tiles038_pavement"]
 [ext_resource type="PackedScene" path="res://scenes/zones/tree_exclusion_zone.tscn" id="vegetation_exclusion"]
 [ext_resource type="PackedScene" path="res://scenes/monsters/wrapper_spawn_point.tscn" id="wrapper_test_spawn"]
 
@@ -272,7 +275,7 @@ material = SubResource("StandardMaterial3D_df30d")
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -301.4, 0.169, 4.32)
 material_override = ExtResource("tiles038_pavement")
 use_collision = true
-polygon = PackedVector2Array(0, 0, 0, 2.5, 36, 2.5, 36, 0)
+polygon = PackedVector2Array(0, 0, 0, 2.5, 65, 2.5, 65, 0)
 metadata/surface = "concrete"
 
 [node name="ResidentialStreet" type="Node3D" parent="." unique_id=103184511]
@@ -290,6 +293,7 @@ material = SubResource("ShaderMaterial_oo2gm")
 
 [node name="Turnaround" type="CSGCylinder3D" parent="ResidentialStreet/RoadSurface" unique_id=1793953133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112.5, -0.1, 0)
+visible = false
 radius = 14.0
 height = 0.4
 sides = 64
@@ -509,3 +513,55 @@ transform = Transform3D(-1.1407539, 0, 0.14553533, 0, 1.15, 0, -0.14553533, 0, -
 
 [node name="Sketchfab_Scene3" parent="." unique_id=1414141214 instance=ExtResource("30_01gfn")]
 transform = Transform3D(-1.298956, 0, 0.052086003, 0, 1.3, 0, -0.052086003, 0, -1.298956, 129.5116, 0.96403587, 73.75394)
+
+[node name="StreetlightArray" parent="." unique_id=1833784116 instance=ExtResource("34_mf5vp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 123.08144, -0.0009999275, 44.334694)
+count = 5
+spacing = 20.0
+rotation_offset_degrees = 180.0
+
+[node name="Streetlight_01" type="StaticBody3D" parent="StreetlightArray" unique_id=2072013640 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="Streetlight_02" type="StaticBody3D" parent="StreetlightArray" unique_id=1871993871 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 20, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="Streetlight_03" type="StaticBody3D" parent="StreetlightArray" unique_id=1214948758 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 40, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="Streetlight_04" type="StaticBody3D" parent="StreetlightArray" unique_id=197772259 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 60, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="Streetlight_05" type="StaticBody3D" parent="StreetlightArray" unique_id=1261359957 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 80, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="StreetlightArray2" parent="." unique_id=323571976 instance=ExtResource("34_mf5vp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 133.7597, -0.0009999275, 124.334694)
+count = 3
+spacing = 20.0
+rotation_offset_degrees = 180.0
+
+[node name="Streetlight_01" type="StaticBody3D" parent="StreetlightArray2" unique_id=98139462 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="Streetlight_02" type="StaticBody3D" parent="StreetlightArray2" unique_id=1945057280 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 20, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
+
+[node name="Streetlight_03" type="StaticBody3D" parent="StreetlightArray2" unique_id=1215133981 instance=ExtResource("35_ahhmp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 40, 0, 0)
+script = ExtResource("36_r8nas")
+metadata/streetlight_array_item = true
