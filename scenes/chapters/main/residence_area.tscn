@@ -18,18 +18,21 @@
 [ext_resource type="PackedScene" uid="uid://b2amhd6gu84km" path="res://models/buildings/neighborhood_lots/lot_02_cottage_1250sf.glb" id="23_y6w01"]
 [ext_resource type="PackedScene" uid="uid://b4xv6ruawggpq" path="res://models/buildings/neighborhood_lots/lot_08_craftsman_two_story_2489sf_2415.glb" id="24_2hmer"]
 [ext_resource type="PackedScene" uid="uid://tsgcmd74g61j" path="res://models/buildings/neighborhood_lots/lot_11_craftsman_ranch_1733sf_2427.glb" id="24_y6w01"]
+[ext_resource type="PackedScene" uid="uid://c33bs4ysd42n" path="res://models/map/honda_prelude.glb" id="28_3nmlo"]
+[ext_resource type="PackedScene" uid="uid://cytnvuk0mousg" path="res://models/map/panda.glb" id="29_l35sq"]
+[ext_resource type="PackedScene" uid="uid://beoshx3n784em" path="res://models/map/lincoln_town_car.glb" id="30_01gfn"]
 [ext_resource type="Shader" uid="uid://c5t7wtls5mxk4" path="res://shaders/crt.gdshader" id="gameplay_ui_15_n1tha"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="gameplay_ui_54_world_map"]
 [ext_resource type="PackedScene" path="res://scenes/zones/map_boundary_zone.tscn" id="residence_boundary"]
+[ext_resource type="Script" uid="uid://bpbwqfmbu5c1x" path="res://scenes/player/combat_health.gd" id="residence_combat_health"]
+[ext_resource type="Script" uid="uid://bgomilsj7a7dg" path="res://scenes/environment/map_navigation_baker.gd" id="residence_enemy_navigation"]
 [ext_resource type="PackedScene" path="res://scenes/environment/residence_foliage.tscn" id="residence_foliage"]
 [ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="residence_player"]
 [ext_resource type="Script" uid="uid://xs5w0rlf2fp6" path="res://scenes/chapters/main/residence_area.gd" id="residence_script"]
-[ext_resource type="Script" uid="uid://bpbwqfmbu5c1x" path="res://scenes/player/combat_health.gd" id="residence_combat_health"]
-[ext_resource type="Script" uid="uid://bgomilsj7a7dg" path="res://scenes/environment/map_navigation_baker.gd" id="residence_enemy_navigation"]
-[ext_resource type="PackedScene" path="res://scenes/monsters/wrapper_spawn_point.tscn" id="wrapper_test_spawn"]
 [ext_resource type="Script" uid="uid://bmwcfuam6crb1" path="res://scenes/zones/scene_stream_connection.gd" id="stream_connection"]
-[ext_resource type="PackedScene" path="res://scenes/zones/tree_exclusion_zone.tscn" id="vegetation_exclusion"]
 [ext_resource type="Material" path="res://img/materials/tiles/tiles038_pavement.tres" id="tiles038_pavement"]
+[ext_resource type="PackedScene" path="res://scenes/zones/tree_exclusion_zone.tscn" id="vegetation_exclusion"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/wrapper_spawn_point.tscn" id="wrapper_test_spawn"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_q0lqf"]
 size = Vector2(700, 500)
@@ -319,7 +322,7 @@ shadow_enabled = true
 directional_shadow_max_distance = 188.6
 
 [node name="Player" parent="." unique_id=1155757218 instance=ExtResource("residence_player")]
-transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 117, 0.15, 135.65405)
+transform = Transform3D(-0.25881898, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, -0.25881898, 130, 0.15, 54.654053)
 
 [node name="CombatHealth" type="Node" parent="Player" unique_id=1855020471]
 script = ExtResource("residence_combat_health")
@@ -497,3 +500,12 @@ exclude_grass = true
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 122.700005, 0.199, 42.600006)
 material_override = ExtResource("tiles038_pavement")
 polygon = PackedVector2Array(0, -89.1, 0, -0.7, 1.2, -0.6, 1.2, -89.1)
+
+[node name="Sketchfab_Scene" parent="." unique_id=750928740 instance=ExtResource("28_3nmlo")]
+transform = Transform3D(1.0892938, 0, 0.30056432, 0, 1.13, 0, -0.30056432, 0, 1.0892938, 125.688736, 1.0000002, 60.883003)
+
+[node name="Sketchfab_Scene2" parent="." unique_id=1758716435 instance=ExtResource("29_l35sq")]
+transform = Transform3D(-1.1407539, 0, 0.14553533, 0, 1.15, 0, -0.14553533, 0, -1.1407539, 129.81091, 1.0189066, 67.6)
+
+[node name="Sketchfab_Scene3" parent="." unique_id=1414141214 instance=ExtResource("30_01gfn")]
+transform = Transform3D(-1.298956, 0, 0.052086003, 0, 1.3, 0, -0.052086003, 0, -1.298956, 129.5116, 0.96403587, 73.75394)
