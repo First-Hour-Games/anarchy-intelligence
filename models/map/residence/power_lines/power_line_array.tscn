@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://models/map/residence/power_lines/power_line_array.gd" id="1_array"]
+
+[node name="PowerLineArray" type="Node3D"]
+script = ExtResource("1_array")
