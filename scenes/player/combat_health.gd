@@ -7,6 +7,7 @@ var is_dead: bool = false
 var immunity: float = 0.0
 var spawn: Transform3D
 var status: Label
+## The knockdown after a lethal hit (death_scare.gd): falls, lies still, blacks out.
 var death_scare: CanvasLayer
 ## The ringing phone after a death; its TRY AGAIN comes back here as respawn().
 var game_over: CanvasLayer
@@ -100,19 +101,22 @@ func take_damage(amount: float, attacker: Node3D = null) -> void:
 		InputDevice.rumble_pad(0.8, 1.0, 0.7)
 		get_parent().set_physics_process(false)
 		get_parent().set_process_unhandled_input(false)
+		# Never two at once: anything left from an earlier death goes first.
+		if is_instance_valid(death_scare):
+			death_scare.restore_world()
+		if is_instance_valid(game_over):
+			game_over.queue_free()
+		death_scare = DEATH_SCARE.new()
+		add_child(death_scare)
+		death_scare.finished.connect(_show_game_over, CONNECT_ONE_SHOT)
+		# Before freezing, which snaps the body to the ground: the fall starts from the view as it was.
+		death_scare.start(attacker)
 		get_parent().freeze()
-		if is_instance_valid(attacker) and attacker.has_node("Visual"):
-			death_scare = DEATH_SCARE.new()
-			add_child(death_scare)
-			death_scare.finished.connect(_show_game_over)
-			death_scare.start(attacker)
-		else:
-			_show_game_over()
 
 func _show_game_over() -> void:
-	if is_instance_valid(game_over):
+	if is_instance_valid(game_over) or not is_dead:
 		return
-	# The close-up has faded to black; the phone screen takes over from it.
+	# The view has blacked out; the phone screen takes over from it.
 	if is_instance_valid(death_scare):
 		death_scare.hide()
 	game_over = PHONE_GAME_OVER.new()

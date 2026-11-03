@@ -1,5 +1,5 @@
 extends SceneTree
-## The phone game over: the close-up keeps the CRT, the phone rings and rattles, TRY AGAIN without
+## The phone game over: the knockdown keeps the CRT, the phone rings and rattles, TRY AGAIN without
 ## a save respawns, LOAD PROGRESS answers and opens the load screen, BACK rings again, and MAIN
 ## MENU leaves for the menu. Save files go to a throwaway folder.
 
@@ -33,20 +33,22 @@ func run() -> void:
 	var crt := map.get_node("CRTOverlay") as CanvasLayer
 	var wrapper := map.get_node("Wrapper") as Node3D
 
-	# Caught before any save: the close-up keeps the CRT, then the phone offers TRY AGAIN.
+	# Caught before any save: the knockdown keeps the CRT, then the phone offers TRY AGAIN.
 	health.immunity = 0.0
 	health.take_damage(health.max_health, wrapper)
 	var scare: CanvasLayer = health.death_scare
 	await process_frame
-	check(crt.visible, "CRT stays on through the close-up")
-	check(scare.layer < 99, "Close-up draws under the save screen and the CRT")
-	await create_timer(1.8).timeout
+	check(crt.visible, "CRT stays on through the knockdown")
+	check(scare.layer < 99, "Knockdown draws under the save screen and the CRT")
+	await create_timer(3.0).timeout
+	check(health.game_over == null, "The phone waits until the view has blacked out")
+	await create_timer(2.2).timeout
 	var game_over: CanvasLayer = health.game_over
-	check(game_over != null and game_over.layer < 99, "Phone game over follows the close-up, under the save screen")
+	check(game_over != null and game_over.layer < 99, "Phone game over follows the blackout, under the save screen")
 	if game_over == null:
 		_finish(original_dir)
 		return
-	check(crt.visible and not scare.visible, "CRT stays on and the close-up is put away")
+	check(crt.visible and not scare.visible, "CRT stays on and the knockdown is put away")
 	check(not game_over.can_load and game_over._choices[0].text == "TRY AGAIN", "Without a save the first choice is TRY AGAIN")
 	# A headless display has no mouse to show or capture.
 	var has_mouse := DisplayServer.get_name() != "headless"
@@ -92,7 +94,7 @@ func run() -> void:
 	await create_timer(1.2).timeout
 	health.immunity = 0.0
 	health.take_damage(health.max_health, wrapper)
-	await create_timer(2.0).timeout
+	await create_timer(5.4).timeout
 	game_over = health.game_over
 	check(game_over != null and game_over.can_load and game_over._choices[0].text == "LOAD PROGRESS", "With a save the first choice is LOAD PROGRESS")
 	if game_over == null:
@@ -119,6 +121,7 @@ func run() -> void:
 		if current_scene != null and current_scene.scene_file_path == MENU:
 			break
 	check(current_scene != null and current_scene.scene_file_path == MENU, "MAIN MENU leaves for the main menu")
+	check(root.find_children("DeathFallRig", "RigidBody3D", true, false).is_empty(), "Leaving for the menu leaves no fall rig behind")
 	_finish(original_dir)
 
 
