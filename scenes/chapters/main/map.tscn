@@ -802,6 +802,9 @@ horizontal_alignment = 2
 
 [node name="WorldMap" parent="." unique_id=862421941 instance=ExtResource("world_map_overlay")]
 
+[node name="Display" parent="WorldMap"]
+map_origin = Vector2(1137.893, 229.696)
+
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=1678596168]
 layer = 19
 

@@ -44,14 +44,16 @@ const COLOR_MUTED_TEXT := Color(0.56, 0.66, 0.59, 1.0)
 const COLOR_PLAYER := Color(0.96, 0.79, 0.32, 1.0)
 const PIXEL_STEP := 2.0
 const MAP_TEXTURE: Texture2D = preload("res://img/items/cicely_town_map.png")
-# Calibrated from the PDF's main-road junction and residential turnarounds.
-# Values are pixels in the 2376 x 1836 map texture; +Z runs down the page.
+# Calibrated on the forest and residence roads: the main road (z 10.65) and the south road
+# (x 127.82) meet at pixel (1480.5, 229.5), and the residential turnaround (-97.18, 135.65)
+# is at (708, 666). Values are pixels in the 2376 x 1836 map texture; +Z runs down the page.
+# The opening chapter's map.tscn, laid out before the roads moved, keeps its own origin.
 @export_category("Town Map Image")
 @export var use_image_map: bool = true
 @export var map_texture: Texture2D = MAP_TEXTURE
 ## Resolution in which the calibration coordinates were authored, before texture import resizing.
 @export var image_reference_size: Vector2 = Vector2(2376, 1836)
-@export var map_origin: Vector2 = Vector2(1137.893, 229.696)
+@export var map_origin: Vector2 = Vector2(1041.61, 192.34)
 @export var world_scale: Vector2 = Vector2(3.433656, 3.487944)
 @export var require_inventory_item: bool = true
 @export var required_item_id: StringName = &"map"

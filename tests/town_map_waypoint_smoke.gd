@@ -68,19 +68,20 @@ func _run() -> void:
 	display._unhandled_input(cancel_event)
 	check(not display.is_map_open(), "ESC key (ui_cancel) closes map")
 
-	# Test 4: Preserve the original coordinate mapping. The illustrated welcome
+	# Test 4: The forest's own roads land on the drawn roads. The illustrated welcome
 	# center is not a reliable survey anchor for the current forest layout.
 	display.set_map_open(true)
 	var panel_rect := display._calculate_panel_rect()
 	check(panel_rect.size.x > 100.0 and panel_rect.size.y > 100.0, "Panel rect properly sized on screen")
 	display._map_rect = Rect2(Vector2.ZERO, display.image_reference_size)
-	var locations := [
-		{"world": Vector2.ZERO, "pixel": Vector2(1137.893,229.696)},
-		{"world": Vector2(100,0), "pixel": Vector2(1481.259,229.696)},
-	]
-	for location: Dictionary in locations:
-		var map_pixel: Vector2 = display._world_to_map(location.world)
-		check(map_pixel.distance_to(location.pixel) < 2.0, "Original map coordinates remain unchanged")
+	var main_road: CSGBox3D = forest.get_node("Streets/MainRoad")
+	var south_road: CSGBox3D = forest.get_node("Streets2/MainRoad")
+	var junction := Vector2(south_road.global_position.x, main_road.global_position.z)
+	check(display._world_to_map(junction).distance_to(Vector2(1480.5, 229.5)) < 3.0,
+		"The main road and south road meet where they cross on the drawn map")
+	var turnaround := Vector2(-97.18, 135.65)
+	check(display._world_to_map(turnaround).distance_to(Vector2(708, 666)) < 3.0,
+		"The residential turnaround lands on the drawn turnaround")
 	var start := display._world_to_map(Vector2(0,10))
 	var midpoint := display._world_to_map(Vector2(50,10))
 	var end := display._world_to_map(Vector2(100,10))
