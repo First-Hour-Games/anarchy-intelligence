@@ -521,6 +521,7 @@ zone_behavior = 1
 trigger_once = true
 size = Vector3(8, 4, 6)
 dialogue_resource = ExtResource("residence_zone_dialogue")
+animate_dialogue_close = false
 dialogue_variations = Array[String]([])
 blink_and_return = false
 

@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://c0nocxmagwadt" path="res://models/tutorial/old_telephone.glb" id="9_2bbns"]
 [ext_resource type="PackedScene" uid="uid://bu0yr7nnftvnc" path="res://models/props/realistic_blackboard.glb" id="9_bciu8"]
 [ext_resource type="Script" uid="uid://bd12hamc4ahb" path="res://scenes/chapters/tutorial/old_phone.gd" id="10_5q1ej"]
+[ext_resource type="Texture2D" uid="uid://c6g0f1j0nxd1c" path="res://assets/local_licensed/carrie_house_textures/dark_wooden_planks/dark_wooden_planks_diff_1k.jpg" id="10_y8dwn"]
 [ext_resource type="Script" uid="uid://fhl63xq64yt0" path="res://scenes/interaction/interactable_3d.gd" id="11_03xsh"]
 [ext_resource type="AudioStream" uid="uid://dyany7iaad53o" path="res://sounds/chapters/tutorial/oldPhoneRinging.mp3" id="12_0lcl8"]
 [ext_resource type="AudioStream" uid="uid://cgblq8d1sbi8a" path="res://sounds/chapters/tutorial/phonePickUp.mp3" id="13_0xvk8"]
@@ -19,6 +20,8 @@
 [ext_resource type="Script" uid="uid://cj2c8e2lwafdf" path="res://scenes/flashbacks/school.gd" id="school_intro_script"]
 [ext_resource type="Resource" uid="uid://cqoh2topcu4la" path="res://scenes/flashbacks/school.dialogue" id="school_opening_dialogue"]
 [ext_resource type="Resource" uid="uid://dlame332kfj7j" path="res://scenes/flashbacks/school_phone.dialogue" id="school_phone_dialogue"]
+
+[ext_resource type="Texture2D" path="res://img/menu/title.png" id="school_ending_logo"]
 
 [sub_resource type="Sky" id="Sky_school_stars"]
 sky_material = ExtResource("4_starfield")
@@ -68,6 +71,10 @@ roughness = 0.05
 [sub_resource type="StandardMaterial3D" id="SchoolWindowFrame"]
 albedo_color = Color(0.82, 0.8, 0.76, 1)
 roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nqrxf"]
+albedo_texture = ExtResource("10_y8dwn")
+uv1_triplanar = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_go1h3"]
 size = Vector3(1, 1, 5)
@@ -481,6 +488,7 @@ material = SubResource("SchoolWindowFrame")
 
 [node name="TeacherDesk" type="MeshInstance3D" parent="." unique_id=1759456166]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4872437, 0.37857082, 0)
+material_override = SubResource("StandardMaterial3D_nqrxf")
 mesh = SubResource("BoxMesh_go1h3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="TeacherDesk" unique_id=866420772]
@@ -493,6 +501,7 @@ transform = Transform3D(-0.001185861, 0, 0.016958589, 0, 0.017, 0, -0.016958592,
 script = ExtResource("10_5q1ej")
 door_path = NodePath("../../Door3")
 phone_dialogue_resource = ExtResource("school_phone_dialogue")
+transition_after_dialogue = false
 
 [node name="Interactable" type="Node3D" parent="TeacherDesk/oldPhone" unique_id=1636237914]
 script = ExtResource("11_03xsh")
@@ -542,14 +551,14 @@ mouse_filter = 2
 layer = 105
 dialogue_resource = ExtResource("school_opening_dialogue")
 
-[node name="CRTSideBars" type="CanvasLayer" parent="."]
+[node name="CRTSideBars" type="CanvasLayer" parent="." unique_id=1847243787]
 layer = 101
 
-[node name="LeftBar" type="ColorRect" parent="CRTSideBars"]
+[node name="LeftBar" type="ColorRect" parent="CRTSideBars" unique_id=951118415]
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="RightBar" type="ColorRect" parent="CRTSideBars"]
+[node name="RightBar" type="ColorRect" parent="CRTSideBars" unique_id=1124224783]
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
@@ -565,3 +574,28 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+
+[node name="EndingLogo" type="CanvasLayer" parent="."]
+layer = 180
+visible = false
+
+[node name="BlackScreen" type="ColorRect" parent="EndingLogo"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Logo" type="TextureRect" parent="EndingLogo"]
+anchor_left = 0.15
+anchor_top = 0.4
+anchor_right = 0.85
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("school_ending_logo")
+expand_mode = 1
+stretch_mode = 5

@@ -14,6 +14,7 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_update_crt_side_bars)
 	_update_crt_side_bars.call_deferred()
 	_dialogue.dialogue_finished.connect(_phone.start_ringing, CONNECT_ONE_SHOT)
+	_phone.dialogue_finished.connect(_show_ending_logo, CONNECT_ONE_SHOT)
 	if auto_start_intro:
 		_start_intro()
 
@@ -27,6 +28,12 @@ func _start_intro() -> void:
 	await tween.finished
 	_fade.hide()
 	_dialogue.start()
+
+
+func _show_ending_logo() -> void:
+	_player.freeze()
+	_phone.stop_ringing()
+	$EndingLogo.show()
 
 
 func _update_crt_side_bars() -> void:

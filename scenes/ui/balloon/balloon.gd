@@ -164,7 +164,9 @@ func apply_dialogue_line() -> void:
 
 	# Combine previous dialogue lines with the current line
 	var full_text: String = accumulated_dialogue_text + dialogue_line.text
-	var prev_length: int = accumulated_dialogue_text.length()
+	# Count rendered characters, since BBCode tags do not take typewriter steps.
+	dialogue_label.text = accumulated_dialogue_text
+	var prev_length: int = dialogue_label.get_total_character_count()
 
 	dialogue_label.dialogue_line = dialogue_line
 
