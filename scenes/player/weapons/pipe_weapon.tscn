@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/player/weapons/pipe_weapon.gd" id="1_weapon"]
 [ext_resource type="Script" path="res://models/props/weapons/normalized_pipe.gd" id="2_model"]
+[ext_resource type="PackedScene" path="res://models/player/fpsWhite_holding_idle.glb" id="3_hands"]
 
 [node name="PipeWeapon" type="Node3D"]
 script = ExtResource("1_weapon")
@@ -10,8 +11,10 @@ script = ExtResource("1_weapon")
 
 [node name="ModelPivot" type="Node3D" parent="."]
 visible = false
-position = Vector3(0.28, -0.3, -0.5)
-rotation_degrees = Vector3(-18, -12, -20)
+position = Vector3(0.0, -0.48, -0.35)
+rotation_degrees = Vector3(0, 180, -35)
+
+[node name="Arms" parent="ModelPivot" instance=ExtResource("3_hands")]
 
 [node name="Model" type="Node3D" parent="ModelPivot"]
 script = ExtResource("2_model")
