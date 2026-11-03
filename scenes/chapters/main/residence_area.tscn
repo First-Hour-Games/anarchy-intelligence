@@ -25,7 +25,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="gameplay_ui_54_world_map"]
 [ext_resource type="PackedScene" path="res://scenes/zones/map_boundary_zone.tscn" id="residence_boundary"]
 [ext_resource type="Script" uid="uid://bpbwqfmbu5c1x" path="res://scenes/player/combat_health.gd" id="residence_combat_health"]
-[ext_resource type="Script" uid="uid://bgomilsj7a7dg" path="res://scenes/environment/map_navigation_baker.gd" id="residence_enemy_navigation"]
+[ext_resource type="Script" uid="uid://c32x8b1q2qsty" path="res://scenes/chapters/main/residence_enemy_navigation.gd" id="residence_enemy_navigation"]
 [ext_resource type="PackedScene" path="res://scenes/environment/residence_foliage.tscn" id="residence_foliage"]
 [ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="residence_player"]
 [ext_resource type="Script" uid="uid://xs5w0rlf2fp6" path="res://scenes/chapters/main/residence_area.gd" id="residence_script"]
