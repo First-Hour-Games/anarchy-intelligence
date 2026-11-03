@@ -158,6 +158,9 @@ func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) 
 	if hits_to_kill > 0 and hits_taken >= hits_to_kill:
 		_die(away.normalized() * death_push_speed + Vector3.UP * 0.5)
 		return
+	# A hit that does not stun counts toward killing it but does not stop it.
+	if duration <= 0.0:
+		return
 	_melee_push = away.normalized() * push_speed
 	melee_stagger_time = maxf(melee_stagger_time, duration)
 	strike_time = 0.0

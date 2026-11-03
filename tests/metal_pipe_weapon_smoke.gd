@@ -54,6 +54,8 @@ func run() -> void:
 	wrapper.set_physics_process(false)
 	wrapper.global_position = player.global_position + Vector3(0, 0, -1.15)
 	wrapper.set("strike_time", 0.7)
+	check(is_equal_approx(weapon.stun_chance, 0.2) and weapon.swing_cooldown >= 1.4, "pipe stuns about one hit in five and recovers slowly")
+	weapon.stun_chance = 1.0
 	await physics_frame
 	await process_frame
 	check(weapon.try_swing(), "equipped pipe can swing")
@@ -61,6 +63,12 @@ func run() -> void:
 	await create_timer(0.25).timeout
 	check(float(wrapper.get("melee_stagger_time")) > 0.0 and is_zero_approx(float(wrapper.get("strike_time"))), "pipe hits a real enemy and interrupts its attack")
 	check(wrapper.get("_melee_push").z < 0.0, "pipe pushes the enemy away from the player")
+	var hits := int(wrapper.get("hits_taken"))
+	var stagger := float(wrapper.get("melee_stagger_time"))
+	wrapper.set("strike_time", 0.7)
+	wrapper.take_melee_hit(player.global_position, 0.0, 0.0)
+	check(int(wrapper.get("hits_taken")) == hits + 1 and is_equal_approx(float(wrapper.get("strike_time")), 0.7) and is_equal_approx(float(wrapper.get("melee_stagger_time")), stagger), "a hit that does not stun still counts but does not interrupt the attack")
+	wrapper.set("strike_time", 0.0)
 	var mouse := InputEventMouseButton.new()
 	mouse.button_index = MOUSE_BUTTON_LEFT
 	mouse.pressed = true
@@ -88,7 +96,7 @@ func run() -> void:
 	section.add_child(wall)
 	wall.global_position = player.global_position + Vector3(0, 1, -0.55)
 	wrapper.set("melee_stagger_time", 0.0)
-	await create_timer(0.35).timeout
+	await create_timer(0.75).timeout
 	await physics_frame
 	await process_frame
 	check(weapon.try_swing(), "a new swing is available after cooldown")

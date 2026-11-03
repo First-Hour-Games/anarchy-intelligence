@@ -1,5 +1,6 @@
 extends Node3D
-## Camera-held defensive pipe. A swing interrupts and pushes back the first body hit.
+## Camera-held defensive pipe. A swing hits the first body in reach; only some hits stun
+## (interrupt and push back) the enemy, and recovery is slow, so each swing is a commitment.
 
 signal swung
 signal hit_landed(target: Node3D)
@@ -18,9 +19,12 @@ const SWING_SOUNDS: Array[AudioStream] = [
 ]
 
 @export_range(0.5, 3.0, 0.1) var reach: float = 1.8
-@export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 0.8
+@export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 1.4
 @export_range(0.1, 3.0, 0.1) var stagger_duration: float = 1.0
 @export_range(0.0, 6.0, 0.1) var knockback_speed: float = 2.5
+## Chance that a hit stuns: staggers the enemy and interrupts its attack. Other hits still
+## count toward killing it, but it keeps coming.
+@export_range(0.0, 1.0, 0.05) var stun_chance: float = 0.2
 
 var equipped := false
 var _player: FirstPersonPlayer
@@ -130,7 +134,8 @@ func _strike() -> void:
 	_hit_applied = true
 	var target := nearest.collider as Node3D
 	if target != null and target.has_method("take_melee_hit"):
-		target.take_melee_hit(_player.global_position, stagger_duration, knockback_speed)
+		var stunned := randf() < stun_chance
+		target.take_melee_hit(_player.global_position, stagger_duration if stunned else 0.0, knockback_speed if stunned else 0.0)
 		hit_landed.emit(target)
 
 func _process(delta: float) -> void:
