@@ -5,6 +5,13 @@ signal swung
 signal hit_landed(target: Node3D)
 
 const STAMINA_COST_FRACTION := 0.25
+const SWING_SOUNDS: Array[AudioStream] = [
+	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_01.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_02.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_03.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_04.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_05.ogg"),
+]
 
 @export_range(0.5, 3.0, 0.1) var reach: float = 1.8
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 0.8
@@ -21,7 +28,9 @@ var _cooldown := 0.0
 var _swing_time := -1.0
 var _hit_applied := false
 var _phase := 0.0
+var _last_swing_sound := -1
 @onready var model_pivot: Node3D = $ModelPivot
+@onready var swing_audio: AudioStreamPlayer = $SwingAudio
 
 func _ready() -> void:
 	_camera = get_parent() as Camera3D
@@ -68,8 +77,17 @@ func try_swing() -> bool:
 	_cooldown = swing_cooldown
 	_swing_time = 0.0
 	_hit_applied = false
+	_play_swing_sound()
 	swung.emit()
 	return true
+
+func _play_swing_sound() -> void:
+	if _last_swing_sound < 0:
+		_last_swing_sound = randi_range(0, SWING_SOUNDS.size() - 1)
+	else:
+		_last_swing_sound = (_last_swing_sound + randi_range(1, SWING_SOUNDS.size() - 1)) % SWING_SOUNDS.size()
+	swing_audio.stream = SWING_SOUNDS[_last_swing_sound]
+	swing_audio.play()
 
 func _physics_process(delta: float) -> void:
 	_cooldown = maxf(_cooldown - delta, 0.0)

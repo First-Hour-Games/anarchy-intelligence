@@ -6,6 +6,8 @@
 [node name="PipeWeapon" type="Node3D"]
 script = ExtResource("1_weapon")
 
+[node name="SwingAudio" type="AudioStreamPlayer" parent="."]
+
 [node name="ModelPivot" type="Node3D" parent="."]
 visible = false
 position = Vector3(0.28, -0.3, -0.5)
