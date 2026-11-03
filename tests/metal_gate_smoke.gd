@@ -26,6 +26,17 @@ func passage_clear(gate: Node3D) -> bool:
 			print("PASSAGE BLOCKER ", hit.collider.get_path(), " fraction ", fractions)
 	return fractions[0] > 0.99
 
+## The open "Open with ...?" choice balloon, once its line has typed out.
+func open_choice() -> Node:
+	for attempt in 30:
+		await process_frame
+		for candidate in root.get_children():
+			if candidate is BottomDialogueBalloon and candidate.dialogue_line != null and "Open with" in candidate.dialogue_line.text:
+				if candidate.dialogue_label.is_typing:
+					candidate.dialogue_label.skip_typing()
+				return candidate
+	return null
+
 func run() -> void:
 	# Test the instance and placement actually authored in Starting Forest.
 	var forest := (load("res://scenes/chapters/main/starting_forest.tscn") as PackedScene).instantiate()
@@ -109,11 +120,27 @@ func run() -> void:
 	player.set_physics_process(false)
 	player.global_position = gate.to_global(Vector3(0.7, 0, 1.8))
 	detector._process(0.0)
-	check(detector.current_interactable == gate.interactable and detector.try_interact(), "real player interaction opens gate")
-	check(not gate.is_locked and not player.has_item(PlayerInventory.FENCE_KEY_ITEM), "unlocking consumes exactly one key")
+	check(detector.current_interactable == gate.interactable and detector.try_interact(), "real player interaction with the key asks first")
+	var choice: Node = await open_choice()
+	check(choice != null and "Open with Small Silver Key?" in choice.dialogue_line.text and choice.dialogue_line.responses.size() == 2, "gate asks Open with Small Silver Key? with Yes and No")
+	check(gate.is_locked and player.has_item(PlayerInventory.FENCE_KEY_ITEM) and not gate.is_moving, "key is not used before answering")
+	if choice != null:
+		choice._on_responses_menu_response_selected(choice.dialogue_line.responses[1])
+	await create_timer(0.4).timeout
+	check(gate.is_locked and player.has_item(PlayerInventory.FENCE_KEY_ITEM) and gate.interactable.is_enabled, "answering No keeps the key and the gate locked")
+	player.set_physics_process(false)
+	detector._process(0.0)
+	check(detector.try_interact(), "locked gate asks again after No")
+	choice = await open_choice()
+	if choice != null:
+		choice._on_responses_menu_response_selected(choice.dialogue_line.responses[0])
+	await create_timer(0.1).timeout
+	check(not gate.is_locked and not player.has_item(PlayerInventory.FENCE_KEY_ITEM), "answering Yes consumes exactly one key")
 	check(gate.is_moving and not gate.interactable.is_enabled, "swing blocks repeated activation")
 	await gate._motion.finished
 	await physics_frame
+	await create_timer(0.3).timeout
+	player.set_physics_process(false)
 	check(gate.is_open and not gate.is_moving, "opening tween completes")
 	check(gate._skeleton.get_bone_pose_rotation(gate._bone).angle_to(gate._closed_bone_rotation) > deg_to_rad(90), "imported armature opens more than 90 degrees")
 	check(absf(gate.leaf_body.global_basis.z.dot(gate.global_basis.z)) < 0.15, "collision rotates with the rigged leaf")

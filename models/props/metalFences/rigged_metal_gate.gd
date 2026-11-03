@@ -16,6 +16,7 @@ signal closed
 @export var starts_locked: bool = true
 @export var required_key: StringName = &"fence_key"
 @export_multiline var locked_dialogue: String = "The fence gate is secured with a lock. I need a key."
+@export var choice_balloon_scene: PackedScene = preload("res://scenes/ui/dialogue_box/bottom_dialogue_balloon.tscn")
 
 var is_open: bool = false
 var is_locked: bool = true
@@ -29,6 +30,8 @@ var _angle: float = 0.0
 var _motion: Tween
 var _target_angle: float = 0.0
 var _pending_save_state: Dictionary = {}
+## The player being asked whether to use the key, while the Yes/No choice is open.
+var _asking_player: Node3D
 
 @onready var leaf_body: AnimatableBody3D = $GateLeafCollision
 @onready var interactable: InteractableBlock3D = $Interactable
@@ -63,13 +66,51 @@ func toggle(player: Node3D = null) -> void:
 	if is_moving or _bone < 0:
 		return
 	if is_locked:
-		var inventory := player.get_node_or_null("InventoryHUD") as PlayerInventory if is_instance_valid(player) else null
-		if inventory == null or not inventory.remove_one(required_key):
+		var inventory := _inventory(player)
+		if inventory == null or not inventory.has_item(required_key):
 			interactable.single_line_dialogue = locked_dialogue
 			_shake_locked(player)
 			return
-		is_locked = false
+		interactable.single_line_dialogue = ""
+		_ask_to_use_key(player)
+		return
 	interactable.single_line_dialogue = ""
+	_swing(player)
+
+## Asks "Open with <key>?" before using the key; No leaves the gate locked and asks again next time.
+func _ask_to_use_key(player: Node3D) -> void:
+	var item := ItemDatabase.get_item(required_key)
+	var key_name := item.name if item != null and not item.name.is_empty() else String(required_key).capitalize()
+	var text := "~ start\nOpen with %s?\n- Yes\n\tdo open_with_key()\n- No\n=> END" % key_name
+	var resource: DialogueResource = Engine.get_singleton("DialogueManager").create_resource_from_text(text)
+	var balloon := choice_balloon_scene.instantiate()
+	if balloon.get("freeze_player") != null:
+		balloon.set("freeze_player", true)
+	var scene := get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
+	scene.add_child(balloon)
+	_asking_player = player
+	interactable.is_enabled = false
+	if balloon.has_signal("dialogue_finished"):
+		balloon.connect("dialogue_finished", _on_choice_closed, CONNECT_ONE_SHOT)
+	balloon.start(resource, "start", [self])
+
+## The Yes answer: uses up the key, unlocks the gate and opens it.
+func open_with_key() -> void:
+	var inventory := _inventory(_asking_player)
+	if not is_locked or inventory == null or not inventory.remove_one(required_key):
+		return
+	is_locked = false
+	_swing(_asking_player)
+
+func _on_choice_closed() -> void:
+	_asking_player = null
+	if not is_moving:
+		interactable.is_enabled = true
+
+func _inventory(player: Node3D) -> PlayerInventory:
+	return player.get_node_or_null("InventoryHUD") as PlayerInventory if is_instance_valid(player) else null
+
+func _swing(player: Node3D) -> void:
 	var opening := not is_open
 	var target := 0.0
 	if opening:
