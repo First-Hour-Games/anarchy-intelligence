@@ -1,7 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/player/weapons/pipe_weapon.gd" id="1_weapon"]
-[ext_resource type="Script" path="res://models/props/weapons/normalized_pipe.gd" id="2_model"]
 [ext_resource type="PackedScene" path="res://models/player/fpsWhite_holding_idle.glb" id="3_hands"]
 
 [node name="PipeWeapon" type="Node3D"]
@@ -15,10 +14,6 @@ position = Vector3(0.0, -0.48, -0.35)
 rotation_degrees = Vector3(0, 180, -35)
 
 [node name="Arms" parent="ModelPivot" instance=ExtResource("3_hands")]
-
-[node name="Model" type="Node3D" parent="ModelPivot"]
-script = ExtResource("2_model")
-grip_origin = true
 
 [node name="HeldLight" type="OmniLight3D" parent="ModelPivot"]
 position = Vector3(-0.15, 0.3, 0.3)

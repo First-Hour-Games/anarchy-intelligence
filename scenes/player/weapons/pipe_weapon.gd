@@ -43,25 +43,12 @@ func _ready() -> void:
 		geometry.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 func _setup_hands() -> void:
-	# Keep the imported grip pose and attach the pipe to the animated right hand.
+	# The Blender-authored pipe is bone-parented in the GLB, including its grip offset.
 	idle_animation.get_animation(&"Holding_Idle").loop_mode = Animation.LOOP_LINEAR
 	idle_animation.play(&"Holding_Idle")
 	idle_animation.advance(0.0)
-	var skeleton: Skeleton3D = $ModelPivot/Arms/FPS_Arms/Skeleton3D
-	var right := skeleton.get_bone_global_pose(skeleton.find_bone("Hand.R"))
-	var left := skeleton.get_bone_global_pose(skeleton.find_bone("Hand.L"))
-	var grip := right * Vector3(0.0, 0.085, -0.025)
-	var support := left * Vector3(0.0, 0.085, -0.025)
-	var shaft := (grip - support).normalized()
-	var across := shaft.cross(Vector3.FORWARD).normalized()
-	var pipe_pose := Transform3D(Basis(across, shaft, across.cross(shaft)), grip)
-	var attachment := BoneAttachment3D.new()
-	attachment.name = "PipeGrip"
-	attachment.bone_name = "Hand.R"
-	skeleton.add_child(attachment)
-	var model: Node3D = $ModelPivot/Model
-	model.reparent(attachment, false)
-	model.transform = right.affine_inverse() * pipe_pose
+	var pipe: MeshInstance3D = $ModelPivot/Arms/FPS_Arms/Skeleton3D/Hand_R/MetalPipe_Hand_R
+	pipe.material_override = preload("res://models/props/weapons/pipe_metal_material.tres")
 
 func _bind_inventory() -> void:
 	_player.inventory.inventory_changed.connect(_inventory_changed)

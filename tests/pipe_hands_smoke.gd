@@ -20,8 +20,8 @@ func run() -> void:
 	var arms: Node3D = weapon.get_node("ModelPivot/Arms")
 	var animation: AnimationPlayer = arms.get_node("AnimationPlayer")
 	var skeleton: Skeleton3D = arms.get_node("FPS_Arms/Skeleton3D")
-	var attachment: BoneAttachment3D = skeleton.get_node("PipeGrip")
-	var model: Node3D = attachment.get_node("Model")
+	var attachment: BoneAttachment3D = skeleton.get_node("Hand_R")
+	var model: Node3D = attachment.get_node("MetalPipe_Hand_R")
 	var illustrated: AnimatedSprite2D = player.get_node("HandViewmodel").hands
 	check(not weapon.model_pivot.visible, "arms hidden before pipe pickup")
 	player.inventory.add_item(&"metal_pipe")
