@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://bkqmk8wqax65"
+path="res://.godot/imported/residence_zone.dialogue-f73497cee03bd667386921e2ea98905a.tres"
+
+[deps]
+
+source_file="res://scenes/chapters/main/residence_zone.dialogue"
+dest_files=["res://.godot/imported/residence_zone.dialogue-f73497cee03bd667386921e2ea98905a.tres"]
+
+[params]
+
+defaults=true

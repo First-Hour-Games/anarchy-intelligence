@@ -1,4 +1,4 @@
-[gd_resource type="AnimationLibrary" format=3]
+[gd_resource type="AnimationLibrary" format=3 uid="uid://d4gx1o5f7d2e7"]
 
 [sub_resource type="Animation" id="Animation_4a2v8"]
 resource_name = "swing_bat"

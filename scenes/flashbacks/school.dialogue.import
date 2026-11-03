@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://cqoh2topcu4la"
+path="res://.godot/imported/school.dialogue-4a62164868ee830e5853b4894025a606.tres"
+
+[deps]
+
+source_file="res://scenes/flashbacks/school.dialogue"
+dest_files=["res://.godot/imported/school.dialogue-4a62164868ee830e5853b4894025a606.tres"]
+
+[params]
+
+defaults=true

@@ -64,7 +64,7 @@ func _try_activate() -> void:
 	if bool(_first_appearance.get("is_playing")):
 		return
 	var gate := get_node_or_null(gate_path)
-	var used_key := gate != null and not bool(gate.get("is_locked"))
+	var used_key: bool = gate != null and gate.get("is_locked") == false
 	if not _waiting_player.has_item(required_key) and not used_key:
 		return
 	has_played = true

@@ -1,6 +1,5 @@
 extends Node3D
-## Camera-held defensive pipe. A swing hits the first body in reach; only some hits stun
-## (interrupt and push back) the enemy, and recovery is slow, so each swing is a commitment.
+## Camera-held defensive pipe. Every enemy hit stuns and pushes back the enemy.
 
 signal swung
 signal hit_landed(target: Node3D)
@@ -35,11 +34,7 @@ const HIT_SOUND_STARTS: Array[float] = [0.12, 0.09, 0.13, 0.14, 0.13]
 
 @export_range(0.5, 3.0, 0.1) var reach: float = 1.8
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 1.4
-@export_range(0.1, 3.0, 0.1) var stagger_duration: float = 1.0
 @export_range(0.0, 6.0, 0.1) var knockback_speed: float = 2.5
-## Chance that a hit stuns: staggers the enemy and interrupts its attack. Other hits still
-## count toward killing it, but it keeps coming.
-@export_range(0.0, 1.0, 0.05) var stun_chance: float = 0.2
 ## The swing from models/player/pipe_swings.tres: swing_downswing, or swing_bat.
 @export var swing_clip: StringName = &"swing_downswing"
 
@@ -170,8 +165,7 @@ func _strike() -> void:
 	_hit_applied = true
 	var target := nearest.collider as Node3D
 	if target != null and target.has_method("take_melee_hit"):
-		var stunned := randf() < stun_chance
-		target.take_melee_hit(_player.global_position, stagger_duration if stunned else 0.0, knockback_speed if stunned else 0.0)
+		target.take_melee_hit(_player.global_position, randf_range(1.5, 2.5), knockback_speed)
 		_play_hit_sound()
 		hit_landed.emit(target)
 
