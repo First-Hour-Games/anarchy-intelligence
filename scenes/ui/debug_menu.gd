@@ -105,6 +105,7 @@ func _build_menu() -> void:
 	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
+	_add_button(column, "Open save screen (saves where you stand)", _open_save_screen)
 	_skip_intro_button = _add_button(column, "Skip forest intro fade", _skip_forest_intro)
 	_add_button(column, "Resume", set_open.bind(false))
 	_status_label = Label.new()
@@ -173,6 +174,30 @@ func _reload_scene() -> void:
 	var scene := get_tree().current_scene
 	if scene != null and not scene.scene_file_path.is_empty():
 		jump_to_scene(scene.scene_file_path)
+
+
+## The gem save screen without a gem: the file restarts the player where they stood.
+func _open_save_screen() -> void:
+	var player := get_tree().get_first_node_in_group("player") as FirstPersonPlayer
+	if player == null or get_tree().current_scene == null:
+		_status_label.text = "There's no player in this scene to save."
+		return
+	set_open(false)
+	# The file's picture is the game view, so wait for a frame drawn without this menu.
+	await get_tree().process_frame
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+	if not is_instance_valid(player):
+		return
+	var thumbnail := SaveGame.capture_thumbnail()
+	player.freeze()
+	var save := func(slot: int) -> bool: return SaveGame.save_here(player, slot, thumbnail)
+	var screen := SaveSlotScreen.open(get_tree().root, SaveSlotScreen.Mode.SAVE, save, true, true)
+	screen.closed.connect(func() -> void:
+		if is_instance_valid(player):
+			player.unfreeze()
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	)
 
 
 func _skip_forest_intro() -> void:

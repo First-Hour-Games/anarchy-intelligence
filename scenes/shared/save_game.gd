@@ -138,12 +138,26 @@ func capture_thumbnail() -> Image:
 ## Saves at a gem into a slot. Returns false if nothing could be written.
 func save_at(gem: Node3D, player: FirstPersonPlayer, slot: int, thumbnail: Image = null) -> bool:
 	var section := _section_of(gem)
-	if section == null or section.scene_file_path.is_empty() or not is_instance_valid(player):
+	if section == null:
+		return false
+	return _write_save(section, gem.call("get_respawn_transform"), str(gem.get("area_name")), str(gem.get("location_name")),
+		str(section.get_path_to(gem)), player, slot, thumbnail)
+
+
+## Saves where the player stands, without a gem (the debug menu). Loading it puts the player back there.
+func save_here(player: FirstPersonPlayer, slot: int, thumbnail: Image = null) -> bool:
+	var section := get_tree().current_scene as Node3D
+	if section == null or not is_instance_valid(player):
+		return false
+	return _write_save(section, player.global_transform, "", "Debug save", "", player, slot, thumbnail)
+
+
+func _write_save(section: Node3D, respawn: Transform3D, area: String, location: String, gem_path: String,
+		player: FirstPersonPlayer, slot: int, thumbnail: Image) -> bool:
+	if section.scene_file_path.is_empty() or not is_instance_valid(player):
 		return false
 	if slot < 0 or slot >= SLOT_COUNT:
 		return false
-	var respawn: Transform3D = gem.call("get_respawn_transform")
-	var area := str(gem.get("area_name"))
 	if area.is_empty():
 		area = AREA_NAMES.get(section.scene_file_path, section.scene_file_path.get_file().get_basename().capitalize())
 	var now := Time.get_datetime_dict_from_system()
@@ -154,9 +168,9 @@ func save_at(gem: Node3D, player: FirstPersonPlayer, slot: int, thumbnail: Image
 		"play_time": play_time,
 		"first_save_dialogue_seen": first_save_dialogue_seen,
 		"area": area,
-		"location": str(gem.get("location_name")),
+		"location": location,
 		"scene": section.scene_file_path,
-		"gem": str(section.get_path_to(gem)),
+		"gem": gem_path,
 		"respawn": _transform_to_array(respawn),
 		"player": _capture_player(player),
 		"section": _capture_section(section),
