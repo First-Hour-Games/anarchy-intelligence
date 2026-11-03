@@ -17,8 +17,6 @@ const SWING_SOUNDS: Array[AudioStream] = [
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 0.8
 @export_range(0.1, 3.0, 0.1) var stagger_duration: float = 1.0
 @export_range(0.0, 6.0, 0.1) var knockback_speed: float = 2.5
-@export var held_position := Vector3(0.0, -0.48, -0.35)
-@export var held_rotation_degrees := Vector3(0, 180, -35)
 
 var equipped := false
 var _player: FirstPersonPlayer
@@ -27,9 +25,9 @@ var _had_pipe := false
 var _cooldown := 0.0
 var _swing_time := -1.0
 var _hit_applied := false
-var _phase := 0.0
 var _last_swing_sound := -1
 @onready var model_pivot: Node3D = $ModelPivot
+@onready var _rest_transform: Transform3D = model_pivot.transform
 @onready var swing_audio: AudioStreamPlayer = $SwingAudio
 @onready var idle_animation: AnimationPlayer = $ModelPivot/Arms/AnimationPlayer
 
@@ -65,6 +63,7 @@ func set_equipped(value: bool) -> void:
 	equipped = value and is_instance_valid(_player) and _player.inventory.has_item(&"metal_pipe")
 	if not equipped:
 		_swing_time = -1.0
+		model_pivot.transform = _rest_transform
 	model_pivot.visible = equipped and not _player.is_frozen and not _camera.top_level
 
 func can_swing() -> bool:
@@ -130,12 +129,13 @@ func _strike() -> void:
 		target.take_melee_hit(_player.global_position, stagger_duration, knockback_speed)
 		hit_landed.emit(target)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	model_pivot.visible = equipped and not _player.is_frozen and not _camera.top_level and not _player.is_hidden()
 	idle_animation.speed_scale = 1.0 if model_pivot.visible and _swing_time < 0.0 else 0.0
 	if not model_pivot.visible:
 		return
-	_phase += delta * (1.5 + Vector2(_player.velocity.x, _player.velocity.z).length())
 	var swing := sin(clampf((_swing_time - 0.06) / 0.49, 0.0, 1.0) * PI) if _swing_time >= 0.0 else 0.0
-	model_pivot.position = held_position + Vector3(-0.36 * swing, sin(_phase) * 0.006 + 0.08 * swing, -0.12 * swing)
-	model_pivot.rotation_degrees = held_rotation_degrees + Vector3(-65, 35, 60) * swing
+	# The scene places the complete Blender rig. Only attacks offset that placement.
+	model_pivot.transform = _rest_transform
+	model_pivot.position += Vector3(-0.36, 0.08, -0.12) * swing
+	model_pivot.basis = Basis.from_euler(Vector3(-65, 35, 60) * (PI / 180.0) * swing) * _rest_transform.basis

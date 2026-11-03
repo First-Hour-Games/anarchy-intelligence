@@ -12,6 +12,11 @@ func check(ok: bool, label: String) -> void:
 
 func run() -> void:
 	var player := load("res://scenes/player/player.tscn").instantiate() as FirstPersonPlayer
+	# Scene edits must survive runtime updates, including attack recovery.
+	var pivot: Node3D = player.get_node("Head/Camera3D/PipeWeapon/ModelPivot")
+	pivot.position += Vector3(0.03, 0.02, -0.01)
+	pivot.rotation.y += 0.08
+	var scene_placement := pivot.transform
 	root.add_child(player)
 	player.set_physics_process(false)
 	player.unfreeze()
@@ -36,12 +41,16 @@ func run() -> void:
 	await process_frame
 	check(not model.global_transform.is_equal_approx(start), "idle animation moves held pipe")
 	check(model.transform.is_equal_approx(grip_transform), "idle preserves pipe grip offset")
+	check(pivot.transform.is_equal_approx(scene_placement), "idle preserves edited scene placement without extra bob or roll")
 	animation.seek(3.95, true)
 	await create_timer(0.2).timeout
 	check(animation.is_playing() and animation.current_animation_position < 1.0, "four-second idle wraps and continues")
 	check(weapon.try_swing(), "arms setup allows pipe attack")
 	await create_timer(0.25).timeout
 	check(model.transform.is_equal_approx(grip_transform), "swing preserves pipe grip offset")
+	check(not pivot.transform.is_equal_approx(scene_placement), "attack offsets the complete rig")
+	await create_timer(0.4).timeout
+	check(pivot.transform.is_equal_approx(scene_placement), "completed swing returns to exact scene placement")
 	weapon.set_equipped(false)
 	await process_frame
 	await process_frame

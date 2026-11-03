@@ -10,8 +10,8 @@ script = ExtResource("1_weapon")
 
 [node name="ModelPivot" type="Node3D" parent="."]
 visible = false
-position = Vector3(0.0, -0.48, -0.35)
-rotation_degrees = Vector3(0, 180, -35)
+position = Vector3(0.0, -0.25, -0.1)
+rotation_degrees = Vector3(0, 180, 0)
 
 [node name="Arms" parent="ModelPivot" instance=ExtResource("3_hands")]
 
