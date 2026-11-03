@@ -2,6 +2,19 @@ extends Node
 ## Optional health/respawn component; existing movement controller is unchanged.
 signal health_changed(value: float)
 @export var max_health: float = 100.0
+@export_range(-40.0, 6.0, 0.5) var impact_volume_db: float = -3.0
+const IMPACT_SOUNDS: Array[AudioStream] = [
+	preload("res://sounds/player/impact/punching_short_impact_hits_1.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_2.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_3.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_4.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_5.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_6.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_7.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_8.ogg"),
+	preload("res://sounds/player/impact/punching_short_impact_hits_9.ogg"),
+]
+var impact_audio: AudioStreamPlayer
 var health: float = 100.0
 var is_dead: bool = false
 var immunity: float = 0.0
@@ -25,6 +38,15 @@ var daze_camera: Camera3D
 func _ready() -> void:
 	health = max_health
 	spawn = get_parent().global_transform
+	var impacts := AudioStreamRandomizer.new()
+	impacts.playback_mode = AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS
+	for sound in IMPACT_SOUNDS:
+		impacts.add_stream(-1, sound)
+	impact_audio = AudioStreamPlayer.new()
+	impact_audio.name = "ImpactAudio"
+	impact_audio.stream = impacts
+	impact_audio.bus = &"Effects"
+	add_child(impact_audio)
 	var canvas := CanvasLayer.new()
 	canvas.layer = 21
 	add_child(canvas)
@@ -85,6 +107,9 @@ func take_damage(amount: float, attacker: Node3D = null) -> void:
 		return
 	health = maxf(0.0, health - amount)
 	immunity = 0.6
+	if is_instance_valid(attacker):
+		impact_audio.volume_db = impact_volume_db
+		impact_audio.play()
 	health_changed.emit(health)
 	_refresh()
 	if health > 0.0:
