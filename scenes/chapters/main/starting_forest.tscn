@@ -122,6 +122,7 @@
 [ext_resource type="PackedScene" uid="uid://c31b3yqyr8p38" path="res://models/map/tunnel.glb" id="139_dfnds"]
 [ext_resource type="PackedScene" uid="uid://clbffbdvmm7am" path="res://models/map/mountain.glb" id="140_eubcj"]
 [ext_resource type="Material" path="res://models/map/mountain_rock_material.tres" id="141_mountain_rock"]
+[ext_resource type="Material" path="res://models/map/tunnel_stone_material.tres" id="142_tunnel_stone"]
 [ext_resource type="PackedScene" path="res://scenes/environment/bloody_footprint.tscn" id="bloody_footprint"]
 [ext_resource type="Script" uid="uid://dtqn8vn5ynbis" path="res://scenes/environment/bloody_footprint_trail.gd" id="bloody_footprint_trail"]
 [ext_resource type="AudioStream" uid="uid://ctgjg2debay7j" path="res://sounds/chapters/main/electric_light_hum_flickers_01_wav.ogg" id="flashlight_flicker_audio"]
@@ -605,7 +606,7 @@ metadata/_gltf_primary_texture_coord = 0
 size = Vector3(0.28186035, 0.63464355, 2.3273392)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tsud7"]
-size = Vector3(13.864258, 2, 8)
+size = Vector3(17.47754, 13.359253, 8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ag0la"]
 size = Vector3(1.9, 0.13378906, 3.1933594)
@@ -1607,6 +1608,21 @@ shape = SubResource("BoxShape3D_tsud7")
 
 [node name="barricade3" parent="." unique_id=94753405 instance=ExtResource("38_y0hyv")]
 transform = Transform3D(-0.054549642, 0, 0.5623606, 0, 0.56500006, 0, -0.5623606, 0, -0.054549642, -100.13837, 0.16756046, 13.239731)
+
+[node name="barricade4" parent="." unique_id=287033552 instance=ExtResource("38_y0hyv")]
+transform = Transform3D(0.04924303, 0, 0.56285, 0, 0.565, 0, -0.56285, 0, 0.04924303, 183.48996, 0.16756046, 8.120854)
+
+[node name="barricade5" parent="." unique_id=1556595705 instance=ExtResource("38_y0hyv")]
+transform = Transform3D(-0.00948317, 0, 0.56492054, 0, 0.565, 0, -0.56492054, 0, -0.00948317, 183.50948, 0.16756046, 10.649774)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="barricade5" unique_id=1304068406]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="barricade5/StaticBody3D" unique_id=391544975]
+transform = Transform3D(1, 0, -3.7252903e-09, 0, 1.0000002, 0, 3.7252903e-09, 0, 1, -0.13959312, 6.612069, 2.999878)
+shape = SubResource("BoxShape3D_tsud7")
+
+[node name="barricade6" parent="." unique_id=1902643256 instance=ExtResource("38_y0hyv")]
+transform = Transform3D(-0.054549642, 0, 0.5623606, 0, 0.56500006, 0, -0.5623606, 0, -0.054549642, 183.52077, 0.16756046, 13.321069)
 
 [node name="Fence" type="Node3D" parent="." unique_id=502141997]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.7, 0.09680283, 0.09999983)
@@ -3453,16 +3469,19 @@ transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 159.8413, 1.2, 54.69453
 [node name="Tunnel" parent="." unique_id=1475556023 instance=ExtResource("139_dfnds")]
 transform = Transform3D(-4.2140567e-08, 0, 1, 0, 1, 0, -0.96406376, 0, -4.371139e-08, 194.44762, 3.3319736, 10.643544)
 
+[node name="Cube_Tunnel_0" parent="Tunnel/Sketchfab_model/ad670f8c52e94173947c2d5d1b293781_fbx/RootNode/Cube" parent_id_path=PackedInt32Array(1475556023, 1258900631) index="0" unique_id=1197092790]
+material_override = ExtResource("142_tunnel_stone")
+
 [node name="Mountain" parent="." unique_id=242259471 instance=ExtResource("140_eubcj")]
 transform = Transform3D(147.20363, 0, 38.438206, 0, 149.9, 0, -28.828655, 0, 196.2715, 211.44484, 20.549185, 43.11169)
 
-[node name="Cube_0" parent="Mountain/Sketchfab_model/Root/Cube" index="0"]
+[node name="Cube_0" parent="Mountain/Sketchfab_model/Root/Cube" parent_id_path=PackedInt32Array(242259471, 622956325) index="0" unique_id=1277664774]
 material_override = ExtResource("141_mountain_rock")
 
 [node name="Mountain2" parent="." unique_id=1581286062 instance=ExtResource("140_eubcj")]
 transform = Transform3D(130.0551, 0, 99.64978, 0, 149.9, 0, -74.737335, 0, 173.4068, 249.08174, 20.549185, 65.85052)
 
-[node name="Cube_0" parent="Mountain2/Sketchfab_model/Root/Cube" index="0"]
+[node name="Cube_0" parent="Mountain2/Sketchfab_model/Root/Cube" parent_id_path=PackedInt32Array(1581286062, 622956325) index="0" unique_id=1277664774]
 material_override = ExtResource("141_mountain_rock")
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
@@ -3475,6 +3494,6 @@ material_override = ExtResource("141_mountain_rock")
 [connection signal="finished" from="CopCarSedan/EngineLoop" to="CopCarSedan/EngineLoop" method="play"]
 
 [editable path="GasStation"]
-
+[editable path="Tunnel"]
 [editable path="Mountain"]
 [editable path="Mountain2"]
