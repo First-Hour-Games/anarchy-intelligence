@@ -34,6 +34,8 @@ var play_time: float = 0.0
 ## The last gem's respawn point this session, for death handling.
 var respawn_transform: Transform3D = Transform3D.IDENTITY
 var has_respawn: bool = false
+## One-time introduction to the first gas-station save point, per playthrough.
+var first_save_dialogue_seen: bool = false
 var _pending: Dictionary = {}
 var _toast: Label
 var _toast_tween: Tween
@@ -110,6 +112,7 @@ func delete_all() -> Error:
 
 ## Called when a new game starts from the menu.
 func start_new_game() -> void:
+	first_save_dialogue_seen = false
 	play_time = 0.0
 	has_respawn = false
 	_pending = {}
@@ -149,6 +152,7 @@ func save_at(gem: Node3D, player: FirstPersonPlayer, slot: int, thumbnail: Image
 		"saved_at": Time.get_datetime_string_from_system(),
 		"saved_label": "%02d/%02d/%02d %02d:%02d" % [now.year % 100, now.month, now.day, now.hour, now.minute],
 		"play_time": play_time,
+		"first_save_dialogue_seen": first_save_dialogue_seen,
 		"area": area,
 		"location": str(gem.get("location_name")),
 		"scene": section.scene_file_path,
@@ -235,6 +239,8 @@ func _on_scene_changed() -> void:
 
 
 func _restore(scene: Node, data: Dictionary) -> void:
+	# Existing saves already passed the first opportunity to introduce saving.
+	first_save_dialogue_seen = bool(data.get("first_save_dialogue_seen", true))
 	var player := scene.get_node_or_null("Player") as FirstPersonPlayer
 	if scene.has_method("restore_save_state"):
 		# Untyped, so a restore that waits on frames is awaited properly.

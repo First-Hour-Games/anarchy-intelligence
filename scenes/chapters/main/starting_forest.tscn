@@ -3378,6 +3378,7 @@ modulate = Color(0.36, 0.012, 0.012, 1)
 [node name="GasStationSaveGem" parent="." unique_id=300406649 instance=ExtResource("save_gem")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 161.12073, 0.0725, 59)
 location_name = "Town Entrance"
+introduce_first_save = true
 
 [node name="BuildupFadeZone" type="Area3D" parent="GasStationSaveGem" unique_id=1973774816]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6250458, 1.5, -0.7482147)

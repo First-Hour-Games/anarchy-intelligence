@@ -583,6 +583,6 @@ func _get_item_display_name(item: StringName) -> String:
 		MAP_ITEM: return "TOWN MAP"
 		NOTEBOOK_ITEM: return "CARRIE'S NOTES"
 		BOTTLE_ITEM: return "EMPTY BOTTLE x%d" % get_count(item)
-		FENCE_KEY_ITEM: return "FENCE KEY"
+		FENCE_KEY_ITEM: return "Small Silver Key"
 		METAL_PIPE_ITEM: return "METAL PIPE"
 		_: return "EMPTY" if item == EMPTY_ITEM else str(item).to_upper()

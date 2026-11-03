@@ -11,10 +11,10 @@ var retry: Button
 var death_scare: CanvasLayer
 const DEATH_SCARE := preload("res://scenes/ui/death_scare.gd")
 const ACCUM_BLUR := preload("res://scenes/player/accum_blur_effect.gd")
-## Hit daze: motion blur plus a slight camera sway that fade out after a hit.
-const DAZE_TIME := 1.6
-const DAZE_BLUR := 0.85
-const DAZE_ROLL := deg_to_rad(2.5)
+## Hit daze: strong motion blur and camera shake that fade out after a hit.
+const DAZE_TIME := 3.2
+const DAZE_BLUR := 0.94
+const DAZE_ROLL := deg_to_rad(6.0)
 var daze: float = 0.0
 var daze_blur: CompositorEffect
 var daze_camera: Camera3D
@@ -75,12 +75,12 @@ func _setup_daze() -> void:
 	daze_camera.compositor.compositor_effects = effects
 
 func _apply_daze() -> void:
-	var fade := daze * daze
+	var fade := daze
 	if daze_blur:
 		daze_blur.set(&"alpha", DAZE_BLUR * fade)
 	if daze_camera:
 		var t := Time.get_ticks_msec() * 0.001
-		daze_camera.rotation.z = sin(t * 5.0) * DAZE_ROLL * fade
+		daze_camera.rotation.z = sin(t * 8.0) * DAZE_ROLL * fade
 
 func _process(delta: float) -> void:
 	immunity = maxf(0.0, immunity - delta)

@@ -8,6 +8,6 @@ script = ExtResource("1_pickup")
 item_id = &"fence_key"
 interaction_distance = 2.0
 visual_target_path = NodePath(".")
-interaction_message = "Picked up the fence key."
+interaction_message = "Picked up the small silver key."
 
 [node name="Model" parent="." instance=ExtResource("2_key")]
