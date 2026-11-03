@@ -22,7 +22,8 @@ grip_origin = true
 
 [node name="HeldLight" type="OmniLight3D" parent="ModelPivot"]
 position = Vector3(-0.15, 0.3, 0.3)
-light_energy = 0.6
+light_energy = 0.12
+light_specular = 0.15
 light_color = Color(0.8, 0.85, 1, 1)
 omni_range = 1.5
 cull_mask = 2
