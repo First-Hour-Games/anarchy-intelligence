@@ -16,7 +16,7 @@ signal died
 ## Pipe hits that kill it; 0 means it can only be staggered. The count resets when the player respawns.
 @export var hits_to_kill: int = 0
 ## How fast the ragdoll is thrown away from the player by the killing blow.
-@export var death_push_speed: float = 3.5
+@export var death_push_speed: float = 2.0
 const ROUTE := preload("res://scenes/shared/entity_route.gd")
 var navigation_route := ROUTE.new()
 var enabled: bool = false
@@ -156,7 +156,7 @@ func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) 
 	away.y = 0.0
 	hits_taken += 1
 	if hits_to_kill > 0 and hits_taken >= hits_to_kill:
-		_die(away.normalized() * death_push_speed + Vector3.UP * 1.0)
+		_die(away.normalized() * death_push_speed + Vector3.UP * 0.5)
 		return
 	_melee_push = away.normalized() * push_speed
 	melee_stagger_time = maxf(melee_stagger_time, duration)
@@ -184,8 +184,9 @@ func _die(push: Vector3) -> void:
 	melee_stagger_time = 0.0
 	hunted_spot = null
 	_set_seated(false)
-	$CollisionShape3D.set_deferred("disabled", true)
-	RAGDOLL.fall($Visual, push)
+	# Off now, not deferred: the ragdoll's first physics step must not start inside it.
+	($CollisionShape3D as CollisionShape3D).disabled = true
+	RAGDOLL.fall(self, $Visual, push)
 	died.emit()
 
 func _physics_process(delta: float) -> void:
