@@ -200,7 +200,9 @@ func _mesh_radii(visual: Node3D) -> Dictionary:
 				var rest_vertex := skeleton.get_bone_global_rest(bone) * skin.get_bind_pose(bind) * vertices[v]
 				var segment: PackedVector3Array = rest_segments[bone]
 				var on_bone := Geometry3D.get_closest_point_to_segment(rest_vertex, segment[0], segment[1])
-				(distances[bone] as PackedFloat32Array).append(rest_vertex.distance_to(on_bone))
+				var bone_distances: PackedFloat32Array = distances[bone]
+				bone_distances.append(rest_vertex.distance_to(on_bone))
+				distances[bone] = bone_distances
 	var basis_scale := skeleton.global_basis.get_scale().abs()
 	var to_world := (basis_scale.x + basis_scale.y + basis_scale.z) / 3.0
 	var radii := {}
