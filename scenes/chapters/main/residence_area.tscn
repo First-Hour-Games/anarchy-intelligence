@@ -24,6 +24,9 @@
 [ext_resource type="PackedScene" path="res://scenes/environment/residence_foliage.tscn" id="residence_foliage"]
 [ext_resource type="PackedScene" uid="uid://c1yrt156ikqol" path="res://scenes/player/player.tscn" id="residence_player"]
 [ext_resource type="Script" uid="uid://xs5w0rlf2fp6" path="res://scenes/chapters/main/residence_area.gd" id="residence_script"]
+[ext_resource type="Script" uid="uid://bpbwqfmbu5c1x" path="res://scenes/player/combat_health.gd" id="residence_combat_health"]
+[ext_resource type="Script" uid="uid://bgomilsj7a7dg" path="res://scenes/environment/map_navigation_baker.gd" id="residence_enemy_navigation"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/wrapper_spawn_point.tscn" id="wrapper_test_spawn"]
 [ext_resource type="Script" uid="uid://bmwcfuam6crb1" path="res://scenes/zones/scene_stream_connection.gd" id="stream_connection"]
 [ext_resource type="PackedScene" path="res://scenes/zones/tree_exclusion_zone.tscn" id="vegetation_exclusion"]
 [ext_resource type="Material" path="res://img/materials/tiles/tiles038_pavement.tres" id="tiles038_pavement"]
@@ -318,8 +321,20 @@ directional_shadow_max_distance = 188.6
 [node name="Player" parent="." unique_id=1155757218 instance=ExtResource("residence_player")]
 transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 117, 0.15, 135.65405)
 
+[node name="CombatHealth" type="Node" parent="Player" unique_id=1855020471]
+script = ExtResource("residence_combat_health")
+
 [node name="ForestEntranceSpawn" type="Marker3D" parent="." unique_id=1657417268]
 transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 117, 0.15, 135.65405)
+
+[node name="WrapperTestSpawn" parent="." unique_id=1816556256 instance=ExtResource("wrapper_test_spawn")]
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 80, 0.11, 135.65405)
+
+[node name="ResidenceEnemyNavigation" type="NavigationRegion3D" parent="." unique_id=1937412470]
+script = ExtResource("residence_enemy_navigation")
+geometry_root_paths = Array[NodePath]([NodePath("../ResidentialStreet"), NodePath("../Lot1_Ranch_1470sf_LOT2"), NodePath("../Lot1_Ranch_1470sf_LOT3"), NodePath("../Lot2_Cottage_1250sf_LOT2"), NodePath("../Lot8_CraftsmanTwoStory_2489sf_2415_LOT2"), NodePath("../Lot8_CraftsmanTwoStory_2489sf_2415_LOT3"), NodePath("../Lot11_CraftsmanRanch_1733sf_2427_LOT2"), NodePath("../Lot11_CraftsmanRanch_1733sf_2427_LOT3")])
+cache_path = "user://residence_wrapper_test_navigation.res"
+baking_bounds = AABB(32, -1, 130, 94, 8, 12)
 
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=207223521]
 layer = 19
