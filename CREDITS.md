@@ -56,7 +56,7 @@ licence and link are embedded in each file.
 | Ceiling_Lamp_LP | Vitor.GomesPT | https://sketchfab.com/3d-models/ceiling-lamp-lp-97807f860c804446a31f9beed37afa20 | Tutorial |
 | Coffin | Daniyal Malik | https://sketchfab.com/3d-models/coffin-232a95f5c4be4411abc1d2f7cc28965f | Tutorial |
 | Grandfather Clock | Memorie | https://sketchfab.com/3d-models/grandfather-clock-5c08d95755954e109ab63fbf997b818b | Tutorial |
-| Old telephone | Termi1 | https://sketchfab.com/3d-models/old-telephone-5fec9138e8fe4f6aa023a99aa11de159 | Tutorial |
+| Old telephone | Termi1 | https://sketchfab.com/3d-models/old-telephone-5fec9138e8fe4f6aa023a99aa11de159 | Tutorial; the game over uses a copy with the handset split off so it can rattle in its cradle |
 | stairs | RVECH | https://sketchfab.com/3d-models/stairs-6560ab865d0f4374916a15ab538d87fb | Tutorial |
 | Table | yryabchenko | https://sketchfab.com/3d-models/table-1132fa2850a24917892733566bd68e74 | Tutorial |
 | Gem | TomaszObloj | https://sketchfab.com/3d-models/gem-ce73ada1698342d2bde0cb7b632a5b94 | Gas station; recoloured white and shiny |

@@ -10,6 +10,10 @@ func check(condition: bool, label: String) -> void:
 		failures += 1
 
 func run() -> void:
+	# No save files, so the phone game over offers TRY AGAIN; the real saves are never looked at.
+	var save_game := root.get_node("SaveGame")
+	var original_dir: String = save_game.save_dir
+	save_game.save_dir = "user://test_death_scare_no_saves"
 	var map := (load("res://scenes/chapters/main/map.tscn") as PackedScene).instantiate()
 	map.get_node("OpeningStory").persist_progress = false
 	root.add_child(map)
@@ -31,6 +35,8 @@ func run() -> void:
 		check(scare.audio.bus == &"Effects" and scare.audio.stream != null, entity + " plays credited sound through Effects")
 		check(scare.audio.stream is AudioStreamWAV and scare.audio.playing and scare.audio.volume_db >= -3.0, entity + " starts normalized vocal immediately at audible level")
 		check(scare.camera.current and scare.camera.position.z < 0, entity + " camera faces attacker regardless of player facing")
+		check(map.get_node("CRTOverlay").visible and map.get_node("AspectRatioBars").visible,
+				entity + " close-up stays inside the TV: the CRT and the side bars stay on")
 		await create_timer(0.4).timeout
 		if scare.head_skeleton != null:
 			var face: Vector3 = scare.head_skeleton.global_transform * scare.head_skeleton.get_bone_global_pose(scare.head_bone).origin
@@ -39,14 +45,22 @@ func run() -> void:
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png("res://../scare-" + entity + ".png")
 		await create_timer(1.4).timeout
-		check(scare.retry_button != null and not scare.audio.playing, entity + " fades to retry and stops scream")
-		scare.retry_button.pressed.emit()
-		check(player.global_position.distance_to(health.spawn.origin) < 0.01, entity + " retry restores checkpoint")
+		var game_over = health.game_over
+		check(game_over != null and not scare.audio.playing, entity + " fades to the phone game over and stops scream")
+		var respawned := {}
+		game_over.try_again.connect(func() -> void: respawned["at"] = player.global_position)
+		game_over.choose(0)
+		for i in 180:
+			if not health.is_dead:
+				break
+			await process_frame
+		check(respawned.has("at") and (respawned["at"] as Vector3).distance_to(health.spawn.origin) < 0.01, entity + " retry restores checkpoint")
 		await process_frame
 		check(not health.is_dead and not player.is_frozen and health.death_scare == null, entity + " retry restores control")
 		check(attacker.process_mode != Node.PROCESS_MODE_DISABLED, entity + " retry restores enemy processing")
 		check(player.camera.current, entity + " retry restores gameplay camera")
 	map.queue_free()
+	save_game.save_dir = original_dir
 	await process_frame
 	print("Death scare failures: ", failures)
 	quit(1 if failures else 0)

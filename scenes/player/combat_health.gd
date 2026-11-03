@@ -7,9 +7,11 @@ var is_dead: bool = false
 var immunity: float = 0.0
 var spawn: Transform3D
 var status: Label
-var retry: Button
 var death_scare: CanvasLayer
+## The ringing phone after a death; its TRY AGAIN comes back here as respawn().
+var game_over: CanvasLayer
 const DEATH_SCARE := preload("res://scenes/ui/death_scare.gd")
+const PHONE_GAME_OVER := preload("res://scenes/ui/game_over/phone_game_over.gd")
 const ACCUM_BLUR := preload("res://scenes/player/accum_blur_effect.gd")
 ## Hit daze: strong motion blur and camera shake that fade out after a hit.
 const DAZE_TIME := 3.2
@@ -49,17 +51,6 @@ func _ready() -> void:
 	if hud_font:
 		status.add_theme_font_override(&"font", hud_font)
 	content.add_child(status)
-
-	retry = Button.new()
-	retry.text = "You were caught — try again"
-	retry.position = Vector2(24.0, 250.0)
-	retry.size = Vector2(220.0, 42.0)
-	if hud_font:
-		retry.add_theme_font_override(&"font", hud_font)
-	retry.add_theme_font_size_override(&"font_size", 18)
-	retry.hide()
-	content.add_child(retry)
-	retry.pressed.connect(respawn)
 	_setup_daze()
 	_refresh()
 
@@ -113,16 +104,27 @@ func take_damage(amount: float, attacker: Node3D = null) -> void:
 		if is_instance_valid(attacker) and attacker.has_node("Visual"):
 			death_scare = DEATH_SCARE.new()
 			add_child(death_scare)
-			death_scare.finished.connect(respawn)
+			death_scare.finished.connect(_show_game_over)
 			death_scare.start(attacker)
 		else:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-			retry.show()
-			retry.grab_focus()  # lets gamepad A / keyboard Enter press it
+			_show_game_over()
+
+func _show_game_over() -> void:
+	if is_instance_valid(game_over):
+		return
+	# The close-up has faded to black; the phone screen takes over from it.
+	if is_instance_valid(death_scare):
+		death_scare.hide()
+	game_over = PHONE_GAME_OVER.new()
+	game_over.try_again.connect(respawn)
+	add_child(game_over)
 
 func respawn() -> void:
 	if not is_dead:
 		return
+	if is_instance_valid(game_over):
+		game_over.queue_free()
+		game_over = null
 	if is_instance_valid(death_scare):
 		death_scare.restore_world()
 		death_scare = null
@@ -135,7 +137,6 @@ func respawn() -> void:
 	get_parent().set_process_unhandled_input(true)
 	get_parent().unfreeze()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	retry.hide()
 	get_tree().call_group("corrupted_friend", "reset_enemy")
 	health_changed.emit(health)
 	_refresh()
