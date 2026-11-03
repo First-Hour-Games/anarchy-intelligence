@@ -1,7 +1,8 @@
 extends Marker3D
-## A persistent Wrapper instance, active only while the player is near its post.
-
-@export_range(1.0, 100.0, 1.0, "suffix:m") var activation_distance: float = 32.0
+## A persistent roaming Wrapper. It wanders round this marker, hunts a player it hears and walks
+## back here once they escape (see story_entity.gd, Roaming). It is never switched off by
+## distance, so a hunt or a walk home always finishes; it only pauses while the player is frozen
+## (reading, inspecting, dialogue). Its navigation map comes from the area's enemy navigation.
 
 @onready var wrapper: CharacterBody3D = $Wrapper
 
@@ -13,5 +14,4 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as FirstPersonPlayer
 		wrapper.set("player", player)
-	wrapper.set("enabled", is_instance_valid(player) and not player.is_frozen
-		and global_position.distance_to(player.global_position) <= activation_distance)
+	wrapper.set("enabled", is_instance_valid(player) and not player.is_frozen)

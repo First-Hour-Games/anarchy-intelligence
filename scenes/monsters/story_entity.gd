@@ -17,6 +17,42 @@ signal died
 @export var hits_to_kill: int = 0
 ## How fast the ragdoll is thrown away from the player by the killing blow.
 @export var death_push_speed: float = 2.0
+
+@export_group("Roaming")
+## Free-roaming Wrapper (spawn points): wanders near its home, hunts a player it hears, and
+## walks home after losing them. It keeps moving while watched. Story Wrappers leave this off.
+@export var roaming: bool = false
+## Wandering stays within this distance of home (where it was placed).
+@export_range(1.0, 60.0, 0.5, "suffix:m") var wander_radius: float = 12.0
+@export_range(0.1, 5.0, 0.05, "suffix:m/s") var wander_speed: float = 0.7
+@export_range(0.0, 20.0, 0.1, "suffix:s") var wander_pause_min: float = 1.5
+@export_range(0.0, 20.0, 0.1, "suffix:s") var wander_pause_max: float = 4.0
+@export_range(0.1, 6.0, 0.05, "suffix:m/s") var hunt_speed: float = 1.4
+## Footsteps carry this far at full noise (sprinting); quieter steps carry proportionally less.
+@export_range(1.0, 60.0, 0.5, "suffix:m") var detection_distance: float = 18.0
+## Noise from 0 to 1 by how the player moves. Hearing range is detection_distance x noise.
+@export_range(0.0, 1.0, 0.05) var sprint_noise: float = 1.0
+@export_range(0.0, 1.0, 0.05) var walk_noise: float = 0.55
+@export_range(0.0, 1.0, 0.05) var crouch_noise: float = 0.2
+## Quieter than this is never heard, however close.
+@export_range(0.0, 1.0, 0.05) var noise_threshold: float = 0.15
+## Slower than this counts as standing still: no noise at all.
+@export_range(0.0, 3.0, 0.05, "suffix:m/s") var min_noise_speed: float = 0.5
+## The hunt ends after the player stays farther than escape_distance (or hidden) this long.
+@export_range(1.0, 80.0, 0.5, "suffix:m") var escape_distance: float = 22.0
+@export_range(0.1, 30.0, 0.1, "suffix:s") var escape_time: float = 6.0
+@export_group("")
+
+enum RoamState { WANDERING, HUNTING, RETURNING }
+var roam_state: RoamState = RoamState.WANDERING
+## Where a roaming entity was placed; it always returns here, never to a wander destination.
+var home := Vector3.ZERO
+var wander_target := Vector3.INF
+var wander_pause: float = 0.0
+var _wander_time: float = 0.0
+var _lost_time: float = 0.0
+## Gives up on a wander destination it cannot reach after this long.
+const WANDER_TIMEOUT := 15.0
 const ROUTE := preload("res://scenes/shared/entity_route.gd")
 var navigation_route := ROUTE.new()
 var enabled: bool = false
@@ -55,6 +91,7 @@ func _ready() -> void:
 	add_to_group("story_mob")
 	add_to_group("corrupted_friend")
 	spawn = global_transform
+	home = spawn.origin
 	player = get_tree().get_first_node_in_group("player") as FirstPersonPlayer
 	if not _pending_corpse.is_empty():
 		var corpse := _pending_corpse
@@ -77,6 +114,7 @@ func reset_enemy() -> void:
 	investigating_noise = false
 	returning_to_post = false
 	navigation_route.reset()
+	_set_roam_state(RoamState.WANDERING)
 	_set_seated(seat != Vector3.INF)
 	returned_to_post.emit()
 
@@ -158,6 +196,9 @@ func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) 
 	if hits_to_kill > 0 and hits_taken >= hits_to_kill:
 		_die(away.normalized() * death_push_speed + Vector3.UP * 0.5)
 		return
+	# Being hit gives the player away.
+	if roaming and roam_state != RoamState.HUNTING:
+		_set_roam_state(RoamState.HUNTING)
 	# A hit that does not stun counts toward killing it but does not stop it.
 	if duration <= 0.0:
 		return
@@ -208,6 +249,9 @@ func _physics_process(delta: float) -> void:
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
 	warning_cooldown = maxf(0.0, warning_cooldown - delta)
 	memory = maxf(0.0, memory - delta)
+	if roaming and encounter_kind == 0:
+		_roam(delta)
+		return
 	var distance := global_position.distance_to(player.global_position)
 	var in_territory := encounter_kind == 0 or player.global_position.distance_to(spawn.origin) < territory_radius
 	var hidden := player.is_hidden()
@@ -288,6 +332,10 @@ func _physics_process(delta: float) -> void:
 	alert_time = maxf(0.0, alert_time - delta)
 	if alert_time > 0.0:
 		motion = Vector3.ZERO
+	_move(motion, delta)
+
+## Plays the matching clip and moves (motion is the wanted horizontal velocity).
+func _move(motion: Vector3, delta: float) -> void:
 	var visual := $Visual
 	if visual.has_method("play") and not seated:
 		visual.play("attack" if strike_time > 0.0 else "windup" if alert_time > 0.0 else "run" if motion.length() > 0.1 else "idle")
@@ -298,6 +346,109 @@ func _physics_process(delta: float) -> void:
 		rotation.y = lerp_angle(rotation.y, atan2(-motion.x, -motion.z), delta * 4.0)
 	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
+
+## True while this entity is after the player: always for story entities, only while
+## HUNTING for a roaming one. The hunt music follows it.
+func is_hunting() -> bool:
+	return not dead and (not roaming or roam_state == RoamState.HUNTING)
+
+## How much noise the player is making, 0 to 1: none standing still, hidden or frozen.
+func player_noise() -> float:
+	if not is_instance_valid(player) or player.is_hidden() or player.is_frozen:
+		return 0.0
+	if Vector2(player.velocity.x, player.velocity.z).length() < min_noise_speed:
+		return 0.0
+	if player.is_crouching:
+		return crouch_noise
+	return sprint_noise if player.is_sprinting else walk_noise
+
+## Whether the player is loud enough and close enough to be heard.
+func hears_player() -> bool:
+	var noise := player_noise()
+	if noise <= 0.0 or noise < noise_threshold:
+		return false
+	return global_position.distance_to(player.global_position) <= detection_distance * noise
+
+func _set_roam_state(next: RoamState) -> void:
+	if next == RoamState.HUNTING and roam_state != RoamState.HUNTING:
+		alert_time = 0.75
+	roam_state = next
+	_lost_time = 0.0
+	wander_target = Vector3.INF
+	_wander_time = 0.0
+	if next == RoamState.WANDERING:
+		wander_pause = randf_range(wander_pause_min, maxf(wander_pause_min, wander_pause_max))
+	navigation_route.reset()
+
+## WANDERING near home, HUNTING the player it heard, RETURNING home once they escape.
+func _roam(delta: float) -> void:
+	var nav_map := agent.get_navigation_map()
+	var nav_ready := NavigationServer3D.map_get_iteration_id(nav_map) > 0
+	var distance := global_position.distance_to(player.global_position)
+	var hidden := player.is_hidden()
+	if roam_state != RoamState.HUNTING and hears_player():
+		_set_roam_state(RoamState.HUNTING)
+	var motion := Vector3.ZERO
+	match roam_state:
+		RoamState.HUNTING:
+			if not hidden:
+				last_heard = player.global_position
+			_lost_time = _lost_time + delta if hidden or distance > escape_distance else 0.0
+			if _lost_time >= escape_time:
+				_set_roam_state(RoamState.RETURNING)
+			elif nav_ready and (distance > 1.4 or hidden) and _flat_distance(last_heard) > 0.3:
+				motion = navigation_route.direction(self, nav_map, last_heard, delta) * hunt_speed
+		RoamState.RETURNING:
+			if _flat_distance(home) <= 0.8:
+				_set_roam_state(RoamState.WANDERING)
+			elif nav_ready:
+				motion = navigation_route.direction(self, nav_map, home, delta) * movement_speed
+		RoamState.WANDERING:
+			if wander_pause > 0.0:
+				wander_pause = maxf(0.0, wander_pause - delta)
+			elif not wander_target.is_finite():
+				if nav_ready:
+					wander_target = _pick_wander_target(nav_map)
+			elif _flat_distance(wander_target) <= 0.6 or _wander_time > WANDER_TIMEOUT:
+				_set_roam_state(RoamState.WANDERING)
+			else:
+				_wander_time += delta
+				motion = navigation_route.direction(self, nav_map, wander_target, delta) * wander_speed
+	var visible_player := not hidden and _clear_sight(player.camera.global_position)
+	if roam_state == RoamState.HUNTING and distance < 1.65 and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0:
+		strike_time = 0.9
+		strike_hit = false
+		attack_cooldown = 2.0
+	if strike_time > 0.0:
+		strike_time = maxf(0.0, strike_time - delta)
+		motion = Vector3.ZERO
+	if strike_time > 0.0 and strike_time < 0.4 and not strike_hit:
+		strike_hit = true
+		var health := player.get_node_or_null("CombatHealth")
+		if health != null and distance < 1.9 and visible_player:
+			health.take_damage(GRAB_DAMAGE, self)
+		get_tree().call_group("opening_story", "narrate_once", "caught_warning", "Too close. I need to get away!")
+	alert_time = maxf(0.0, alert_time - delta)
+	if alert_time > 0.0:
+		motion = Vector3.ZERO
+	_move(motion, delta)
+
+## A random reachable point on the navigation map within wander_radius of home, or INF.
+func _pick_wander_target(nav_map: RID) -> Vector3:
+	var lift := Vector3.UP * 0.6
+	for attempt in 8:
+		var angle := randf() * TAU
+		var reach := sqrt(randf()) * wander_radius
+		var point := NavigationServer3D.map_get_closest_point(nav_map, home + Vector3(cos(angle), 0.0, sin(angle)) * reach)
+		if Vector2(point.x - home.x, point.z - home.z).length() > wander_radius or _flat_distance(point) < 1.5:
+			continue
+		var path := NavigationServer3D.map_get_path(nav_map, global_position + lift, point + lift, true)
+		if path.size() >= 2 and path[path.size() - 1].distance_to(point + lift) < 1.0:
+			return point
+	return Vector3.INF
+
+func _flat_distance(point: Vector3) -> float:
+	return Vector2(point.x - global_position.x, point.z - global_position.z).length()
 
 func _clear_sight(point: Vector3, also_exclude: Array[RID] = []) -> bool:
 	var ray := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 1.3, point)

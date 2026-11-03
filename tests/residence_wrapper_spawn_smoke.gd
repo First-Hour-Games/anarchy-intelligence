@@ -25,6 +25,11 @@ func _run() -> void:
 	# Keep this check on the authored town street without loading the forest/foliage.
 	town.get_node("ForestStreamConnection").free()
 	town.get_node("Foliage").free()
+	# A second spawn point, added the way a designer would, must get the town map too.
+	var extra_spawn: Marker3D = (load("res://scenes/monsters/wrapper_spawn_point.tscn") as PackedScene).instantiate()
+	extra_spawn.name = "ExtraWrapperSpawn"
+	town.add_child(extra_spawn)
+	extra_spawn.position = town.get_node("WrapperTestSpawn").position + Vector3(20, 0, 0)
 	root.add_child(town)
 	current_scene = town
 	var player := town.get_node("Player") as FirstPersonPlayer
@@ -34,32 +39,39 @@ func _run() -> void:
 	var wrapper: CharacterBody3D = spawn.get_node("Wrapper")
 	var navigation: NavigationRegion3D = town.get_node("ResidenceEnemyNavigation")
 	await frames(8)
-	check(town.find_children("*", "Marker3D", true, false).filter(func(node): return node.scene_file_path.ends_with("wrapper_spawn_point.tscn")).size() == 1,
-		"town has exactly one test spawn point")
-	check(not wrapper.enabled, "Wrapper waits while player is outside activation range")
+	check(town.find_children("*", "Marker3D", true, false).filter(func(node): return node.scene_file_path.ends_with("wrapper_spawn_point.tscn")).size() == 2,
+		"town has its authored spawn point plus the added one")
+	check(wrapper.enabled and wrapper.roaming and wrapper.roam_state == wrapper.RoamState.WANDERING,
+		"Wrapper roams with no activation-distance cutoff while the player is far away")
 	check(navigation.navigation_mesh != null and navigation.navigation_mesh.get_polygon_count() > 0,
 		"residential street has a nonempty navigation mesh")
 	check(navigation.get_navigation_map() != navigation.get_world_3d().navigation_map
 		and wrapper.get_node("NavigationAgent3D").get_navigation_map() == navigation.get_navigation_map(),
 		"town enemy uses an isolated map so forest navigation cannot overlap it")
-	check(wrapper.spawn.origin.is_equal_approx(spawn.global_position), "enemy post matches editable marker")
+	check(extra_spawn.get_node("Wrapper/NavigationAgent3D").get_navigation_map() == navigation.get_navigation_map(),
+		"an added spawn point uses the town map without being named in code")
+	extra_spawn.free()
+	check(wrapper.spawn.origin.is_equal_approx(spawn.global_position) and wrapper.home.is_equal_approx(spawn.global_position),
+		"enemy post and home match the editable marker")
 
 	player.global_position = spawn.global_position + Vector3(8, 0.1, 0)
 	player.look_at(player.global_position + Vector3.RIGHT)
 	player.head.rotation = Vector3.ZERO
 	await frames(6)
-	check(wrapper.enabled and wrapper.freeze_when_watched, "nearby player activates normal Wrapper behavior")
-	var start := wrapper.global_position
-	await frames(60)
-	check(wrapper.global_position.distance_to(start) > 0.3, "Wrapper walks along the town street when unwatched")
+	check(wrapper.enabled and not wrapper.freeze_when_watched, "street Wrapper does not freeze when watched")
+	check(wrapper.roam_state == wrapper.RoamState.WANDERING, "a silent player standing near it is not detected")
+	player.velocity = Vector3(3.2, 0, 0)
+	await frames(2)
+	check(wrapper.roam_state == wrapper.RoamState.HUNTING, "a player walking nearby is heard and hunted")
+	player.velocity = Vector3.ZERO
 	player.look_at(Vector3(wrapper.global_position.x, player.global_position.y, wrapper.global_position.z))
 	player.head.look_at(wrapper.global_position + Vector3.UP * 1.4)
 	await frames(4)
 	check(wrapper.is_watched_by_player(), "player can see the street Wrapper")
-	start = wrapper.global_position
-	await frames(20)
-	check(Vector2(wrapper.global_position.x - start.x, wrapper.global_position.z - start.z).length() < 0.05,
-		"Wrapper stops moving while watched")
+	var start := wrapper.global_position
+	await frames(60)
+	check(Vector2(wrapper.global_position.x - start.x, wrapper.global_position.z - start.z).length() > 0.3,
+		"hunting Wrapper keeps coming while watched")
 	player.is_frozen = true
 	await frames()
 	check(not wrapper.enabled, "inspection or frozen player suspends the encounter")
@@ -75,7 +87,7 @@ func _run() -> void:
 	check(health.health < initial_health, "Wrapper reaches and damages the player through existing combat")
 	player.global_position = spawn.global_position + Vector3(40, 0.1, 0)
 	await frames()
-	check(not wrapper.enabled, "leaving the post radius deactivates the test encounter")
+	check(wrapper.enabled and wrapper.roam_state == wrapper.RoamState.HUNTING, "running out of range does not cut a hunt off at once")
 	player.global_position = spawn.global_position + Vector3(8, 0.1, 0)
 	await frames()
 	for i in wrapper.hits_to_kill:

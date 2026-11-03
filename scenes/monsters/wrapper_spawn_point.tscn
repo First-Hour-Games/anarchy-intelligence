@@ -8,3 +8,5 @@ script = ExtResource("1_spawn")
 
 [node name="Wrapper" parent="." instance=ExtResource("2_wrapper")]
 scale = Vector3(1.2, 1.2, 1.2)
+freeze_when_watched = false
+roaming = true
