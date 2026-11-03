@@ -41,6 +41,14 @@ func run() -> void:
 	check(bone.global_position.distance_to(start) > 0.05, "The ragdoll moves under physics")
 	check(bone.global_position.distance_to(start) < 4.0, "The ragdoll falls rather than flinging away")
 	check(bone.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE), "Ragdoll bodies are unscaled under a scaled Wrapper")
+	var thickest := 0.0
+	var self_colliding := true
+	for body: RigidBody3D in wrapper.get_node("Ragdoll").find_children("*", "RigidBody3D", false, false):
+		thickest = maxf(thickest, ((body.get_child(0) as CollisionShape3D).shape as CapsuleShape3D).radius)
+		self_colliding = self_colliding and (body.collision_mask & body.collision_layer) != 0
+	print("Thickest ragdoll capsule: %.3f m" % thickest)
+	check(thickest > 0.1, "Capsules are sized from the mesh, not left thin")
+	check(self_colliding, "Ragdoll limbs collide with each other")
 	var corpse: Vector3 = wrapper.global_position
 	wrapper.reset_enemy()
 	wrapper.set_post(Transform3D(Basis.IDENTITY, Vector3(10, 0, 10)))
