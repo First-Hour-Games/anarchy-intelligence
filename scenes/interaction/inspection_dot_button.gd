@@ -38,7 +38,6 @@ func _init() -> void:
 	pivot_offset = Vector2(20.0, 20.0)
 	scale = SCALE_UNHOVERED
 	modulate = COLOR_UNHOVERED
-	gui_input.connect(_on_gui_input)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -47,8 +46,12 @@ func _gui_input(event: InputEvent) -> void:
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		_play_click_pop()
-		clicked.emit()
+		activate()
+
+
+func activate() -> void:
+	_play_click_pop()
+	clicked.emit()
 
 
 func _notification(what: int) -> void:

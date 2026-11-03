@@ -27,12 +27,12 @@ func _run() -> void:
 	var visitor_bgm: AudioStreamPlayer = forest.get_node_or_null("VisitorBGM") as AudioStreamPlayer
 	check(is_instance_valid(visitor_bgm), "VisitorBGM node found in starting_forest")
 	check(visitor_bgm.bus == &"Music", "VisitorBGM assigned to Music bus")
-	check(visitor_bgm.stream != null and visitor_bgm.stream.resource_path.ends_with("theVisitor.mp3"), "VisitorBGM stream is theVisitor.mp3")
+	check(visitor_bgm.stream != null and visitor_bgm.stream.resource_path.ends_with("theVisitor.ogg"), "VisitorBGM stream is theVisitor.ogg")
 
 	var hike_bgm: AudioStreamPlayer = forest.get_node_or_null("WelcomingHikeBGM") as AudioStreamPlayer
 	check(is_instance_valid(hike_bgm), "WelcomingHikeBGM node found in starting_forest")
 	check(hike_bgm.bus == &"Music", "WelcomingHikeBGM assigned to Music bus")
-	check(hike_bgm.stream != null and hike_bgm.stream.resource_path.ends_with("welcomingHike.mp3"), "WelcomingHikeBGM stream is welcomingHike.mp3")
+	check(hike_bgm.stream != null and hike_bgm.stream.resource_path.ends_with("welcomingHike.ogg"), "WelcomingHikeBGM stream is welcomingHike.ogg")
 	check(hike_bgm.volume_db <= -70.0, "WelcomingHikeBGM starts muted/silent (-80 dB)")
 
 	var barrier_tree: InteractableBlock3D = forest.get_node_or_null("Interactables/BarrierTree") as InteractableBlock3D

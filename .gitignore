@@ -1,3 +1,20 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Generated Python bytecode from asset tools.
+__pycache__/
+*.pyc
+
+# Local playable exports and their build logs.
+/builds/
+
+# Local investigation output and generated reference captures.
+/scratch/
+/debug-captures/
+/models/source/**/*_preview.png
+/models/source/**/*_preview.png.import
+# Blender's automatic backups of the previous save.
+*.blend1
+# The Ridgeback build's copy of the vendor file with the new clips keyed on, regenerated every build.
+/models/source/the_ridgeback/THE_RIDGEBACK_animated.blend

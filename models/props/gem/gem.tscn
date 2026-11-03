@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://hfal57vrwnwr"]
+
+[ext_resource type="PackedScene" uid="uid://be18ff4qiymgy" path="res://models/props/gem/gem.glb" id="1_gem"]
+[ext_resource type="Material" path="res://shaders/save_gem_portal_material.tres" id="2_portal"]
+[ext_resource type="Script" path="res://models/props/gem/gem_sky_portal.gd" id="3_sky_portal"]
+
+[node name="Gem" type="Node3D" unique_id=1671728218]
+script = ExtResource("3_sky_portal")
+
+[node name="Model" parent="." unique_id=515862986 instance=ExtResource("1_gem")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.123, 0)
+
+[node name="Object_4" parent="Model/Sketchfab_model/root/GLTF_SceneRootNode/GemFull_0" parent_id_path=PackedInt32Array(515862986, 479764875) index="0" unique_id=633409413]
+material_override = ExtResource("2_portal")
+
+[editable path="Model"]

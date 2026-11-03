@@ -6,7 +6,7 @@
 [resource]
 shader = ExtResource("1_starfield")
 shader_parameter/star_texture = ExtResource("3_star")
-shader_parameter/background_brightness = 4.0
+shader_parameter/background_brightness = 3.70000005513444
 shader_parameter/star_brightness = 0.0
 shader_parameter/drift_speed = 0.3
 shader_parameter/rotation_speed = 1.2500000186265

@@ -45,11 +45,15 @@ func run() -> void:
 	player.global_position = Vector3(100, 0.3, 100)
 	await physics_frame
 	check(player.get_footstep_surface() == &"gravel", "Town road selects gravel footsteps")
+	# Every bottle in the hospital is a pickup (decorative ones would look collectable).
 	var bottles: Array[Node] = []
+	var decor_bottles: int = 0
 	for child: Node in hospital.get_children():
-		if child.has_meta("target_height") and is_equal_approx(float(child.get_meta("target_height")), 0.22):
+		if child is BottlePickup and is_equal_approx(float(child.get_node("Model").get_meta("target_height")), 0.22):
 			bottles.append(child)
-	check(bottles.size() == 9, "Medical bottles are normalized to 22 cm")
+		elif child.has_meta("target_height") and is_equal_approx(float(child.get_meta("target_height")), 0.22):
+			decor_bottles += 1
+	check(bottles.size() == 5 and decor_bottles == 0, "Hospital bottles are pickups normalized to 22 cm")
 	var ray := PhysicsRayQueryParameters3D.create(hospital.to_global(Vector3(-15, 1.7, -2)), hospital.to_global(Vector3(-15, 1.7, 1)))
 	check(not hospital.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(), "Hospital front shell closes facade gaps away from the door")
 	var visual := map.get_node("Clawman/Visual")

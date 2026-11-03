@@ -1,5 +1,5 @@
 extends Node3D
-## One failing electrical source drives both the beam and nearby spill light.
+## One failing electrical source drives the beam, nearby spill light, and lens glow.
 
 @export var interval_range := Vector2(2.0, 7.0)
 @export var burst_duration_range := Vector2(0.25, 1.8)
@@ -9,10 +9,15 @@ extends Node3D
 
 @onready var _spot := $SpotLight3D as SpotLight3D
 @onready var _omni := $OmniLight3D as OmniLight3D
+@onready var _lens := $Flashlight_Body/Flashlight_Lens as MeshInstance3D
+@onready var _audio := get_node_or_null("FlickerAudio") as AudioStreamPlayer3D
 
 var _rng := RandomNumberGenerator.new()
 var _spot_energy: float
 var _omni_energy: float
+var _lens_material: BaseMaterial3D
+var _lens_off_material: StandardMaterial3D
+var _lens_energy: float
 var _remaining: float = 0.0
 var _burst_remaining: float = 0.0
 var _is_dip: bool = false
@@ -20,9 +25,60 @@ var _is_dip: bool = false
 
 func _ready() -> void:
 	_rng.randomize()
-	_spot_energy = _spot.light_energy
-	_omni_energy = _omni.light_energy
+	if is_instance_valid(_spot):
+		_spot_energy = _spot.light_energy
+	if is_instance_valid(_omni):
+		_omni_energy = _omni.light_energy
+	if is_instance_valid(_lens):
+		var material := _lens.get_active_material(0) as BaseMaterial3D
+		if material != null:
+			# Keep the held flashlight and pickup/inventory previews at their authored glow.
+			_lens_material = material.duplicate() as BaseMaterial3D
+			_lens.material_override = _lens_material
+			_lens_energy = _lens_material.emission_energy_multiplier
+			# A dark emitter alone still has a white, reflective surface. Use an
+			# unlit black material during a complete outage so the lens goes black too.
+			_lens_off_material = StandardMaterial3D.new()
+			_lens_off_material.albedo_color = Color.BLACK
+			_lens_off_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			_lens_off_material.cull_mode = _lens_material.cull_mode
 	_remaining = _random_duration(interval_range)
+	_setup_audio()
+	visibility_changed.connect(_on_visibility_changed)
+
+
+func _setup_audio() -> void:
+	if not is_instance_valid(_audio):
+		return
+	if _audio.stream is AudioStreamOggVorbis:
+		(_audio.stream as AudioStreamOggVorbis).loop = true
+	if not _audio.finished.is_connected(_on_audio_finished):
+		_audio.finished.connect(_on_audio_finished)
+	if is_visible_in_tree():
+		if not _audio.playing:
+			_audio.play()
+	else:
+		_audio.stop()
+
+
+func _on_audio_finished() -> void:
+	if is_visible_in_tree() and is_instance_valid(_audio):
+		_audio.play()
+
+
+func _on_visibility_changed() -> void:
+	if not is_visible_in_tree():
+		stop_audio()
+		set_process(false)
+	else:
+		set_process(true)
+		if is_instance_valid(_audio) and not _audio.playing:
+			_audio.play()
+
+
+func stop_audio() -> void:
+	if is_instance_valid(_audio) and _audio.playing:
+		_audio.stop()
 
 
 func _process(delta: float) -> void:
@@ -54,6 +110,9 @@ func _process(delta: float) -> void:
 func _set_output(multiplier: float) -> void:
 	_spot.light_energy = _spot_energy * multiplier
 	_omni.light_energy = _omni_energy * multiplier
+	if _lens_material != null:
+		_lens_material.emission_energy_multiplier = _lens_energy * multiplier
+		_lens.material_override = _lens_off_material if multiplier <= 0.0 else _lens_material
 
 
 func _random_duration(duration_range: Vector2) -> float:

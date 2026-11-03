@@ -23,9 +23,14 @@ func run() -> void:
 	assert(menu.start_label.get_theme_font_size("font_size") == 24, "Start label should shrink to 24")
 	print("PASS: Main menu Options button hover updates selected_index and styling")
 
-	# Hover Quit label (index 2)
+	# Hover Credits label (index 2)
+	menu.credits_label.mouse_entered.emit()
+	assert(menu.selected_index == 2, "Credits hover should set index to 2")
+	print("PASS: Main menu Credits button hover updates selected_index")
+
+	# Hover Quit label (index 3)
 	menu.quit_label.mouse_entered.emit()
-	assert(menu.selected_index == 2, "Quit hover should set index to 2")
+	assert(menu.selected_index == 3, "Quit hover should set index to 3")
 	assert(menu.quit_label.get_theme_font_size("font_size") == 36, "Quit label should be size 36")
 	print("PASS: Main menu Quit button hover updates selected_index and styling")
 
@@ -34,15 +39,20 @@ func run() -> void:
 	assert(menu.is_in_options_menu, "Should be in options menu")
 	assert(menu.selected_index == 0, "Options menu should start at index 0")
 
-	# Hover Reset Progress label (index 2 in options)
+	# Hover Graphics label (index 2 in options)
+	menu.graphics_label.mouse_entered.emit()
+	assert(menu.selected_index == 2, "Graphics hover should set index to 2")
+	assert(menu.graphics_label.get_theme_font_size("font_size") == 36, "Graphics label should be size 36")
+
+	# Hover Reset Progress label (index 3 in options)
 	menu.reset_label.mouse_entered.emit()
-	assert(menu.selected_index == 2, "Reset label hover should set index to 2")
+	assert(menu.selected_index == 3, "Reset label hover should set index to 3")
 	assert(menu.reset_label.get_theme_font_size("font_size") == 36, "Reset label should be size 36")
 	print("PASS: Options menu Reset Progress button hover works")
 
-	# Hover Back (quit_label, index 3 in options)
+	# Hover Back (quit_label, index 4 in options)
 	menu.quit_label.mouse_entered.emit()
-	assert(menu.selected_index == 3, "Back button hover should set index to 3")
+	assert(menu.selected_index == 4, "Back button hover should set index to 4")
 	assert(menu.quit_label.get_theme_font_size("font_size") == 36, "Back label should be size 36")
 	print("PASS: Options menu Back button hover works")
 

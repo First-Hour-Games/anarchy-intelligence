@@ -73,6 +73,8 @@ signal climb_over_completed(player: Node3D)
 ## Optional NodePath to the teleport target node (e.g. Marker3D named ClimbOverTeleport).
 ## If empty, automatically searches the active scene for a node named "ClimbOverTeleport".
 @export var climb_over_teleport: NodePath
+## Cover the screen with five horizontal bands, then reveal them in reverse order.
+@export var climb_banded_fade: bool = false
 ## Duration in seconds to fade out into black when climbing over.
 @export_range(0.1, 5.0, 0.1) var climb_fade_out_duration: float = 0.8
 ## Duration in seconds to hold in pitch black while the teleportation takes place.
@@ -130,6 +132,26 @@ func _exit_tree() -> void:
 
 func get_prompt_world_position() -> Vector3:
 	return to_global(prompt_offset)
+
+
+func get_prompt_world_position_for(interactor: Node3D) -> Vector3:
+	if not proximity_prompt or not is_instance_valid(interactor):
+		return get_prompt_world_position()
+	var local_player := to_local(interactor.global_position)
+	var half := Vector2(size.x, size.z) * 0.5
+	var point := Vector2(local_player.x, local_player.z).clamp(-half, half)
+	# Clamping finds the closest perimeter point from outside the footprint.
+	# From inside, move to the closest of its four edges instead.
+	if absf(local_player.x) <= half.x and absf(local_player.z) <= half.y:
+		var edge_distances := half - point.abs()
+		if edge_distances.x < edge_distances.y:
+			point.x = half.x if point.x >= 0.0 else -half.x
+		else:
+			point.y = half.y if point.y >= 0.0 else -half.y
+	var world_point := to_global(Vector3(point.x, 0.0, point.y))
+	var eye := interactor.get_node_or_null("Head/Camera3D") as Node3D
+	world_point.y = eye.global_position.y if eye != null else interactor.global_position.y
+	return world_point
 
 
 func can_interact(interactor: Node3D) -> bool:
@@ -446,12 +468,23 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 	_climb_canvas.name = "ClimbOverFadeCanvas"
 	_climb_canvas.layer = 115
 
-	var black_rect := ColorRect.new()
-	black_rect.name = "BlackFadeRect"
-	black_rect.color = Color(0, 0, 0, 0)
-	black_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	black_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_climb_canvas.add_child(black_rect)
+	var fade_root := Control.new()
+	fade_root.name = "ClimbFadeBands"
+	fade_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_climb_canvas.add_child(fade_root)
+	fade_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var fade_rects: Array[ColorRect] = []
+	var band_count := 5 if climb_banded_fade else 1
+	for index in range(band_count):
+		var black_rect := ColorRect.new()
+		black_rect.name = "BlackFadeBand%d" % (index + 1) if climb_banded_fade else "BlackFadeRect"
+		black_rect.color = Color(0, 0, 0, 0)
+		black_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		fade_root.add_child(black_rect)
+		black_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		black_rect.anchor_top = float(index) / band_count
+		black_rect.anchor_bottom = float(index + 1) / band_count
+		fade_rects.append(black_rect)
 
 	var root_target := get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
 	root_target.add_child(_climb_canvas)
@@ -460,13 +493,16 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 		_climb_tween.kill()
 	_climb_tween = create_tween()
 
-	# 1. Smooth fade to black
-	_climb_tween.tween_property(
-		black_rect,
-		"color:a",
-		1.0,
-		climb_fade_out_duration
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	# 1. Cover each band top to bottom, stepping by 25% every quarter-second.
+	for rect in fade_rects:
+		if climb_banded_fade:
+			for step in range(1, 5):
+				_climb_tween.tween_interval(0.25)
+				_climb_tween.tween_callback(rect.set.bind("color", Color(0, 0, 0, step * 0.25)))
+		else:
+			_climb_tween.tween_property(
+				rect, "color:a", 1.0, climb_fade_out_duration
+			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 	# 2. Hold in pitch black for a few seconds and teleport player
 	var hold_before := climb_black_hold_duration * 0.4
@@ -499,13 +535,16 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 	if hold_after > 0.0:
 		_climb_tween.tween_interval(hold_after)
 
-	# 3. Smooth fade back out from black
-	_climb_tween.tween_property(
-		black_rect,
-		"color:a",
-		0.0,
-		climb_fade_in_duration
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	# 3. Reveal each band bottom to top after the fully black teleport hold.
+	for index in range(fade_rects.size() - 1, -1, -1):
+		if climb_banded_fade:
+			for step in range(1, 5):
+				_climb_tween.tween_interval(0.25)
+				_climb_tween.tween_callback(fade_rects[index].set.bind("color", Color(0, 0, 0, 1.0 - step * 0.25)))
+		else:
+			_climb_tween.tween_property(
+				fade_rects[index], "color:a", 0.0, climb_fade_in_duration
+			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 	# 4. Clean up and restore player control
 	_climb_tween.chain().tween_callback(func() -> void:

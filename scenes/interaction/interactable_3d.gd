@@ -3,6 +3,8 @@ class_name Interactable3D extends Node3D
 signal interacted(interactor: Node3D)
 
 @export_range(0.5, 10.0, 0.1) var interaction_distance: float = 3.0
+## Select whenever in range; blocks anchor the floating prompt to their nearest edge.
+@export var proximity_prompt: bool = false
 @export var visual_target_path: NodePath = NodePath("..")
 @export_multiline var interaction_message: String = "Interacted with an object."
 
@@ -18,6 +20,10 @@ func can_interact(interactor: Node3D) -> bool:
 func interact(interactor: Node3D) -> void:
 	interacted.emit(interactor)
 	print(interaction_message)
+
+
+func get_prompt_world_position_for(_interactor: Node3D) -> Vector3:
+	return get_prompt_world_position()
 
 
 func get_prompt_world_position() -> Vector3:

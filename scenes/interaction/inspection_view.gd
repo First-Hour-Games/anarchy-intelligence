@@ -29,13 +29,19 @@ signal inspection_ended(player: FirstPersonPlayer)
 const ItemPickupScreenScript = preload("res://scenes/ui/item_pickup/item_pickup_screen.gd")
 const TELETEXT_FONT: Font = preload("res://fonts/EuropeanTeletextNuevo.ttf")
 
-@export_category("Blink Transition")
+const FRACTAL_TRANSITION_SHADER: Shader = preload("res://shaders/inspection_fractal_transition.gdshader")
+
+@export_category("Fractal Noise Transition")
+## Retain the existing timing and audio property names for scene compatibility.
 @export var blink_sound: AudioStream = preload("res://sounds/player/blink.mp3")
 @export_range(-40.0, 6.0, 0.5) var blink_sound_volume_db: float = 0.0
 @export var blink_sound_bus: StringName = &"Master"
 @export var blink_close_duration: float = 0.16
 @export var blink_hold_duration: float = 0.08
 @export var blink_open_duration: float = 0.20
+@export_range(1.0, 32.0, 1.0) var transition_pixel_size: float = 2.0
+@export_range(0.1, 10.0, 0.1) var transition_noise_zoom: float = 2.0
+@export_range(0.0, 2.0, 0.01) var transition_noise_speed: float = 0.1
 
 var is_inspecting: bool = false
 var current_player: FirstPersonPlayer = null
@@ -47,8 +53,8 @@ var _dots_container: Control = null
 var _exit_prompt_label: Label = null
 var _active_dialogue_balloon: CanvasLayer = null
 var _blink_canvas: CanvasLayer = null
-var _top_eyelid: ColorRect = null
-var _bottom_eyelid: ColorRect = null
+var _transition_rect: ColorRect = null
+var _transition_material: ShaderMaterial = null
 var _blink_audio_player: AudioStreamPlayer = null
 var _is_transitioning: bool = false
 
@@ -60,6 +66,7 @@ func _ready() -> void:
 		blink_sound = preload("res://sounds/player/blink.mp3")
 	_build_overlay_ui()
 	_setup_audio()
+	InputDevice.bind(self, &"exit_prompt_text", exit_prompt_text, "[ B ] RETURN")
 
 
 func _build_overlay_ui() -> void:
@@ -109,52 +116,32 @@ func _build_overlay_ui() -> void:
 	_exit_prompt_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	prompt_content.add_child(_exit_prompt_label)
 
-	# Eyelid blink canvas rendered at layer 50
+	# Fullscreen fractal transition above the inspection overlays.
 	_blink_canvas = CanvasLayer.new()
+	_blink_canvas.name = "InspectionTransitionCanvas"
 	_blink_canvas.layer = 50
 	add_child(_blink_canvas)
 
-	var blink_container := Control.new()
-	blink_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	blink_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_blink_canvas.add_child(blink_container)
-
-	_top_eyelid = ColorRect.new()
-	_top_eyelid.color = Color.BLACK
-	_top_eyelid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	blink_container.add_child(_top_eyelid)
-
-	_bottom_eyelid = ColorRect.new()
-	_bottom_eyelid.color = Color.BLACK
-	_bottom_eyelid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	blink_container.add_child(_bottom_eyelid)
-
-	_reset_eyelids()
+	_transition_rect = ColorRect.new()
+	_transition_rect.name = "FractalTransition"
+	_transition_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_blink_canvas.add_child(_transition_rect)
+	_transition_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_transition_material = ShaderMaterial.new()
+	_transition_material.shader = FRACTAL_TRANSITION_SHADER
+	_transition_rect.material = _transition_material
+	_set_transition_progress(0.0)
 
 	_dots_canvas.visible = false
 	_prompt_canvas.visible = false
 	_blink_canvas.visible = false
 
 
-func _reset_eyelids() -> void:
-	if is_instance_valid(_top_eyelid):
-		_top_eyelid.anchor_left = 0.0
-		_top_eyelid.anchor_right = 1.0
-		_top_eyelid.anchor_top = 0.0
-		_top_eyelid.anchor_bottom = 0.0
-		_top_eyelid.offset_left = 0.0
-		_top_eyelid.offset_right = 0.0
-		_top_eyelid.offset_top = 0.0
-		_top_eyelid.offset_bottom = 0.0
-	if is_instance_valid(_bottom_eyelid):
-		_bottom_eyelid.anchor_left = 0.0
-		_bottom_eyelid.anchor_right = 1.0
-		_bottom_eyelid.anchor_top = 1.0
-		_bottom_eyelid.anchor_bottom = 1.0
-		_bottom_eyelid.offset_left = 0.0
-		_bottom_eyelid.offset_right = 0.0
-		_bottom_eyelid.offset_top = 0.0
-		_bottom_eyelid.offset_bottom = 0.0
+func _set_transition_progress(value: float) -> void:
+	# Animate thresholds with progress: 0.5 is opaque; both endpoints are clear.
+	_transition_material.set_shader_parameter("progress", value)
+	_transition_material.set_shader_parameter("background_threshold", absf(1.0 - value * 2.0) - 0.5)
+	_transition_material.set_shader_parameter("color_threshold", minf(1.0, absf(-4.0 + value * 8.0)) * 0.48)
 
 
 func _setup_audio() -> void:
@@ -181,24 +168,26 @@ func _play_blink_sound() -> void:
 		_blink_audio_player.play()
 
 
-func _play_blink_transition(on_blacked_out: Callable, on_complete: Callable = Callable()) -> void:
+func _play_noise_transition(on_blacked_out: Callable, on_complete: Callable = Callable()) -> void:
 	_play_blink_sound()
 
-	if not is_instance_valid(_blink_canvas) or not is_instance_valid(_top_eyelid) or not is_instance_valid(_bottom_eyelid):
+	if not is_instance_valid(_blink_canvas) or not is_instance_valid(_transition_rect) or _transition_material == null:
 		if on_blacked_out.is_valid():
 			on_blacked_out.call()
 		if on_complete.is_valid():
 			on_complete.call()
 		return
 
-	_reset_eyelids()
+	_transition_material.set_shader_parameter("seed", randf())
+	_transition_material.set_shader_parameter("pixelation", Vector2.ONE * maxf(transition_pixel_size, 1.0))
+	_transition_material.set_shader_parameter("zoom", transition_noise_zoom)
+	_transition_material.set_shader_parameter("speed", transition_noise_speed)
+	_set_transition_progress(0.0)
 	_blink_canvas.visible = true
 
-	# 1. Close eyelids
+	# Cover the screen before changing the camera.
 	var close_tween := create_tween()
-	close_tween.set_parallel(true)
-	close_tween.tween_property(_top_eyelid, "anchor_bottom", 0.505, blink_close_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	close_tween.tween_property(_bottom_eyelid, "anchor_top", 0.495, blink_close_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	close_tween.tween_method(_set_transition_progress, 0.0, 0.5, maxf(blink_close_duration, 0.0))
 	await close_tween.finished
 
 	if not is_inside_tree():
@@ -214,18 +203,16 @@ func _play_blink_transition(on_blacked_out: Callable, on_complete: Callable = Ca
 	if on_blacked_out.is_valid():
 		on_blacked_out.call()
 
-	# 4. Open eyelids
+	# Reveal the new camera view from the fully opaque midpoint.
 	var open_tween := create_tween()
-	open_tween.set_parallel(true)
-	open_tween.tween_property(_top_eyelid, "anchor_bottom", 0.0, blink_open_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	open_tween.tween_property(_bottom_eyelid, "anchor_top", 1.0, blink_open_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	open_tween.tween_method(_set_transition_progress, 0.5, 1.0, maxf(blink_open_duration, 0.0))
 	await open_tween.finished
 
 	if not is_inside_tree():
 		return
 
 	# 5. Finish
-	_reset_eyelids()
+	_set_transition_progress(1.0)
 	if is_instance_valid(_blink_canvas):
 		_blink_canvas.visible = false
 
@@ -249,11 +236,14 @@ func start_inspection(player: FirstPersonPlayer) -> void:
 	_is_transitioning = true
 	is_inspecting = true
 	current_player = player
+	var input_manager := InputDevice.manager()
+	if input_manager != null:
+		input_manager.set_inspection_cursor_owner(self)
 
 	# Freeze player movement, input, and footsteps immediately
 	current_player.freeze()
 
-	_play_blink_transition(
+	_play_noise_transition(
 		func() -> void:
 			if not is_instance_valid(current_player) or not is_instance_valid(current_player.camera):
 				return
@@ -290,7 +280,7 @@ func exit_inspection() -> void:
 	_is_transitioning = true
 	var departing_player := current_player
 
-	_play_blink_transition(
+	_play_noise_transition(
 		func() -> void:
 			# If a dialogue balloon is open, close it
 			if is_instance_valid(_active_dialogue_balloon):
@@ -319,10 +309,28 @@ func exit_inspection() -> void:
 	)
 
 
+func is_controller_cursor_active() -> bool:
+	return is_inspecting and not _is_transitioning \
+		and not is_instance_valid(_active_dialogue_balloon) \
+		and is_instance_valid(_dots_canvas) and _dots_canvas.visible \
+		and not (is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active) \
+		and not get_tree().paused
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_inspecting or _is_transitioning:
 		return
 	if is_instance_valid(ItemPickupScreenScript.instance) and ItemPickupScreenScript.instance.is_active:
+		return
+
+	# Confirm the eye under the cursor, using the same hit testing as mouse clicks.
+	# B also maps to ui_accept, so leave it for the Return handler below.
+	if event is InputEventJoypadButton and event.is_action_pressed(&"ui_accept") \
+			and not event.is_action_pressed(&"ui_cancel") and is_controller_cursor_active():
+		var hovered := get_viewport().gui_get_hovered_control()
+		if hovered is InspectionDotButton and hovered.get_parent() == _dots_container:
+			hovered.activate()
+		get_viewport().set_input_as_handled()
 		return
 
 	if event.is_action_pressed(&"interact") and not event.is_echo() and is_instance_valid(keyboard_pickup_hotspot):

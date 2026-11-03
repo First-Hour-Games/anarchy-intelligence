@@ -1,0 +1,17 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/window_interior.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://models/buildings/downtown/textures/rooms.png" id="2_rooms"]
+[ext_resource type="Texture2D" path="res://models/buildings/downtown/textures/overlays.png" id="3_overlays"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/rooms = ExtResource("2_rooms")
+shader_parameter/overlays = ExtResource("3_overlays")
+shader_parameter/grid = 4.0
+shader_parameter/room_depth = 3.2
+shader_parameter/dark_room = 0.16
+shader_parameter/lit_room = 1.5
+shader_parameter/glass_colour = Color(0.04, 0.05, 0.055, 1)
+shader_parameter/frame_colour = Color(0.08, 0.085, 0.09, 1)
+shader_parameter/frame_width = 0.055

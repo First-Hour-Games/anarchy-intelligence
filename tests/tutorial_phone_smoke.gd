@@ -18,8 +18,11 @@ func run_test() -> void:
 	root.add_child(tutorial)
 	await process_frame
 
-	var phone := tutorial.get_node_or_null("oldPhone") as OldPhone
+	var phone := tutorial.get_node_or_null("Phone and Table/oldPhone") as OldPhone
 	check(is_instance_valid(phone), "oldPhone exists in tutorial")
+	if not is_instance_valid(phone):
+		quit(1)
+		return
 
 	var player := tutorial.get_node_or_null("Player") as FirstPersonPlayer
 	check(is_instance_valid(player), "Player exists in tutorial")
@@ -83,6 +86,12 @@ func run_test() -> void:
 			check((phone.active_balloon as CanvasLayer).layer > 150, "Dialogue balloon layer is on top of black screen")
 		check(phone.active_balloon.get("dialogue_line") != null, "Dialogue balloon has active dialogue_line")
 
+	var loader := root.get_node("SceneLoader")
+	var load_deadline := Time.get_ticks_msec() + 10000
+	while not loader.is_ready(phone.next_scene_path) and Time.get_ticks_msec() < load_deadline:
+		await process_frame
+	check(loader.is_ready(phone.next_scene_path), "phone dialogue prepares forest in background")
+	loader.cancel_prefetch()
 	tutorial.queue_free()
 	await process_frame
 

@@ -22,6 +22,8 @@ enum State { DORMANT, ACTIVATING, PURSUIT, SEARCH, WINDUP, RECOVERY, HIT, DEAD }
 @export var attack_damage: float = 25.0
 @export var windup_seconds: float = 0.7
 @export var recovery_seconds: float = 1.2
+## How long it takes to start the chase after it first sees the player, for its activation clip.
+@export var activation_seconds: float = 0.9
 @export var memory_seconds: float = 4.0
 @export var max_health: float = 100.0
 @export var max_step_height: float = 0.3
@@ -53,7 +55,7 @@ func activate() -> void:
 			_enter(State.DORMANT)
 		return
 	if state == State.DORMANT:
-		_enter(State.ACTIVATING, 0.9)
+		_enter(State.ACTIVATING, activation_seconds)
 
 func reset_enemy() -> void:
 	global_transform = spawn_transform
@@ -186,6 +188,9 @@ func _target_is_visible(max_distance: float, require_line_of_sight: bool) -> boo
 		return false
 	var receiver := target.get_node_or_null("CombatHealth")
 	if receiver and receiver.get("is_dead") == true:
+		return false
+	# Players inside a HidingSpot cannot be seen.
+	if target.has_method(&"is_hidden") and target.is_hidden():
 		return false
 	if not require_line_of_sight:
 		return true

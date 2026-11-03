@@ -9,7 +9,7 @@ func run() -> void:
 	root.add_child(map)
 	current_scene = map
 	await create_timer(1).timeout
-	var house := map.get_node("Buildings/ResidentialLots/WestStubBrickHouse") as Node3D
+	var house := map.get_node("Buildings/ResidentialLots/CrossroadWestBrickHouse") as Node3D
 	for node: Node in house.get_node("Source").get_children():
 		print("ROOT ", node.name, " ", node.get_class())
 		if node is MeshInstance3D:

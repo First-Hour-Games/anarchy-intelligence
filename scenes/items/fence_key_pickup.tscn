@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/items/inventory_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" path="res://models/props/fence_key.tscn" id="2_key"]
+
+[node name="FenceKeyPickup" type="Node3D"]
+script = ExtResource("1_pickup")
+item_id = &"fence_key"
+interaction_distance = 2.0
+visual_target_path = NodePath(".")
+interaction_message = "Picked up the small silver key."
+
+[node name="Model" parent="." instance=ExtResource("2_key")]

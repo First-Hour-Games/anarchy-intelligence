@@ -86,9 +86,10 @@ func _input(event: InputEvent) -> void:
 		_on_dialogue_ended(null)
 
 func _ready() -> void:
+	SceneLoader.prefetch(_tutorial_path())
 	_clear_grass_along_road()
 	
-	print("Intro scene loaded: Starting 5-second dropping ambience fade-in...")
+	print("Intro scene loaded: Starting 2.5-second dropping ambience fade-in...")
 	if camera:
 		camera.fov = 60
 	_init_camera_at_start()
@@ -124,7 +125,7 @@ func _ready() -> void:
 	if ambience_player:
 		ambience_player.volume_db = -80.0
 		ambience_player.play()
-		var fade_time: float = 0.1 if is_editor else 5.0
+		var fade_time: float = 0.1 if is_editor else 2.5
 		var tween = create_tween()
 		tween.tween_property(ambience_player, "volume_db", 0.0, fade_time)
 		if not is_editor:
@@ -359,10 +360,12 @@ func _on_dialogue_ended(_resource: Resource) -> void:
 		dm.dialogue_ended.disconnect(_on_dialogue_ended)
 
 	# Switch scene to the tutorial
-	if ResourceLoader.exists(tutorial_scene_path):
-		get_tree().change_scene_to_file(tutorial_scene_path)
-	else:
-		get_tree().change_scene_to_file("res://scenes/chapters/tutorial/tutorial.tscn")
+	await SceneLoader.change_to(_tutorial_path())
+
+func _tutorial_path() -> String:
+	if not tutorial_scene_path.is_empty() and ResourceLoader.exists(tutorial_scene_path):
+		return tutorial_scene_path
+	return "res://scenes/chapters/tutorial/tutorial.tscn"
 
 func _clear_grass_along_road(clear_radius: float = -1.0) -> void:
 	if not path or not path.curve:

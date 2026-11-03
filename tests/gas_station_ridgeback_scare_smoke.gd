@@ -4,6 +4,7 @@ func _initialize() -> void:
 func run() -> void:
 	var forest := load("res://scenes/chapters/main/starting_forest.tscn").instantiate() as StartingForest
 	forest.auto_start_fade = false
+	forest.get_node("GasStationRidgebackScare").enabled = true
 	root.add_child(forest)
 	await create_timer(0.5).timeout
 	var scare := forest.get_node("GasStationRidgebackScare")
@@ -19,6 +20,15 @@ func run() -> void:
 	await create_timer(0.4).timeout
 	assert(not screen.is_active)
 	assert(forest.player.flashlight.is_enabled(), "Reward confirmation must switch on the equipped flashlight")
+	var dialogue := forest.get_node_or_null("FlashlightPickupDialogue") as BottomDialogueBalloon
+	if dialogue != null:
+		dialogue.finish_opening_animation()
+		await process_frame
+		if dialogue.dialogue_label.is_typing:
+			dialogue.dialogue_label.skip_typing()
+		await process_frame
+		dialogue.next(dialogue.dialogue_line.next_id)
+		await create_timer(0.5).timeout
 	forest.player.unfreeze()
 	await physics_frame
 	assert(not scare.rushing, "Pickup alone must not reveal Ridgeback")
@@ -43,7 +53,7 @@ func run() -> void:
 	await create_timer(0.8).timeout
 	assert(scare.rushing)
 	assert(scare.ridge.visual.clip == "chase")
-	assert(scare.ridge.visual.animation_player.current_animation == "ManThing_CHASE")
+	assert(scare.ridge.visual.animation_player.current_animation == scare.ridge.visual.model_clip_for("chase"))
 	# Move player to the attacker to verify contact blackout.
 	forest.player.global_position = scare.ridge.global_position
 	await physics_frame

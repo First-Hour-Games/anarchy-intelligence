@@ -47,13 +47,14 @@
 [ext_resource type="Texture2D" uid="uid://bbblmy8oxxeff" path="res://img/materials/tiles/Tiles012_1K-JPG_Roughness.jpg" id="44_3uwsk"]
 [ext_resource type="PackedScene" uid="uid://b1sdcvrtbvaxi" path="res://models/tutorial/stairs.tscn" id="45_ft1jb"]
 [ext_resource type="Script" uid="uid://c3pgusnpti2sv" path="res://scenes/chapters/tutorial/ledge_portal.gd" id="45_ledge_portal"]
-[ext_resource type="Material" uid="uid://dj5qy3el31tbx" path="res://shaders/tutorial_starfield_material.tres" id="46_starfield"]
 [ext_resource type="PackedScene" uid="uid://bjs36b63l68mc" path="res://models/tutorial/grandfather_clock.glb" id="47_3uwsk"]
 [ext_resource type="Texture2D" uid="uid://1ffpf3hfvcvl" path="res://models/tutorial/hourglass_0.png" id="48_a40ct"]
 [ext_resource type="PackedScene" uid="uid://cgx4jovdi02b0" path="res://models/tutorial/coffin.glb" id="49_sgdgq"]
 [ext_resource type="PackedScene" uid="uid://dsimae7dfet0v" path="res://models/props/vehicles/toyota_crown_model.tscn" id="50_stvp6"]
 [ext_resource type="AudioStream" uid="uid://bkbqlv0ggdx5c" path="res://sounds/chapters/intro/engineLoop.ogg" id="51_6fpwm"]
 [ext_resource type="Script" uid="uid://cdf632wiagchb" path="res://scenes/chapters/tutorial/dream_floating.gd" id="52_dream_floating"]
+
+[ext_resource type="Environment" path="res://shaders/tutorial_sky_environment.tres" id="tutorial_sky_environment"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2d648"]
 resource_name = "Cobwebs_M.001"
@@ -289,6 +290,9 @@ size = Vector3(0.24890137, 5, 17)
 
 [sub_resource type="BoxMesh" id="BoxMesh_8khbb"]
 size = Vector3(0.24890137, 5, 16.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ls21m"]
+size = Vector3(0.24890137, 5, 16.50863)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7gwna"]
 size = Vector3(0.24890137, 5, 16.5)
@@ -526,21 +530,6 @@ shader_parameter/color_saturation = 1.0
 shader_parameter/color_brightness = 1.0
 shader_parameter/color_contrast = 1.0
 
-[sub_resource type="Sky" id="Sky_tutorial_stars"]
-sky_material = ExtResource("46_starfield")
-radiance_size = 0
-
-[sub_resource type="Environment" id="Environment_jpyye"]
-background_mode = 2
-background_color = Color(0.16206557, 0.1620656, 0.16206557, 1)
-background_energy_multiplier = 0.47
-sky = SubResource("Sky_tutorial_stars")
-glow_intensity = 8.0
-adjustment_enabled = true
-adjustment_brightness = 0.82
-adjustment_contrast = 1.12
-adjustment_saturation = 0.0
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jpyye"]
 albedo_texture = ExtResource("41_otu0i")
 roughness_texture = ExtResource("44_3uwsk")
@@ -589,8 +578,11 @@ shadow_mesh = SubResource("ArrayMesh_1m5m1")
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_sgdgq"]
 data = PackedVector3Array(0, 0, -2.1667, 0.1951, 0.59999996, -2.1475, 0, 0.59999996, -2.1667, 0, 0, -2.1667, 0.1951, 0, -2.1475, 0.1951, 0.59999996, -2.1475, 0.1951, 0, -2.1475, 0.3827, 0.59999996, -2.0906, 0.1951, 0.59999996, -2.1475, 0.1951, 0, -2.1475, 0.3827, 0, -2.0906, 0.3827, 0.59999996, -2.0906, 0.3827, 0.59999996, -2.0906, 0, 0.59999996, -2.1667, 0.1951, 0.59999996, -2.1475, 0.3827, 0, -2.0906, 0.5556, 0.59999996, -1.9981999, 0.3827, 0.59999996, -2.0906, 0.5556, 0.59999996, -1.9981999, 0, 0.59999996, -2.1667, 0.3827, 0.59999996, -2.0906, 0.3827, 0, -2.0906, 0.5556, 0, -1.9981999, 0.5556, 0.59999996, -1.9981999, 0.5556, 0, -1.9981999, 0.7071, 0.59999996, -1.8737999, 0.5556, 0.59999996, -1.9981999, 0.5556, 0, -1.9981999, 0.7071, 0, -1.8737999, 0.7071, 0.59999996, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0.5556, 0.59999996, -1.9981999, 0.7071, 0.59999996, -1.8737999, 0.7071, 0, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0.7071, 0.59999996, -1.8737999, 0.8314, 0.59999996, -1.7222999, 0, 0.59999996, -2.1667, 0.5556, 0.59999996, -1.9981999, 0.7071, 0, -1.8737999, 0.8314, 0, -1.7222999, 0.8314, 0.59999996, -1.7222999, 0.8314, 0, -1.7222999, 0.92389995, 0.59999996, -1.5494, 0.8314, 0.59999996, -1.7222999, 0.8314, 0, -1.7222999, 0.92389995, 0, -1.5494, 0.92389995, 0.59999996, -1.5494, 0.92389995, 0, -1.5494, 0.9808, 0.59999996, -1.3618, 0.92389995, 0.59999996, -1.5494, 0.9808, 0.59999996, -1.3618, 0.8314, 0.59999996, -1.7222999, 0.92389995, 0.59999996, -1.5494, 0.92389995, 0, -1.5494, 0.9808, 0, -1.3618, 0.9808, 0.59999996, -1.3618, 0.9808, 0, -1.3618, 1, 0.59999996, 0, 0.9808, 0.59999996, -1.3618, 0.9808, 0, -1.3618, 1, 0, 0, 1, 0.59999996, 0, -1, 0.59999996, 0, 0.8314, 0.59999996, -1.7222999, 0.9808, 0.59999996, -1.3618, -1, 0.59999996, 0, 0.9808, 0.59999996, -1.3618, 1, 0.59999996, 0, 1, 0, 0, -1, 0.59999996, 0, 1, 0.59999996, 0, 0, 0.59999996, -2.1667, 0.8314, 0.59999996, -1.7222999, -1, 0.59999996, 0, 1, 0, 0, -1, 0, 0, -1, 0.59999996, 0, -1, 0, 0, -0.9808, 0.59999996, -1.3618, -1, 0.59999996, 0, -1, 0, 0, -0.9808, 0, -1.3618, -0.9808, 0.59999996, -1.3618, -0.9808, 0, -1.3618, -0.92389995, 0.59999996, -1.5494, -0.9808, 0.59999996, -1.3618, -0.92389995, 0.59999996, -1.5494, -1, 0.59999996, 0, -0.9808, 0.59999996, -1.3618, -0.9808, 0, -1.3618, -0.92389995, 0, -1.5494, -0.92389995, 0.59999996, -1.5494, -0.92389995, 0, -1.5494, -0.8315, 0.59999996, -1.7222999, -0.92389995, 0.59999996, -1.5494, -0.92389995, 0, -1.5494, -0.8315, 0, -1.7222999, -0.8315, 0.59999996, -1.7222999, -0.7071, 0.59999996, -1.8737999, -1, 0.59999996, 0, -0.92389995, 0.59999996, -1.5494, -0.7071, 0.59999996, -1.8737999, -0.92389995, 0.59999996, -1.5494, -0.8315, 0.59999996, -1.7222999, -0.8315, 0, -1.7222999, -0.7071, 0.59999996, -1.8737999, -0.8315, 0.59999996, -1.7222999, 0, 0.59999996, -2.1667, -1, 0.59999996, 0, -0.7071, 0.59999996, -1.8737999, -0.8315, 0, -1.7222999, -0.7071, 0, -1.8737999, -0.7071, 0.59999996, -1.8737999, -0.7071, 0, -1.8737999, -0.5556, 0.59999996, -1.9981999, -0.7071, 0.59999996, -1.8737999, -0.7071, 0, -1.8737999, -0.5556, 0, -1.9981999, -0.5556, 0.59999996, -1.9981999, -0.3827, 0.59999996, -2.0906, -0.7071, 0.59999996, -1.8737999, -0.5556, 0.59999996, -1.9981999, -0.5556, 0, -1.9981999, -0.3827, 0.59999996, -2.0906, -0.5556, 0.59999996, -1.9981999, 0, 0.59999996, -2.1667, -0.7071, 0.59999996, -1.8737999, -0.3827, 0.59999996, -2.0906, -0.5556, 0, -1.9981999, -0.3827, 0, -2.0906, -0.3827, 0.59999996, -2.0906, -0.3827, 0, -2.0906, -0.1951, 0.59999996, -2.1475, -0.3827, 0.59999996, -2.0906, 0, 0.59999996, -2.1667, -0.3827, 0.59999996, -2.0906, -0.1951, 0.59999996, -2.1475, -0.3827, 0, -2.0906, -0.1951, 0, -2.1475, -0.1951, 0.59999996, -2.1475, -0.1951, 0, -2.1475, 0, 0.59999996, -2.1667, -0.1951, 0.59999996, -2.1475, -0.1951, 0, -2.1475, 0, 0, -2.1667, 0, 0.59999996, -2.1667)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_b34om"]
+size = Vector3(1, 4.7000003, 1.4345703)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_ledge_sides"]
-size = Vector3(0.15, 4.7000003, 1.3505859)
+size = Vector3(0.15, 4.7000003, 2.5429688)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_orua6"]
 size = Vector3(2.1000001, 4.7000003, 1.3505859)
@@ -758,6 +750,10 @@ material_override = SubResource("StandardMaterial3D_gytjy")
 mesh = SubResource("BoxMesh_8khbb")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="TutorialRooms/MeshInstance3D3" unique_id=1284051086]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="TutorialRooms/MeshInstance3D3/StaticBody3D" unique_id=75064534]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5364003, 0, -0.006336212)
+shape = SubResource("BoxShape3D_ls21m")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TutorialRooms/MeshInstance3D3/StaticBody3D" unique_id=1801930141]
 shape = SubResource("BoxShape3D_7gwna")
@@ -1156,7 +1152,7 @@ volume_db = -80.0
 bus = &"Music"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=780829012]
-environment = SubResource("Environment_jpyye")
+environment = ExtResource("tutorial_sky_environment")
 
 [node name="Door3" parent="." unique_id=1824854679 instance=ExtResource("21_8khbb")]
 transform = Transform3D(1.2818775, 0, 0, 0, 1.2818775, 0, 0, 0, 1, -0.64387226, -0.5457572, -2.5326805)
@@ -1226,7 +1222,6 @@ script = ExtResource("38_hallway_lights")
 [node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb3" unique_id=671373627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 light_energy = 0.3
-shadow_enabled = true
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb3" unique_id=1775665610]
@@ -1245,7 +1240,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 [node name="OmniLight3D2" type="OmniLight3D" parent="HallwayBulbs/CeilingBulb4" unique_id=735640619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 light_energy = 0.3
-shadow_enabled = true
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb4" unique_id=858370197]
@@ -1266,7 +1260,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 visible = false
 light_energy = 0.3
-shadow_enabled = true
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb5" unique_id=1924241228]
@@ -1287,7 +1280,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3464544, 0)
 visible = false
 light_energy = 0.3
-shadow_enabled = true
 omni_range = 5.236
 
 [node name="SpotLight3D" type="SpotLight3D" parent="HallwayBulbs/CeilingBulb6" unique_id=54558558]
@@ -1339,15 +1331,19 @@ mesh = SubResource("ArrayMesh_a40ct")
 shape = SubResource("ConcavePolygonShape3D_sgdgq")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=1809852923]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 2.472, -5.921)
-shape = SubResource("BoxShape3D_ledge_sides")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 3.8400002, 0.98739064, 2.472, -4.446228)
+shape = SubResource("BoxShape3D_b34om")
+
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=2098650987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 3.8400002, -1.0169998, 2.472, -4.60725)
+shape = SubResource("BoxShape3D_b34om")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=1735451833]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.80442476, 2.4715393, -5.920889)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 3.8400002, -0.80442476, 2.4715393, -4.4458084)
 shape = SubResource("BoxShape3D_ledge_sides")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=461113629]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.882208, 2.4715393, -1.3544817)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 5.2000003, -0.882208, 2.4715393, -6.814558)
 shape = SubResource("BoxShape3D_ledge_sides")
 
 [node name="LedgeBackCollision" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=1643954754]
@@ -1356,7 +1352,7 @@ shape = SubResource("BoxShape3D_orua6")
 disabled = true
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="Ledge/StaticBody3D" unique_id=555412078]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8877036, 2.4715393, -1.3544817)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 5.2000003, 0.8877036, 2.4715393, -3.714363)
 shape = SubResource("BoxShape3D_ledge_sides")
 
 [node name="AreaLight3D" type="AreaLight3D" parent="Ledge" unique_id=623701919]
@@ -1364,28 +1360,25 @@ transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.
 light_energy = 1.837
 shadow_enabled = true
 shadow_bias = 0.0
-area_range = 2630.076
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="AreaLight3D2" type="AreaLight3D" parent="Ledge" unique_id=1128615554]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 1.7699115, -3.2448368)
 light_energy = 1.837
-shadow_enabled = true
-area_range = 2630.076
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="AreaLight3D3" type="AreaLight3D" parent="Ledge" unique_id=1723057038]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 2.6548672, -5.0147476)
 light_energy = 1.837
-shadow_enabled = true
-area_range = 2630.076
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="AreaLight3D4" type="AreaLight3D" parent="Ledge" unique_id=1622025137]
 transform = Transform3D(0.29498526, 0, 0, 0, -1.28942155e-08, 0.29498526, 0, -0.29498526, -1.28942155e-08, 0, 4.7197638, -8.259586)
 light_energy = 1.837
-shadow_enabled = true
-area_range = 2630.076
+area_range = 16.0
 area_attenuation = 1.233
 
 [node name="Ledge2" type="MeshInstance3D" parent="." unique_id=685212319]

@@ -1,0 +1,18 @@
+[gd_resource type="Environment" format=3 uid="uid://vsi17a3djp2j"]
+
+[ext_resource type="Material" uid="uid://dj5qy3el31tbx" path="res://shaders/tutorial_starfield_material.tres" id="1_sky"]
+
+[sub_resource type="Sky" id="Sky_tutorial_stars"]
+sky_material = ExtResource("1_sky")
+radiance_size = 0
+
+[resource]
+background_mode = 2
+background_color = Color(0.16206557, 0.1620656, 0.16206557, 1)
+background_energy_multiplier = 0.47
+sky = SubResource("Sky_tutorial_stars")
+glow_intensity = 8.0
+adjustment_enabled = true
+adjustment_brightness = 0.82
+adjustment_contrast = 1.12
+adjustment_saturation = 0.0

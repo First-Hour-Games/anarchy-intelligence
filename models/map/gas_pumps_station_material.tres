@@ -1,0 +1,21 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://models/map/gasPumps_Station_Diffuse-Station_Alpha.png" id="1_kwfj3"]
+[ext_resource type="Texture2D" path="res://models/map/gasPumps_Station_Metalness-Station_Roughness.png" id="2_5wujd"]
+[ext_resource type="Texture2D" path="res://models/map/gasPumps_Station_Normal.png" id="3_i135s"]
+
+[resource]
+resource_name = "Gas Pump Surfaces"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("1_kwfj3")
+metallic = 1.0
+metallic_texture = ExtResource("2_5wujd")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_5wujd")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_i135s")
+metadata/_gltf_primary_texture_coord = 1

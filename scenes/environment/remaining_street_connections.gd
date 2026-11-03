@@ -17,6 +17,10 @@ func build() -> void:
 	for house: Node3D in get_node("../Buildings/ResidentialLots").get_children():
 		if not (String(house.name).begins_with("Connector") or String(house.name).begins_with("CrossroadNorth") or String(house.name).begins_with("CrossroadSouth")):
 			continue
+		if house.get_meta("skip_street_connections", false):
+			# Still counted, so the lots after it keep their drives on the same sides.
+			index += 1
+			continue
 		var lot := Node3D.new()
 		lot.name = String(house.name) + "Connections"
 		add_child(lot)
@@ -29,7 +33,9 @@ func build() -> void:
 		_box(lot, "FrontDoorPath", Vector3(0, 0.06, 12.35), Vector3(1.4, 0.12, 4.3))
 		_box(lot, "ParkingToDoor", Vector3(side * 4.25, 0.06, 11.3), Vector3(7.1, 0.12, 1.4))
 		crossings.append(house.global_transform * Vector3(side * 9.5, 0, 18))
-	var curb_names := ["ConnectorRoad_West_1", "ConnectorRoad_West_2", "ConnectorRoad_West_3", "ConnectorRoad_East_1", "ConnectorRoad_East_2", "Crossroad_North_1", "Crossroad_North_2", "Crossroad_South_1"]
+	# The downtown beside the hospital paves the Crossroad's north side east of the Connector road
+	# (Crossroad_North_2) with its own sidewalk and curb.
+	var curb_names := ["ConnectorRoad_West_1", "ConnectorRoad_West_2", "ConnectorRoad_West_3", "ConnectorRoad_East_1", "ConnectorRoad_East_2", "Crossroad_North_1", "Crossroad_South_1"]
 	for name: String in curb_names:
 		var curb := get_node("../Curbs/" + name) as CSGBox3D
 		var vertical := name.begins_with("Connector")
