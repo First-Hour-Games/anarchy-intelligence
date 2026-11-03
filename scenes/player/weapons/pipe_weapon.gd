@@ -5,6 +5,7 @@ signal swung
 signal hit_landed(target: Node3D)
 
 const STAMINA_COST_FRACTION := 0.25
+const SWING_DURATION := 0.55
 const SWING_SOUNDS: Array[AudioStream] = [
 	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_01.ogg"),
 	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_02.ogg"),
@@ -27,7 +28,6 @@ var _swing_time := -1.0
 var _hit_applied := false
 var _last_swing_sound := -1
 @onready var model_pivot: Node3D = $ModelPivot
-@onready var _rest_transform: Transform3D = model_pivot.transform
 @onready var swing_audio: AudioStreamPlayer = $SwingAudio
 @onready var idle_animation: AnimationPlayer = $ModelPivot/Arms/AnimationPlayer
 
@@ -43,6 +43,7 @@ func _ready() -> void:
 func _setup_hands() -> void:
 	# The Blender-authored pipe is bone-parented in the GLB, including its grip offset.
 	idle_animation.get_animation(&"Holding_Idle").loop_mode = Animation.LOOP_LINEAR
+	idle_animation.get_animation(&"Pipe_Swing").loop_mode = Animation.LOOP_NONE
 	idle_animation.play(&"Holding_Idle")
 	idle_animation.advance(0.0)
 	var pipe: MeshInstance3D = $ModelPivot/Arms/FPS_Arms/Skeleton3D/Hand_R/MetalPipe_Hand_R
@@ -63,7 +64,6 @@ func set_equipped(value: bool) -> void:
 	equipped = value and is_instance_valid(_player) and _player.inventory.has_item(&"metal_pipe")
 	if not equipped:
 		_swing_time = -1.0
-		model_pivot.transform = _rest_transform
 	model_pivot.visible = equipped and not _player.is_frozen and not _camera.top_level
 
 func can_swing() -> bool:
@@ -106,7 +106,7 @@ func _physics_process(delta: float) -> void:
 		_swing_time += delta
 		if _swing_time >= 0.14 and _swing_time <= 0.32 and not _hit_applied:
 			_strike()
-		if _swing_time >= 0.55:
+		if _swing_time >= SWING_DURATION:
 			_swing_time = -1.0
 
 func _strike() -> void:
@@ -131,11 +131,9 @@ func _strike() -> void:
 
 func _process(_delta: float) -> void:
 	model_pivot.visible = equipped and not _player.is_frozen and not _camera.top_level and not _player.is_hidden()
-	idle_animation.speed_scale = 1.0 if model_pivot.visible and _swing_time < 0.0 else 0.0
-	if not model_pivot.visible:
-		return
-	var swing := sin(clampf((_swing_time - 0.06) / 0.49, 0.0, 1.0) * PI) if _swing_time >= 0.0 else 0.0
-	# The scene places the complete Blender rig. Only attacks offset that placement.
-	model_pivot.transform = _rest_transform
-	model_pivot.position += Vector3(-0.18, -0.1, 0.0) * swing
-	model_pivot.basis = Basis.from_euler(Vector3(0, 0, 20) * (PI / 180.0) * swing) * _rest_transform.basis
+	# Attack motion belongs to the skeleton; the camera-mounted rig never swings.
+	var clip: StringName = &"Pipe_Swing" if _swing_time >= 0.0 else &"Holding_Idle"
+	if idle_animation.current_animation != clip:
+		idle_animation.play(clip, 0.05)
+	var playback_speed := idle_animation.get_animation(clip).length / SWING_DURATION if _swing_time >= 0.0 else 1.0
+	idle_animation.speed_scale = playback_speed if model_pivot.visible else 0.0

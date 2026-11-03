@@ -45,12 +45,18 @@ func run() -> void:
 	animation.seek(3.95, true)
 	await create_timer(0.2).timeout
 	check(animation.is_playing() and animation.current_animation_position < 1.0, "four-second idle wraps and continues")
+	var shoulder_before := skeleton.get_bone_global_pose(skeleton.find_bone("UpperArm.R")).origin
+	var hand_before := skeleton.get_bone_global_pose(skeleton.find_bone("Hand.R"))
 	check(weapon.try_swing(), "arms setup allows pipe attack")
 	await create_timer(0.25).timeout
 	check(model.transform.is_equal_approx(grip_transform), "swing preserves pipe grip offset")
-	check(not pivot.transform.is_equal_approx(scene_placement), "attack offsets the complete rig")
+	check(animation.current_animation == &"Pipe_Swing", "attack plays the skeletal swing clip")
+	check(pivot.transform.is_equal_approx(scene_placement), "attack keeps the viewmodel root fixed")
+	check(not skeleton.get_bone_global_pose(skeleton.find_bone("Hand.R")).is_equal_approx(hand_before), "swing moves the hand bones")
+	check(skeleton.get_bone_global_pose(skeleton.find_bone("UpperArm.R")).origin.distance_to(shoulder_before) < 0.01, "swing keeps the shoulder anchored")
 	await create_timer(0.4).timeout
 	check(pivot.transform.is_equal_approx(scene_placement), "completed swing returns to exact scene placement")
+	check(animation.current_animation == &"Holding_Idle", "attack recovers to holding idle")
 	weapon.set_equipped(false)
 	await process_frame
 	await process_frame
