@@ -28,6 +28,10 @@ var load_label: Label
 var slots_open: bool = false
 var graphics_label: Label
 var reset_warning: ConfirmationDialog
+## Opens the team and 3D model credits (credits_screen.gd).
+var credits_label: Label
+var credits_open: bool = false
+const CREDITS_SCREEN := preload("res://scenes/mainMenu/credits_screen.gd")
 
 const SELECTED_FONT_SIZE: int = 36
 const UNSELECTED_FONT_SIZE: int = 24
@@ -45,6 +49,10 @@ func _ready() -> void:
 	load_label.name = "LoadLabel"
 	options_label.get_parent().add_child(load_label)
 	options_label.get_parent().move_child(load_label, options_label.get_index())
+	credits_label = options_label.duplicate() as Label
+	credits_label.name = "CreditsLabel"
+	quit_label.get_parent().add_child(credits_label)
+	quit_label.get_parent().move_child(credits_label, quit_label.get_index())
 	graphics_label = quit_label.duplicate() as Label
 	graphics_label.name = "GraphicsLabel"
 	graphics_label.hide()
@@ -82,8 +90,23 @@ func _rebuild_main_options() -> void:
 	if can_continue:
 		main_options.append({"label": load_label, "action": _open_load_screen})
 	main_options.append({"label": options_label, "action": _open_options})
+	main_options.append({"label": credits_label, "action": _open_credits})
 	main_options.append({"label": quit_label, "action": _quit_game})
 	selected_index = clampi(selected_index, 0, main_options.size() - 1)
+
+func _open_credits() -> void:
+	if credits_open or is_starting:
+		return
+	credits_open = true
+	var screen: CanvasLayer = CREDITS_SCREEN.new()
+	screen.closed.connect(_on_credits_closed)
+	add_child(screen)
+
+func _on_credits_closed() -> void:
+	credits_open = false
+	input_ready_at = Time.get_ticks_msec() + 200
+	if click_sfx_player:
+		click_sfx_player.play()
 
 func _open_load_screen() -> void:
 	if slots_open or is_starting:
@@ -109,7 +132,7 @@ func _load_slot(slot: int) -> bool:
 	return true
 
 func _setup_mouse_listeners() -> void:
-	var all_labels: Array[Label] = [start_label, load_label, options_label, quit_label, graphics_label]
+	var all_labels: Array[Label] = [start_label, load_label, options_label, credits_label, quit_label, graphics_label]
 	if is_instance_valid(reset_label):
 		all_labels.append(reset_label)
 
@@ -129,7 +152,7 @@ func _setup_mouse_listeners() -> void:
 		lbl.mouse_entered.connect(_on_label_mouse_entered.bind(idx))
 
 func _on_label_mouse_entered(idx: int) -> void:
-	if slots_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or credits_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if selected_index == idx:
 		return
@@ -139,7 +162,7 @@ func _on_label_mouse_entered(idx: int) -> void:
 		_update_menu_display(true)
 
 func _on_label_gui_input(event: InputEvent, idx: int) -> void:
-	if slots_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or credits_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		selected_index = idx
@@ -162,7 +185,7 @@ func _mark_input_handled() -> void:
 		get_viewport().set_input_as_handled()
 
 func _input(event: InputEvent) -> void:
-	if slots_open or is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or credits_open or is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
 		return
 	if not event.is_pressed() or event.is_echo():
 		return
@@ -229,6 +252,7 @@ func _update_menu_display(play_sound: bool = true) -> void:
 	if is_in_options_menu:
 		start_label.show()
 		load_label.hide()
+		credits_label.hide()
 		options_label.show()
 		reset_label.show()
 		graphics_label.show()
@@ -253,6 +277,8 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		quit_label.show()
 		
 		load_label.visible = can_continue
+		credits_label.show()
+		credits_label.text = "Credits"
 		start_label.text = "New Game"
 		load_label.text = "Load Game"
 		options_label.text = "Options"
