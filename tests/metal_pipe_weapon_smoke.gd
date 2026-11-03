@@ -60,6 +60,7 @@ func run() -> void:
 	await process_frame
 	check(weapon.try_swing(), "equipped pipe can swing")
 	check(not weapon.try_swing(), "cooldown prevents repeated swings")
+	check(not weapon.get_node("SwingAudio").playing, "the swing sound waits for the downswing instead of starting on the click")
 	await create_timer(0.2).timeout
 	check(is_zero_approx(float(wrapper.get("melee_stagger_time"))), "the hit waits for the pipe to come down")
 	await create_timer(0.3).timeout

@@ -30,8 +30,14 @@ const HIT_SOUNDS: Array[AudioStream] = [
 	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_04.ogg"),
 	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_05.ogg"),
 ]
-## Seconds into each hit sound to start from: just before its impact, so the clang lands on the hit.
-const HIT_SOUND_STARTS: Array[float] = [0.12, 0.09, 0.13, 0.14, 0.13]
+## Where each sound peaks, in seconds (measured from the files): the whoosh's rush, the hit's
+## clang. A swing's sound starts so that this lands on the clip's impact.
+const SWING_SOUND_PEAKS: Array[float] = [0.06, 0.07, 0.08, 0.11, 0.09]
+const HIT_SOUND_PEAKS: Array[float] = [0.14, 0.11, 0.15, 0.16, 0.15]
+## The swing decides whoosh or hit this long before its impact: longer than any sound's lead-in.
+const SOUND_DECISION_LEAD := 0.18
+## A hit sound still waiting on its target this close to the impact turns back into a whoosh.
+const CLANG_CANCEL_LEAD := 0.03
 
 @export_range(0.5, 3.0, 0.1) var reach: float = 1.8
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 1.4
@@ -52,6 +58,11 @@ var _swing_time := -1.0
 var _hit_applied := false
 var _last_swing_sound := -1
 var _last_hit_sound := -1
+## This swing's sound: whether it has been chosen, whether it is a hit, and when it starts.
+var _sound_chosen := false
+var _sound_is_hit := false
+var _sound_due := -1.0
+var _enemy_hit := false
 var _presentation := 0.0
 var _swing_name: StringName
 var _swing: Animation
@@ -119,22 +130,56 @@ func try_swing() -> bool:
 	_cooldown = swing_cooldown
 	_swing_time = 0.0
 	_hit_applied = false
+	_enemy_hit = false
+	_sound_chosen = false
+	_sound_due = -1.0
 	if idle_animation.current_animation == _swing_name:
 		idle_animation.seek(0.0, true)
-	_play_swing_sound()
 	swung.emit()
 	return true
 
-func _play_swing_sound() -> void:
+func _impact() -> float:
+	return float(_swing.get_meta(&"impact"))
+
+## Picks this swing's sound just before the impact: a hit if an enemy is in reach, else a whoosh,
+## and queues it so its peak lands on the impact.
+func _choose_swing_sound() -> void:
+	_sound_chosen = true
+	var aimed := _aim()
+	if not aimed.is_empty() and (aimed.collider as Object).has_method("take_melee_hit"):
+		_queue_hit_sound()
+	else:
+		_queue_whoosh()
+
+func _queue_whoosh() -> void:
+	_sound_is_hit = false
 	_last_swing_sound = _next_variant(_last_swing_sound, SWING_SOUNDS.size())
 	swing_audio.stream = SWING_SOUNDS[_last_swing_sound]
-	swing_audio.play()
+	_sound_due = _impact() - SWING_SOUND_PEAKS[_last_swing_sound]
 
-## Swaps the swing's whoosh for a hit variant the moment the pipe connects with an enemy.
-func _play_hit_sound() -> void:
+func _queue_hit_sound() -> void:
+	_sound_is_hit = true
 	_last_hit_sound = _next_variant(_last_hit_sound, HIT_SOUNDS.size())
 	swing_audio.stream = HIT_SOUNDS[_last_hit_sound]
-	swing_audio.play(HIT_SOUND_STARTS[_last_hit_sound])
+	_sound_due = _impact() - HIT_SOUND_PEAKS[_last_hit_sound]
+
+## Starts the queued sound when it is due, or straight away part-way in if it is already late,
+## so its peak still lands on the impact.
+func _update_swing_sound() -> void:
+	if _sound_due < 0.0 or _swing_time < _sound_due:
+		return
+	var into := _swing_time - _sound_due
+	_sound_due = -1.0
+	swing_audio.play(into if into > 0.02 else 0.0)
+
+## An enemy stepped in after the sound was chosen: the clang takes over, timed to the impact.
+func _switch_to_hit_sound() -> void:
+	var due := _sound_due
+	_queue_hit_sound()
+	if due < 0.0:
+		# The whoosh is already playing; the hit picks up where its clang will still land on time.
+		_sound_due = minf(_sound_due, _swing_time)
+	_update_swing_sound()
 
 ## A random variant, never the same one twice in a row.
 func _next_variant(last: int, count: int) -> int:
@@ -148,12 +193,22 @@ func _physics_process(delta: float) -> void:
 		_swing_time = -1.0
 	if _swing_time >= 0.0:
 		_swing_time += delta
-		if absf(_swing_time - float(_swing.get_meta(&"impact"))) <= HIT_WINDOW and not _hit_applied:
+		if not _sound_chosen and _swing_time >= _impact() - SOUND_DECISION_LEAD:
+			_choose_swing_sound()
+		if absf(_swing_time - _impact()) <= HIT_WINDOW and not _hit_applied:
 			_strike()
+		# The enemy got away before the clang: it whooshes past instead.
+		if _sound_is_hit and not _enemy_hit and _swing_time >= _impact() - CLANG_CANCEL_LEAD:
+			var heard := swing_audio.get_playback_position() if swing_audio.playing else 0.0
+			_queue_whoosh()
+			_sound_due = -1.0
+			swing_audio.play(minf(heard, SWING_SOUND_PEAKS[_last_swing_sound]))
+		_update_swing_sound()
 		if _swing_time >= _swing.length:
 			_swing_time = -1.0
 
-func _strike() -> void:
+## The first thing the swing would hit, as a ray result, or empty.
+func _aim() -> Dictionary:
 	var nearest: Dictionary = {}
 	var nearest_distance := INF
 	for offset: Vector2 in [Vector2.ZERO, Vector2(-0.12, 0), Vector2(0.12, 0), Vector2(0, -0.12), Vector2(0, 0.12)]:
@@ -165,6 +220,10 @@ func _strike() -> void:
 		if not result.is_empty() and origin.distance_to(result.position) < nearest_distance:
 			nearest = result
 			nearest_distance = origin.distance_to(result.position)
+	return nearest
+
+func _strike() -> void:
+	var nearest := _aim()
 	if nearest.is_empty():
 		return
 	_hit_applied = true
@@ -172,7 +231,9 @@ func _strike() -> void:
 	if target != null and target.has_method("take_melee_hit"):
 		var stunned := randf() < stun_chance
 		target.take_melee_hit(_player.global_position, stagger_duration if stunned else 0.0, knockback_speed if stunned else 0.0)
-		_play_hit_sound()
+		_enemy_hit = true
+		if not _sound_is_hit:
+			_switch_to_hit_sound()
 		hit_landed.emit(target)
 
 func _process(delta: float) -> void:
