@@ -110,7 +110,8 @@ Concrete012 and brick_wall_02. See `models/buildings/downtown/textures/SOURCE.md
 ## Original work for this game
 
 The downtown and its generated textures, Carrie's house and its wallpapers, the Corrupted Friend,
-and the Blender and Godot tooling in `tools/` were made for this game.
+the Ridgeback's animations (keyed on Codyanka's rig, whose original clips the game keeps as a
+fallback), and the Blender and Godot tooling in `tools/` were made for this game.
 
 ## Before release
 

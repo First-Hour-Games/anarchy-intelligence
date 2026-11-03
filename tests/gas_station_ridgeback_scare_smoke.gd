@@ -53,7 +53,7 @@ func run() -> void:
 	await create_timer(0.8).timeout
 	assert(scare.rushing)
 	assert(scare.ridge.visual.clip == "chase")
-	assert(scare.ridge.visual.animation_player.current_animation == "ManThing_CHASE")
+	assert(scare.ridge.visual.animation_player.current_animation == scare.ridge.visual.model_clip_for("chase"))
 	# Move player to the attacker to verify contact blackout.
 	forest.player.global_position = scare.ridge.global_position
 	await physics_frame
