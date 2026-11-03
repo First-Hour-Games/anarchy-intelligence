@@ -88,6 +88,7 @@ func run() -> void:
 	section.add_child(wall)
 	wall.global_position = player.global_position + Vector3(0, 1, -0.55)
 	wrapper.set("melee_stagger_time", 0.0)
+	await create_timer(0.35).timeout
 	await physics_frame
 	await process_frame
 	check(weapon.try_swing(), "a new swing is available after cooldown")
@@ -121,6 +122,7 @@ func run() -> void:
 	check(not legacy_pipe.is_queued_for_deletion(), "older saves still allow picking up the newly added weapon")
 	weapon.set_equipped(true)
 	player.max_stamina = 240.0
+	await create_timer(0.35).timeout
 	player.stamina = player.max_stamina
 	weapon.set("_cooldown", 0.0)
 	var stamina_updates: Array[float] = []

@@ -33,6 +33,9 @@ func run() -> void:
 	await process_frame
 	await process_frame
 	check(weapon.model_pivot.visible and not illustrated.visible, "equipping shows 3D arms and hides illustrated hands")
+	check(pivot.position.y < scene_placement.origin.y and not weapon.try_swing(), "equip rises from below and blocks attacks")
+	await create_timer(0.35).timeout
+	check(pivot.transform.is_equal_approx(scene_placement), "equip finishes at the authored holding pose")
 	check(attachment.bone_name == "Hand.R", "pipe follows right hand bone")
 	var grip_transform := model.transform
 	var start := model.global_transform
@@ -60,6 +63,10 @@ func run() -> void:
 	weapon.set_equipped(false)
 	await process_frame
 	await process_frame
+	check(pivot.visible and not illustrated.visible and pivot.position.y < scene_placement.origin.y, "holster lowers the arms before hiding them")
+	check(not weapon.try_swing(), "lowering blocks attacks")
+	await create_timer(0.3).timeout
+	await process_frame
 	check(not weapon.model_pivot.visible and illustrated.visible, "holstering restores illustrated hands")
 	check(animation.speed_scale == 0.0, "holstered idle pauses")
 	weapon.set_equipped(true)
@@ -68,9 +75,17 @@ func run() -> void:
 	await process_frame
 	check(not weapon.model_pivot.visible, "freeze hides arms and pipe together")
 	player.unfreeze()
+	await create_timer(0.35).timeout
 	await process_frame
 	await process_frame
 	check(weapon.model_pivot.visible and animation.speed_scale == 1.0, "unfreeze resumes equipped arms idle")
+	weapon.set_equipped(false)
+	await create_timer(0.1).timeout
+	var reversing_from := pivot.position
+	weapon.set_equipped(true)
+	check(pivot.position.is_equal_approx(reversing_from), "re-equipping mid-lower does not snap the pose")
+	await create_timer(0.35).timeout
+	check(pivot.transform.is_equal_approx(scene_placement), "reversed transition returns to held pose")
 	player.queue_free()
 	await process_frame
 	print("pipe_hands_smoke: %d failures" % failures)

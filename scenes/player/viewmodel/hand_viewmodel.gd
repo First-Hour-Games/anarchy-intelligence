@@ -118,7 +118,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
 	var pipe := player.get_node_or_null("Head/Camera3D/PipeWeapon")
-	hands.visible = pipe == null or not pipe.equipped
+	hands.visible = pipe == null or not (pipe.equipped or pipe.model_pivot.visible)
 
 	var horizontal_speed: float = Vector2(player.velocity.x, player.velocity.z).length()
 	var is_moving: bool = player.is_on_floor() and horizontal_speed > 0.1

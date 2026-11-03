@@ -6,6 +6,9 @@ signal hit_landed(target: Node3D)
 
 const STAMINA_COST_FRACTION := 0.25
 const SWING_DURATION := 0.55
+const EQUIP_DURATION := 0.3
+const HOLSTER_DURATION := 0.24
+const LOWERED_OFFSET := Vector3(0.0, -1.25, 0.0)
 const SWING_SOUNDS: Array[AudioStream] = [
 	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_01.ogg"),
 	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_02.ogg"),
@@ -27,7 +30,9 @@ var _cooldown := 0.0
 var _swing_time := -1.0
 var _hit_applied := false
 var _last_swing_sound := -1
+var _presentation := 0.0
 @onready var model_pivot: Node3D = $ModelPivot
+@onready var _held_position: Vector3 = model_pivot.position
 @onready var swing_audio: AudioStreamPlayer = $SwingAudio
 @onready var idle_animation: AnimationPlayer = $ModelPivot/Arms/AnimationPlayer
 
@@ -64,11 +69,10 @@ func set_equipped(value: bool) -> void:
 	equipped = value and is_instance_valid(_player) and _player.inventory.has_item(&"metal_pipe")
 	if not equipped:
 		_swing_time = -1.0
-	model_pivot.visible = equipped and not _player.is_frozen and not _camera.top_level
 
 func can_swing() -> bool:
 	var health := _player.get_node_or_null("CombatHealth")
-	return equipped and _player.inventory.has_item(&"metal_pipe") and not _player.is_frozen \
+	return equipped and _presentation >= 1.0 and _player.inventory.has_item(&"metal_pipe") and not _player.is_frozen \
 		and not get_tree().paused and not _camera.top_level and not _player.is_hidden() \
 		and not _player.inventory.is_open \
 		and _player.stamina >= _player.max_stamina * STAMINA_COST_FRACTION \
@@ -129,8 +133,15 @@ func _strike() -> void:
 		target.take_melee_hit(_player.global_position, stagger_duration, knockback_speed)
 		hit_landed.emit(target)
 
-func _process(_delta: float) -> void:
-	model_pivot.visible = equipped and not _player.is_frozen and not _camera.top_level and not _player.is_hidden()
+func _process(delta: float) -> void:
+	var concealed := _player.is_frozen or _camera.top_level or _player.is_hidden()
+	if concealed:
+		_presentation = 0.0
+	else:
+		var duration := EQUIP_DURATION if equipped else HOLSTER_DURATION
+		_presentation = move_toward(_presentation, 1.0 if equipped else 0.0, delta / duration)
+	model_pivot.position = _held_position + LOWERED_OFFSET * (1.0 - smoothstep(0.0, 1.0, _presentation))
+	model_pivot.visible = not concealed and _presentation > 0.0
 	# Attack motion belongs to the skeleton; the camera-mounted rig never swings.
 	var clip: StringName = &"Pipe_Swing" if _swing_time >= 0.0 else &"Holding_Idle"
 	if idle_animation.current_animation != clip:
