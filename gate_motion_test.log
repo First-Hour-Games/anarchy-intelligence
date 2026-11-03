@@ -1,0 +1,59 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/metal_gate_smoke.gd:31)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/metal_gate_smoke.gd:39)
+PASS gate height matches existing metal fences
+PASS gate uses imported armature and leaf bone
+PASS gate starts closed
+PASS old fence panel and collider are replaced only in Starting Forest
+PASS moving collision avoids inherited-scale synchronization
+PASS gate defaults to a slow opening swing
+PASS closed gate blocks player-sized capsule
+PASS gate starts locked
+Opened or closed the metal gate.
+PASS interaction without key shakes the locked gate
+PASS locked attempt pushes gate forward and blocks repeated activation
+PASS saving during shake keeps gate locked and closed
+PASS locked shake settles fully closed
+PASS locked shake restores collision
+PASS locked gate shows Thomas's lock dialogue
+PASS save state records placed key pickup
+PASS full inventory leaves key in the world
+PASS placeable key adds fence key to inventory
+PASS key uses existing pickup screen and item metadata
+PASS confirming key pickup removes prop and restores control
+Opened or closed the metal gate.
+PASS real player interaction opens gate
+PASS unlocking consumes exactly one key
+PASS swing blocks repeated activation
+PASS opening tween completes
+PASS imported armature opens more than 90 degrees
+PASS collision rotates with the rigged leaf
+PASS open gate keeps physical collision on swung leaf
+PASS opened gate clears player-sized passage
+Opened or closed the metal gate.
+PASS real player can close the opened gate
+PASS closed gate restores blocked passage
+PASS closing returns collision to its original transform
+Opened or closed the metal gate.
+PASS gate opens away from a player on the other side
+PASS closing gate does not relock or require another key
+PASS save captures consumed key and permanently unlocked gate
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/metal_gate_smoke.gd:142)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/metal_gate_smoke.gd:150)
+PASS streamed return before ready keeps key collected and gate unlocked
+PASS save-game restore keeps gate unlocked after key consumption
+PASS older saves do not erase newly placed key props
+metal_gate_smoke: OK

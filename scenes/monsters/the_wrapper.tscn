@@ -13,6 +13,7 @@ floor_snap_length = 0.35
 script = ExtResource("1")
 movement_speed = 1.05
 territory_radius = 26.0
+hits_to_kill = 5
 [node name="Visual" parent="." instance=ExtResource("2")]
 rotation = Vector3(0, 3.1415927, 0)
 script = ExtResource("3_visual")

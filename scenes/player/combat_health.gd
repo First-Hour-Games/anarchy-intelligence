@@ -10,6 +10,14 @@ var status: Label
 var retry: Button
 var death_scare: CanvasLayer
 const DEATH_SCARE := preload("res://scenes/ui/death_scare.gd")
+const ACCUM_BLUR := preload("res://scenes/player/accum_blur_effect.gd")
+## Hit daze: motion blur plus a slight camera sway that fade out after a hit.
+const DAZE_TIME := 1.6
+const DAZE_BLUR := 0.85
+const DAZE_ROLL := deg_to_rad(2.5)
+var daze: float = 0.0
+var daze_blur: CompositorEffect
+var daze_camera: Camera3D
 
 func _ready() -> void:
 	health = max_health
@@ -52,10 +60,33 @@ func _ready() -> void:
 	retry.hide()
 	content.add_child(retry)
 	retry.pressed.connect(respawn)
+	_setup_daze()
 	_refresh()
+
+func _setup_daze() -> void:
+	daze_camera = get_parent().get_node_or_null("Head/Camera3D") as Camera3D
+	if not daze_camera:
+		return
+	if not daze_camera.compositor:
+		daze_camera.compositor = Compositor.new()
+	daze_blur = ACCUM_BLUR.new()
+	var effects := daze_camera.compositor.compositor_effects.duplicate()
+	effects.append(daze_blur)
+	daze_camera.compositor.compositor_effects = effects
+
+func _apply_daze() -> void:
+	var fade := daze * daze
+	if daze_blur:
+		daze_blur.set(&"alpha", DAZE_BLUR * fade)
+	if daze_camera:
+		var t := Time.get_ticks_msec() * 0.001
+		daze_camera.rotation.z = sin(t * 5.0) * DAZE_ROLL * fade
 
 func _process(delta: float) -> void:
 	immunity = maxf(0.0, immunity - delta)
+	if daze > 0.0:
+		daze = maxf(0.0, daze - delta / DAZE_TIME)
+		_apply_daze()
 
 func take_damage(amount: float, attacker: Node3D = null) -> void:
 	if is_dead or immunity > 0.0 or amount <= 0.0:
@@ -66,11 +97,15 @@ func take_damage(amount: float, attacker: Node3D = null) -> void:
 	_refresh()
 	if health > 0.0:
 		InputDevice.rumble_pad(0.35, 0.65, 0.25)
+		daze = 1.0
+		_apply_daze()
 	if health == 0.0:
 		var spot := get_parent().get("hiding_spot") as Node3D
 		if is_instance_valid(spot):
 			spot.force_out()
 		is_dead = true
+		daze = 0.0
+		_apply_daze()
 		InputDevice.rumble_pad(0.8, 1.0, 0.7)
 		get_parent().set_physics_process(false)
 		get_parent().set_process_unhandled_input(false)

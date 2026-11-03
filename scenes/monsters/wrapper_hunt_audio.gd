@@ -22,7 +22,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	var wrapper := get_parent() as CharacterBody3D
 	var player: FirstPersonPlayer = wrapper.get("player") as FirstPersonPlayer
-	var active := bool(wrapper.get("enabled")) and not bool(wrapper.get("suspended")) \
+	var active := bool(wrapper.get("enabled")) and not bool(wrapper.get("suspended")) and not bool(wrapper.get("dead")) \
 		and wrapper.is_visible_in_tree() and is_instance_valid(player) and not player.is_frozen
 	var distance := wrapper.global_position.distance_to(player.global_position) if is_instance_valid(player) else INF
 	var outer := maxf(stop_distance, start_distance + 0.5)

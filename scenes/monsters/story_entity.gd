@@ -2,6 +2,8 @@ extends CharacterBody3D
 
 ## Emitted when the entity is put back at its post: placed there, or reset when the player respawns.
 signal returned_to_post
+## Emitted once, when the pipe kills a killable entity.
+signal died
 
 @export_enum("Wrapper", "Clawman") var encounter_kind: int = 0
 @export var movement_speed: float = 1.25
@@ -11,6 +13,10 @@ signal returned_to_post
 @export var freeze_when_watched: bool = true
 ## Seconds the Clawman spends investigating a breaking bottle.
 @export var noise_memory: float = 7.0
+## Pipe hits that kill it; 0 means it can only be staggered. The count resets when the player respawns.
+@export var hits_to_kill: int = 0
+## How fast the ragdoll is thrown away from the player by the killing blow.
+@export var death_push_speed: float = 3.5
 const ROUTE := preload("res://scenes/shared/entity_route.gd")
 var navigation_route := ROUTE.new()
 var enabled: bool = false
@@ -38,6 +44,11 @@ var seat := Vector3.INF
 var seated: bool = false
 const GRAB_DAMAGE := 35.0
 const SEATED_POSE := preload("res://scenes/monsters/seated_pose.gd")
+const RAGDOLL := preload("res://scenes/monsters/ragdoll.gd")
+var hits_taken: int = 0
+## Dead for good: nothing moves, resets or revives it, and saves keep it dead.
+var dead: bool = false
+var _pending_corpse: Array = []
 @onready var agent: NavigationAgent3D = $NavigationAgent3D
 
 func _ready() -> void:
@@ -45,8 +56,15 @@ func _ready() -> void:
 	add_to_group("corrupted_friend")
 	spawn = global_transform
 	player = get_tree().get_first_node_in_group("player") as FirstPersonPlayer
+	if not _pending_corpse.is_empty():
+		var corpse := _pending_corpse
+		_pending_corpse = []
+		restore_dead(corpse[0], corpse[1])
 
 func reset_enemy() -> void:
+	if dead:
+		return
+	hits_taken = 0
 	global_transform = spawn
 	velocity = Vector3.ZERO
 	memory = 0.0
@@ -64,12 +82,16 @@ func reset_enemy() -> void:
 
 ## Gives the entity a new post and puts it there, sitting back at seat if one is given.
 func set_post(post: Transform3D, seat_point: Vector3 = Vector3.INF) -> void:
+	if dead:
+		return
 	spawn = post
 	seat = seat_point
 	reset_enemy()
 
 ## Moves the entity, on its feet, without changing its post.
 func place(where: Transform3D) -> void:
+	if dead:
+		return
 	global_transform = where
 	velocity = Vector3.ZERO
 	navigation_route.reset()
@@ -84,7 +106,7 @@ func _set_seated(value: bool) -> void:
 ## Breaking glass draws the Clawman to the impact unless it is already tracking a hidden player.
 ## Noise that arrives while it is suspended (the player reading) is kept and acted on afterwards.
 func hear_noise(point: Vector3, radius: float) -> void:
-	if encounter_kind != 1 or not enabled or is_instance_valid(hunted_spot):
+	if dead or encounter_kind != 1 or not enabled or is_instance_valid(hunted_spot):
 		return
 	if global_position.distance_to(point) > radius or point.distance_to(spawn.origin) > territory_radius + 6.0:
 		return
@@ -99,7 +121,7 @@ func hear_noise(point: Vector3, radius: float) -> void:
 
 ## Called as the player climbs into a HidingSpot, before they disappear from view.
 func notice_player_hiding(spot: Node3D) -> void:
-	if encounter_kind != 1 or not enabled or suspended or not is_instance_valid(player):
+	if dead or encounter_kind != 1 or not enabled or suspended or not is_instance_valid(player):
 		return
 	var distance := global_position.distance_to(player.global_position)
 	if not _clear_sight(player.camera.global_position):
@@ -115,7 +137,7 @@ func notice_player_hiding(spot: Node3D) -> void:
 ## Whether the player can currently see this entity on screen. A hidden player
 ## watches through vents or door gaps, so their own hiding spot does not block the view.
 func is_watched_by_player() -> bool:
-	if not is_instance_valid(player):
+	if dead or not is_instance_valid(player):
 		return false
 	var spot_rids: Array[RID] = []
 	if player.is_hidden():
@@ -128,10 +150,14 @@ func is_watched_by_player() -> bool:
 	return player.get_viewport().get_visible_rect().has_point(player.camera.unproject_position(focus))
 
 func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) -> void:
-	if not enabled or suspended:
+	if dead or not enabled or suspended:
 		return
 	var away := global_position - from_position
 	away.y = 0.0
+	hits_taken += 1
+	if hits_to_kill > 0 and hits_taken >= hits_to_kill:
+		_die(away.normalized() * death_push_speed + Vector3.UP * 1.0)
+		return
 	_melee_push = away.normalized() * push_speed
 	melee_stagger_time = maxf(melee_stagger_time, duration)
 	strike_time = 0.0
@@ -139,8 +165,31 @@ func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) 
 	attack_cooldown = maxf(attack_cooldown, duration + 0.3)
 	navigation_route.reset()
 
+## Lays a saved corpse back down where it died, without the killing push. A streamed section
+## restores before it enters the tree, so the corpse waits for _ready then.
+func restore_dead(origin: Vector3, yaw: float) -> void:
+	if dead:
+		return
+	if not is_inside_tree():
+		_pending_corpse = [origin, yaw]
+		return
+	global_transform = Transform3D(Basis(Vector3.UP, yaw).scaled(global_basis.get_scale()), origin)
+	_die(Vector3.ZERO)
+
+func _die(push: Vector3) -> void:
+	dead = true
+	enabled = false
+	velocity = Vector3.ZERO
+	strike_time = 0.0
+	melee_stagger_time = 0.0
+	hunted_spot = null
+	_set_seated(false)
+	$CollisionShape3D.set_deferred("disabled", true)
+	RAGDOLL.fall($Visual, push)
+	died.emit()
+
 func _physics_process(delta: float) -> void:
-	if not is_instance_valid(player) or not enabled or suspended:
+	if dead or not is_instance_valid(player) or not enabled or suspended:
 		return
 	if melee_stagger_time > 0.0:
 		melee_stagger_time = maxf(0.0, melee_stagger_time - delta)

@@ -17,6 +17,7 @@ assets are not cleared for release. See **Before release** at the end.
 | Godot Engine 4.7 | © 2014-present Godot Engine contributors; © 2007-2014 Juan Linietsky, Ariel Manzur | MIT | The licence text, and the notices of the libraries built into Godot (Jolt Physics, FreeType and others), must ship with the game. `Engine.get_license_text()` and `Engine.get_copyright_info()` return them. |
 | Dialogue Manager (`addons/dialogue_manager`) | © 2022-present Nathan Hoad and Dialogue Manager contributors | MIT | Ship `addons/dialogue_manager/LICENSE`. |
 | Shader Tiler (`third_party/shader-tiler`) | © 2026 Profesor Shader | MIT | Ship `third_party/shader-tiler/LICENSE`. Used for the tutorial sky. |
+| Accumulation Motion Blur (`shaders/accumulation_blur.glsl`, `scenes/player/accum_blur_effect.gd`) | xandwr, https://godotshaders.com/shader/accumulation-motion-blur-compositor-pipeline/ | CC0 | Hit daze blur. No credit required. |
 
 ## Fonts
 
@@ -92,8 +93,8 @@ All CC0.
   Dimitrios Savva, Dario Barresi, Charlotte Baglioni, Rob Tuytel, Jenelle van Heerden, Sergej
   Majboroda and Amal Kumar. Identified by their file names, with no record of download yet:
   dry_mud_field_001 (`img/materials/dirtRoad`) and wood_floor_worn (`img/materials/woodFloor`).
-- **ambientCG** (https://ambientcg.com): Concrete012, Concrete034, WoodSiding009 and Tiles071, all on
-  record. Identified by their file names: Road013A, Road015C, Ground037, Snow009A, Tiles012,
+- **ambientCG** (https://ambientcg.com): Concrete012, Concrete034, WoodSiding009, Tiles071 and Tiles038 (residence
+  pavement), all on record. Identified by their file names: Road013A, Road015C, Ground037, Snow009A, Tiles012,
   Wallpaper001C, Wallpaper002C, Metal009, Wood035, Bark014, Concrete047A, Rocks025, Plastic013B,
   Tiles141.
 
