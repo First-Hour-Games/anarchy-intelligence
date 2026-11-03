@@ -30,6 +30,8 @@ func interact(interactor: Node3D) -> void:
 	var visual_target := get_node_or_null(visual_target_path) as Node3D
 	if is_instance_valid(visual_target):
 		visual_target.hide()
+		for audio: AudioStreamPlayer3D in visual_target.find_children("*", "AudioStreamPlayer3D", true, false):
+			audio.stop()
 	super.interact(interactor)
 	var player := interactor as FirstPersonPlayer
 	if is_instance_valid(player):

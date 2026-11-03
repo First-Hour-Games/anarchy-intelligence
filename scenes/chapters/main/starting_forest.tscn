@@ -121,6 +121,7 @@
 [ext_resource type="PackedScene" path="res://scenes/items/fence_key_pickup.tscn" id="133_ag0la"]
 [ext_resource type="PackedScene" path="res://scenes/environment/bloody_footprint.tscn" id="bloody_footprint"]
 [ext_resource type="Script" uid="uid://dtqn8vn5ynbis" path="res://scenes/environment/bloody_footprint_trail.gd" id="bloody_footprint_trail"]
+[ext_resource type="AudioStream" uid="uid://ctgjg2debay7j" path="res://sounds/chapters/main/electric_light_hum_flickers_01_wav.ogg" id="flashlight_flicker_audio"]
 [ext_resource type="Script" uid="uid://bpbwqfmbu5c1x" path="res://scenes/player/combat_health.gd" id="forest_combat_health"]
 [ext_resource type="Script" uid="uid://bgomilsj7a7dg" path="res://scenes/environment/map_navigation_baker.gd" id="forest_enemy_navigation"]
 [ext_resource type="PackedScene" path="res://models/props/metalFences/simple_metal_gate.tscn" id="metal_fence_gate"]
@@ -581,21 +582,6 @@ roughness = 0.5
 emission_enabled = true
 emission = Color(0.85, 0.85, 0.82, 1)
 emission_energy_multiplier = 0.15
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4raly"]
-resource_name = "Concrete047A_1K-JPG_NORMAL"
-cull_mode = 2
-albedo_texture = ExtResource("28_16o3n")
-metallic_texture = ExtResource("29_tf0i6")
-metallic_texture_channel = 2
-roughness_texture = ExtResource("29_tf0i6")
-roughness_texture_channel = 1
-normal_enabled = true
-normal_texture = ExtResource("30_y0hyv")
-uv1_scale = Vector3(0.2, 0.2, 0.2)
-uv1_triplanar = true
-uv1_triplanar_sharpness = 1.4142108
-metadata/_gltf_primary_texture_coord = 0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_43khc"]
 resource_name = "Concrete047A_1K-JPG_NORMAL"
@@ -1395,20 +1381,6 @@ material = SubResource("StandardMaterial3D_vbdqn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -294.4842, 0.105, 11.779953)
 size = Vector3(117.56701, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_vbdqn")
-
-[node name="Pavement" type="CSGPolygon3D" parent="Streets2" unique_id=897443347]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -301.4, 0.169, 4.32)
-material_override = SubResource("StandardMaterial3D_4raly")
-use_collision = true
-polygon = PackedVector2Array(0, 0, 0, 2.5, 36, 2.5, 36, 0)
-metadata/surface = "concrete"
-
-[node name="Pavement2" type="CSGPolygon3D" parent="Streets2" unique_id=191676159]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -324.15475, 0.16900045, 14.677206)
-material_override = SubResource("StandardMaterial3D_4raly")
-use_collision = true
-polygon = PackedVector2Array(0, 0, 0, 2.5, 60, 2.5, 60, 0)
-metadata/surface = "concrete"
 
 [node name="ParkingLot" type="Node3D" parent="." unique_id=612701265]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 153, 0, 0)
@@ -2361,6 +2333,13 @@ script = ExtResource("station_flashlight_pickup")
 pickup_dialogue_resource = ExtResource("18_forest_dialogue")
 pickup_dialogue_cue = "gas_station_flashlight_pickup"
 interaction_message = "Picked up flashlight."
+
+[node name="FlickerAudio" type="AudioStreamPlayer3D" parent="FlashlightItem" unique_id=2089417283]
+stream = ExtResource("flashlight_flicker_audio")
+volume_db = -8.0
+unit_size = 3.0
+max_distance = 28.0
+bus = &"Reverb"
 
 [node name="GasEntrance" type="Node3D" parent="." unique_id=1706779948]
 transform = Transform3D(0.5853213, 0, -1.3626107, 0, 1.4, 0, 1.27177, 0, 0.62713, 147.02072, 2.0946684, 49.036102)
@@ -3472,6 +3451,7 @@ transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 159.8413, 1.2, 54.69453
 [connection signal="finished" from="VisitorBGM" to="VisitorBGM" method="play"]
 [connection signal="finished" from="WelcomingHikeBGM" to="WelcomingHikeBGM" method="play"]
 [connection signal="finished" from="toyotaCrownModel2/EngineLoop" to="toyotaCrownModel2/EngineLoop" method="play"]
+[connection signal="finished" from="FlashlightItem/FlickerAudio" to="FlashlightItem/FlickerAudio" method="play"]
 [connection signal="cutscene_started" from="WrapperCutscene" to="." method="_on_wrapper_cutscene_started"]
 [connection signal="finished" from="CopCarSedan/EngineLoop" to="CopCarSedan/EngineLoop" method="play"]
 
