@@ -63,6 +63,8 @@ func run() -> void:
 	await create_timer(0.25).timeout
 	check(float(wrapper.get("melee_stagger_time")) > 0.0 and is_zero_approx(float(wrapper.get("strike_time"))), "pipe hits a real enemy and interrupts its attack")
 	check(wrapper.get("_melee_push").z < 0.0, "pipe pushes the enemy away from the player")
+	var audio: AudioStreamPlayer = weapon.get_node("SwingAudio")
+	check(weapon.get_script().HIT_SOUNDS.has(audio.stream) and audio.playing, "a hit on the enemy swaps the whoosh for a hit sound")
 	var hits := int(wrapper.get("hits_taken"))
 	var stagger := float(wrapper.get("melee_stagger_time"))
 	wrapper.set("strike_time", 0.7)
@@ -102,6 +104,7 @@ func run() -> void:
 	check(weapon.try_swing(), "a new swing is available after cooldown")
 	await create_timer(0.25).timeout
 	check(is_zero_approx(float(wrapper.get("melee_stagger_time"))), "pipe cannot hit an enemy through a wall")
+	check(weapon.get_script().SWING_SOUNDS.has(weapon.get_node("SwingAudio").stream), "hitting a wall keeps the plain whoosh")
 	var slot := 0
 	for i in PlayerInventory.SLOT_COUNT:
 		if player.inventory.get_item(i) == &"metal_pipe":

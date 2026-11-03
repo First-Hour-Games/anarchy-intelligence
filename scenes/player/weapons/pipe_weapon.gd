@@ -17,6 +17,16 @@ const SWING_SOUNDS: Array[AudioStream] = [
 	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_04.ogg"),
 	preload("res://sounds/weapons/metalPipe/metal_tube_whoosh_05.ogg"),
 ]
+## Played instead of the whoosh when the pipe connects with an enemy.
+const HIT_SOUNDS: Array[AudioStream] = [
+	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_01.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_02.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_03.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_04.ogg"),
+	preload("res://sounds/weapons/metalPipe/metal_tube_hit_with_whoosh_05.ogg"),
+]
+## Seconds into each hit sound to start from: just before its impact, so the clang lands on the hit.
+const HIT_SOUND_STARTS: Array[float] = [0.12, 0.09, 0.13, 0.14, 0.13]
 
 @export_range(0.5, 3.0, 0.1) var reach: float = 1.8
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 1.4
@@ -34,6 +44,7 @@ var _cooldown := 0.0
 var _swing_time := -1.0
 var _hit_applied := false
 var _last_swing_sound := -1
+var _last_hit_sound := -1
 var _presentation := 0.0
 @onready var model_pivot: Node3D = $ModelPivot
 @onready var _held_position: Vector3 = model_pivot.position
@@ -99,12 +110,21 @@ func try_swing() -> bool:
 	return true
 
 func _play_swing_sound() -> void:
-	if _last_swing_sound < 0:
-		_last_swing_sound = randi_range(0, SWING_SOUNDS.size() - 1)
-	else:
-		_last_swing_sound = (_last_swing_sound + randi_range(1, SWING_SOUNDS.size() - 1)) % SWING_SOUNDS.size()
+	_last_swing_sound = _next_variant(_last_swing_sound, SWING_SOUNDS.size())
 	swing_audio.stream = SWING_SOUNDS[_last_swing_sound]
 	swing_audio.play()
+
+## Swaps the swing's whoosh for a hit variant the moment the pipe connects with an enemy.
+func _play_hit_sound() -> void:
+	_last_hit_sound = _next_variant(_last_hit_sound, HIT_SOUNDS.size())
+	swing_audio.stream = HIT_SOUNDS[_last_hit_sound]
+	swing_audio.play(HIT_SOUND_STARTS[_last_hit_sound])
+
+## A random variant, never the same one twice in a row.
+func _next_variant(last: int, count: int) -> int:
+	if last < 0:
+		return randi_range(0, count - 1)
+	return (last + randi_range(1, count - 1)) % count
 
 func _physics_process(delta: float) -> void:
 	_cooldown = maxf(_cooldown - delta, 0.0)
@@ -136,6 +156,7 @@ func _strike() -> void:
 	if target != null and target.has_method("take_melee_hit"):
 		var stunned := randf() < stun_chance
 		target.take_melee_hit(_player.global_position, stagger_duration if stunned else 0.0, knockback_speed if stunned else 0.0)
+		_play_hit_sound()
 		hit_landed.emit(target)
 
 func _process(delta: float) -> void:
