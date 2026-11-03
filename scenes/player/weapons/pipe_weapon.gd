@@ -5,7 +5,12 @@ signal swung
 signal hit_landed(target: Node3D)
 
 const STAMINA_COST_FRACTION := 0.25
-const SWING_DURATION := 0.55
+## Two-handed swings built for these arms by tools/blender/build_pipe_swings.py. Each clip's "impact"
+## metadata is when the pipe passes through the hit.
+const SWINGS: AnimationLibrary = preload("res://models/player/pipe_swings.tres")
+const SWING_LIBRARY := &"pipe_swings"
+## How long either side of the impact a swing can land.
+const HIT_WINDOW := 0.07
 const EQUIP_DURATION := 0.3
 const HOLSTER_DURATION := 0.24
 const LOWERED_OFFSET := Vector3(0.0, -1.25, 0.0)
@@ -21,6 +26,8 @@ const SWING_SOUNDS: Array[AudioStream] = [
 @export_range(0.1, 3.0, 0.05) var swing_cooldown: float = 0.8
 @export_range(0.1, 3.0, 0.1) var stagger_duration: float = 1.0
 @export_range(0.0, 6.0, 0.1) var knockback_speed: float = 2.5
+## The swing from models/player/pipe_swings.tres: swing_downswing, or swing_bat.
+@export var swing_clip: StringName = &"swing_downswing"
 
 var equipped := false
 var _player: FirstPersonPlayer
@@ -31,6 +38,10 @@ var _swing_time := -1.0
 var _hit_applied := false
 var _last_swing_sound := -1
 var _presentation := 0.0
+var _swing_name: StringName
+var _swing: Animation
+var _pipe: MeshInstance3D
+var _pipe_grip: Vector3
 @onready var model_pivot: Node3D = $ModelPivot
 @onready var _held_position: Vector3 = model_pivot.position
 @onready var swing_audio: AudioStreamPlayer = $SwingAudio
@@ -48,11 +59,14 @@ func _ready() -> void:
 func _setup_hands() -> void:
 	# The Blender-authored pipe is bone-parented in the GLB, including its grip offset.
 	idle_animation.get_animation(&"Holding_Idle").loop_mode = Animation.LOOP_LINEAR
-	idle_animation.get_animation(&"Pipe_Swing").loop_mode = Animation.LOOP_NONE
+	idle_animation.add_animation_library(SWING_LIBRARY, SWINGS)
+	_swing_name = StringName("%s/%s" % [SWING_LIBRARY, swing_clip])
+	_swing = idle_animation.get_animation(_swing_name)
 	idle_animation.play(&"Holding_Idle")
 	idle_animation.advance(0.0)
-	var pipe: MeshInstance3D = $ModelPivot/Arms/FPS_Arms/Skeleton3D/Hand_R/MetalPipe_Hand_R
-	pipe.material_override = preload("res://models/props/weapons/pipe_metal_material.tres")
+	_pipe = $ModelPivot/Arms/FPS_Arms/Skeleton3D/Hand_R/MetalPipe_Hand_R
+	_pipe.material_override = preload("res://models/props/weapons/pipe_metal_material.tres")
+	_pipe_grip = _pipe.position
 
 func _bind_inventory() -> void:
 	_player.inventory.inventory_changed.connect(_inventory_changed)
@@ -90,6 +104,8 @@ func try_swing() -> bool:
 	_cooldown = swing_cooldown
 	_swing_time = 0.0
 	_hit_applied = false
+	if idle_animation.current_animation == _swing_name:
+		idle_animation.seek(0.0, true)
 	_play_swing_sound()
 	swung.emit()
 	return true
@@ -108,9 +124,9 @@ func _physics_process(delta: float) -> void:
 		_swing_time = -1.0
 	if _swing_time >= 0.0:
 		_swing_time += delta
-		if _swing_time >= 0.14 and _swing_time <= 0.32 and not _hit_applied:
+		if absf(_swing_time - float(_swing.get_meta(&"impact"))) <= HIT_WINDOW and not _hit_applied:
 			_strike()
-		if _swing_time >= SWING_DURATION:
+		if _swing_time >= _swing.length:
 			_swing_time = -1.0
 
 func _strike() -> void:
@@ -143,8 +159,10 @@ func _process(delta: float) -> void:
 	model_pivot.position = _held_position + LOWERED_OFFSET * (1.0 - smoothstep(0.0, 1.0, _presentation))
 	model_pivot.visible = not concealed and _presentation > 0.0
 	# Attack motion belongs to the skeleton; the camera-mounted rig never swings.
-	var clip: StringName = &"Pipe_Swing" if _swing_time >= 0.0 else &"Holding_Idle"
+	var clip: StringName = _swing_name if _swing_time >= 0.0 else &"Holding_Idle"
 	if idle_animation.current_animation != clip:
 		idle_animation.play(clip, 0.05)
-	var playback_speed := idle_animation.get_animation(clip).length / SWING_DURATION if _swing_time >= 0.0 else 1.0
-	idle_animation.speed_scale = playback_speed if model_pivot.visible else 0.0
+	idle_animation.speed_scale = 1.0 if model_pivot.visible else 0.0
+	if _swing_time < 0.0:
+		# Only a swing slides the pipe through the hands; one cut short must not leave it slid.
+		_pipe.position = _pipe_grip

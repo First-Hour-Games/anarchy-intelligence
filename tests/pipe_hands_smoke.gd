@@ -48,18 +48,28 @@ func run() -> void:
 	animation.seek(3.95, true)
 	await create_timer(0.2).timeout
 	check(animation.is_playing() and animation.current_animation_position < 1.0, "four-second idle wraps and continues")
+	check(animation.has_animation(&"pipe_swings/swing_downswing") and animation.has_animation(&"pipe_swings/swing_bat"),
+		"both two-handed swings are loaded onto the arms")
 	var shoulder_before := skeleton.get_bone_global_pose(skeleton.find_bone("UpperArm.R")).origin
 	var hand_before := skeleton.get_bone_global_pose(skeleton.find_bone("Hand.R"))
 	check(weapon.try_swing(), "arms setup allows pipe attack")
 	await create_timer(0.25).timeout
-	check(model.transform.is_equal_approx(grip_transform), "swing preserves pipe grip offset")
-	check(animation.current_animation == &"Pipe_Swing", "attack plays the skeletal swing clip")
+	var box := (model as MeshInstance3D).get_aabb()
+	var length_axis := Vector3.ZERO
+	length_axis[box.get_longest_axis_index()] = 1.0
+	var slid := model.position - grip_transform.origin
+	check(model.transform.basis.is_equal_approx(grip_transform.basis) and slid.length() > 0.15
+		and absf(slid.normalized().dot((grip_transform.basis * length_axis).normalized())) > 0.99,
+		"two-handed swing slides the pipe along its length through the hands")
+	check(animation.current_animation == &"pipe_swings/swing_downswing", "attack plays the two-handed downswing")
 	check(pivot.transform.is_equal_approx(scene_placement), "attack keeps the viewmodel root fixed")
 	check(not skeleton.get_bone_global_pose(skeleton.find_bone("Hand.R")).is_equal_approx(hand_before), "swing moves the hand bones")
-	check(skeleton.get_bone_global_pose(skeleton.find_bone("UpperArm.R")).origin.distance_to(shoulder_before) < 0.01, "swing keeps the shoulder anchored")
-	await create_timer(0.4).timeout
+	check(skeleton.get_bone_global_pose(skeleton.find_bone("UpperArm.R")).origin.distance_to(shoulder_before) < 0.08,
+		"the shoulders only move with the upper body's lean and turn")
+	await create_timer(0.6).timeout
 	check(pivot.transform.is_equal_approx(scene_placement), "completed swing returns to exact scene placement")
 	check(animation.current_animation == &"Holding_Idle", "attack recovers to holding idle")
+	check(model.transform.is_equal_approx(grip_transform), "completed swing returns the pipe to its one-handed grip")
 	weapon.set_equipped(false)
 	await process_frame
 	await process_frame
