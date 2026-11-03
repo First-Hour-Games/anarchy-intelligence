@@ -119,6 +119,9 @@
 [ext_resource type="PackedScene" uid="uid://b435usssm88bs" path="res://models/psx_industrial_pack/plank.glb" id="127_5e1kc"]
 [ext_resource type="PackedScene" uid="uid://flwpli7378o7" path="res://models/psx_industrial_pack/crate_wood.glb" id="128_8lmkg"]
 [ext_resource type="PackedScene" path="res://scenes/items/fence_key_pickup.tscn" id="133_ag0la"]
+[ext_resource type="PackedScene" uid="uid://c31b3yqyr8p38" path="res://models/map/tunnel.glb" id="139_dfnds"]
+[ext_resource type="PackedScene" uid="uid://clbffbdvmm7am" path="res://models/map/mountain.glb" id="140_eubcj"]
+[ext_resource type="Material" path="res://models/map/mountain_rock_material.tres" id="141_mountain_rock"]
 [ext_resource type="PackedScene" path="res://scenes/environment/bloody_footprint.tscn" id="bloody_footprint"]
 [ext_resource type="Script" uid="uid://dtqn8vn5ynbis" path="res://scenes/environment/bloody_footprint_trail.gd" id="bloody_footprint_trail"]
 [ext_resource type="AudioStream" uid="uid://ctgjg2debay7j" path="res://sounds/chapters/main/electric_light_hum_flickers_01_wav.ogg" id="flashlight_flicker_audio"]
@@ -2258,6 +2261,7 @@ shape = SubResource("BoxShape3D_ag0la")
 
 [node name="MetalFenceGate" parent="GasStation" unique_id=757550912 instance=ExtResource("metal_fence_gate")]
 transform = Transform3D(-3.3220655e-08, 0, -0.76, 0, 0.995, 0, 0.76, 0, -3.3220655e-08, 14.316849, 0.066121, -19.492504)
+script = null
 
 [node name="Sketchfab_Scene6" parent="GasStation" unique_id=776198852 instance=ExtResource("66_nj1ac")]
 transform = Transform3D(1.133849, 0.24491964, -7.399592e-11, -0.24491964, 1.133849, -3.8735206e-09, -7.4552275e-10, 3.801821e-09, 1.1599998, 5.7662964, 2.331, -5.715122)
@@ -3446,6 +3450,21 @@ transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 158.0592, 0.1691451, 60
 [node name="FenceKey" parent="." unique_id=1269952178 instance=ExtResource("133_ag0la")]
 transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 159.8413, 1.2, 54.69453)
 
+[node name="Tunnel" parent="." unique_id=1475556023 instance=ExtResource("139_dfnds")]
+transform = Transform3D(-4.2140567e-08, 0, 1, 0, 1, 0, -0.96406376, 0, -4.371139e-08, 194.44762, 3.3319736, 10.643544)
+
+[node name="Mountain" parent="." unique_id=242259471 instance=ExtResource("140_eubcj")]
+transform = Transform3D(147.20363, 0, 38.438206, 0, 149.9, 0, -28.828655, 0, 196.2715, 211.44484, 20.549185, 43.11169)
+
+[node name="Cube_0" parent="Mountain/Sketchfab_model/Root/Cube" index="0"]
+material_override = ExtResource("141_mountain_rock")
+
+[node name="Mountain2" parent="." unique_id=1581286062 instance=ExtResource("140_eubcj")]
+transform = Transform3D(130.0551, 0, 99.64978, 0, 149.9, 0, -74.737335, 0, 173.4068, 249.08174, 20.549185, 65.85052)
+
+[node name="Cube_0" parent="Mountain2/Sketchfab_model/Root/Cube" index="0"]
+material_override = ExtResource("141_mountain_rock")
+
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]
 [connection signal="finished" from="VisitorBGM" to="VisitorBGM" method="play"]
@@ -3456,3 +3475,6 @@ transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 159.8413, 1.2, 54.69453
 [connection signal="finished" from="CopCarSedan/EngineLoop" to="CopCarSedan/EngineLoop" method="play"]
 
 [editable path="GasStation"]
+
+[editable path="Mountain"]
+[editable path="Mountain2"]
