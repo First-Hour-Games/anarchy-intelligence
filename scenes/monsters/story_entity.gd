@@ -28,6 +28,8 @@ signal died
 @export_range(0.0, 20.0, 0.1, "suffix:s") var wander_pause_min: float = 1.5
 @export_range(0.0, 20.0, 0.1, "suffix:s") var wander_pause_max: float = 4.0
 @export_range(0.1, 6.0, 0.05, "suffix:m/s") var hunt_speed: float = 1.4
+## How quickly it turns while hunting; it faces the player whenever it stands, winds up or strikes.
+@export_range(1.0, 20.0, 0.5) var hunt_turn_rate: float = 9.0
 ## Footsteps carry this far at full noise (sprinting); quieter steps carry proportionally less.
 @export_range(1.0, 60.0, 0.5, "suffix:m") var detection_distance: float = 18.0
 ## Noise from 0 to 1 by how the player moves. Hearing range is detection_distance x noise.
@@ -334,16 +336,18 @@ func _physics_process(delta: float) -> void:
 		motion = Vector3.ZERO
 	_move(motion, delta)
 
-## Plays the matching clip and moves (motion is the wanted horizontal velocity).
-func _move(motion: Vector3, delta: float) -> void:
+## Plays the matching clip and moves (motion is the wanted horizontal velocity). It turns toward
+## facing when one is given, otherwise toward where it is going.
+func _move(motion: Vector3, delta: float, facing := Vector3.ZERO, turn_rate := 4.0) -> void:
 	var visual := $Visual
 	if visual.has_method("play") and not seated:
 		visual.play("attack" if strike_time > 0.0 else "windup" if alert_time > 0.0 else "run" if motion.length() > 0.1 else "idle")
 	velocity.x = motion.x
 	velocity.z = motion.z
 	velocity.y = velocity.y - 9.8 * delta if not is_on_floor() else 0.0
-	if motion.length() > 0.1:
-		rotation.y = lerp_angle(rotation.y, atan2(-motion.x, -motion.z), delta * 4.0)
+	var look := facing if facing.length() > 0.01 else motion
+	if look.length() > 0.1 or facing.length() > 0.01:
+		rotation.y = lerp_angle(rotation.y, atan2(-look.x, -look.z), minf(1.0, delta * turn_rate))
 	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 
@@ -431,7 +435,12 @@ func _roam(delta: float) -> void:
 	alert_time = maxf(0.0, alert_time - delta)
 	if alert_time > 0.0:
 		motion = Vector3.ZERO
-	_move(motion, delta)
+	# Hunting a player it can see, it squares up to them when it stops, screams, strikes or closes in.
+	var facing := Vector3.ZERO
+	if roam_state == RoamState.HUNTING and not hidden and (motion.length() <= 0.1 or distance < 3.0):
+		facing = player.global_position - global_position
+		facing.y = 0.0
+	_move(motion, delta, facing, hunt_turn_rate if roam_state == RoamState.HUNTING else 4.0)
 
 ## A random reachable point on the navigation map within wander_radius of home, or INF.
 func _pick_wander_target(nav_map: RID) -> Vector3:

@@ -30,6 +30,14 @@ func wait_for(condition: Callable, timeout: float) -> bool:
 		await physics_frame
 	return condition.call()
 
+## How squarely the Wrapper faces the player: 1 head-on, 0 side-on, -1 away.
+func facing_player() -> float:
+	var forward: Vector3 = -wrapper.global_basis.z
+	var to_player: Vector3 = player.global_position - wrapper.global_position
+	forward.y = 0.0
+	to_player.y = 0.0
+	return forward.normalized().dot(to_player.normalized())
+
 func place_player(offset: Vector3, moving: Vector3 = Vector3.ZERO, sprint: bool = false, crouch: bool = false) -> void:
 	player.global_position = wrapper.global_position + offset
 	player.velocity = moving
@@ -110,11 +118,17 @@ func run() -> void:
 	place_player(Vector3(8, 0, 0))
 	await seconds(0.3)
 	check(wrapper.roam_state == wrapper.RoamState.WANDERING, "A silent player nearby stays undetected")
-	place_player(Vector3(7, 0, 0), Vector3(3.2, 0, 0))
+	# Heard from behind, so it has to turn round to the player.
+	var behind: Vector3 = wrapper.global_basis.z
+	behind.y = 0.0
+	place_player(behind.normalized() * 7.0, Vector3(3.2, 0, 0))
 	await physics_frame
 	await physics_frame
 	check(wrapper.roam_state == wrapper.RoamState.HUNTING, "A walking player nearby starts the hunt")
 	player.velocity = Vector3.ZERO
+	# It turns to the player while it screams, before it moves.
+	await seconds(0.6)
+	check(facing_player() > 0.95, "It turns to face the player while it screams (%.2f)" % facing_player())
 
 	# Hunting: it keeps moving while watched, then attacks.
 	player.look_at(Vector3(wrapper.global_position.x, player.global_position.y, wrapper.global_position.z))
@@ -127,6 +141,7 @@ func run() -> void:
 	var health := player.get_node("CombatHealth")
 	var full: float = health.health
 	check(await wait_for(func() -> bool: return health.health < full, 10.0), "It reaches and strikes the player")
+	check(facing_player() > 0.95, "It faces the player as it strikes (%.2f)" % facing_player())
 	check(wrapper.get_node("HuntAudio").playing or wrapper.is_hunting(), "Hunting drives the hunt music")
 
 	# Escape: far away for escape_time ends the hunt and sends it home, not to a wander point.
