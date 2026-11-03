@@ -60,7 +60,9 @@ func run() -> void:
 	await process_frame
 	check(weapon.try_swing(), "equipped pipe can swing")
 	check(not weapon.try_swing(), "cooldown prevents repeated swings")
-	await create_timer(0.25).timeout
+	await create_timer(0.2).timeout
+	check(is_zero_approx(float(wrapper.get("melee_stagger_time"))), "the hit waits for the pipe to come down")
+	await create_timer(0.3).timeout
 	check(float(wrapper.get("melee_stagger_time")) > 0.0 and is_zero_approx(float(wrapper.get("strike_time"))), "pipe hits a real enemy and interrupts its attack")
 	check(wrapper.get("_melee_push").z < 0.0, "pipe pushes the enemy away from the player")
 	var audio: AudioStreamPlayer = weapon.get_node("SwingAudio")
@@ -102,7 +104,7 @@ func run() -> void:
 	await physics_frame
 	await process_frame
 	check(weapon.try_swing(), "a new swing is available after cooldown")
-	await create_timer(0.25).timeout
+	await create_timer(0.5).timeout
 	check(is_zero_approx(float(wrapper.get("melee_stagger_time"))), "pipe cannot hit an enemy through a wall")
 	check(weapon.get_script().SWING_SOUNDS.has(weapon.get_node("SwingAudio").stream), "hitting a wall keeps the plain whoosh")
 	var slot := 0
