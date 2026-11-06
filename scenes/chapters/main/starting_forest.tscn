@@ -1313,6 +1313,8 @@ mouse_filter = 2
 
 [node name="ForestApparitions" type="Node3D" parent="." unique_id=179180594]
 script = ExtResource("56_apparitions")
+developer_trigger_enabled = false
+automatic_sightings_enabled = false
 
 [node name="Streets" type="Node3D" parent="." unique_id=186703953]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3547363)
@@ -2277,7 +2279,6 @@ shape = SubResource("BoxShape3D_ag0la")
 
 [node name="MetalFenceGate" parent="GasStation" unique_id=757550912 instance=ExtResource("metal_fence_gate")]
 transform = Transform3D(-3.3220655e-08, 0, -0.76, 0, 0.995, 0, 0.76, 0, -3.3220655e-08, 14.316849, 0.066121, -19.492504)
-script = null
 
 [node name="Sketchfab_Scene6" parent="GasStation" unique_id=776198852 instance=ExtResource("66_nj1ac")]
 transform = Transform3D(1.133849, 0.24491964, -7.399592e-11, -0.24491964, 1.133849, -3.8735206e-09, -7.4552275e-10, 3.801821e-09, 1.1599998, 5.7662964, 2.331, -5.715122)
@@ -2501,12 +2502,12 @@ transform = Transform3D(0.06616978, 0, -0.49560207, 0, 0.49999976, 0, 0.49560207
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6040039, 2.052929, -3.6107922)
 shape = SubResource("BoxShape3D_truck_bounds")
 
-[node name="Sketchfab_Scene3" parent="." unique_id=1111088335 instance=ExtResource("83_74wbp")]
+[node name="Van" parent="." unique_id=1111088335 instance=ExtResource("83_74wbp")]
 transform = Transform3D(-0.41368842, -0.072231516, -1.5439055, -0.0186949, 1.5983686, -0.069770284, 1.5454812, 0, -0.41411063, 141, 0.08122468, 42.70698)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Sketchfab_Scene3" unique_id=517297092]
+[node name="StaticBody3D" type="StaticBody3D" parent="Van" unique_id=517297092]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Sketchfab_Scene3/StaticBody3D" unique_id=785047040]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Van/StaticBody3D" unique_id=785047040]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1.395, 0, 1, -6.0977385e-08, 0, 0.69, 0)
 shape = SubResource("BoxShape3D_74wbp")
 
@@ -3483,6 +3484,9 @@ transform = Transform3D(130.0551, 0, 99.64978, 0, 149.9, 0, -74.737335, 0, 173.4
 
 [node name="Cube_0" parent="Mountain2/Sketchfab_model/Root/Cube" parent_id_path=PackedInt32Array(1581286062, 622956325) index="0" unique_id=1277664774]
 material_override = ExtResource("141_mountain_rock")
+
+[node name="TrashContainer3" parent="." unique_id=638794433 instance=ExtResource("97_wq560")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.2, 0, -1, 0, -4.371139e-08, 160.87843, 0.15736245, 51.335194)
 
 [connection signal="dialogue_finished" from="BottomDialogueBalloon" to="VisitorBGM" method="play"]
 [connection signal="finished" from="NightAmbience" to="NightAmbience" method="play"]

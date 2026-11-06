@@ -22,7 +22,6 @@ func run() -> void:
 	forest.get_node("BottomDialogueBalloon").free()
 	root.add_child(forest)
 	current_scene = forest
-	forest.get_node("IntroFadeCanvas").hide()
 	var player: FirstPersonPlayer = forest.player
 	player.unfreeze()
 	player.set_physics_process(false)

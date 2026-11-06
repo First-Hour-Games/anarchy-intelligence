@@ -69,6 +69,8 @@ var strike_time: float = 0.0
 var strike_hit: bool = false
 var alert_time: float = 0.0
 var melee_stagger_time: float = 0.0
+## Covers the active stun plus one second after recovery.
+var melee_stun_immunity_time: float = 0.0
 var _melee_push := Vector3.ZERO
 ## A HidingSpot the Clawman watched the player enter; it goes there to pull them out.
 var hunted_spot: Node3D = null
@@ -111,6 +113,7 @@ func reset_enemy() -> void:
 	strike_time = 0.0
 	alert_time = 0.0
 	melee_stagger_time = 0.0
+	melee_stun_immunity_time = 0.0
 	_melee_push = Vector3.ZERO
 	hunted_spot = null
 	investigating_noise = false
@@ -202,10 +205,11 @@ func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) 
 	if roaming and roam_state != RoamState.HUNTING:
 		_set_roam_state(RoamState.HUNTING)
 	# A hit that does not stun counts toward killing it but does not stop it.
-	if duration <= 0.0:
+	if duration <= 0.0 or melee_stun_immunity_time > 0.0:
 		return
 	_melee_push = away.normalized() * push_speed
 	melee_stagger_time = maxf(melee_stagger_time, duration)
+	melee_stun_immunity_time = melee_stagger_time + 1.0
 	strike_time = 0.0
 	strike_hit = true
 	attack_cooldown = maxf(attack_cooldown, duration + 0.3)
@@ -238,6 +242,7 @@ func _die(push: Vector3) -> void:
 func _physics_process(delta: float) -> void:
 	if dead or not is_instance_valid(player) or not enabled or suspended:
 		return
+	melee_stun_immunity_time = maxf(0.0, melee_stun_immunity_time - delta)
 	if melee_stagger_time > 0.0:
 		melee_stagger_time = maxf(0.0, melee_stagger_time - delta)
 		velocity.x = _melee_push.x

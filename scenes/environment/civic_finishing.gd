@@ -64,6 +64,7 @@ func _ready() -> void:
 			lamp.omni_range = 13
 			# The bulb is enclosed by the imported lantern mesh; no self-shadow blackout.
 			lamp.shadow_enabled = false
+			preload("res://scenes/environment/streetlight_fault.gd").attach(lamp)
 	for i in markers.cars.size():
 		var car: Dictionary = markers.cars[i]
 		_car(String(car.scene), "DeadCar%d" % i, Vector3(car.position[0], car.position[1], car.position[2]),

@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/map/cadillac_miller_meteor_funeral_coach_hearse.glb" id="1_model"]
+
+[sub_resource type="BoxShape3D" id="CarCollision"]
+size = Vector3(1.850941, 1.366194, 5.071439)
+
+[node name="CadillacHearse" instance=ExtResource("1_model")]
+
+[node name="CarBody" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CarBody"]
+position = Vector3(0.0, -0.109075, 0.0)
+shape = SubResource("CarCollision")

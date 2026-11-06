@@ -52,6 +52,8 @@ class_name Streetlight extends StaticBody3D
 func _ready() -> void:
 	_apply_light_settings()
 	_apply_collision_settings()
+	if not Engine.is_editor_hint():
+		preload("res://scenes/environment/streetlight_fault.gd").attach.call_deferred(spot_light)
 
 
 func _apply_light_settings() -> void:

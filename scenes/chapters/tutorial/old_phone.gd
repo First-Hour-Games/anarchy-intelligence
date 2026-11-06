@@ -20,6 +20,7 @@ signal dialogue_finished()
 @export var dialogue_start_delay: float = 0.5
 
 @export_group("Scene Transition")
+@export var transition_after_dialogue: bool = true
 @export_file("*.tscn") var next_scene_path: String = "res://scenes/chapters/main/starting_forest.tscn"
 @export_range(0.0, 5.0, 0.1) var transition_delay: float = 1.0 ## Delay after phone call ends before switching scenes
 
@@ -99,7 +100,8 @@ func _on_phone_interacted(interactor: Node3D = null) -> void:
 	if _is_picked_up:
 		return
 	_is_picked_up = true
-	get_node("/root/SceneLoader").prefetch(_next_scene_path())
+	if transition_after_dialogue:
+		get_node("/root/SceneLoader").prefetch(_next_scene_path())
 
 	stop_ringing()
 
@@ -144,7 +146,8 @@ func _play_dialogue() -> void:
 
 func _on_dialogue_ended(_resource: DialogueResource = null) -> void:
 	dialogue_finished.emit()
-	_transition_to_next_scene()
+	if transition_after_dialogue:
+		_transition_to_next_scene()
 
 
 func _transition_to_next_scene() -> void:

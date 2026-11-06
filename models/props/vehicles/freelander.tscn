@@ -3,15 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://r503gcm3lk8y" path="res://models/props/vehicles/land_rover_freelander.glb" id="1_30s6r"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_30s6r"]
-size = Vector3(2.0926607, 1.7161045, 4.3031006)
+size = Vector3(2.092661, 1.806139, 4.315761)
 
 [node name="Sketchfab_Scene" unique_id=405479715 instance=ExtResource("1_30s6r")]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Sketchfab_model/freelander_fbx/RootNode/unnamed" parent_id_path=PackedInt32Array(1678162584) index="1" unique_id=951994342]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1162976, -0.12718843)
-shape = SubResource("BoxShape3D_30s6r")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Sketchfab_model/freelander_fbx" parent_id_path=PackedInt32Array(1086264611) index="1" unique_id=2115817545]
 
 [node name="CarLights" type="Node3D" parent="Sketchfab_model" parent_id_path=PackedInt32Array(1378816654) index="1" unique_id=484550694]
 unique_name_in_owner = true
@@ -114,3 +108,8 @@ transform = Transform3D(1, 0, 1.5020163e-08, 0, 1, 0, -1.5020163e-08, 0, 1, -0.7
 light_color = Color(0.8666667, 0, 0, 1)
 shadow_enabled = true
 omni_range = 66.767
+[node name="CarBody" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CarBody"]
+position = Vector3(0.0, -0.161315, -0.118328)
+shape = SubResource("BoxShape3D_30s6r")

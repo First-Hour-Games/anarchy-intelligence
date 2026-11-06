@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/map/mercedes-benz_s-class.glb" id="1_model"]
+
+[sub_resource type="BoxShape3D" id="CarCollision"]
+size = Vector3(2.376033, 1.36193, 4.944999)
+
+[node name="MercedesBenzSClass" instance=ExtResource("1_model")]
+
+[node name="CarBody" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CarBody"]
+position = Vector3(-0.000001, -0.11211, 0.0)
+shape = SubResource("CarCollision")

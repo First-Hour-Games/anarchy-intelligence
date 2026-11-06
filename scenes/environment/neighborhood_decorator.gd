@@ -437,11 +437,11 @@ func _add_street_furniture(generated_root: Node3D) -> void:
 		lamp_light.name = "StreetlightGlow_%02d" % index
 		lamp_light.position = position + Vector3(0.0, 6.2, 0.0)
 		lamp_light.light_color = Color(1.0, 0.72, 0.43)
-		# Steady, uneven pools of light; no strobing or map-wide ambient boost.
 		lamp_light.light_energy = streetlight_energy * (0.72 if index % 5 == 3 else 1.0)
 		lamp_light.omni_range = 18.0
 		lamp_light.shadow_enabled = false
 		generated_root.add_child(lamp_light)
+		preload("res://scenes/environment/streetlight_fault.gd").attach(lamp_light)
 
 	for index in UTILITY_POLES.size():
 		_spawn_world_scene(

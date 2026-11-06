@@ -54,22 +54,30 @@ func run() -> void:
 	wrapper.set_physics_process(false)
 	wrapper.global_position = player.global_position + Vector3(0, 0, -1.15)
 	wrapper.set("strike_time", 0.7)
-	check(is_equal_approx(weapon.stun_chance, 0.2) and weapon.swing_cooldown >= 1.4, "pipe stuns about one hit in five and recovers slowly")
-	weapon.stun_chance = 1.0
+	check(weapon.swing_cooldown >= 1.4, "pipe retains its swing recovery")
 	await physics_frame
 	await process_frame
 	check(weapon.try_swing(), "equipped pipe can swing")
 	check(not weapon.try_swing(), "cooldown prevents repeated swings")
-	await create_timer(0.25).timeout
-	check(float(wrapper.get("melee_stagger_time")) > 0.0 and is_zero_approx(float(wrapper.get("strike_time"))), "pipe hits a real enemy and interrupts its attack")
+	check(not weapon.get_node("SwingAudio").playing, "the swing sound waits for the downswing instead of starting on the click")
+	await create_timer(0.2).timeout
+	check(is_zero_approx(float(wrapper.get("melee_stagger_time"))), "the hit waits for the pipe to come down")
+	await create_timer(0.3).timeout
+	check(float(wrapper.get("melee_stagger_time")) >= 1.5 and float(wrapper.get("melee_stagger_time")) <= 2.5 and is_zero_approx(float(wrapper.get("strike_time"))), "pipe always interrupts the enemy for 1.5 to 2.5 seconds")
 	check(wrapper.get("_melee_push").z < 0.0, "pipe pushes the enemy away from the player")
 	var audio: AudioStreamPlayer = weapon.get_node("SwingAudio")
 	check(weapon.get_script().HIT_SOUNDS.has(audio.stream) and audio.playing, "a hit on the enemy swaps the whoosh for a hit sound")
-	var hits := int(wrapper.get("hits_taken"))
-	var stagger := float(wrapper.get("melee_stagger_time"))
-	wrapper.set("strike_time", 0.7)
-	wrapper.take_melee_hit(player.global_position, 0.0, 0.0)
-	check(int(wrapper.get("hits_taken")) == hits + 1 and is_equal_approx(float(wrapper.get("strike_time")), 0.7) and is_equal_approx(float(wrapper.get("melee_stagger_time")), stagger), "a hit that does not stun still counts but does not interrupt the attack")
+	var durations := {}
+	wrapper.set("hits_to_kill", 0)
+	for hit in 24:
+		wrapper.set("melee_stagger_time", 0.0)
+		wrapper.set("melee_stun_immunity_time", 0.0)
+		wrapper.set("strike_time", 0.7)
+		weapon._strike()
+		var duration := float(wrapper.get("melee_stagger_time"))
+		check(duration >= 1.5 and duration <= 2.5 and is_zero_approx(float(wrapper.get("strike_time"))), "every repeated hit stuns within the requested duration range")
+		durations[duration] = true
+	check(durations.size() > 1, "stun duration varies between hits")
 	wrapper.set("strike_time", 0.0)
 	var mouse := InputEventMouseButton.new()
 	mouse.button_index = MOUSE_BUTTON_LEFT
@@ -102,7 +110,7 @@ func run() -> void:
 	await physics_frame
 	await process_frame
 	check(weapon.try_swing(), "a new swing is available after cooldown")
-	await create_timer(0.25).timeout
+	await create_timer(0.5).timeout
 	check(is_zero_approx(float(wrapper.get("melee_stagger_time"))), "pipe cannot hit an enemy through a wall")
 	check(weapon.get_script().SWING_SOUNDS.has(weapon.get_node("SwingAudio").stream), "hitting a wall keeps the plain whoosh")
 	var slot := 0
