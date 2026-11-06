@@ -19,6 +19,25 @@ func frames(count: int = 4) -> void:
 		await process_frame
 
 
+func wait_for_navigation(region: NavigationRegion3D) -> void:
+	var deadline := Time.get_ticks_msec() + 10000
+	while region.navigation_mesh == null and Time.get_ticks_msec() < deadline:
+		await physics_frame
+	await frames(2)
+
+
+func reaches_player(wrapper: CharacterBody3D, player: FirstPersonPlayer) -> bool:
+	var health := player.get_node("CombatHealth")
+	var initial_health: float = health.health
+	var deadline := Time.get_ticks_msec() + 14000
+	while health.health >= initial_health and Time.get_ticks_msec() < deadline:
+		await physics_frame
+	if health.health >= initial_health:
+		print("Hunt stalled at ", wrapper.global_position, " targeting ", player.global_position,
+			" with route ", wrapper.navigation_route.points)
+	return health.health < initial_health
+
+
 func _run() -> void:
 	var scene: PackedScene = load("res://scenes/chapters/main/residence_area.tscn")
 	var town := scene.instantiate()
@@ -37,10 +56,11 @@ func _run() -> void:
 	player.set_physics_process(false)
 	var spawn := town.get_node("WrapperTestSpawn") as Marker3D
 	var wrapper: CharacterBody3D = spawn.get_node("Wrapper")
+	var second_spawn := town.get_node("WrapperTestSpawn2") as Marker3D
+	var second_wrapper: CharacterBody3D = second_spawn.get_node("Wrapper")
 	var navigation: NavigationRegion3D = town.get_node("ResidenceEnemyNavigation")
-	await frames(8)
-	check(town.find_children("*", "Marker3D", true, false).filter(func(node): return node.scene_file_path.ends_with("wrapper_spawn_point.tscn")).size() == 2,
-		"town has its authored spawn point plus the added one")
+	await wait_for_navigation(navigation)
+	check(navigation.spawn_point_agents().size() == 3, "town discovers both authored spawn points and the added one")
 	check(wrapper.enabled and wrapper.roaming and wrapper.roam_state == wrapper.RoamState.WANDERING,
 		"Wrapper roams with no activation-distance cutoff while the player is far away")
 	check(navigation.navigation_mesh != null and navigation.navigation_mesh.get_polygon_count() > 0,
@@ -51,6 +71,10 @@ func _run() -> void:
 	check(extra_spawn.get_node("Wrapper/NavigationAgent3D").get_navigation_map() == navigation.get_navigation_map(),
 		"an added spawn point uses the town map without being named in code")
 	extra_spawn.free()
+	var nav_map := navigation.get_navigation_map()
+	for marker in [spawn, second_spawn]:
+		var closest := NavigationServer3D.map_get_closest_point(nav_map, marker.global_position)
+		check(closest.distance_to(marker.global_position) < 0.7, "%s spawns on the baked navigation" % marker.name)
 	check(wrapper.spawn.origin.is_equal_approx(spawn.global_position) and wrapper.home.is_equal_approx(spawn.global_position),
 		"enemy post and home match the editable marker")
 
@@ -79,12 +103,7 @@ func _run() -> void:
 	player.set_physics_process(false)
 	player.look_at(player.global_position + Vector3.RIGHT)
 	player.head.rotation = Vector3.ZERO
-	var health := player.get_node("CombatHealth")
-	var initial_health: float = health.health
-	var deadline := Time.get_ticks_msec() + 14000
-	while health.health >= initial_health and Time.get_ticks_msec() < deadline:
-		await physics_frame
-	check(health.health < initial_health, "Wrapper reaches and damages the player through existing combat")
+	check(await reaches_player(wrapper, player), "first Wrapper crosses the road and strikes the player")
 	player.global_position = spawn.global_position + Vector3(40, 0.1, 0)
 	await frames()
 	check(wrapper.enabled and wrapper.roam_state == wrapper.RoamState.HUNTING, "running out of range does not cut a hunt off at once")
@@ -93,6 +112,13 @@ func _run() -> void:
 	for i in wrapper.hits_to_kill:
 		wrapper.take_melee_hit(player.global_position, 0.1, 1.0)
 	check(wrapper.dead, "test Wrapper can be killed with the pipe")
+	second_wrapper.reset_enemy()
+	player.global_position = second_spawn.global_position + Vector3(-4, 0.1, 6)
+	player.velocity = Vector3(3.2, 0, 0)
+	await frames(2)
+	player.velocity = Vector3.ZERO
+	check(second_wrapper.roam_state == second_wrapper.RoamState.HUNTING, "second Wrapper hears the player")
+	check(await reaches_player(second_wrapper, player), "second Wrapper reaches the player past the parked cars and strikes")
 	var save := root.get_node("SaveGame")
 	var state: Dictionary = save._capture_section(town)
 	check(state.dead_story_mobs.has("WrapperTestSpawn/Wrapper"), "save captures the persistent enemy path")
@@ -101,18 +127,24 @@ func _run() -> void:
 	var corpse: Node = restored.get_node("WrapperTestSpawn/Wrapper")
 	check(not corpse._pending_corpse.is_empty(), "load queues the saved corpse before the town enters the tree")
 	restored.set_meta("streamed_section", true)
-	for shared_name in root.get_node("WorldStreaming").SHARED_NAMES:
+	var streaming := root.get_node("WorldStreaming")
+	for shared_name in streaming.SHARED_NAMES:
 		var duplicate := restored.get_node_or_null(NodePath(shared_name))
 		if duplicate != null:
+			streaming.shared_nodes[shared_name] = town.get_node(NodePath(shared_name))
 			duplicate.free()
 	restored.get_node("Foliage").free()
 	restored.get_node("ForestStreamConnection").free()
 	root.add_child(restored)
-	await frames(8)
-	check(corpse.dead and not corpse.enabled, "streamed town restores its corpse without reactivating it")
 	var restored_nav: NavigationRegion3D = restored.get_node("ResidenceEnemyNavigation")
+	await wait_for_navigation(restored_nav)
+	check(corpse.dead and not corpse.enabled, "streamed town restores its corpse without reactivating it")
 	check(restored_nav.navigation_mesh != null and restored_nav.navigation_mesh.get_polygon_count() > 0,
 		"town navigation also bakes after shared terrain and player are stripped for streaming")
+	var streamed_spawn := restored.get_node("WrapperTestSpawn2") as Marker3D
+	var closest := NavigationServer3D.map_get_closest_point(restored_nav.get_navigation_map(), streamed_spawn.global_position)
+	check(closest.distance_to(streamed_spawn.global_position) < 0.7, "streamed navigation covers the connecting road spawn")
+	streaming.shared_nodes.clear()
 	restored.queue_free()
 	root.get_node("WorldStreaming")._save_state(town)
 	var streaming_state: Dictionary = root.get_node("WorldStreaming")._states[town.scene_file_path]

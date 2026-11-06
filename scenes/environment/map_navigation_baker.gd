@@ -38,8 +38,12 @@ func _ready() -> void:
 	_bake()
 
 
+func _geometry_root(path: NodePath) -> Node:
+	return get_node_or_null(path)
+
+
 func _bake() -> void:
-	var map := get_world_3d().navigation_map
+	var map := get_navigation_map()
 	NavigationServer3D.map_set_cell_size(map, cell_size)
 	NavigationServer3D.map_set_cell_height(map, cell_height)
 	var nav_mesh := NavigationMesh.new()
@@ -58,19 +62,21 @@ func _bake() -> void:
 	nav_mesh.geometry_source_group_name = &"town_navigation_source"
 
 	var source_geometry := NavigationMeshSourceGeometryData3D.new()
-	var found_any := false
+	var source_roots: Array[Node] = []
 	for path in geometry_root_paths:
-		var root := get_node_or_null(path)
+		var root := _geometry_root(path)
 		if root == null:
 			push_warning("Navigation baker could not find geometry root at %s." % path)
 			continue
-		found_any = true
 		root.add_to_group(&"town_navigation_source")
-	if not found_any:
+		source_roots.append(root)
+	if source_roots.is_empty():
 		return
 	# Parse once in the map's shared coordinate frame. Parsing each root
 	# separately strips that root's transform (notably ground height/offset).
 	NavigationServer3D.parse_source_geometry_data(nav_mesh, source_geometry, get_parent())
+	for source_root in source_roots:
+		source_root.remove_from_group(&"town_navigation_source")
 	var signature := str([hash(source_geometry.get_vertices()), hash(source_geometry.get_indices()), agent_radius, agent_height, agent_max_climb, agent_max_slope_degrees, cell_size, cell_height, nav_mesh.edge_max_error])
 	if baking_bounds.has_volume():
 		signature += str(baking_bounds)

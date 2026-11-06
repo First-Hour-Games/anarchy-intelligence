@@ -30,13 +30,13 @@ func wait_for(condition: Callable, timeout: float) -> bool:
 		await physics_frame
 	return condition.call()
 
-## How squarely the Wrapper faces the player: 1 head-on, 0 side-on, -1 away.
+## The imported mesh faces +Z. Compare its visible front against a world-space direction.
+func facing_direction(direction: Vector3) -> float:
+	var forward: Vector3 = wrapper.get_node("Visual").global_basis.z
+	return Vector2(forward.x, forward.z).normalized().dot(Vector2(direction.x, direction.z).normalized())
+
 func facing_player() -> float:
-	var forward: Vector3 = -wrapper.global_basis.z
-	var to_player: Vector3 = player.global_position - wrapper.global_position
-	forward.y = 0.0
-	to_player.y = 0.0
-	return forward.normalized().dot(to_player.normalized())
+	return facing_direction(player.global_position - wrapper.global_position)
 
 func place_player(offset: Vector3, moving: Vector3 = Vector3.ZERO, sprint: bool = false, crouch: bool = false) -> void:
 	player.global_position = wrapper.global_position + offset
@@ -80,7 +80,10 @@ func run() -> void:
 	wrapper.set("wander_pause_min", 0.2)
 	wrapper.set("wander_pause_max", 0.4)
 	wrapper.set("escape_time", 1.0)
-	world.add_child(wrapper)
+	var spawn_marker := Marker3D.new()
+	spawn_marker.rotation.y = -PI / 2.0
+	world.add_child(spawn_marker)
+	spawn_marker.add_child(wrapper)
 	wrapper.global_position = Vector3.ZERO
 	wrapper.set("spawn", wrapper.global_transform)
 	wrapper.set("home", Vector3.ZERO)
@@ -138,6 +141,7 @@ func run() -> void:
 	var gap := flat(wrapper.global_position, player.global_position)
 	await seconds(2.0)
 	check(flat(wrapper.global_position, player.global_position) < gap - 1.0, "It closes in while watched")
+	check(facing_direction(wrapper.get_real_velocity()) > 0.95, "Its visible front points along its movement under a rotated spawn marker")
 	var health := player.get_node("CombatHealth")
 	var full: float = health.health
 	check(await wait_for(func() -> bool: return health.health < full, 10.0), "It reaches and strikes the player")

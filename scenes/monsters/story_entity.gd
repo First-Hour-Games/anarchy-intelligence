@@ -352,7 +352,8 @@ func _move(motion: Vector3, delta: float, facing := Vector3.ZERO, turn_rate := 4
 	velocity.y = velocity.y - 9.8 * delta if not is_on_floor() else 0.0
 	var look := facing if facing.length() > 0.01 else motion
 	if look.length() > 0.1 or facing.length() > 0.01:
-		rotation.y = lerp_angle(rotation.y, atan2(-look.x, -look.z), minf(1.0, delta * turn_rate))
+		# Route directions and player offsets are in world space, even under a rotated spawn marker.
+		global_rotation.y = lerp_angle(global_rotation.y, atan2(-look.x, -look.z), minf(1.0, delta * turn_rate))
 	StairStepping.apply(self, delta, max_step_height)
 	move_and_slide()
 

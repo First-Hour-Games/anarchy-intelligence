@@ -533,9 +533,11 @@ transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 128.4828
 
 [node name="ResidenceEnemyNavigation" type="NavigationRegion3D" parent="." unique_id=1937412470]
 script = ExtResource("residence_enemy_navigation")
-geometry_root_paths = Array[NodePath]([NodePath("../ResidentialStreet"), NodePath("../Lot1_Ranch_1470sf_LOT2"), NodePath("../Lot1_Ranch_1470sf_LOT3"), NodePath("../Lot2_Cottage_1250sf_LOT2"), NodePath("../Lot8_CraftsmanTwoStory_2489sf_2415_LOT2"), NodePath("../Lot8_CraftsmanTwoStory_2489sf_2415_LOT3"), NodePath("../Lot11_CraftsmanRanch_1733sf_2427_LOT2"), NodePath("../Lot11_CraftsmanRanch_1733sf_2427_LOT3")])
+geometry_root_paths = Array[NodePath]([NodePath("../GroundPlane"), NodePath("../Streets2"), NodePath("../ResidentialStreet"), NodePath("../Lot1_Ranch_1470sf_LOT2"), NodePath("../Lot1_Ranch_1470sf_LOT3"), NodePath("../Lot2_Cottage_1250sf_LOT2"), NodePath("../Lot8_CraftsmanTwoStory_2489sf_2415_LOT2"), NodePath("../Lot8_CraftsmanTwoStory_2489sf_2415_LOT3"), NodePath("../Lot11_CraftsmanRanch_1733sf_2427_LOT2"), NodePath("../Lot11_CraftsmanRanch_1733sf_2427_LOT3"), NodePath("../Van"), NodePath("../Sketchfab_Scene"), NodePath("../Sketchfab_Scene2"), NodePath("../Sketchfab_Scene3"), NodePath("../Sketchfab_Scene4"), NodePath("../Sketchfab_Scene5"), NodePath("../Sketchfab_Scene6"), NodePath("../Sketchfab_Scene7"), NodePath("../Sketchfab_Scene8"), NodePath("../freelanderSUV"), NodePath("../StreetlightArray"), NodePath("../StreetlightArray2")])
+agent_radius = 0.6
+agent_height = 2.375
 cache_path = "user://residence_wrapper_test_navigation.res"
-baking_bounds = AABB(32, -1, 130, 94, 8, 12)
+baking_bounds = AABB(30, -1, 58, 125, 8, 94)
 
 [node name="AspectRatioBars" type="CanvasLayer" parent="." unique_id=207223521]
 layer = 19
