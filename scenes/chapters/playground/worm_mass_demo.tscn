@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/chapters/playground/worm_mass_demo.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/worm_mass/worm_mass.tscn" id="2_worm_mass"]
+
+[node name="WormMassDemo" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WormMass" parent="." instance=ExtResource("2_worm_mass")]

@@ -71,6 +71,7 @@ var _pipe_grip: Vector3
 func _ready() -> void:
 	_camera = get_parent() as Camera3D
 	_player = get_node("../../..") as FirstPersonPlayer
+	add_to_group(&"held_weapons")
 	_setup_hands()
 	_bind_inventory.call_deferred()
 	for geometry in model_pivot.find_children("*", "GeometryInstance3D", true, false):
@@ -102,7 +103,12 @@ func _inventory_changed() -> void:
 func set_equipped(value: bool) -> void:
 	_had_pipe = is_instance_valid(_player) and _player.inventory.has_item(&"metal_pipe")
 	equipped = value and is_instance_valid(_player) and _player.inventory.has_item(&"metal_pipe")
-	if not equipped:
+	if equipped and is_inside_tree():
+		# One weapon in hand at a time: taking up the pipe puts any other away.
+		for weapon in get_tree().get_nodes_in_group(&"held_weapons"):
+			if weapon != self and bool(weapon.get("equipped")):
+				weapon.set_equipped(false)
+	else:
 		_swing_time = -1.0
 
 func can_swing() -> bool:

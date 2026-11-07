@@ -1,6 +1,8 @@
 extends Node3D
 
 const SCHOOL_SCENE := "res://scenes/flashbacks/school.tscn"
+## Where Thomas's arrival lines lead: the school; the alt route's copy of this section goes on elsewhere.
+var next_scene_path: String = SCHOOL_SCENE
 var _transitioning_to_school := false
 
 func _ready() -> void:
@@ -19,6 +21,7 @@ func _transition_to_school() -> void:
 		return
 	_transitioning_to_school = true
 	var player := get_tree().get_first_node_in_group("player") as FirstPersonPlayer
+	_leaving(player)
 	var previous_process_mode := player.process_mode
 	player.freeze()
 	player.process_mode = Node.PROCESS_MODE_DISABLED
@@ -31,11 +34,16 @@ func _transition_to_school() -> void:
 	blackout.add_child(screen)
 	add_child(blackout)
 	var loader := get_node("/root/SceneLoader")
-	loader.prefetch(SCHOOL_SCENE)
+	loader.prefetch(next_scene_path)
 	await get_tree().create_timer(2.0).timeout
-	var error: Error = await loader.change_to(SCHOOL_SCENE)
+	var error: Error = await loader.change_to(next_scene_path)
 	if error != OK:
 		blackout.queue_free()
 		player.process_mode = previous_process_mode
 		player.unfreeze()
 		_transitioning_to_school = false
+
+
+## Just before the scene changes, with the player frozen in place.
+func _leaving(_player: FirstPersonPlayer) -> void:
+	pass

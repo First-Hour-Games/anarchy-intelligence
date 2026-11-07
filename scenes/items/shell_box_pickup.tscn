@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/items/shell_box_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" path="res://models/props/weapons/shotgun/shell_pair.glb" id="2_shells"]
+[ext_resource type="AudioStream" path="res://sounds/weapons/shotgun/shotgun_shells_in.wav" id="3_sound"]
+
+[sub_resource type="BoxMesh" id="Box"]
+size = Vector3(0.17, 0.08, 0.11)
+
+[sub_resource type="StandardMaterial3D" id="Cardboard"]
+albedo_color = Color(0.58, 0.13, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="Label"]
+size = Vector3(0.12, 0.004, 0.07)
+
+[sub_resource type="StandardMaterial3D" id="LabelPaper"]
+albedo_color = Color(0.86, 0.79, 0.6, 1)
+roughness = 0.95
+
+[node name="ShellBoxPickup" type="Node3D"]
+script = ExtResource("1_pickup")
+interaction_distance = 2.6
+visual_target_path = NodePath("Model")
+interaction_message = "Picked up a box of shotgun shells."
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Box" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.97, 0, -0.24, 0, 1, 0, 0.24, 0, 0.97, 0, 0.04, 0)
+mesh = SubResource("Box")
+surface_material_override/0 = SubResource("Cardboard")
+
+[node name="Label" type="MeshInstance3D" parent="Model/Box"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.041, 0)
+mesh = SubResource("Label")
+surface_material_override/0 = SubResource("LabelPaper")
+
+[node name="Shells" parent="Model" instance=ExtResource("2_shells")]
+transform = Transform3D(0.6, 0, 0.8, 0, 1, 0, -0.8, 0, 0.6, 0.15, 0.011, 0.05)
+
+[node name="PickupAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_sound")
+unit_size = 3.0

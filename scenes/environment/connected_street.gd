@@ -104,6 +104,7 @@ func _arc_surface(label: String, inner: float, outer: float, start: float, finis
 	mesh.name = label
 	mesh.mesh = surface.commit()
 	mesh.material_override = material
+	_lay_flat(mesh)
 	generated.add_child(mesh)
 	mesh.create_trimesh_collision()
 
@@ -149,7 +150,7 @@ func _dress_property(house: Node3D, index: int, x: float, z: float, direction: f
 	if index % 3 == 1:
 		_box("Bin", Vector3(x + 6.4, 0.5, z + direction * 5.5), Vector3(0.65, 1, 0.65), box_color, true)
 	if index % 4 == 1:
-		_box("GardenTerrace", Vector3(x - 10, 0.08, z + direction * 7), Vector3(4.0, 0.12, 4.0), worn_concrete, false)
+		_lay_flat(_box("GardenTerrace", Vector3(x - 10, 0.08, z + direction * 7), Vector3(4.0, 0.12, 4.0), worn_concrete, false))
 		_asset(FURNITURE + "tableRound.glb", Vector3(x - 10, 0.15, z + direction * 7), 1.5)
 		_asset(FURNITURE + "chair.glb", Vector3(x - 11.3, 0.15, z + direction * 7), 1.5)
 		_asset(FURNITURE + "pottedPlant.glb", Vector3(x - 8.6, 0.15, z + direction * 8.2), 1.5)
@@ -199,7 +200,7 @@ func _build_row(north: bool) -> void:
 		_strip("Sidewalk", Vector3(parking_x + driveway_width * 0.5, 0, walk_z), Vector3(right, 0, walk_z), sidewalk_width, concrete)
 		var opening_left := parking_x - driveway_width * 0.5 - 0.25
 		var opening_right := parking_x + driveway_width * 0.5 + 0.25
-		_box("Curb", Vector3((curb_start + opening_left) * 0.5, 0.10, road_edge), Vector3(opening_left - curb_start, 0.2, 0.2), concrete, true)
+		_lay_flat(_box("Curb", Vector3((curb_start + opening_left) * 0.5, 0.10, road_edge), Vector3(opening_left - curb_start, 0.2, 0.2), concrete, true))
 		curb_start = opening_right
 		_fence(Vector3(x - 15.0, 0, rear_z), Vector3(x + 15.0, 0, rear_z))
 		if i > 0:
@@ -212,7 +213,7 @@ func _build_row(north: bool) -> void:
 			generated.add_child(car)
 			car.position = Vector3(parking_x, 0.12, house_z + direction * 2.0)
 			car.rotation.y = 0.0 if north else PI
-	_box("Curb", Vector3((curb_start + 96.0) * 0.5, 0.10, road_edge), Vector3(96.0 - curb_start, 0.2, 0.2), concrete, true)
+	_lay_flat(_box("Curb", Vector3((curb_start + 96.0) * 0.5, 0.10, road_edge), Vector3(96.0 - curb_start, 0.2, 0.2), concrete, true))
 	_strip("JunctionWalk", Vector3(87, 0, walk_z), Vector3(95, 0, walk_z), sidewalk_width, concrete)
 
 
@@ -220,6 +221,13 @@ func _strip(label: String, start: Vector3, end: Vector3, width: float, material:
 	var delta := end - start
 	var item := _box(label, (start + end) * 0.5 + Vector3(0, 0.075, 0), Vector3(width, 0.12, delta.length()), material, false)
 	item.rotation.y = atan2(delta.x, delta.z)
+	_lay_flat(item)
+
+
+## Paving on the ground casts no shadows: there is nothing under it to shade, and every shadowed lamp would
+## otherwise draw it into its shadow map.
+func _lay_flat(item: GeometryInstance3D) -> void:
+	item.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _box(label: String, center: Vector3, dimensions: Vector3, material: Material, solid: bool) -> MeshInstance3D:

@@ -2,6 +2,10 @@
 
 blender --background --python tools/blender/prepare_downtown.py
 
+With DOWNTOWN_PLAN set to another layout in tools/blender/downtown (see build_downtown.py), it exports
+that one instead, beside its own name: plan_alt goes to models/buildings/downtown_alt/downtown_alt.gltf
+and downtown_alt_markers.json. Both share the generated textures in models/buildings/downtown/textures.
+
 Opens models/source/buildings/Downtown.blend (never saved here), rebuilds the downtown from
 tools/blender/build_downtown.py and exports every object in world coordinates, each with its
 origin at the middle of its base so Godot measures draw distances from the building. The .gltf
@@ -16,6 +20,7 @@ exported while tools/blender/downtown/validate.py finds a problem with the plan.
 
 import hashlib
 import json
+import os
 import runpy
 from pathlib import Path
 
@@ -23,10 +28,12 @@ import bpy
 from mathutils import Matrix, Vector
 
 ROOT = Path(__file__).resolve().parents[2]
-OUTPUT_DIR = ROOT / "models" / "buildings" / "downtown"
-OUTPUT = OUTPUT_DIR / "downtown.gltf"
-MARKERS = OUTPUT_DIR / "downtown_markers.json"
-TEXTURE_DIRS = [ROOT / "assets" / "local_licensed", OUTPUT_DIR / "textures"]
+VARIANT = os.environ.get("DOWNTOWN_PLAN", "plan")
+NAME = "downtown" if VARIANT == "plan" else "downtown_" + VARIANT.removeprefix("plan_")
+OUTPUT_DIR = ROOT / "models" / "buildings" / NAME
+OUTPUT = OUTPUT_DIR / f"{NAME}.gltf"
+MARKERS = OUTPUT_DIR / f"{NAME}_markers.json"
+TEXTURE_DIRS = [ROOT / "assets" / "local_licensed", ROOT / "models" / "buildings" / "downtown" / "textures"]
 
 builder = runpy.run_path(str(ROOT / "tools" / "blender" / "build_downtown.py"), run_name="export")
 checker = builder["load_module"]("validate")
@@ -70,9 +77,9 @@ for obj in list(bpy.data.objects):
         bpy.data.objects.remove(obj, do_unlink=True)
 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-copies = OUTPUT_DIR / "downtown_images"
+copies = OUTPUT_DIR / f"{NAME}_images"
 bpy.ops.export_scene.gltf(filepath=str(OUTPUT), export_format="GLTF_SEPARATE", export_apply=True, use_visible=True,
-                          export_image_format="AUTO", export_texture_dir="downtown_images")
+                          export_image_format="AUTO", export_texture_dir=f"{NAME}_images")
 
 # Point the images at the project's texture files rather than the exporter's copies, and stamp the
 # markers' hash into the file so a change to the markers alone still makes Godot reimport it.

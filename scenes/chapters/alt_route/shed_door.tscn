@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/interaction/key_door.gd" id="1_door"]
+[ext_resource type="ArrayMesh" path="res://models/buildings/gasStation/industrial_warehouse_shed_door.res" id="2_leaf"]
+[ext_resource type="PackedScene" path="res://scenes/interaction/interactable_block.tscn" id="3_block"]
+[ext_resource type="AudioStream" uid="uid://3wq0l7h20422" path="res://sounds/chapters/intro/lockedDoor.mp3" id="4_locked"]
+[ext_resource type="AudioStream" uid="uid://cwa52v4rlg66w" path="res://sounds/chapters/tutorial/doorCreak.mp3" id="5_creak"]
+
+[sub_resource type="BoxShape3D" id="LeafShape"]
+size = Vector3(1.15, 2.32, 0.05)
+
+[node name="ShedDoor" type="Node3D"]
+script = ExtResource("1_door")
+required_key = &"shed_key"
+locked_dialogue = "The door to the shed is locked."
+
+[node name="Hinge" type="AnimatableBody3D" parent="."]
+sync_to_physics = false
+
+[node name="Leaf" type="MeshInstance3D" parent="Hinge"]
+mesh = ExtResource("2_leaf")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.575, 1.23, 0)
+shape = SubResource("LeafShape")
+
+[node name="Interactable" parent="Hinge" instance=ExtResource("3_block")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 1.1, 0)
+size = Vector3(0.3, 0.5, 0.3)
+interaction_distance = 2.2
+interaction_message = "Opened or closed the shed door."
+next_scene_path = ""
+
+[node name="LockedAudio" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 1.1, 0)
+stream = ExtResource("4_locked")
+max_distance = 20.0
+
+[node name="SwingAudio" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 1.2, 0)
+stream = ExtResource("5_creak")
+max_distance = 20.0

@@ -4,7 +4,9 @@ Headless: blender --background --python tools/blender/build_downtown.py
 Live (Blender MCP): runpy.run_path(<this file>, run_name="live")["build"]()
 
 The layout lives in tools/blender/downtown/plan.py, in the map's world coordinates; generated
-textures come from tools/blender/downtown/textures.py. Everything is rebuilt from scratch in the
+textures come from tools/blender/downtown/textures.py. The environment variable DOWNTOWN_PLAN names
+another layout in that folder to build instead (plan_alt: the alt route's street, see
+prepare_downtown.py for where it is exported). Everything is rebuilt from scratch in the
 "Downtown" collection under the "DowntownRoot" empty, which turns +90 degrees about X so children
 are authored in game coordinates (x east, y up, z south). Aids that are never exported (a figure
 for scale) go in "DowntownAids".
@@ -21,6 +23,7 @@ SignalAmber and SignalRed blink in Godot. MARKERS gathers what Godot adds itself
 occluders, sign lettering and lights (see prepare_downtown.py).
 """
 
+import os
 from math import cos, pi, radians, sin, sqrt
 from pathlib import Path
 
@@ -87,8 +90,11 @@ _state = {}             # plan, tex (the textures module) and the markers of the
 
 
 def load_module(name: str):
-    """A module from tools/blender/downtown, loaded fresh (and without a __pycache__)."""
+    """A module from tools/blender/downtown, loaded fresh (and without a __pycache__). "plan" is the
+    layout DOWNTOWN_PLAN names, plan.py by default."""
     import types
+    if name == "plan":
+        name = os.environ.get("DOWNTOWN_PLAN", "plan")
     path = PLAN_DIR / f"{name}.py"
     module = types.ModuleType("downtown_" + name)
     module.__file__ = str(path)

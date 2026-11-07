@@ -5,9 +5,13 @@ const SCENES: Array[Dictionary] = [
 	{"name": "Intro", "path": "res://scenes/chapters/intro/intro.tscn"},
 	{"name": "Tutorial", "path": "res://scenes/chapters/tutorial/tutorial.tscn"},
 	{"name": "Starting forest", "path": "res://scenes/chapters/main/starting_forest.tscn"},
+	{"name": "Starting forest (alt route)", "path": "res://scenes/chapters/alt_route/starting_forest_alt.tscn"},
+	{"name": "Town map (alt route)", "path": "res://scenes/chapters/alt_route/map_alt.tscn"},
 ]
 const FOREST_PATH := "res://scenes/chapters/main/starting_forest.tscn"
+const ALT_FOREST_PATH := "res://scenes/chapters/alt_route/starting_forest_alt.tscn"
 const MAP_PATH := "res://scenes/chapters/main/map.tscn"
+const ALT_MAP_PATH := "res://scenes/chapters/alt_route/map_alt.tscn"
 
 var opened := false
 var _previous_mouse: Input.MouseMode
@@ -96,12 +100,17 @@ func _build_menu() -> void:
 	_add_button(column, "Before the log: test the climb", _jump_to_checkpoint.bind("before_log"))
 	_add_button(column, "After climbing the log: continue on foot", _jump_to_checkpoint.bind("after_log"))
 	_add_button(column, "In front of the gas station", _jump_to_checkpoint.bind("gas_station"))
+	_add_button(column, "Alt route: in front of the gas station", _jump_to_checkpoint.bind("gas_station", ALT_FOREST_PATH))
 	var map_checkpoints := Label.new()
 	map_checkpoints.text = "MAP CHECKPOINTS (keeps saved progress)"
 	map_checkpoints.add_theme_font_size_override("font_size", 14)
 	column.add_child(map_checkpoints)
 	_add_button(column, "Carrie's house: the Wrapper in the armchair (replay, doesn't save)", _jump_to_map_checkpoint.bind("carrie_house"))
 	_add_button(column, "Hospital entrance: Clawman, hiding spots, bottles", _jump_to_map_checkpoint.bind("hospital"))
+	_add_button(column, "Alt route: the downtown street, Ridgebacks on the roofs (shotgun, doesn't save)",
+		_jump_to_map_checkpoint.bind("street", ALT_MAP_PATH))
+	_add_button(column, "Alt route: the new hospital's roof, the helicopter waiting (doesn't save)",
+		_jump_to_map_checkpoint.bind("hospital_roof", ALT_MAP_PATH))
 	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
@@ -207,25 +216,25 @@ func _skip_forest_intro() -> void:
 		set_open(false)
 
 
-func _jump_to_checkpoint(checkpoint: String) -> void:
+func _jump_to_checkpoint(checkpoint: String, forest_path: String = FOREST_PATH) -> void:
 	if not _loading_path.is_empty():
 		return
 	_pending_checkpoint = checkpoint
-	jump_to_scene(FOREST_PATH)
+	jump_to_scene(forest_path)
 	if _loading_path.is_empty():
 		_pending_checkpoint = ""
 
 
-func _jump_to_map_checkpoint(checkpoint: String) -> void:
+func _jump_to_map_checkpoint(checkpoint: String, map_path: String = MAP_PATH) -> void:
 	if not _loading_path.is_empty():
 		return
 	var scene := get_tree().current_scene
-	if scene != null and scene.scene_file_path == MAP_PATH:
+	if scene != null and scene.scene_file_path == map_path:
 		set_open(false)
 		apply_map_checkpoint(scene, checkpoint)
 		return
 	_pending_checkpoint = checkpoint
-	jump_to_scene(MAP_PATH)
+	jump_to_scene(map_path)
 	if _loading_path.is_empty():
 		_pending_checkpoint = ""
 
@@ -234,6 +243,8 @@ func _jump_to_map_checkpoint(checkpoint: String) -> void:
 ## the story to the hospital stage as normal play would.
 ## Carrie's house: places the player on the porch, facing the open front door, with the story set
 ## back to finding Carrie's notebook so the house plays again. Saving stops for that session.
+## Downtown street (the alt route's map): at the corner with the notebook read and the shotgun, facing down
+## the street at the Ridgebacks on the roofs. Saving stops for that session.
 func apply_map_checkpoint(scene: Node, checkpoint: String) -> void:
 	var player := scene.get_node_or_null("Player") as FirstPersonPlayer
 	if player == null:
@@ -258,6 +269,21 @@ func apply_map_checkpoint(scene: Node, checkpoint: String) -> void:
 			story.call("debug_replay_house")
 			player.global_position = house.call("point", &"porch") + Vector3.UP * 0.1
 			target = house.call("point", &"front_door")
+		"street":
+			var story := scene.get_node_or_null("OpeningStory")
+			if story == null or not story.has_method("debug_start_street"):
+				return
+			story.call("debug_start_street")
+			player.global_position = Vector3(101.0, 0.2, 225.0)
+			target = Vector3(130.0, 0.2, 225.0)
+		"hospital_roof":
+			var story := scene.get_node_or_null("OpeningStory")
+			var building := scene.get_node_or_null("Buildings/NeighborhoodHospital") as Node3D
+			if story == null or not story.has_method("debug_start_roof") or building == null or not building.has_method("point"):
+				return
+			story.call("debug_start_roof")
+			player.global_position = building.call("point", &"roof_door") + Vector3.UP * 0.1
+			target = building.call("point", &"helipad")
 		_:
 			return
 	player.velocity = Vector3.ZERO
@@ -326,11 +352,11 @@ func _on_scene_changed() -> void:
 		var checkpoint := _pending_checkpoint
 		_pending_checkpoint = ""
 		var scene := get_tree().current_scene
-		if scene != null and scene.scene_file_path == FOREST_PATH:
+		if scene != null and scene.scene_file_path in [FOREST_PATH, ALT_FOREST_PATH]:
 			if checkpoint == "gas_station" and scene.has_method("debug_jump_to_gas_station"):
 				scene.call("debug_jump_to_gas_station")
 			elif scene.has_method("debug_jump_to_log"):
 				scene.call("debug_jump_to_log", checkpoint == "after_log")
-		elif scene != null and scene.scene_file_path == MAP_PATH:
+		elif scene != null and scene.scene_file_path in [MAP_PATH, ALT_MAP_PATH]:
 			# Wait one frame so the story's saved-checkpoint restore has already run.
 			apply_map_checkpoint.call_deferred(scene, checkpoint)

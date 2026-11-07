@@ -3,7 +3,9 @@ extends Node3D
 ## Maps the shared CorruptedFriend watcher AI's gameplay clip names onto The Ridgeback's clips.
 ## The clips authored for it (tools/blender/ridgeback/clips.py) come in two sets, on all fours
 ## and standing; moving between the two plays fours_drop or fours_rise on the way. The creator's
-## original ManThing_ clips stay in the model as a fallback.
+## original ManThing_ clips stay in the model as a fallback. The car ambush (ridgeback_ambusher.gd)
+## adds leaping over cars (leap, airborne, land), hiding behind them, peeking over them, perching on
+## them and shrieking.
 
 const FOURS := {
 	"dormant": "idle",
@@ -16,6 +18,13 @@ const FOURS := {
 	"attack": "fours_pounce",
 	"hit": "fours_hit",
 	"dead": "fours_death",
+	"leap": "fours_leap",
+	"airborne": "fours_air",
+	"land": "fours_land",
+	"hide": "fours_hide",
+	"peek": "fours_peek",
+	"perch": "fours_lurk",
+	"shriek": "fours_shriek",
 }
 const STANDING := {
 	"dormant": "idle",
@@ -28,6 +37,13 @@ const STANDING := {
 	"attack": "attack",
 	"hit": "hit",
 	"dead": "death",
+	"leap": "windup",
+	"airborne": "run",
+	"land": "idle",
+	"hide": "watch",
+	"peek": "watch",
+	"perch": "watch",
+	"shriek": "scream",
 }
 const ORIGINAL := {
 	"dormant": "ManThing_IDLE",
@@ -40,12 +56,20 @@ const ORIGINAL := {
 	"attack": "ManThing_ATTACK",
 	"hit": "ManThing_NOTICE",
 	"dead": "ManThing_IDLE",
+	"leap": "ManThing_NOTICE",
+	"airborne": "ManThing_CHASE",
+	"land": "ManThing_IDLE",
+	"hide": "ManThing_IDLE",
+	"peek": "ManThing_NOTICE",
+	"perch": "ManThing_IDLE",
+	"shriek": "ManThing_NOTICE",
 }
 const LOOPING_MODEL_CLIPS := [&"idle", &"watch", &"walk", &"run", &"fours_lurk", &"fours_prowl", &"fours_gallop",
-		&"ManThing_IDLE", &"ManThing_WALK", &"ManThing_CHASE"]
+		&"fours_air", &"fours_hide", &"ManThing_IDLE", &"ManThing_WALK", &"ManThing_CHASE"]
 ## Clips that end on all fours; the rest end standing, or lying down.
 const ON_ALL_FOURS := [&"fours_scream", &"fours_drop", &"fours_lurk", &"fours_prowl", &"fours_gallop",
-		&"fours_crouch", &"fours_pounce", &"fours_hit"]
+		&"fours_crouch", &"fours_pounce", &"fours_hit", &"fours_leap", &"fours_air", &"fours_land", &"fours_hide",
+		&"fours_peek", &"fours_shriek"]
 const STANCE_CHANGES := [&"fours_drop", &"fours_rise"]
 ## Reactions that play on whichever footing it is on when they happen.
 const FOOTED := ["hit", "dead"]

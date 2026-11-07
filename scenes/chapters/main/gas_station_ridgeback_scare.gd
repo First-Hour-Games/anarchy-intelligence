@@ -123,4 +123,3 @@ func _blackout() -> void:
 	audio.finished.connect(func() -> void:
 		create_tween().tween_property(logo, "modulate:a", 1.0, 0.8)
 	, CONNECT_ONE_SHOT)
-

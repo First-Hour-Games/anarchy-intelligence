@@ -365,6 +365,8 @@ func _configure_overhead_camera() -> void:
 func _set_overhead_rendering(is_active: bool) -> void:
 	if not is_instance_valid(_map_viewport):
 		return
+	# The town's draw distances (fog_draw_distance.gd) would hide it from the overhead camera.
+	get_tree().call_group(&"fog_draw_distance", &"set_overhead_view", is_active)
 	_map_viewport.render_target_update_mode = (
 		SubViewport.UPDATE_ALWAYS if is_active else SubViewport.UPDATE_DISABLED
 	)

@@ -2,7 +2,8 @@
 extends EditorScenePostImport
 
 ## Finishes models/buildings/downtown/downtown.gltf as Godot imports it, from the markers that
-## tools/blender/prepare_downtown.py writes beside it. Everything is saved in the imported scene,
+## tools/blender/prepare_downtown.py writes beside it (<name>_markers.json; the alt route's
+## downtown_alt.gltf has its own). Everything is saved in the imported scene,
 ## so nothing is built when the map loads:
 ## - Collision: one static body (footsteps sound like concrete) with a box per building, step,
 ##   pole, fence and sidewalk;
@@ -10,14 +11,16 @@ extends EditorScenePostImport
 ## - Signs: the lettering as Label3D in the project's condensed face. Neon signs flicker together
 ##   with their lights (neon_lettering.gd); other lights and lettering stay steady;
 ## - the window shader on every *_Glass mesh, and a draw distance on every *_Details mesh;
+## - no shadows from the Paving: the street and sidewalks lie on the ground with nothing under them to shade,
+##   and every shadowed lamp in the street would otherwise draw them into its shadow map;
 ## - SignalBlink, which flashes the traffic signal's lenses (blinking_signal.gd).
 
-const MARKERS := "res://models/buildings/downtown/downtown_markers.json"
 const GLASS := "res://models/buildings/downtown/window_glass.tres"
 const FONT := "res://fonts/HelveticaNeueCondensed.ttf"
 const NEON := "res://scenes/environment/neon_lettering.gd"
 const SIGNAL := "res://scenes/environment/blinking_signal.gd"
 const DETAIL_RANGE := 90.0
+const PAVING := "Paving"
 ## Painted and carved lettering stops drawing this far away; neon and roof signs show as far as
 ## the fog allows.
 const SIGN_RANGE := 70.0
@@ -27,7 +30,8 @@ const CAP_HEIGHT := 0.72
 
 
 func _post_import(scene: Node) -> Object:
-	var markers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(MARKERS))
+	var markers_path := get_source_file().get_basename() + "_markers.json"
+	var markers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(markers_path))
 	var glass := load(GLASS) as Material
 	for mesh_name: String in markers.objects.glass:
 		var mesh := scene.get_node_or_null(mesh_name) as MeshInstance3D
@@ -40,6 +44,9 @@ func _post_import(scene: Node) -> Object:
 			mesh.visibility_range_end = DETAIL_RANGE
 			mesh.visibility_range_end_margin = 10.0
 			mesh.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+	var paving := scene.get_node_or_null(PAVING) as MeshInstance3D
+	if paving != null:
+		paving.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_add_collision(scene, markers.colliders)
 	_add_occluders(scene, markers.occluders)
 	_add_signs(scene, markers.signs, markers.lights)

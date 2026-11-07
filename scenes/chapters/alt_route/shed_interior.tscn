@@ -1,0 +1,121 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/chapters/alt_route/shed_interior.gd" id="0_shed"]
+[ext_resource type="PackedScene" path="res://scenes/chapters/alt_route/shed_door.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://models/props/shed/workbench.glb" id="2_bench"]
+[ext_resource type="PackedScene" path="res://models/props/shed/work_lamp.glb" id="3_lamp"]
+[ext_resource type="PackedScene" path="res://scenes/items/shotgun_pickup.tscn" id="4_shotgun"]
+[ext_resource type="PackedScene" path="res://scenes/zones/ambient_sound_zone.tscn" id="5_zone"]
+[ext_resource type="AudioStream" uid="uid://cqqw6igvsfapf" path="res://sounds/ambience/forest/factoryAmbience.mp3" id="6_hum"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/locker.glb" id="7_locker"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/locker2.glb" id="8_locker2"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/barrel_oil.glb" id="9_barrel"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/jerrycan.glb" id="10_jerrycan"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/tires.glb" id="11_tires"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/crate_wood2.glb" id="12_crate_wood"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/crate.glb" id="13_crate"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/pallet_solid.tscn" id="14_pallet"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/crate_metal.glb" id="15_crate_metal"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/propane_tank_small.glb" id="16_propane"]
+[ext_resource type="PackedScene" path="res://models/psx_industrial_pack/generator_portable.glb" id="17_generator"]
+[ext_resource type="Texture2D" uid="uid://cff32daeek7vw" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Color.jpg" id="18_concrete"]
+[ext_resource type="Texture2D" uid="uid://u5k0wra73hcl" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_NormalGL.jpg" id="19_concrete_normal"]
+[ext_resource type="Texture2D" uid="uid://8dh7hdnj5fj7" path="res://models/buildings/visitorCenter/welcomeCenterTextured_Concrete047A_1K-JPG_Roughness.png" id="20_concrete_roughness"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(15.76, 7.155)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+resource_name = "ShedFloor"
+albedo_color = Color(0.62, 0.6, 0.56, 1)
+albedo_texture = ExtResource("18_concrete")
+roughness_texture = ExtResource("20_concrete_roughness")
+normal_enabled = true
+normal_texture = ExtResource("19_concrete_normal")
+uv1_scale = Vector3(0.35, 0.35, 0.35)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[node name="ShedInterior" type="Node3D"]
+editor_description = "The alt route's shed: the garage across the road from the gas station, dressed and lit. Placed at the world origin, so every child sits at its world position. The garage's own mesh and collision swap to the doorless shed versions in starting_forest_alt.tscn. The shed's inside and everything in it but the door are drawn on render layer 12, which the pump sign's light leaves out and the bench lamp alone lights; see shed_interior.gd and tools/build_shed_meshes.gd."
+script = ExtResource("0_shed")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 103.51, 0.112, 27.0575)
+layers = 2048
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="ShedDoor" parent="." instance=ExtResource("1_door")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 111.402, 0, 24.24)
+
+[node name="Workbench" parent="." instance=ExtResource("2_bench")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 96.49, 0.11, 27.06)
+
+[node name="WorkLamp" parent="." instance=ExtResource("3_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.2, 2.39, 27.06)
+
+[node name="BenchLight" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 96.2, 2.32, 27.06)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.5
+light_cull_mask = 2048
+shadow_enabled = true
+spot_range = 5.0
+spot_attenuation = 0.8
+spot_angle = 55.0
+
+[node name="BenchGlow" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.2, 2.3, 27.06)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 0.3
+light_cull_mask = 2048
+omni_range = 3.0
+
+[node name="ShotgunPickup" parent="." instance=ExtResource("4_shotgun")]
+transform = Transform3D(0, -0.939693, 0.34202, 1, 0, 0, 0, 0.34202, 0.939693, 96.17, 1.07, 27.2)
+
+[node name="Locker" parent="." instance=ExtResource("7_locker")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 100.3, 0.11, 30.38)
+
+[node name="Locker2" parent="." instance=ExtResource("8_locker2")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 101.75, 0.11, 30.38)
+
+[node name="Generator" parent="." instance=ExtResource("17_generator")]
+transform = Transform3D(-0.939693, 0, -0.34202, 0, 1, 0, 0.34202, 0, -0.939693, 97.6, 0.11, 29.7)
+
+[node name="BarrelOil" parent="." instance=ExtResource("9_barrel")]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 104.6, 0.11, 23.92)
+
+[node name="BarrelOil2" parent="." instance=ExtResource("9_barrel")]
+transform = Transform3D(0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, 0.258819, 105.38, 0.11, 23.95)
+
+[node name="Jerrycan" parent="." instance=ExtResource("10_jerrycan")]
+transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, 106.15, 0.11, 23.85)
+
+[node name="Tires" parent="." instance=ExtResource("11_tires")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108.3, 0.11, 24)
+
+[node name="CrateWood" parent="." instance=ExtResource("12_crate_wood")]
+transform = Transform3D(0.990268, 0, 0.139173, 0, 1, 0, -0.139173, 0, 0.990268, 99.3, 0.11, 24.05)
+
+[node name="Crate" parent="." instance=ExtResource("13_crate")]
+transform = Transform3D(0.997564, 0, -0.0697565, 0, 1, 0, 0.0697565, 0, 0.997564, 100.55, 0.11, 24.12)
+
+[node name="PropaneTank" parent="." instance=ExtResource("16_propane")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.55, 0.11, 25.55)
+
+[node name="Pallet" parent="." instance=ExtResource("14_pallet")]
+transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 103.6, 0.11, 28.2)
+
+[node name="CrateMetal" parent="." instance=ExtResource("15_crate_metal")]
+transform = Transform3D(0.906308, 0, 0.422618, 0, 1, 0, -0.422618, 0, 0.906308, 103.65, 0.25, 28.15)
+
+[node name="InteriorAmbienceZone" parent="." instance=ExtResource("5_zone")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 103.45, 2.8, 27.06)
+stream = ExtResource("6_hum")
+size = Vector3(7.1, 5.4, 16.0)
+entrance_offset_x = 2.26
+entrance_width = 1.4
+show_in_editor = false

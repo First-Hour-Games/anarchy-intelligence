@@ -1,0 +1,2384 @@
+{
+ "levels": [
+  0.12,
+  3.92,
+  7.72,
+  11.52
+ ],
+ "roof_y": 15.32,
+ "storey": 3.8,
+ "ceiling": 3.2,
+ "footprint": [
+  -20.0,
+  20.0,
+  -18.0,
+  0.0
+ ],
+ "rooms": [
+  {
+   "level": 0,
+   "kind": "lobby",
+   "name": "Admissions Lobby",
+   "rect": [
+    -6.8,
+    6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "er",
+   "name": "Emergency Treatment",
+   "rect": [
+    -13.6,
+    -6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "shelter",
+   "name": "Shelter Ward",
+   "rect": [
+    6.8,
+    13.6,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "ambulance",
+   "name": "Ambulance Bay",
+   "rect": [
+    -19.7,
+    -13.6,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "security",
+   "name": "Security",
+   "rect": [
+    13.6,
+    19.7,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "radiology",
+   "name": "Radiology",
+   "rect": [
+    -13.6,
+    -6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "pharmacy",
+   "name": "Pharmacy",
+   "rect": [
+    -6.8,
+    -2.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "staff",
+   "name": "Staff Room",
+   "rect": [
+    2.6,
+    6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "records",
+   "name": "Medical Records",
+   "rect": [
+    6.8,
+    13.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "storage",
+   "name": "Stores",
+   "rect": [
+    -19.7,
+    -13.6,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "linen",
+   "name": "Linen",
+   "rect": [
+    13.6,
+    19.7,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 0,
+   "kind": "plant",
+   "name": "Lift Machinery",
+   "rect": [
+    -2.6,
+    2.6,
+    -17.7,
+    -12.6
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "ward",
+   "name": "Ward 2A",
+   "rect": [
+    -13.6,
+    -6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "void",
+   "name": "Atrium",
+   "rect": [
+    -6.8,
+    6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "ward",
+   "name": "Ward 2D",
+   "rect": [
+    6.8,
+    13.6,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "children",
+   "name": "Children's Ward",
+   "rect": [
+    -13.6,
+    -6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "nurse",
+   "name": "Nurse Station",
+   "rect": [
+    -6.8,
+    -2.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "dayroom",
+   "name": "Day Room",
+   "rect": [
+    2.6,
+    6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "ward",
+   "name": "Ward 2E",
+   "rect": [
+    6.8,
+    13.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "isolation",
+   "name": "Isolation",
+   "rect": [
+    -19.7,
+    -13.6,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "sluice",
+   "name": "Sluice Room",
+   "rect": [
+    13.6,
+    19.7,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "storage",
+   "name": "Ward Stores",
+   "rect": [
+    -19.7,
+    -13.6,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "linen",
+   "name": "Linen",
+   "rect": [
+    13.6,
+    19.7,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 1,
+   "kind": "plant",
+   "name": "Lift Machinery",
+   "rect": [
+    -2.6,
+    2.6,
+    -17.7,
+    -12.6
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "theatre",
+   "name": "Theatre 1",
+   "rect": [
+    -13.6,
+    -6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "scrub",
+   "name": "Scrub Room",
+   "rect": [
+    -6.8,
+    0.0,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "theatre",
+   "name": "Theatre 2",
+   "rect": [
+    0.0,
+    6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "recovery",
+   "name": "Recovery",
+   "rect": [
+    6.8,
+    13.6,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "sterile",
+   "name": "Sterile Supply",
+   "rect": [
+    -13.6,
+    -6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "anaesthetics",
+   "name": "Anaesthetics",
+   "rect": [
+    -6.8,
+    -2.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "staff",
+   "name": "Surgeons' Lounge",
+   "rect": [
+    2.6,
+    6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "ward",
+   "name": "Surgical Ward",
+   "rect": [
+    6.8,
+    13.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "waiting",
+   "name": "Surgical Waiting",
+   "rect": [
+    -19.7,
+    -13.6,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "changing",
+   "name": "Changing",
+   "rect": [
+    13.6,
+    19.7,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "storage",
+   "name": "Equipment Store",
+   "rect": [
+    -19.7,
+    -13.6,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "linen",
+   "name": "Linen",
+   "rect": [
+    13.6,
+    19.7,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 2,
+   "kind": "plant",
+   "name": "Lift Machinery",
+   "rect": [
+    -2.6,
+    2.6,
+    -17.7,
+    -12.6
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "icu",
+   "name": "Intensive Care",
+   "rect": [
+    -13.6,
+    0.0,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "office",
+   "name": "Director",
+   "rect": [
+    0.0,
+    6.8,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "radio",
+   "name": "Communications",
+   "rect": [
+    6.8,
+    13.6,
+    -7.3,
+    -0.3
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "oncall",
+   "name": "On-Call Rooms",
+   "rect": [
+    -13.6,
+    -6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "records",
+   "name": "Administration",
+   "rect": [
+    -6.8,
+    -2.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "conference",
+   "name": "Conference Room",
+   "rect": [
+    2.6,
+    6.8,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "office",
+   "name": "Medical Director",
+   "rect": [
+    6.8,
+    13.6,
+    -17.7,
+    -10.1
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "waiting",
+   "name": "Roof Access",
+   "rect": [
+    -19.7,
+    -13.6,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "waiting",
+   "name": "Visitors",
+   "rect": [
+    13.6,
+    19.7,
+    -6.7,
+    -0.3
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "storage",
+   "name": "Stores",
+   "rect": [
+    -19.7,
+    -13.6,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "linen",
+   "name": "Linen",
+   "rect": [
+    13.6,
+    19.7,
+    -17.7,
+    -10.7
+   ]
+  },
+  {
+   "level": 3,
+   "kind": "plant",
+   "name": "Lift Machinery",
+   "rect": [
+    -2.6,
+    2.6,
+    -17.7,
+    -12.6
+   ]
+  }
+ ],
+ "hiding_spots": [
+  {
+   "name": "L0_ShelterWard_Bed38",
+   "kind": "bed",
+   "level": 0,
+   "position": [
+    12.3,
+    0.12,
+    -5.9
+   ],
+   "yaw": 180.0
+  },
+  {
+   "name": "L0_Security_Locker56",
+   "kind": "locker",
+   "level": 0,
+   "position": [
+    19.34,
+    0.12,
+    -3.9
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L0_Security_Locker57",
+   "kind": "locker",
+   "level": 0,
+   "position": [
+    19.34,
+    0.12,
+    -4.6
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L0_StaffRoom_Locker83",
+   "kind": "locker",
+   "level": 0,
+   "position": [
+    3.035,
+    0.12,
+    -16.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L0_StaffRoom_Locker84",
+   "kind": "locker",
+   "level": 0,
+   "position": [
+    3.035,
+    0.12,
+    -15.8
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L0_StaffRoom_Locker85",
+   "kind": "locker",
+   "level": 0,
+   "position": [
+    3.035,
+    0.12,
+    -15.1
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L0_Stores_Closet110",
+   "kind": "closet",
+   "level": 0,
+   "position": [
+    -14.075,
+    0.12,
+    -16.3
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L0_Linen_Closet119",
+   "kind": "closet",
+   "level": 0,
+   "position": [
+    19.3,
+    0.12,
+    -14.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L1_Ward2A_Bed134",
+   "kind": "bed",
+   "level": 1,
+   "position": [
+    -12.35,
+    3.92,
+    -2.05
+   ],
+   "yaw": 180.0
+  },
+  {
+   "name": "L1_Ward2D_Bed158",
+   "kind": "bed",
+   "level": 1,
+   "position": [
+    8.05,
+    3.92,
+    -2.05
+   ],
+   "yaw": 180.0
+  },
+  {
+   "name": "L1_ChildrenSWard_Bed179",
+   "kind": "bed",
+   "level": 1,
+   "position": [
+    -12.35,
+    3.92,
+    -15.95
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "L1_Ward2E_Bed220",
+   "kind": "bed",
+   "level": 1,
+   "position": [
+    8.05,
+    3.92,
+    -15.95
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "L1_SluiceRoom_Closet252",
+   "kind": "closet",
+   "level": 1,
+   "position": [
+    14.075,
+    3.92,
+    -1.9
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L1_WardStores_Closet261",
+   "kind": "closet",
+   "level": 1,
+   "position": [
+    -14.075,
+    3.92,
+    -16.3
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L1_Linen_Closet270",
+   "kind": "closet",
+   "level": 1,
+   "position": [
+    19.3,
+    3.92,
+    -14.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L2_ScrubRoom_Locker304",
+   "kind": "locker",
+   "level": 2,
+   "position": [
+    -6.365,
+    7.72,
+    -1.3
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L2_Recovery_Bed328",
+   "kind": "bed",
+   "level": 2,
+   "position": [
+    8.05,
+    7.72,
+    -2.05
+   ],
+   "yaw": 180.0
+  },
+  {
+   "name": "L2_Anaesthetics_Closet363",
+   "kind": "closet",
+   "level": 2,
+   "position": [
+    -3.075,
+    7.72,
+    -13.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L2_SurgeonsLounge_Locker368",
+   "kind": "locker",
+   "level": 2,
+   "position": [
+    3.035,
+    7.72,
+    -16.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L2_SurgeonsLounge_Locker369",
+   "kind": "locker",
+   "level": 2,
+   "position": [
+    3.035,
+    7.72,
+    -15.8
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L2_SurgeonsLounge_Locker370",
+   "kind": "locker",
+   "level": 2,
+   "position": [
+    3.035,
+    7.72,
+    -15.1
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "L2_SurgicalWard_Bed379",
+   "kind": "bed",
+   "level": 2,
+   "position": [
+    8.05,
+    7.72,
+    -15.95
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "L2_Changing_Locker408",
+   "kind": "locker",
+   "level": 2,
+   "position": [
+    19.34,
+    7.72,
+    -2.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L2_Changing_Locker409",
+   "kind": "locker",
+   "level": 2,
+   "position": [
+    19.34,
+    7.72,
+    -2.7
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L2_EquipmentStore_Closet420",
+   "kind": "closet",
+   "level": 2,
+   "position": [
+    -14.075,
+    7.72,
+    -16.3
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L2_Linen_Closet429",
+   "kind": "closet",
+   "level": 2,
+   "position": [
+    19.3,
+    7.72,
+    -14.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L3_IntensiveCare_Bed453",
+   "kind": "bed",
+   "level": 3,
+   "position": [
+    -4.1,
+    11.52,
+    -1.65
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L3_Communications_Locker487",
+   "kind": "locker",
+   "level": 3,
+   "position": [
+    13.165,
+    11.52,
+    -4.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L3_OnCallRooms_Locker496",
+   "kind": "locker",
+   "level": 3,
+   "position": [
+    -7.235,
+    11.52,
+    -16.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L3_OnCallRooms_Locker497",
+   "kind": "locker",
+   "level": 3,
+   "position": [
+    -7.235,
+    11.52,
+    -15.8
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L3_Stores_Closet557",
+   "kind": "closet",
+   "level": 3,
+   "position": [
+    -14.075,
+    11.52,
+    -16.3
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "L3_Linen_Closet566",
+   "kind": "closet",
+   "level": 3,
+   "position": [
+    19.3,
+    11.52,
+    -14.5
+   ],
+   "yaw": -90.0
+  }
+ ],
+ "bottles": [
+  {
+   "name": "L0_AdmissionsLobby_Bottle12",
+   "level": 0,
+   "position": [
+    3.9,
+    1.24,
+    -4.5
+   ]
+  },
+  {
+   "name": "L0_EmergencyTreatment_Bottle25",
+   "level": 0,
+   "position": [
+    -12.9,
+    1.12,
+    -5.2
+   ]
+  },
+  {
+   "name": "L0_ShelterWard_Bottle39",
+   "level": 0,
+   "position": [
+    9.5,
+    0.59,
+    -4.0
+   ]
+  },
+  {
+   "name": "L0_Pharmacy_Bottle78",
+   "level": 0,
+   "position": [
+    -6.425,
+    1.1,
+    -15.2
+   ]
+  },
+  {
+   "name": "L0_StaffRoom_Bottle89",
+   "level": 0,
+   "position": [
+    6.225,
+    0.88,
+    -15.4
+   ]
+  },
+  {
+   "name": "L0_MedicalRecords_Bottle101",
+   "level": 0,
+   "position": [
+    10.6,
+    0.88,
+    -15.1
+   ]
+  },
+  {
+   "name": "L0_Stores_Bottle112",
+   "level": 0,
+   "position": [
+    -19.4,
+    0.67,
+    -15.2
+   ]
+  },
+  {
+   "name": "L1_Ward2A_Bottle149",
+   "level": 1,
+   "position": [
+    -10.0,
+    4.39,
+    -0.9
+   ]
+  },
+  {
+   "name": "L1_Ward2D_Bottle173",
+   "level": 1,
+   "position": [
+    10.4,
+    4.39,
+    -0.9
+   ]
+  },
+  {
+   "name": "L1_ChildrenSWard_Bottle194",
+   "level": 1,
+   "position": [
+    -10.0,
+    4.39,
+    -17.1
+   ]
+  },
+  {
+   "name": "L1_NurseStation_Bottle207",
+   "level": 1,
+   "position": [
+    -3.825,
+    5.04,
+    -11.095
+   ]
+  },
+  {
+   "name": "L1_Ward2E_Bottle235",
+   "level": 1,
+   "position": [
+    10.4,
+    4.39,
+    -17.1
+   ]
+  },
+  {
+   "name": "L1_WardStores_Bottle263",
+   "level": 1,
+   "position": [
+    -19.4,
+    4.47,
+    -15.2
+   ]
+  },
+  {
+   "name": "L2_ScrubRoom_Bottle305",
+   "level": 2,
+   "position": [
+    -0.375,
+    8.7,
+    -2.1
+   ]
+  },
+  {
+   "name": "L2_Recovery_Bottle343",
+   "level": 2,
+   "position": [
+    10.4,
+    8.19,
+    -0.9
+   ]
+  },
+  {
+   "name": "L2_SurgeonsLounge_Bottle374",
+   "level": 2,
+   "position": [
+    6.225,
+    8.48,
+    -15.4
+   ]
+  },
+  {
+   "name": "L2_SurgicalWard_Bottle394",
+   "level": 2,
+   "position": [
+    10.4,
+    8.19,
+    -17.1
+   ]
+  },
+  {
+   "name": "L2_EquipmentStore_Bottle422",
+   "level": 2,
+   "position": [
+    -19.4,
+    8.27,
+    -15.2
+   ]
+  },
+  {
+   "name": "L3_IntensiveCare_Bottle463",
+   "level": 3,
+   "position": [
+    -4.6,
+    12.64,
+    -4.53
+   ]
+  },
+  {
+   "name": "L3_Director_Bottle476",
+   "level": 3,
+   "position": [
+    4.0,
+    12.28,
+    -1.9
+   ]
+  },
+  {
+   "name": "L3_Administration_Bottle510",
+   "level": 3,
+   "position": [
+    -4.3,
+    12.28,
+    -15.1
+   ]
+  },
+  {
+   "name": "L3_MedicalDirector_Bottle532",
+   "level": 3,
+   "position": [
+    10.8,
+    12.28,
+    -16.1
+   ]
+  },
+  {
+   "name": "L3_Stores_Bottle559",
+   "level": 3,
+   "position": [
+    -19.4,
+    12.07,
+    -15.2
+   ]
+  }
+ ],
+ "documents": {
+  "register": [
+   2.3,
+   1.24,
+   -4.5
+  ],
+  "evacuation": [
+   11.0,
+   0.885,
+   -15.1
+  ],
+  "supply": [
+   -19.4,
+   1.565,
+   -15.2
+  ],
+  "flight": [
+   11.1,
+   12.285,
+   -0.75
+  ]
+ },
+ "decals": [
+  {
+   "kind": "blood_pool",
+   "level": 0,
+   "position": [
+    -7.2,
+    0.12,
+    -9.425
+   ],
+   "facing": "floor",
+   "size": [
+    1.3,
+    1.0
+   ],
+   "yaw": 20.0
+  },
+  {
+   "kind": "blood_smear",
+   "level": 0,
+   "position": [
+    -11.0,
+    0.12,
+    -8.037
+   ],
+   "facing": "floor",
+   "size": [
+    0.5,
+    1.07964114408446
+   ],
+   "yaw": 132.1844433157888
+  },
+  {
+   "kind": "blood_smear",
+   "level": 0,
+   "position": [
+    -10.0,
+    0.12,
+    -8.8
+   ],
+   "facing": "floor",
+   "size": [
+    0.5,
+    1.4422205101855945
+   ],
+   "yaw": 123.69006752597979
+  },
+  {
+   "kind": "blood_smear",
+   "level": 0,
+   "position": [
+    -8.65,
+    0.12,
+    -9.4
+   ],
+   "facing": "floor",
+   "size": [
+    0.5,
+    1.5524174696260025
+   ],
+   "yaw": 104.93141717813756
+  },
+  {
+   "kind": "handprint",
+   "level": 0,
+   "position": [
+    -12.6,
+    1.32,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    0.35,
+    0.35
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "blood_pool",
+   "level": 1,
+   "position": [
+    -8.6,
+    3.92,
+    -8.075
+   ],
+   "facing": "floor",
+   "size": [
+    1.1,
+    0.9
+   ],
+   "yaw": 40.0
+  },
+  {
+   "kind": "blood_smear",
+   "level": 1,
+   "position": [
+    -8.5,
+    3.92,
+    -7.188
+   ],
+   "facing": "floor",
+   "size": [
+    0.5,
+    1.587647630930742
+   ],
+   "yaw": 7.236922025967982
+  },
+  {
+   "kind": "blood_smear",
+   "level": 1,
+   "position": [
+    -8.65,
+    3.92,
+    -5.7
+   ],
+   "facing": "floor",
+   "size": [
+    0.5,
+    1.4866068747318508
+   ],
+   "yaw": -19.653824058053306
+  },
+  {
+   "kind": "blood_spatter",
+   "level": 1,
+   "position": [
+    12.6,
+    4.92,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    0.9,
+    0.7
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "blood_smear",
+   "level": 2,
+   "position": [
+    -7.9,
+    7.72,
+    -8.137
+   ],
+   "facing": "floor",
+   "size": [
+    0.45,
+    1.6779824194549828
+   ],
+   "yaw": 123.4533094540727
+  },
+  {
+   "kind": "blood_smear",
+   "level": 2,
+   "position": [
+    -5.1,
+    7.72,
+    -8.9
+   ],
+   "facing": "floor",
+   "size": [
+    0.45,
+    4.242640687119286
+   ],
+   "yaw": 98.13010235415597
+  },
+  {
+   "kind": "blood_smear",
+   "level": 2,
+   "position": [
+    -0.5,
+    7.72,
+    -9.1
+   ],
+   "facing": "floor",
+   "size": [
+    0.45,
+    5.0039984012787215
+   ],
+   "yaw": 87.70938995736148
+  },
+  {
+   "kind": "blood_smear",
+   "level": 2,
+   "position": [
+    4.25,
+    7.72,
+    -8.85
+   ],
+   "facing": "floor",
+   "size": [
+    0.45,
+    4.509988913511872
+   ],
+   "yaw": 86.18592516570963
+  },
+  {
+   "kind": "blood_pool",
+   "level": 2,
+   "position": [
+    -8.6,
+    7.72,
+    -7.875
+   ],
+   "facing": "floor",
+   "size": [
+    1.0,
+    0.8
+   ],
+   "yaw": 10.0
+  },
+  {
+   "kind": "water_stain",
+   "level": 3,
+   "position": [
+    -9.8,
+    13.52,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    1.6,
+    1.4
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "water_stain",
+   "level": 3,
+   "position": [
+    6.0,
+    13.62,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    1.4,
+    1.2
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 0,
+   "position": [
+    -6.0,
+    0.57,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 0,
+   "position": [
+    -8.0,
+    0.57,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 0,
+   "position": [
+    1.0,
+    0.57,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 0,
+   "position": [
+    -1.0,
+    0.57,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 0,
+   "position": [
+    9.0,
+    0.57,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 0,
+   "position": [
+    7.0,
+    0.57,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 1,
+   "position": [
+    -5.3,
+    4.37,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 1,
+   "position": [
+    -8.5,
+    4.37,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 1,
+   "position": [
+    1.7,
+    4.37,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 1,
+   "position": [
+    -1.5,
+    4.37,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 1,
+   "position": [
+    9.7,
+    4.37,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 1,
+   "position": [
+    6.5,
+    4.37,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 2,
+   "position": [
+    -4.6,
+    8.17,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 2,
+   "position": [
+    -9.0,
+    8.17,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 2,
+   "position": [
+    2.4,
+    8.17,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 2,
+   "position": [
+    -2.0,
+    8.17,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 2,
+   "position": [
+    10.4,
+    8.17,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 2,
+   "position": [
+    6.0,
+    8.17,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 3,
+   "position": [
+    -3.9,
+    11.97,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 3,
+   "position": [
+    -9.5,
+    11.97,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 3,
+   "position": [
+    3.1,
+    11.97,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 3,
+   "position": [
+    -2.5,
+    11.97,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 3,
+   "position": [
+    11.1,
+    11.97,
+    -10.015
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "size": [
+    2.4,
+    0.9
+   ],
+   "yaw": 0.0
+  },
+  {
+   "kind": "grime",
+   "level": 3,
+   "position": [
+    5.5,
+    11.97,
+    -7.385
+   ],
+   "facing": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "size": [
+    2.0,
+    0.9
+   ],
+   "yaw": 0.0
+  }
+ ],
+ "lights": [
+  {
+   "name": "L_AtriumLow",
+   "level": 0,
+   "mode": "steady",
+   "position": [
+    1.0,
+    6.87,
+    -4.0
+   ],
+   "color": [
+    0.86,
+    0.92,
+    0.88
+   ],
+   "energy": 2.6,
+   "range": 11.0
+  },
+  {
+   "name": "L_AtriumHigh",
+   "level": 1,
+   "mode": "steady",
+   "position": [
+    1.0,
+    7.0,
+    -4.0
+   ],
+   "color": [
+    0.86,
+    0.92,
+    0.88
+   ],
+   "energy": 1.6,
+   "range": 8.0
+  },
+  {
+   "name": "L_LobbyExitA",
+   "level": 0,
+   "mode": "steady",
+   "position": [
+    -6.0,
+    3.2,
+    -7.9
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.2,
+   "range": 4.0
+  },
+  {
+   "name": "L_CorridorG1",
+   "level": 0,
+   "mode": "flicker",
+   "position": [
+    -10.0,
+    3.2,
+    -8.7
+   ],
+   "color": [
+    0.86,
+    0.92,
+    0.88
+   ],
+   "energy": 0.9,
+   "range": 4.5
+  },
+  {
+   "name": "L_CorridorG2",
+   "level": 0,
+   "mode": "pulse",
+   "position": [
+    10.5,
+    3.2,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.2,
+   "range": 4.0
+  },
+  {
+   "name": "L_RecordsLamp",
+   "level": 0,
+   "mode": "steady",
+   "position": [
+    9.4,
+    3.2,
+    -16.4
+   ],
+   "color": [
+    1.0,
+    0.78,
+    0.5
+   ],
+   "energy": 1.1,
+   "range": 3.4
+  },
+  {
+   "name": "L_ShelterLantern",
+   "level": 0,
+   "mode": "noise",
+   "position": [
+    9.0,
+    3.2,
+    -3.2
+   ],
+   "color": [
+    1.0,
+    0.78,
+    0.5
+   ],
+   "energy": 1.0,
+   "range": 4.2
+  },
+  {
+   "name": "L_StairBG",
+   "level": 0,
+   "mode": "steady",
+   "position": [
+    15.0,
+    3.2,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.0,
+   "range": 3.6
+  },
+  {
+   "name": "L_Corridor2a",
+   "level": 1,
+   "mode": "steady",
+   "position": [
+    11.0,
+    7.0,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.2,
+   "range": 4.0
+  },
+  {
+   "name": "L_Corridor2b",
+   "level": 1,
+   "mode": "strobe",
+   "position": [
+    -0.5,
+    7.0,
+    -8.7
+   ],
+   "color": [
+    0.86,
+    0.92,
+    0.88
+   ],
+   "energy": 0.9,
+   "range": 4.5
+  },
+  {
+   "name": "L_Corridor2c",
+   "level": 1,
+   "mode": "pulse",
+   "position": [
+    -11.0,
+    7.0,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.1,
+   "range": 4.0
+  },
+  {
+   "name": "L_NurseLamp",
+   "level": 1,
+   "mode": "flicker",
+   "position": [
+    -4.7,
+    7.0,
+    -11.6
+   ],
+   "color": [
+    1.0,
+    0.78,
+    0.5
+   ],
+   "energy": 1.2,
+   "range": 3.6
+  },
+  {
+   "name": "L_ChildrenNight",
+   "level": 1,
+   "mode": "steady",
+   "position": [
+    -10.2,
+    7.0,
+    -14.5
+   ],
+   "color": [
+    0.55,
+    0.62,
+    1.0
+   ],
+   "energy": 0.8,
+   "range": 3.6
+  },
+  {
+   "name": "L_Corridor3a",
+   "level": 2,
+   "mode": "steady",
+   "position": [
+    -11.0,
+    10.8,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.1,
+   "range": 4.0
+  },
+  {
+   "name": "L_Corridor3b",
+   "level": 2,
+   "mode": "dying",
+   "position": [
+    2.0,
+    10.8,
+    -8.7
+   ],
+   "color": [
+    0.86,
+    0.92,
+    0.88
+   ],
+   "energy": 0.8,
+   "range": 4.5
+  },
+  {
+   "name": "L_Theatre1Lamp",
+   "level": 2,
+   "mode": "flicker",
+   "position": [
+    -10.2,
+    10.8,
+    -3.8
+   ],
+   "color": [
+    0.9,
+    0.95,
+    1.0
+   ],
+   "energy": 1.6,
+   "range": 3.8
+  },
+  {
+   "name": "L_Corridor3c",
+   "level": 2,
+   "mode": "pulse",
+   "position": [
+    11.5,
+    10.8,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.1,
+   "range": 4.0
+  },
+  {
+   "name": "L_Corridor4a",
+   "level": 3,
+   "mode": "steady",
+   "position": [
+    11.0,
+    14.6,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.1,
+   "range": 4.0
+  },
+  {
+   "name": "L_Corridor4b",
+   "level": 3,
+   "mode": "flicker",
+   "position": [
+    0.0,
+    14.6,
+    -8.7
+   ],
+   "color": [
+    0.86,
+    0.92,
+    0.88
+   ],
+   "energy": 0.8,
+   "range": 4.5
+  },
+  {
+   "name": "L_ICUMonitors",
+   "level": 3,
+   "mode": "noise",
+   "position": [
+    -4.0,
+    14.6,
+    -3.4
+   ],
+   "color": [
+    0.35,
+    1.0,
+    0.55
+   ],
+   "energy": 0.7,
+   "range": 3.4
+  },
+  {
+   "name": "L_RadioDesk",
+   "level": 3,
+   "mode": "steady",
+   "position": [
+    10.5,
+    14.6,
+    -1.6
+   ],
+   "color": [
+    1.0,
+    0.78,
+    0.5
+   ],
+   "energy": 1.2,
+   "range": 3.4
+  },
+  {
+   "name": "L_Corridor4c",
+   "level": 3,
+   "mode": "strobe",
+   "position": [
+    -11.0,
+    14.6,
+    -8.7
+   ],
+   "color": [
+    1.0,
+    0.14,
+    0.08
+   ],
+   "energy": 1.3,
+   "range": 4.0
+  }
+ ],
+ "points": {
+  "entrance": [
+   0.0,
+   0.12,
+   2.0
+  ],
+  "lobby": [
+   0.0,
+   0.12,
+   -4.0
+  ],
+  "roof_door": [
+   -12.0,
+   15.32,
+   -8.7
+  ],
+  "helipad": [
+   4.0,
+   15.32,
+   -9.0
+  ],
+  "landing_A0": [
+   -14.5,
+   0.12,
+   -8.7
+  ],
+  "landing_A1": [
+   -14.5,
+   3.92,
+   -8.7
+  ],
+  "landing_A2": [
+   -14.5,
+   7.72,
+   -8.7
+  ],
+  "landing_A3": [
+   -14.5,
+   11.52,
+   -8.7
+  ],
+  "landing_B0": [
+   14.5,
+   0.12,
+   -8.7
+  ],
+  "landing_B1": [
+   14.5,
+   3.92,
+   -8.7
+  ],
+  "landing_B2": [
+   14.5,
+   7.72,
+   -8.7
+  ],
+  "landing_B3": [
+   14.5,
+   11.52,
+   -8.7
+  ]
+ },
+ "clawman_posts": {
+  "1": [
+   -11.6,
+   3.92,
+   -8.7
+  ],
+  "2": [
+   11.6,
+   7.72,
+   -8.7
+  ],
+  "3": [
+   -11.6,
+   11.52,
+   -8.7
+  ]
+ },
+ "helicopter": {
+  "position": [
+   4.0,
+   15.32,
+   -9.0
+  ],
+  "yaw": 180.0
+ },
+ "up": {
+  "A": [
+   "open",
+   "open",
+   "blocked",
+   "open"
+  ],
+  "B": [
+   "open",
+   "blocked",
+   "open",
+   null
+  ]
+ },
+ "core_doors": {
+  "A": [
+   "chained",
+   "open",
+   "open",
+   "open"
+  ],
+  "B": [
+   "open",
+   "open",
+   "open",
+   "open"
+  ]
+ },
+ "blocked": [
+  [
+   "B",
+   1,
+   "collapse"
+  ],
+  [
+   "A",
+   2,
+   "barricade"
+  ]
+ ],
+ "cores": {
+  "A": {
+   "z": [
+    -10.7,
+    -6.7
+   ],
+   "s": -1.0,
+   "inner": -13.6,
+   "landing_end": -15.4,
+   "flight_end": -18.1,
+   "outer": -19.7
+  },
+  "B": {
+   "z": [
+    -10.7,
+    -6.7
+   ],
+   "s": 1.0,
+   "inner": 13.6,
+   "landing_end": 15.4,
+   "flight_end": 18.1,
+   "outer": 19.7
+  }
+ }
+}

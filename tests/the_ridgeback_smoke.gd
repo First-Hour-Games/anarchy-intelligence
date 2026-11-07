@@ -84,6 +84,21 @@ func run() -> void:
 	check(animation_player.get_animation("fours_gallop").loop_mode == Animation.LOOP_LINEAR, "Gallop loops")
 	check(animation_player.get_animation("fours_pounce").loop_mode == Animation.LOOP_NONE, "Pounce is a one-shot")
 	check(animation_player.get_animation("death").loop_mode == Animation.LOOP_NONE, "Death is a one-shot")
+	# The car ambush's clips: leaping over cars, hiding behind them, peeking over them, shrieking on them.
+	for clip_name in ["fours_leap", "fours_air", "fours_land", "fours_hide", "fours_peek", "fours_shriek"]:
+		check(clip_name in available_clips, "Ridgeback resolves the %s clip" % clip_name)
+	check(animation_player.get_animation("fours_air").loop_mode == Animation.LOOP_LINEAR
+		and animation_player.get_animation("fours_hide").loop_mode == Animation.LOOP_LINEAR, "The flight and the hiding loop")
+	check(["fours_leap", "fours_land", "fours_peek", "fours_shriek"].all(func(clip_name: String) -> bool:
+		return animation_player.get_animation(clip_name).loop_mode == Animation.LOOP_NONE), "Leap, landing, peek and shriek are one-shots")
+	var ambush_clips := {"leap": "fours_leap", "airborne": "fours_air", "land": "fours_land", "hide": "fours_hide",
+		"peek": "fours_peek", "perch": "fours_lurk", "shriek": "fours_shriek"}
+	var mapped := true
+	for gameplay_clip: String in ambush_clips:
+		visual.play(gameplay_clip, true)
+		mapped = mapped and animation_player.current_animation == ambush_clips[gameplay_clip]
+	check(mapped, "The ambush's gameplay clips play their own clips on all fours")
+	visual.play("walk", true)
 	visual.set_movement_speed(1.4)
 	var slow_cadence: float = animation_player.speed_scale
 	visual.set_movement_speed(3.8)

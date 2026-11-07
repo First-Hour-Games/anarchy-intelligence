@@ -79,6 +79,8 @@ func _box(parent: Node3D, label: String, point: Vector3, size: Vector3, solid: b
 	mesh.size = size
 	visual.mesh = mesh
 	visual.material_override = concrete
+	# Paving on the ground: nothing under it to shade, so it is left out of every lamp's shadow map.
+	visual.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(visual)
 	visual.position = point
 	if solid:

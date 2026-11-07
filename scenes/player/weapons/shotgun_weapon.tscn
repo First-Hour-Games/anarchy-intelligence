@@ -1,0 +1,126 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/player/weapons/shotgun_weapon.gd" id="1_weapon"]
+[ext_resource type="PackedScene" path="res://models/player/fpsWhite_holding_idle.glb" id="2_arms"]
+[ext_resource type="FontFile" path="res://fonts/JainiPurva.ttf" id="3_font"]
+[ext_resource type="AudioStream" path="res://sounds/weapons/shotgun/shotgun_blast_1.wav" id="4_blast_1"]
+[ext_resource type="AudioStream" path="res://sounds/weapons/shotgun/shotgun_blast_2.wav" id="5_blast_2"]
+[ext_resource type="AudioStream" path="res://sounds/weapons/shotgun/shotgun_blast_3.wav" id="6_blast_3"]
+[ext_resource type="Script" path="res://scenes/player/weapons/shotgun_crosshair.gd" id="7_crosshair"]
+
+[sub_resource type="AudioStreamRandomizer" id="BlastSounds"]
+random_pitch = 1.06
+streams_count = 3
+stream_0/stream = ExtResource("4_blast_1")
+stream_1/stream = ExtResource("5_blast_2")
+stream_2/stream = ExtResource("6_blast_3")
+
+[sub_resource type="Gradient" id="FlashGradient"]
+offsets = PackedFloat32Array(0, 0.3, 0.65, 1)
+colors = PackedColorArray(1, 0.97, 0.82, 1, 1, 0.75, 0.3, 0.9, 1, 0.38, 0.06, 0.35, 1, 0.2, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="FlashTexture"]
+gradient = SubResource("FlashGradient")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="FlashMaterial"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = SubResource("FlashTexture")
+texture_filter = 0
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="FlashQuad"]
+material = SubResource("FlashMaterial")
+size = Vector2(0.22, 0.22)
+
+[node name="ShotgunWeapon" type="Node3D"]
+script = ExtResource("1_weapon")
+
+[node name="ShotAudio" type="AudioStreamPlayer" parent="."]
+stream = SubResource("BlastSounds")
+max_polyphony = 2
+
+[node name="ActionAudio" type="AudioStreamPlayer" parent="."]
+volume_db = -4.0
+
+[node name="ModelPivot" type="Node3D" parent="."]
+visible = false
+position = Vector3(0, -0.25, -0.1)
+rotation_degrees = Vector3(0, 180, 0)
+
+[node name="Arms" parent="ModelPivot" instance=ExtResource("2_arms")]
+
+[node name="HeldLight" type="OmniLight3D" parent="ModelPivot"]
+position = Vector3(-0.15, 0.3, 0.3)
+light_energy = 0.12
+light_specular = 0.15
+light_color = Color(0.8, 0.85, 1, 1)
+omni_range = 1.5
+cull_mask = 2
+
+[node name="MuzzleLight" type="OmniLight3D" parent="."]
+visible = false
+light_color = Color(1, 0.72, 0.42, 1)
+light_energy = 5.0
+omni_range = 9.0
+
+[node name="MuzzleFlash" type="MeshInstance3D" parent="."]
+visible = false
+cast_shadow = 0
+mesh = SubResource("FlashQuad")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+layer = 21
+visible = false
+
+[node name="Crosshair" type="Control" parent="Hud"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("7_crosshair")
+
+[node name="Frame" type="AspectRatioContainer" parent="Hud"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.3333
+
+[node name="Content" type="Control" parent="Hud/Frame"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Shells" type="Label" parent="Hud/Frame/Content"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -244.0
+offset_top = -58.0
+offset_right = -28.0
+offset_bottom = -28.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.84, 0.93, 0.86, 0.94)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 18
+text = "SHELLS  0  |  0"
+horizontal_alignment = 2

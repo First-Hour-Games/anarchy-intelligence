@@ -90,6 +90,7 @@ class Clip:
     loop: bool
     pose: Callable[[float], dict]   # loops: phase 0..1; one-shots: frame number
     spring: Optional[tuple] = None  # free hands' follow-through: (frequency in Hz, damping ratio)
+    legless: bool = False           # played only by the crawler, whose legs are cut away: unchecked
 
 
 # --- Posing ----------------------------------------------------------------------------------------
@@ -1067,9 +1068,412 @@ def fours_death(frame):
     return pose
 
 
+# --- Among the cars: leaping, hiding, peeking ----------------------------------------------------------
+# For the alt route's car ambush (scenes/monsters/the_ridgeback/ridgeback_ambusher.gd). The AI flies the
+# body along the arc of a leap, so these stay over their root: fours_leap gathers and pushes off, and
+# the body leaves the ground at LEAP_LAUNCH; fours_air holds the flight for as long as the arc takes;
+# fours_land plants the hands and absorbs. fours_peek rears up against a car with the claws hooked
+# over its edge (PEEK_EDGE high, PEEK_REACH ahead), so the AI stands it that far from the car.
+
+LEAP_FRAMES = 6
+LEAP_LAUNCH = 5
+AIR_FRAMES = 12
+LAND_FRAMES = 8
+PEEK_FRAMES = 36
+PEEK_EDGE = 1.42
+PEEK_REACH = 0.42
+SHRIEK_FRAMES = 26
+
+COILED_FOURS = hang(gaze(pose_of(
+    GATHERED, hip=(0.0, 0.04, -0.46), trunk=(80.0, 0.0, 0.0), chest=(28.0, 0.0, 0.0),
+    foot_l=(0.2, 0.32, 0.14), foot_r=(-0.2, 0.34, 0.14), sole_l=(40.0, 15.0), sole_r=(40.0, -15.0)), down=6.0))
+SPRING = hang(gaze(pose_of(
+    QUAD, hip=(0.0, -0.02, -0.28), trunk=(62.0, 0.0, 0.0), spine1=(2.0, 0.0, 0.0), spine2=(6.0, 0.0, 0.0),
+    chest=(12.0, 0.0, 0.0), clav_l=(-4.0, 24.0), clav_r=(-4.0, 24.0), hand_l=(0.55, 0.05, 0.18),
+    hand_r=(0.52, 0.08, 0.16), reach_l=0.0, reach_r=0.0, plant_l=0.0, plant_r=0.0, claw_l=-20.0, claw_r=-25.0,
+    elbow_l=25.0, elbow_r=25.0, foot_l=(0.2, 0.6, 0.12), foot_r=(-0.2, 0.62, 0.12), sole_l=(70.0, 10.0),
+    sole_r=(70.0, -10.0), toe_l=-40.0, toe_r=-40.0), down=-5.0))
+FLY = hang(gaze(pose_of(
+    SPRING, hip=(0.0, 0.0, -0.32), trunk=(66.0, 0.0, 0.0), spine1=(0.0, 0.0, 0.0), spine2=(4.0, 0.0, 0.0),
+    chest=(10.0, 0.0, 0.0), clav_l=(-2.0, 20.0), clav_r=(-2.0, 20.0), hand_l=(0.5, -0.18, 0.2),
+    hand_r=(0.48, -0.16, 0.18), claw_l=-30.0, claw_r=-30.0, elbow_l=28.0, elbow_r=28.0,
+    foot_l=(0.2, 0.52, 0.32), foot_r=(-0.2, 0.55, 0.3), sole_l=(60.0, 10.0), sole_r=(60.0, -10.0),
+    toe_l=-30.0, toe_r=-30.0), down=10.0))
+TOUCH = hang(gaze(pose_of(
+    QUAD, hip=(0.0, 0.02, -0.36), trunk=(70.0, 0.0, 0.0), grip_l=(0.38, -0.8, WRIST_FLOOR),
+    grip_r=(-0.38, -0.78, WRIST_FLOOR), claw_l=10.0, claw_r=10.0, elbow_l=34.0, elbow_r=34.0,
+    foot_l=(0.2, 0.48, 0.24), foot_r=(-0.2, 0.5, 0.22), sole_l=(55.0, 15.0), sole_r=(55.0, -15.0)), down=12.0))
+ABSORB = hang(gaze(pose_of(
+    QUAD, hip=(0.0, 0.04, -0.47), trunk=(78.0, 0.0, 0.0), chest=(28.0, 0.0, 0.0), clav_l=(20.0, 8.0),
+    clav_r=(20.0, 8.0), grip_l=(0.38, -0.78, WRIST_FLOOR), grip_r=(-0.38, -0.76, WRIST_FLOOR),
+    elbow_l=42.0, elbow_r=42.0, foot_l=(0.2, 0.36, 0.14), foot_r=(-0.2, 0.38, 0.14)), down=18.0))
+
+
+def leap(frame):
+    """Off the ground and over a car: the haunches drop and coil, the hind legs drive it up and
+    forward off its toes, and the arms are already reaching out ahead with the claws spread."""
+    keys = [(0, QUAD, smooth), (2, COILED_FOURS, ease_out), (LEAP_LAUNCH - 1, SPRING, ease_in),
+            (LEAP_FRAMES, FLY, ease_out)]
+    return hang(timeline(keys, frame, {"head": 0.5, "trophy": 2.0}))
+
+
+def air(u):
+    """In the air: stretched out with the claws reaching ahead and the hind legs trailing, the spine
+    flexing a little and the claws opening and closing, the head steady on where it will land."""
+    pose = dict(FLY)
+    flex = wave(u, 1, 0.2)
+    pose["spine2"] = (4.0 + 4.0 * flex, 0.0, 0.0)
+    pose["chest"] = (10.0 + 3.0 * flex, 0.0, 0.0)
+    pose["hand_l"] = (0.5 + 0.04 * flex, -0.18 - 0.05 * flex, 0.2)
+    pose["hand_r"] = (0.48 + 0.04 * wave(u, 1, 0.3), -0.16 - 0.05 * wave(u, 1, 0.3), 0.18)
+    pose["claw_l"] = -30.0 + 20.0 * wave(u, 2, 0.1)
+    pose["claw_r"] = -30.0 + 20.0 * wave(u, 2, 0.35)
+    pose["foot_l"] = (0.2, 0.52 - 0.06 * flex, 0.32 + 0.04 * flex)
+    pose["foot_r"] = (-0.2, 0.55 - 0.06 * flex, 0.3 + 0.04 * flex)
+    gaze(pose, down=10.0 + 2.0 * flex)
+    return hang(pose, (8.0 * wave(u, 1, 0.4), 0.0, 0.0))
+
+
+def land(frame):
+    """Down: the hands slap onto the ground first, the chest drops between the elbows as the hind
+    feet come down behind, and it rocks back up into its crouch."""
+    keys = [(0, FLY, smooth), (2, TOUCH, ease_in), (4, ABSORB, ease_out), (LAND_FRAMES, QUAD, smooth)]
+    pose = timeline(keys, frame, {"head": 1.0, "neck": 0.5, "trophy": 2.0})
+    if 2 <= frame <= 6:
+        pose = tremble(pose, frame / FPS, 2.0, seed=40)
+    return hang(pose)
+
+
+LOW = hang(gaze(pose_of(
+    QUAD, hip=(0.0, 0.10, -0.52), trunk=(82.0, 0.0, 0.0), spine1=(8.0, 0.0, 0.0), spine2=(14.0, 0.0, 0.0),
+    chest=(18.0, 0.0, 0.0), clav_l=(22.0, 28.0), clav_r=(22.0, 28.0), grip_l=(0.44, -0.6, WRIST_FLOOR),
+    grip_r=(-0.44, -0.58, WRIST_FLOOR), elbow_l=48.0, elbow_r=48.0, claw_l=20.0, claw_r=20.0,
+    foot_l=(0.24, 0.3, 0.13), foot_r=(-0.24, 0.32, 0.13), sole_l=(40.0, 18.0), sole_r=(40.0, -18.0),
+    knee_l=30.0, knee_r=30.0), down=15.0))
+
+
+def hide(u):
+    """Pressed flat behind cover with its elbows splayed like a spider's and its belly near the
+    ground: the ribs heave, the head lies low, lifts and turns to listen, holds, and sinks back; one
+    hand flexes its claws against the ground."""
+    pose = dict(LOW)
+    breath = wave(u, 4, 0.05)
+    listen = bump(u, 0.3, 0.06, 0.2, 0.12)
+    flex = bump(u, 0.72, 0.03, 0.06, 0.08)
+    sway = math.sin(TAU * u)
+    pose["hip"] = (0.012 * sway, 0.10, -0.52 + 0.01 * breath)
+    pose["spine2"] = (14.0 + 2.0 * breath, 0.0, 0.0)
+    pose["chest"] = (18.0 - 3.0 * breath, 0.0, -1.5 * sway)
+    pose["clav_l"] = (22.0, 28.0 + 3.0 * breath)
+    pose["clav_r"] = (22.0, 28.0 + 3.0 * breath)
+    pose["claw_r"] = 20.0 + 30.0 * flex
+    pose["head"] = (2.0 * loop_noise(u, 31, (3, 5)), 0.0, 8.0 * loop_noise(u, 33, (2, 3)) - 14.0 * listen)
+    gaze(pose, down=15.0 - 14.0 * listen, turn=26.0 * listen + 5.0 * loop_noise(u, 35, (2, 5)))
+    return hang(pose, (0.0, 0.0, 3.0 * sway))
+
+
+PEEK = gaze(pose_of(
+    STAND, hip=(0.0, 0.06, -0.06), trunk=(12.0, 0.0, 0.0), spine1=(3.0, 0.0, 0.0), spine2=(4.0, 0.0, 0.0),
+    chest=(6.0, 0.0, 0.0), clav_l=(16.0, 14.0), clav_r=(16.0, 14.0),
+    grip_l=(0.24, -PEEK_REACH, PEEK_EDGE), grip_r=(-0.24, -PEEK_REACH + 0.02, PEEK_EDGE), reach_l=1.0, reach_r=1.0,
+    plant_l=0.0, plant_r=0.0, claw_l=60.0, claw_r=60.0, elbow_l=35.0, elbow_r=35.0,
+    foot_l=(0.15, 0.06, ANKLE), foot_r=(-0.15, 0.1, ANKLE), sole_l=(0.0, 10.0), sole_r=(0.0, -10.0),
+    knee_l=12.0, knee_r=12.0), down=14.0)
+RISING = hang(gaze(pose_of(
+    PEEK, hip=(0.0, 0.1, -0.28), trunk=(40.0, 0.0, 0.0), grip_l=(0.3, -PEEK_REACH + 0.05, 0.95),
+    grip_r=(-0.3, -PEEK_REACH + 0.05, 0.95), claw_l=20.0, claw_r=20.0, foot_l=(0.18, 0.18, 0.1),
+    foot_r=(-0.18, 0.2, 0.1), sole_l=(30.0, 12.0), sole_r=(30.0, -12.0), knee_l=22.0, knee_r=22.0), down=6.0))
+
+
+def peek(frame):
+    """Up over the car: it rises behind it, straightens up with its claws hooked over the roof's edge,
+    lifts its head over the top and stares down at you, cocks its head with a jerk, holds, then sinks
+    back down out of sight into its crouch."""
+    keys = [(0, LOW, smooth), (5, RISING, ease_in), (9, PEEK, ease_out), (24, PEEK, smooth),
+            (31, LOW, ease_in), (PEEK_FRAMES, LOW, smooth)]
+    pose = timeline(keys, frame, {"head": 2.0, "neck": 1.0, "hand_l": 1.0, "hand_r": 1.5, "trophy": 3.0})
+    cock = bump(frame / PEEK_FRAMES, 0.42, 0.03, 0.18, 0.06)
+    pose["head"] = add(pose["head"], (0.0, 0.0, 22.0 * cock))
+    if 9 <= frame <= 24:
+        pose = tremble(pose, frame / FPS, 1.5, seed=42)
+    return hang(pose)
+
+
+REARED = hang(gaze(pose_of(
+    QUAD, hip=(0.0, 0.10, -0.3), trunk=(46.0, 0.0, 0.0), spine1=(2.0, 0.0, 0.0), spine2=(4.0, 0.0, 0.0),
+    chest=(6.0, 0.0, 0.0), clav_l=(-8.0, 32.0), clav_r=(-8.0, 32.0), hand_l=(0.24, -0.24, 0.34),
+    hand_r=(0.22, -0.22, 0.34), reach_l=0.0, reach_r=0.0, plant_l=0.0, plant_r=0.0, claw_l=-35.0, claw_r=-35.0,
+    elbow_l=30.0, elbow_r=30.0, foot_l=(0.2, 0.36, 0.13), foot_r=(-0.2, 0.38, 0.13)), down=-40.0))
+SCREECH = hang(gaze(pose_of(
+    REARED, trunk=(56.0, 0.0, 0.0), chest=(12.0, 0.0, 0.0), hand_l=(0.32, -0.3, 0.3), hand_r=(0.3, -0.28, 0.3),
+    claw_l=35.0, claw_r=35.0), down=-12.0))
+
+
+def shriek(frame):
+    """On all fours, up on a car or in the road: it rears its front up with its claws spread and its
+    head thrown back, shrieks forward shaking, and drops back onto its hands."""
+    keys = [(0, QUAD, smooth), (4, REARED, snap), (8, REARED, smooth), (10, SCREECH, snap), (18, SCREECH, smooth),
+            (23, QUAD, ease_in), (SHRIEK_FRAMES, QUAD, smooth)]
+    pose = timeline(keys, frame, DELAYS)
+    if 4 <= frame <= 19:
+        pose = tremble(pose, frame / FPS, 5.0 if frame >= 10 else 2.5, seed=44)
+    return hang(pose)
+
+
 # Clip names follow the enemy contract (lowercase; see the godot-3d-enemy-pipeline skill). The
 # gameplay states map onto them in scenes/monsters/the_ridgeback/ridgeback_visual.gd. The fours_
 # clips are the four-legged set; fours_drop and fours_rise carry it between standing and all fours.
+# --- Off the roofs (scenes/monsters/the_ridgeback/ridgeback_faller.gd) ------------------------------
+# The alt route's downtown ambush: standing on a roof's edge over the street with the rest of its line,
+# it shrieks with them, throws itself off, falls flailing and hits the road. Most live through it
+# without their legs: THE_RIDGEBACK_crawler.glb is the same rig with the legs cut away at the hips
+# (build_the_ridgeback.py), and drags itself after the player on its arms. The legs it leaves are
+# posed as splat ends, so they lie where the full body lay. The crawl clips are legless: what the
+# legs do in them is never seen, and the joint check leaves them out.
+
+# The bones the crawler has lost: their skin is cut away from it and is what its legs are made of.
+LEGS = tuple(bone + "_" + side for side in SIDES for bone in ("thigh", "calf", "foot", "toe"))
+
+LEDGE_FRAMES = 96
+PERCHED = pose_of(
+    STAND, hip=(0.0, 0.03, -0.05), trunk=(16.0, 0.0, 0.0), spine1=(6.0, 0.0, 0.0), spine2=(8.0, 0.0, 0.0),
+    chest=(8.0, 0.0, 0.0), clav_l=(12.0, 2.0), clav_r=(12.0, 3.0), hand_l=(0.24, -0.6, 0.08),
+    hand_r=(0.22, -0.62, 0.06), elbow_l=14.0, elbow_r=15.0, claw_l=24.0, claw_r=28.0,
+    foot_l=(0.11, -0.02, ANKLE), foot_r=(-0.11, 0.03, ANKLE), sole_l=(0.0, 6.0), sole_r=(0.0, -6.0),
+    knee_l=8.0, knee_r=8.0)
+
+
+def ledge(u):
+    """On a roof's edge with its toes over the drop, leaning out and staring down at the street,
+    swaying forward and back as if about to go; the arms hang and swing with it, the claws flex, and
+    the head cocks over and jerks back once."""
+    pose = dict(PERCHED)
+    sway = math.sin(TAU * u)
+    breath = wave(u, 3, 0.1)
+    twitch = bump(u, 0.55, 0.02, 0.12, 0.1)
+    pose["hip"] = (0.012 * math.sin(TAU * 2.0 * u), 0.03 - 0.03 * sway, -0.05 + 0.008 * breath)
+    pose["trunk"] = (16.0 + 5.0 * sway, 3.0 * math.sin(TAU * (u - 0.2)), 1.5 * math.sin(TAU * 2.0 * u))
+    pose["chest"] = (8.0 - 2.5 * breath, 0.0, 0.0)
+    pose["clav_l"] = (12.0, 2.0 + 3.0 * breath)
+    pose["clav_r"] = (12.0, 3.0 + 3.0 * wave(u, 3, 0.14))
+    pose["hand_l"] = (0.24 + 0.05 * sway, -0.6, 0.08 + 0.01 * breath)
+    pose["hand_r"] = (0.22 + 0.05 * math.sin(TAU * (u - 0.06)), -0.62, 0.06)
+    pose["claw_l"] = 24.0 + 10.0 * loop_noise(u, 3)
+    pose["claw_r"] = 28.0 + 10.0 * loop_noise(u, 6)
+    pose["head"] = (3.0 * loop_noise(u, 8, (2, 3)), 0.0, 6.0 + 28.0 * twitch)
+    pose["trophy"] = (3.0 * breath + 4.0 * sway, 0.0, 0.0)
+    return gaze(pose, down=34.0 + 4.0 * sway, turn=10.0 * math.sin(TAU * (u + 0.3)) - 22.0 * twitch)
+
+
+LEDGE_SHRIEK_FRAMES = 34
+REARED_LEDGE = gaze(pose_of(
+    PERCHED, hip=(0.0, 0.06, 0.02), trunk=(-10.0, 0.0, 0.0), spine1=(-5.0, 0.0, 0.0), spine2=(-8.0, 0.0, 0.0),
+    chest=(-10.0, 0.0, 0.0), clav_l=(-15.0, 20.0), clav_r=(-15.0, 22.0), hand_l=(-0.05, 0.4, 0.55),
+    hand_r=(-0.08, 0.42, 0.55), elbow_l=34.0, elbow_r=35.0, claw_l=-20.0, claw_r=-25.0,
+    foot_r=(-0.13, 0.2, ANKLE)), down=-30.0)
+SCREAMING_DOWN = gaze(pose_of(
+    PERCHED, hip=(0.0, 0.0, -0.06), trunk=(24.0, 0.0, 0.0), spine2=(6.0, 0.0, 0.0), chest=(10.0, 0.0, 0.0),
+    clav_l=(4.0, 24.0), clav_r=(4.0, 26.0), hand_l=(0.3, 0.15, 0.6), hand_r=(0.28, 0.18, 0.6),
+    elbow_l=30.0, elbow_r=31.0, claw_l=34.0, claw_r=38.0, head=(10.0, 0.0, 5.0)), down=40.0)
+
+
+def ledge_shriek(frame):
+    """The line's shriek: it rears back on the edge with its arms flung up, pitches forward over the
+    street and screams down into it with everything shaking, then sinks back to staring."""
+    keys = [(0, ledge(0.0), smooth), (4, REARED_LEDGE, snap), (9, REARED_LEDGE, smooth), (12, SCREAMING_DOWN, snap),
+            (26, SCREAMING_DOWN, smooth), (LEDGE_SHRIEK_FRAMES, ledge(0.0), smooth)]
+    pose = timeline(keys, frame, DELAYS)
+    if 4 <= frame <= 27:
+        pose = tremble(pose, frame / FPS, 5.0 if frame >= 12 else 2.5, seed=50)
+    return pose
+
+
+FALL_FRAMES = 18
+FALLING = gaze(pose_of(
+    STAND, trunk=(36.0, 0.0, 0.0), spine1=(4.0, 0.0, 0.0), spine2=(4.0, 0.0, 0.0), chest=(-6.0, 0.0, 0.0),
+    clav_l=(-4.0, 24.0), clav_r=(-4.0, 24.0), hand_l=(0.3, 0.2, 0.5), hand_r=(0.3, 0.2, 0.5),
+    elbow_l=30.0, elbow_r=30.0, claw_l=-30.0, claw_r=-30.0, foot_l=(0.2, 0.25, 0.32), foot_r=(-0.2, 0.2, 0.28),
+    sole_l=(30.0, 10.0), sole_r=(30.0, -10.0), toe_l=-20.0, toe_r=-20.0, knee_l=24.0, knee_r=24.0), down=50.0)
+
+
+def fall(u):
+    """Falling: pitched forward at the road, the arms windmilling out of time with each other and the
+    legs kicking at nothing, the head craned at the ground coming up."""
+    pose = dict(FALLING)
+    for side, sign, at in (("l", 1.0, 0.0), ("r", -1.0, 0.37)):
+        a = TAU * (u - at)
+        pose["hand_" + side] = (0.28 + 0.3 * math.cos(a), 0.15 + 0.3 * math.sin(a), 0.5 + 0.06 * math.sin(2.0 * a))
+        pose["claw_" + side] = -30.0 + 30.0 * wave(u, 2, at)
+        pose["elbow_" + side] = 30.0 + 10.0 * math.sin(a)
+        kick = TAU * (u - at - 0.2)
+        foot = FALLING["foot_" + side]
+        pose["foot_" + side] = (foot[0] + 0.05 * sign * math.sin(kick), foot[1] + 0.2 * math.sin(kick),
+                                foot[2] + 0.16 * math.cos(kick))
+    pose["trunk"] = (36.0 + 6.0 * wave(u, 1, 0.1), 4.0 * math.sin(TAU * u), 5.0 * math.sin(TAU * (u + 0.25)))
+    pose["chest"] = (-6.0 + 5.0 * wave(u, 2, 0.2), 0.0, 0.0)
+    return gaze(pose, down=50.0)
+
+
+LEAP_OFF_FRAMES = 14
+LEAP_OFF_LAUNCH = 9             # the feet leave the roof
+DIP = gaze(pose_of(
+    PERCHED, hip=(0.0, 0.08, -0.24), trunk=(34.0, 0.0, 0.0), clav_l=(-12.0, 6.0), clav_r=(-12.0, 8.0),
+    hand_l=(-0.3, -0.45, 0.28), hand_r=(-0.32, -0.42, 0.3), elbow_l=26.0, elbow_r=27.0, claw_l=30.0,
+    claw_r=30.0, knee_l=16.0, knee_r=16.0), down=40.0)
+SPRUNG = gaze(pose_of(
+    PERCHED, hip=(0.0, -0.06, 0.04), trunk=(42.0, 0.0, 0.0), spine1=(4.0, 0.0, 0.0), spine2=(6.0, 0.0, 0.0),
+    chest=(4.0, 0.0, 0.0), clav_l=(-6.0, 24.0), clav_r=(-6.0, 26.0), hand_l=(0.5, 0.2, 0.3),
+    hand_r=(0.48, 0.24, 0.32), elbow_l=24.0, elbow_r=25.0, claw_l=-25.0, claw_r=-30.0,
+    foot_l=(0.12, 0.34, 0.3), foot_r=(-0.12, 0.3, 0.36), sole_l=(55.0, 0.0), sole_r=(60.0, 0.0),
+    toe_l=-30.0, toe_r=-30.0), down=45.0)
+
+
+def leap_off(frame):
+    """Off the edge: it drops into a crouch with its arms swung back, then throws itself out over the
+    street, the arms flung forward and the legs driving off the roof behind it, and starts to fall."""
+    keys = [(0, ledge(0.0), smooth), (5, DIP, ease_out), (LEAP_OFF_LAUNCH, SPRUNG, snap),
+            (LEAP_OFF_FRAMES, fall(0.0), smooth)]
+    return timeline(keys, frame, {"head": 0.5, "hand_l": 1.0, "hand_r": 1.5, "trophy": 2.0})
+
+
+SPLAT_FRAMES = 30
+SLAMMED = pose_of(
+    STAND, hip=(0.0, 0.12, -0.8), trunk=(88.0, 0.0, -6.0), spine1=(4.0, 0.0, 0.0), spine2=(2.0, 0.0, 0.0),
+    chest=(-4.0, 0.0, 4.0), neck=(-14.0, 0.0, 0.0), head=(-16.0, 40.0, 0.0), clav_l=(-6.0, 4.0),
+    clav_r=(-6.0, 6.0), hand_l=(0.25, -0.2, 0.6), hand_r=(0.2, -0.22, 0.62), elbow_l=40.0, elbow_r=40.0,
+    claw_l=50.0, claw_r=45.0, foot_l=(0.22, 0.8, 0.34), foot_r=(-0.42, 0.68, 0.32), sole_l=(-85.0, 10.0),
+    sole_r=(-78.0, -20.0), knee_l=0.0, knee_r=0.0)
+BOUNCED = pose_of(
+    SLAMMED, hip=(0.0, 0.12, -0.7), trunk=(82.0, 0.0, -10.0), chest=(-8.0, 0.0, 6.0), head=(-26.0, 30.0, 0.0),
+    hand_l=(0.3, -0.05, 0.62), hand_r=(0.22, -0.02, 0.6), foot_l=(0.3, 0.74, 0.42), foot_r=(-0.44, 0.64, 0.4))
+SPLAYED = pose_of(
+    SLAMMED, hip=(0.0, 0.12, -0.8), trunk=(88.0, 0.0, -8.0), chest=(-2.0, 0.0, 6.0), neck=(-12.0, 0.0, 0.0),
+    head=(-18.0, 36.0, 0.0), hand_l=(0.35, -0.24, 0.55), hand_r=(0.05, -0.24, 0.64), claw_l=55.0, claw_r=35.0,
+    foot_l=(0.45, 0.7, 0.32), foot_r=(-0.44, 0.64, 0.36), knee_l=28.0, knee_r=0.0)
+
+
+def splat(frame):
+    """Hits the road: the body slams flat in two frames, bounces, the limbs flop out and settle broken
+    and shaking, then lie still. The last frame is the corpse, and what the crawler rises from."""
+    keys = [(0, fall(0.0), smooth), (2, SLAMMED, snap), (5, BOUNCED, ease_out), (10, SPLAYED, ease_in),
+            (SPLAT_FRAMES, SPLAYED, smooth)]
+    pose = timeline(keys, frame, {"head": 1.0, "hand_l": 1.0, "hand_r": 1.5, "trophy": 2.0})
+    if 2 <= frame < SPLAT_FRAMES - 4:
+        pose = tremble(pose, frame / FPS, 6.0 * (1.0 - (frame - 2) / (SPLAT_FRAMES - 6)), seed=60)
+    return pose
+
+
+# The crawl: belly down with the chest lifted on its arms, hauling itself along hand over hand. The
+# planted hand drags back from CRAWL_REACH to CRAWL_PULL under the shoulder (y, ahead being -y).
+CRAWL_FRAMES = 36
+CRAWL_DUTY = 0.56
+CRAWL_REACH = -0.82
+CRAWL_PULL = -0.36
+CRAWL_SPEED = (CRAWL_PULL - CRAWL_REACH) / (CRAWL_DUTY * CRAWL_FRAMES / FPS)
+STUMPS = dict(foot_l=(0.2, 0.78, 0.3), foot_r=(-0.2, 0.78, 0.3), sole_l=(-80.0, 0.0), sole_r=(-80.0, 0.0),
+              knee_l=0.0, knee_r=0.0, toe_l=0.0, toe_r=0.0)
+DRAGGING = pose_of(
+    STAND, hip=(0.0, 0.14, -0.78), trunk=(82.0, 0.0, 0.0), spine1=(-3.0, 0.0, 0.0), spine2=(-6.0, 0.0, 0.0),
+    chest=(-8.0, 0.0, 0.0), clav_l=(14.0, 10.0), clav_r=(14.0, 10.0), grip_l=(0.3, -0.6, WRIST_FLOOR),
+    grip_r=(-0.3, -0.6, WRIST_FLOOR), reach_l=1.0, reach_r=1.0, plant_l=1.0, plant_r=1.0, elbow_l=40.0,
+    elbow_r=40.0, claw_l=20.0, claw_r=20.0, **STUMPS)
+
+
+def crawl(u):
+    """Dragging itself along: each hand in turn is flung out ahead and slapped down, and hauls the body
+    up to it, the shoulders rolling and the stumps swinging behind; the head stays up, on the player."""
+    pose = dict(DRAGGING)
+    for side, sign in SIDES.items():
+        y, z, plant, claw = quad_hand((u - (0.0 if side == "l" else 0.5)) % 1.0, CRAWL_DUTY, CRAWL_REACH, CRAWL_PULL, 0.22)
+        swinging = 1.0 - plant
+        pose["grip_" + side] = ((0.3 + 0.06 * swinging) * sign, y, z)
+        pose["plant_" + side] = plant
+        pose["claw_" + side] = claw
+        pose["clav_" + side] = (14.0 + 16.0 * swinging, 10.0 + 18.0 * swinging)
+    haul = math.sin(TAU * u)
+    pose["hip"] = (0.04 * haul, 0.14, -0.78 + 0.02 * abs(haul))
+    pose["trunk"] = (82.0, 6.0 * haul, 4.0 * haul)
+    pose["chest"] = (-8.0 + 4.0 * wave(u, 2, 0.15), -6.0 * haul, -5.0 * haul)
+    pose["pelvis"] = (0.0, -8.0 * haul, 0.0)
+    gaze(pose, down=4.0, turn=4.0 * haul)
+    return hang(pose)
+
+
+CRAWL_RISE_FRAMES = 26
+LIFTING = pose_of(
+    SPLAYED, head=(-30.0, 10.0, 0.0), neck=(-24.0, 0.0, 0.0), hand_l=(0.4, -0.22, 0.4), hand_r=(0.35, -0.22, 0.42),
+    claw_l=10.0, claw_r=10.0, **STUMPS)
+
+
+def crawl_rise(frame):
+    """From where it splattered: the head comes up first, the arms drag in and plant, and the chest
+    heaves up off the road into the crawl."""
+    start = pose_of(SPLAYED, **STUMPS)
+    keys = [(0, start, smooth), (8, LIFTING, ease_out), (16, pose_of(DRAGGING, head=(-10.0, 0.0, 0.0)), smooth),
+            (CRAWL_RISE_FRAMES, crawl(0.0), smooth)]
+    pose = timeline(keys, frame, DELAYS)
+    if 4 <= frame <= 20:
+        pose = tremble(pose, frame / FPS, 3.0, seed=70)
+    return pose
+
+
+CRAWL_GRAB_FRAMES = 24
+CRAWL_GRAB_HIT = 10             # the claw reaches the player's ankles
+PROPPED = gaze(pose_of(
+    DRAGGING, hip=(0.0, 0.14, -0.74), trunk=(70.0, 0.0, -6.0), chest=(-14.0, 6.0, 0.0), clav_r=(-10.0, 30.0),
+    grip_l=(0.28, -0.55, WRIST_FLOOR), grip_r=(-0.48, -0.25, 0.85), plant_r=0.0, claw_r=-30.0, elbow_r=30.0), down=-6.0)
+SWIPED = gaze(pose_of(
+    PROPPED, trunk=(80.0, 0.0, 4.0), chest=(-6.0, -10.0, 0.0), clav_r=(30.0, 8.0), grip_r=(-0.25, -1.0, 0.12),
+    claw_r=60.0, elbow_r=20.0), down=8.0)
+
+
+def crawl_grab(frame):
+    """At the player's feet: it props itself up on one arm with the other cocked high, lashes it down
+    at the ankles, hooks and hauls back, and drops into the crawl again."""
+    keys = [(0, crawl(0.0), smooth), (6, PROPPED, ease_out), (CRAWL_GRAB_HIT, SWIPED, ease_in), (14, SWIPED, smooth),
+            (CRAWL_GRAB_FRAMES, crawl(0.0), smooth)]
+    pose = timeline(keys, frame, {"head": 0.5, "trophy": 2.0})
+    if 6 <= frame <= 16:
+        pose = tremble(pose, frame / FPS, 3.0, seed=72)
+    return hang(pose)
+
+
+CRAWL_HIT_FRAMES = 12
+CRINGE = gaze(pose_of(
+    DRAGGING, hip=(0.0, 0.18, -0.76), trunk=(78.0, 0.0, 8.0), chest=(-18.0, 10.0, 0.0), clav_l=(30.0, 24.0),
+    clav_r=(26.0, 26.0), grip_l=(0.38, -0.5, 0.3), grip_r=(-0.4, -0.48, 0.32), plant_l=0.0, plant_r=0.0,
+    claw_l=-25.0, claw_r=-30.0), down=-25.0, turn=20.0)
+
+
+def crawl_hit(frame):
+    """Hit: the head and chest snap up and back, the hands jerk off the road, then it slaps them down
+    again."""
+    keys = [(0, crawl(0.0), smooth), (2, CRINGE, snap), (5, CRINGE, smooth), (CRAWL_HIT_FRAMES, crawl(0.0), smooth)]
+    pose = timeline(keys, frame, DELAYS)
+    return hang(tremble(pose, frame / FPS, 4.0 * (1.0 - frame / CRAWL_HIT_FRAMES), seed=74))
+
+
+CRAWL_DEATH_FRAMES = round(1.3 * FPS)
+SAG = gaze(pose_of(
+    DRAGGING, hip=(0.0, 0.14, -0.8), trunk=(86.0, 0.0, -10.0), chest=(-2.0, 0.0, -6.0),
+    grip_l=(0.42, -0.62, WRIST_FLOOR), grip_r=(-0.4, -0.52, WRIST_FLOOR), elbow_l=60.0, elbow_r=60.0), down=40.0)
+FLAT = pose_of(
+    SPLAYED, hip=(0.0, 0.14, -0.8), trunk=(88.0, 0.0, -10.0), head=(-20.0, -40.0, 0.0),
+    hand_l=(0.45, -0.24, 0.45), hand_r=(0.3, -0.24, 0.5), claw_l=40.0, claw_r=50.0, **STUMPS)
+
+
+def crawl_death(frame):
+    """The arms give out under it, the chest and then the head hit the road, a hand claws once, and it
+    stops: the last frame is the corpse."""
+    twitch = bump(frame / CRAWL_DEATH_FRAMES, 0.75, 0.02, 0.04, 0.1)
+    keys = [(0, crawl(0.0), smooth), (5, SAG, ease_in), (11, FLAT, ease_in), (CRAWL_DEATH_FRAMES, FLAT, smooth)]
+    pose = timeline(keys, frame, DELAYS)
+    pose["claw_r"] = pose["claw_r"] - 45.0 * twitch
+    if frame <= 14:
+        pose = tremble(pose, frame / FPS, 4.0, seed=76)
+    return pose
+
+
 CLIPS = [
     Clip("idle", 96, True, idle, (2.0, 0.3)),
     Clip("watch", 72, True, watch, (2.4, 0.35)),
@@ -1090,6 +1494,22 @@ CLIPS = [
     Clip("fours_rise", RISE_FRAMES, False, rise, (3.0, 0.4)),
     Clip("fours_hit", FLINCH_FRAMES, False, fours_flinch, (3.5, 0.3)),
     Clip("fours_death", FOURS_DEATH_FRAMES, False, fours_death, (3.0, 0.45)),
+    Clip("fours_leap", LEAP_FRAMES, False, leap, (5.0, 0.45)),
+    Clip("fours_air", AIR_FRAMES, True, air, (4.0, 0.45)),
+    Clip("fours_land", LAND_FRAMES, False, land, (5.0, 0.4)),
+    Clip("fours_hide", 72, True, hide, (3.0, 0.4)),
+    Clip("fours_peek", PEEK_FRAMES, False, peek, (3.5, 0.4)),
+    Clip("fours_shriek", SHRIEK_FRAMES, False, shriek, (3.5, 0.45)),
+    Clip("ledge", LEDGE_FRAMES, True, ledge, (2.0, 0.3)),
+    Clip("ledge_shriek", LEDGE_SHRIEK_FRAMES, False, ledge_shriek, (3.2, 0.32)),
+    Clip("leap_off", LEAP_OFF_FRAMES, False, leap_off, (4.0, 0.4)),
+    Clip("fall", FALL_FRAMES, True, fall, (3.0, 0.35)),
+    Clip("splat", SPLAT_FRAMES, False, splat, (5.0, 0.3)),
+    Clip("crawl", CRAWL_FRAMES, True, crawl, None, legless=True),
+    Clip("crawl_rise", CRAWL_RISE_FRAMES, False, crawl_rise, None, legless=True),
+    Clip("crawl_grab", CRAWL_GRAB_FRAMES, False, crawl_grab, None, legless=True),
+    Clip("crawl_hit", CRAWL_HIT_FRAMES, False, crawl_hit, None, legless=True),
+    Clip("crawl_death", CRAWL_DEATH_FRAMES, False, crawl_death, None, legless=True),
 ]
 
 

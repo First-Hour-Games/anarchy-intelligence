@@ -10,7 +10,9 @@ const MAP_ITEM: StringName = &"map"
 const NOTEBOOK_ITEM: StringName = &"notebook"
 const BOTTLE_ITEM: StringName = &"bottle"
 const FENCE_KEY_ITEM: StringName = &"fence_key"
+const SHED_KEY_ITEM: StringName = &"shed_key"
 const METAL_PIPE_ITEM: StringName = &"metal_pipe"
+const SHOTGUN_ITEM: StringName = &"shotgun"
 ## Items that share one slot and track how many are carried.
 const STACK_LIMITS: Dictionary = {BOTTLE_ITEM: 3}
 const INK := Color(0.015, 0.015, 0.015, 0.80)
@@ -543,7 +545,10 @@ func _update_hud() -> void:
 	if item == METAL_PIPE_ITEM:
 		var weapon := _player.get_node_or_null("Head/Camera3D/PipeWeapon")
 		_use.text = "HOLSTER PIPE" if weapon != null and weapon.get("equipped") else "EQUIP PIPE"
-	_use.disabled = item == EMPTY_ITEM or item == FENCE_KEY_ITEM
+	elif item == SHOTGUN_ITEM:
+		var weapon := _player.get_node_or_null("Head/Camera3D/ShotgunWeapon")
+		_use.text = "HOLSTER SHOTGUN" if weapon != null and weapon.get("equipped") else "EQUIP SHOTGUN"
+	_use.disabled = item == EMPTY_ITEM or item == FENCE_KEY_ITEM or item == SHED_KEY_ITEM
 	var health := _player.get_node_or_null("CombatHealth")
 	var ratio := clampf(float(health.get("health")) / maxf(float(health.get("max_health")), 0.01), 0.0, 1.0) if health != null else 1.0
 	var row := 5 if ratio <= 0.0 else 0 if ratio >= 0.8 else 1 if ratio >= 0.6 else 2 if ratio >= 0.4 else 3 if ratio >= 0.2 else 4
@@ -555,8 +560,8 @@ func _use_selected() -> void:
 	if item == EMPTY_ITEM:
 		return
 	match item:
-		METAL_PIPE_ITEM:
-			var weapon := _player.get_node_or_null("Head/Camera3D/PipeWeapon")
+		METAL_PIPE_ITEM, SHOTGUN_ITEM:
+			var weapon := _player.get_node_or_null("Head/Camera3D/PipeWeapon" if item == METAL_PIPE_ITEM else "Head/Camera3D/ShotgunWeapon")
 			if weapon != null:
 				weapon.set_equipped(not bool(weapon.get("equipped")))
 				set_open(false, false)
@@ -583,6 +588,6 @@ func _get_item_display_name(item: StringName) -> String:
 		MAP_ITEM: return "TOWN MAP"
 		NOTEBOOK_ITEM: return "CARRIE'S NOTES"
 		BOTTLE_ITEM: return "EMPTY BOTTLE x%d" % get_count(item)
-		FENCE_KEY_ITEM: return "Small Silver Key"
+		FENCE_KEY_ITEM, SHED_KEY_ITEM: return "Small Silver Key"
 		METAL_PIPE_ITEM: return "METAL PIPE"
 		_: return "EMPTY" if item == EMPTY_ITEM else str(item).to_upper()

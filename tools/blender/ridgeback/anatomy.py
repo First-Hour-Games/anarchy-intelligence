@@ -77,19 +77,26 @@ def main():
 
 def check(armature, mesh, clip, action):
     """Prints the clip's report and returns its problems: joints out of range or mesh through the
-    floor. A limb pulled in to stay bent is reported but is not a problem."""
+    floor. A limb pulled in to stay bent is reported but is not a problem. A legless clip, which only
+    the crawler plays, is checked without its legs (clips.LEGS) and their skin."""
     scene = bpy.context.scene
     armature.animation_data.action = action
     armature.animation_data.action_slot = action.slots[0]
     worst = {}
     reach = {}
     floor = (0.0, 0, "")
+    legless = getattr(clip, "legless", False)
+    cut = {mesh.vertex_groups[name].index for name in clips.LEGS if name in mesh.vertex_groups} if legless else set()
+    kept = [vertex.index for vertex in mesh.data.vertices
+            if not vertex.groups or max(vertex.groups, key=lambda group: group.weight).group not in cut]
     for frame in range(clip.frames + (0 if clip.loop else 1)):
         scene.frame_set(frame)
         depsgraph = bpy.context.evaluated_depsgraph_get()
         for side in ("l", "r"):
             for stem, (twist_limit, swing_limit) in LIMITS.items():
                 name = stem + "_" + side if stem in ("upperarm", "forearm", "hand", "thigh", "calf", "foot") else stem
+                if name in clips.LEGS and legless:
+                    continue
                 if name in worst and stem not in ("upperarm", "forearm", "hand", "thigh", "calf", "foot") and side == "r":
                     continue
                 twist, swing = twist_swing(local_rotation(armature, name))
@@ -97,12 +104,14 @@ def check(armature, mesh, clip, action):
                 if over > worst.get(name, (0.0,))[0]:
                     worst[name] = (over, frame, twist, swing)
             for limb, target in (("hand_" + side, "hand_ik_" + side), ("foot_" + side, "foot_ik_" + side)):
+                if limb in clips.LEGS and legless:
+                    continue
                 miss = (armature.pose.bones[limb].head - armature.pose.bones[target].head).length
                 if miss > reach.get(limb, (0.0,))[0]:
                     reach[limb] = (miss, frame)
         evaluated = mesh.evaluated_get(depsgraph)
         data = evaluated.to_mesh()
-        index, lowest = min(((vertex.index, (evaluated.matrix_world @ vertex.co).z) for vertex in data.vertices),
+        index, lowest = min(((index, (evaluated.matrix_world @ data.vertices[index].co).z) for index in kept),
                             key=lambda item: item[1])
         evaluated.to_mesh_clear()
         if lowest < floor[0]:

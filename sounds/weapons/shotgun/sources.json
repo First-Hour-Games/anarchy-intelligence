@@ -1,0 +1,22 @@
+[
+  {
+    "file": "blasts_source.mp3",
+    "title": "G35-03-Shotgun Blasts.wav",
+    "creator": "craigsmith",
+    "source": "https://freesound.org/people/craigsmith/sounds/438567/",
+    "download": "https://cdn.freesound.org/previews/438/438567_2524442-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "6d1c2056c7b25f3cb9eceaa079f4f78d2ee7b13d8c54a1540da74e1e8e026202",
+    "bytes": 1162896
+  },
+  {
+    "file": "break_action_source.mp3",
+    "title": "Single Barreled Shotgun Loading.wav",
+    "creator": "sentryx86",
+    "source": "https://freesound.org/people/sentryx86/sounds/52202/",
+    "download": "https://cdn.freesound.org/previews/52/52202_626508-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "b04cc7bddf6088d7792b5a6eff1608f2218a75c7f1b1e50c674d33afdc515a99",
+    "bytes": 358665
+  }
+]

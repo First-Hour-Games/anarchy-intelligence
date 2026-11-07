@@ -53,6 +53,8 @@
 [ext_resource type="PackedScene" uid="uid://b6hh34861ubu5" path="res://assets/local_licensed/retro_tree_pack/low_res/tree_rt_4.glb" id="tree_tree_rt_4"]
 [ext_resource type="PackedScene" path="res://scenes/environment/story_welcome_center.tscn" id="welcome_center"]
 [ext_resource type="PackedScene" path="res://scenes/ui/world_map/world_map.tscn" id="world_map_overlay"]
+[ext_resource type="Script" path="res://scenes/environment/light_distance_fade.gd" id="light_distance_fade"]
+[ext_resource type="Script" path="res://scenes/environment/fog_draw_distance.gd" id="fog_draw_distance"]
 
 [sub_resource type="Environment" id="Environment_editor_preview"]
 background_mode = 1
@@ -213,6 +215,7 @@ light_color = Color(0.95, 0.97, 1, 1)
 light_energy = 1.25
 
 [node name="GroundPlane" type="MeshInstance3D" parent="." unique_id=205084173]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, 180)
 mesh = SubResource("PlaneMesh_ground")
 surface_material_override/0 = SubResource("ShaderMaterial_ground")
@@ -228,6 +231,7 @@ shape = SubResource("BoxShape3D_ground")
 metadata/surface = "gravel"
 
 [node name="MainRoad" type="CSGBox3D" parent="Roads" unique_id=27431853]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 use_collision = true
 size = Vector3(600, 0.4, 8)
@@ -235,6 +239,7 @@ material = SubResource("StandardMaterial3D_c7iql")
 metadata/surface = "gravel"
 
 [node name="ConnectorRoad" type="CSGBox3D" parent="Roads" unique_id=822071568]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -0.1, 187.5)
 use_collision = true
 size = Vector3(8, 0.4, 375)
@@ -242,6 +247,7 @@ material = SubResource("StandardMaterial3D_c7iql")
 metadata/surface = "gravel"
 
 [node name="WestStubRoad" type="CSGBox3D" parent="Roads" unique_id=394468731]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -0.1, 125)
 use_collision = true
 size = Vector3(219, 0.4, 6)
@@ -249,6 +255,7 @@ material = SubResource("StandardMaterial3D_c7iql")
 metadata/surface = "gravel"
 
 [node name="Crossroad" type="CSGBox3D" parent="Roads" unique_id=190111206]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.5, -0.1, 225)
 use_collision = true
 size = Vector3(317, 0.4, 8)
@@ -268,78 +275,91 @@ visible = false
 [node name="Curbs" type="Node3D" parent="." unique_id=1461405282]
 
 [node name="ConnectorRoad_West_1" type="CSGBox3D" parent="Curbs" unique_id=1226857345]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95.9, 0.08, 71)
 visible = false
 size = Vector3(0.2, 0.2, 102)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="ConnectorRoad_West_2" type="CSGBox3D" parent="Curbs" unique_id=662590805]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95.9, 0.08, 174.5)
 visible = false
 size = Vector3(0.2, 0.2, 93)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="ConnectorRoad_West_3" type="CSGBox3D" parent="Curbs" unique_id=982638662]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95.9, 0.08, 302)
 visible = false
 size = Vector3(0.2, 0.2, 146)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="ConnectorRoad_East_1" type="CSGBox3D" parent="Curbs" unique_id=1624562398]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104.1, 0.08, 71)
 visible = false
 size = Vector3(0.2, 0.2, 102)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="ConnectorRoad_East_2" type="CSGBox3D" parent="Curbs" unique_id=369371656]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104.1, 0.08, 174.5)
 visible = false
 size = Vector3(0.2, 0.2, 93)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="ConnectorRoad_East_3" type="CSGBox3D" parent="Curbs" unique_id=2064778051]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104.1, 0.08, 302)
 use_collision = true
 size = Vector3(0.2, 0.2, 146)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="WestStubRoad_North" type="CSGBox3D" parent="Curbs" unique_id=1420162301]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0.08, 121.9)
 visible = false
 size = Vector3(215, 0.2, 0.2)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="WestStubRoad_South" type="CSGBox3D" parent="Curbs" unique_id=2120052326]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0.08, 128.1)
 visible = false
 size = Vector3(215, 0.2, 0.2)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="Crossroad_North_1" type="CSGBox3D" parent="Curbs" unique_id=155067536]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0.08, 220.9)
 visible = false
 size = Vector3(138, 0.2, 0.2)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="Crossroad_North_2" type="CSGBox3D" parent="Curbs" unique_id=387096249]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 189.5, 0.08, 220.9)
 visible = false
 size = Vector3(171, 0.2, 0.2)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="Crossroad_South_1" type="CSGBox3D" parent="Curbs" unique_id=676589436]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0.08, 229.1)
 visible = false
 size = Vector3(138, 0.2, 0.2)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="Crossroad_South_2" type="CSGBox3D" parent="Curbs" unique_id=700315097]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 182.25, 0.08, 229.1)
 use_collision = true
 size = Vector3(156.5, 0.2, 0.2)
 material = SubResource("StandardMaterial3D_curb")
 
 [node name="ClinicDrivewayCurbEnd" type="CSGBox3D" parent="Curbs" unique_id=1144636342]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 270.25, 0.08, 229.1)
 use_collision = true
 size = Vector3(9.5, 0.2, 0.2)
@@ -348,46 +368,55 @@ material = SubResource("StandardMaterial3D_curb")
 [node name="RoadMarkings" type="Node3D" parent="." unique_id=1987113061]
 
 [node name="MainRoad_CenterLine" type="CSGBox3D" parent="RoadMarkings" unique_id=1560348408]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.105, 0)
 size = Vector3(600, 0.01, 0.15)
 material = SubResource("StandardMaterial3D_line_yellow")
 
 [node name="MainRoad_EdgeLine_North" type="CSGBox3D" parent="RoadMarkings" unique_id=1782316753]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.105, -3.6)
 size = Vector3(600, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="MainRoad_EdgeLine_South" type="CSGBox3D" parent="RoadMarkings" unique_id=1855321406]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.105, 3.6)
 size = Vector3(600, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="ConnectorRoad_EdgeLine_West" type="CSGBox3D" parent="RoadMarkings" unique_id=1536190829]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.4, 0.105, 187.5)
 size = Vector3(0.1, 0.01, 375)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="ConnectorRoad_EdgeLine_East" type="CSGBox3D" parent="RoadMarkings" unique_id=294286371]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 103.6, 0.105, 187.5)
 size = Vector3(0.1, 0.01, 375)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="WestStubRoad_EdgeLine_North" type="CSGBox3D" parent="RoadMarkings" unique_id=142779637]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0.105, 122.4)
 size = Vector3(219, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="WestStubRoad_EdgeLine_South" type="CSGBox3D" parent="RoadMarkings" unique_id=17043754]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0.105, 127.6)
 size = Vector3(219, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="Crossroad_EdgeLine_North" type="CSGBox3D" parent="RoadMarkings" unique_id=1124628800]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.5, 0.105, 221.4)
 size = Vector3(317, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_line_white")
 
 [node name="Crossroad_EdgeLine_South" type="CSGBox3D" parent="RoadMarkings" unique_id=623840155]
+cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.5, 0.105, 228.6)
 size = Vector3(317, 0.01, 0.1)
 material = SubResource("StandardMaterial3D_line_white")
@@ -2510,4 +2539,10 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 232.5, 0.15, 255.15)
 
 [node name="OpeningStory" type="Node" parent="." unique_id=1626550648]
 script = ExtResource("opening_story")
-editor_start = 3
+editor_start = 1
+
+[node name="LightDistanceFade" type="Node" parent="." unique_id=1084634330]
+script = ExtResource("light_distance_fade")
+
+[node name="FogDrawDistance" type="Node" parent="." unique_id=1517320947]
+script = ExtResource("fog_draw_distance")

@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/props/weapons/shotgun/shotgun.glb" id="1_model"]
+
+[node name="ShotgunPreview" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+position = Vector3(-0.091, 0.012, 0)
+rotation_degrees = Vector3(0, -90, 0)
+scale = Vector3(0.7, 0.7, 0.7)

@@ -7,11 +7,20 @@ signal loading_failed(path: String)
 
 const FOREST := "res://scenes/chapters/main/starting_forest.tscn"
 const RESIDENCE := "res://scenes/chapters/main/residence_area.tscn"
+## Each route's forest section and the residence section it streams with. The alternate route is a
+## copy of the storyline with its own pair.
+const ROUTES := {
+	FOREST: RESIDENCE,
+	"res://scenes/chapters/alt_route/starting_forest_alt.tscn": "res://scenes/chapters/alt_route/residence_area_alt.tscn",
+}
 const SHARED_NAMES := ["Player", "WorldEnvironment", "GroundPlane", "StaticBody3D",
 	"Streets", "Streets2", "DirectionalLight3D", "AspectRatioBars", "CRTOverlay",
 	"WorldMap", "NightAmbience", "VisitorBGM", "WelcomingHikeBGM", "NearTownBGM"]
 
 var active_section: Node3D
+## The pair of sections the current route streams between.
+var forest_path := FOREST
+var residence_path := RESIDENCE
 var shared_nodes: Dictionary = {}
 var seam_position := Vector3(126.8, 0, 69)
 var preload_distance := 140.0
@@ -42,6 +51,7 @@ func register_section(section: Node3D, connection: Node3D) -> void:
 	if active_section == section:
 		return
 	_reset()
+	_use_route(section.scene_file_path)
 	active_section = section
 	seam_position = connection.global_position
 	preload_distance = connection.preload_distance
@@ -63,6 +73,15 @@ func register_section(section: Node3D, connection: Node3D) -> void:
 	_partition_trees(section)
 	set_process(true)
 
+func _use_route(path: String) -> void:
+	for forest: String in ROUTES:
+		if path == forest or path == ROUTES[forest]:
+			forest_path = forest
+			residence_path = ROUTES[forest]
+			return
+	forest_path = FOREST
+	residence_path = RESIDENCE
+
 func _process(_delta: float) -> void:
 	if not is_instance_valid(active_section) or get_tree().current_scene != active_section:
 		_reset()
@@ -76,7 +95,7 @@ func _process(_delta: float) -> void:
 	var offset := player.global_position - seam_position
 	var distance := Vector2(offset.x, offset.z).length()
 	var active_path := active_section.scene_file_path
-	var neighbor_path := RESIDENCE if active_path == FOREST else FOREST
+	var neighbor_path := residence_path if active_path == forest_path else forest_path
 	# Keep unloading outside the preload radius, even with older Inspector overrides.
 	var release_distance := maxf(unload_distance, preload_distance + crossing_hysteresis)
 	if distance > release_distance:
@@ -86,7 +105,7 @@ func _process(_delta: float) -> void:
 	var wants_residence := offset.z > crossing_hysteresis
 	var wants_forest := offset.z < -crossing_hysteresis
 	if _sections.has(neighbor_path) and Engine.get_physics_frames() >= int(_ready_frames.get(neighbor_path, 0)):
-		if not player.is_frozen and ((active_path == FOREST and wants_residence) or (active_path == RESIDENCE and wants_forest)):
+		if not player.is_frozen and ((active_path == forest_path and wants_residence) or (active_path == residence_path and wants_forest)):
 			_activate(neighbor_path)
 	# Use the same distance measure for loading and unloading, with a retention band.
 	for path: String in _sections.keys():
@@ -190,9 +209,14 @@ func _remember_pickups(section: Node3D) -> void:
 	_pickup_paths[section.scene_file_path] = paths
 
 func _save_state(section: Node3D) -> void:
-	var state := {"interactables": {}, "removed_pickups": [], "hidden_visuals": [], "one_shot_cutscenes": {}, "metal_gates": {}}
+	var state := {"interactables": {}, "removed_pickups": [], "hidden_visuals": [], "one_shot_cutscenes": {}, "metal_gates": {},
+		"saved_states": {}}
 	for gate in section.find_children("*", "RiggedMetalGate", true, false):
 		state.metal_gates[section.get_path_to(gate)] = gate.get_save_state()
+	# Anything else that keeps its own state, such as a door a key unlocked.
+	for node in get_tree().get_nodes_in_group("saved_state"):
+		if section.is_ancestor_of(node):
+			state.saved_states[section.get_path_to(node)] = node.call("get_save_state")
 	for cutscene in get_tree().get_nodes_in_group("streaming_one_shot"):
 		if section.is_ancestor_of(cutscene):
 			state.one_shot_cutscenes[section.get_path_to(cutscene)] = cutscene.has_played
@@ -208,7 +232,7 @@ func _save_state(section: Node3D) -> void:
 			state.removed_pickups.append(path)
 			if not pickup_paths[path].is_empty():
 				state.hidden_visuals.append(pickup_paths[path])
-	if section.scene_file_path == FOREST:
+	if section.scene_file_path == forest_path:
 		state["hike_started"] = section.get("_has_switched_music")
 	_states[section.scene_file_path] = state
 
@@ -234,21 +258,25 @@ func _restore_state(section: Node3D) -> void:
 		var gate := section.get_node_or_null(path)
 		if gate != null:
 			gate.restore_save_state(state.metal_gates[path])
+	for path: NodePath in state.get("saved_states", {}):
+		var node := section.get_node_or_null(path)
+		if node != null and node.has_method("restore_save_state"):
+			node.call("restore_save_state", state.saved_states[path])
 	for path: NodePath in state.get("dead_story_mobs", {}):
 		var mob := section.get_node_or_null(path)
 		if mob != null and mob.has_method("restore_dead"):
 			mob.restore_dead(state.dead_story_mobs[path][0], state.dead_story_mobs[path][1])
-	if section.scene_file_path == FOREST:
+	if section.scene_file_path == forest_path:
 		section.set("_has_switched_music", state.get("hike_started", false))
 
 func _partition_trees(section: Node3D) -> void:
 	var sections: Array = _sections.values() if not _sections.is_empty() else [section]
-	_foliage_filter.apply(sections, FOREST, seam_position.z, _road_bounds, _obstacle_bounds, _exclusion_zones, avoid_tree_canopy_overlap, preserve_authored_tree_spacing)
+	_foliage_filter.apply(sections, forest_path, seam_position.z, _road_bounds, _obstacle_bounds, _exclusion_zones, avoid_tree_canopy_overlap, preserve_authored_tree_spacing)
 
 func _refresh_foliage() -> void:
 	_refresh_pending = false
 	if not _sections.is_empty():
-		_foliage_filter.apply(_sections.values(), FOREST, seam_position.z, _road_bounds, _obstacle_bounds, _exclusion_zones, avoid_tree_canopy_overlap, preserve_authored_tree_spacing)
+		_foliage_filter.apply(_sections.values(), forest_path, seam_position.z, _road_bounds, _obstacle_bounds, _exclusion_zones, avoid_tree_canopy_overlap, preserve_authored_tree_spacing)
 
 func _schedule_foliage_refresh() -> void:
 	if not _refresh_pending:

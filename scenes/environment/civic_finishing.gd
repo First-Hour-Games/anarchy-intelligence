@@ -35,9 +35,11 @@ const CARS := {
 	"Police Car": "res://assets/local_licensed/cars_bundle/Police Car.glb",
 }
 @export_range(0.0, 3.0) var street_light_energy: float = 1.8
+## The markers of the downtown this finishes: the alt route's map uses downtown_alt's.
+@export_file("*.json") var markers_path: String = MARKERS
 
 func _ready() -> void:
-	var markers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(MARKERS))
+	var markers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(markers_path))
 	var top := float(markers.sidewalk_top)
 	var trees := 0
 	for item: Dictionary in markers.furniture:

@@ -17,6 +17,8 @@ const SOUNDS := {
 	"wrapper": preload("res://sounds/entities/death_scares/wrapper_kill.wav"),
 	"clawman": preload("res://sounds/entities/death_scares/clawman_kill.wav"),
 	"ridgeback": preload("res://sounds/entities/death_scares/ridgeback_kill.wav"),
+	# The alt route's car-ambush Ridgebacks, which scream like pigs (tools/prepare_ridgeback_pig_audio.gd).
+	"ridgeback_road": preload("res://sounds/entities/ridgeback/ridgeback_road_kill.wav"),
 }
 ## Held items (pipe, flashlight body) render on this layer; the fallen view leaves them out.
 const VIEWMODEL_LAYER := 2
@@ -67,6 +69,9 @@ func start(attacker: Node3D) -> void:
 	var player := get_parent().get_parent() as Node3D
 	if is_instance_valid(attacker):
 		entity_kind = "ridgeback" if attacker is CorruptedFriend else "clawman" if attacker.get("encounter_kind") == 1 else "wrapper"
+		# An attacker can name its own kind, as the alt route's car ambush Ridgebacks do.
+		if attacker.get("scare_kind") is String:
+			entity_kind = attacker.get("scare_kind")
 	_stop_enemies(attacker)
 	_hide_hud()
 	blackout = ColorRect.new()

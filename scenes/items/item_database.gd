@@ -55,6 +55,15 @@ static func _ensure_initialized() -> void:
 	fence_key.use_action_text = "USE AT LOCKED GATE"
 	register_item(fence_key)
 
+	# The alt route's key, found where the fence key is, opens the shed across the road instead.
+	var shed_key := ItemData.new()
+	shed_key.id = &"shed_key"
+	shed_key.name = "Small Silver Key"
+	shed_key.description = "A small metal key on a paper tag that reads SHED. The garage across the road, maybe. Use it on the shed's side door."
+	shed_key.model_scene = preload("res://scenes/items/fence_key_preview.tscn")
+	shed_key.use_action_text = "USE AT THE SHED DOOR"
+	register_item(shed_key)
+
 	var pipe := ItemData.new()
 	pipe.id = &"metal_pipe"
 	pipe.name = "METAL PIPE"
@@ -62,6 +71,14 @@ static func _ensure_initialized() -> void:
 	pipe.model_scene = preload("res://scenes/items/metal_pipe_preview.tscn")
 	pipe.use_action_text = "EQUIP PIPE"
 	register_item(pipe)
+
+	var shotgun := ItemData.new()
+	shotgun.id = &"shotgun"
+	shotgun.name = "DOUBLE-BARREL SHOTGUN"
+	shotgun.description = "A heavy old side-by-side. Left-click or press the right trigger to fire, one barrel at a time. Press R or X to break it open and load both barrels from your spare shells. Equip or holster it from the inventory."
+	shotgun.model_scene = preload("res://scenes/items/shotgun_preview.tscn")
+	shotgun.use_action_text = "EQUIP SHOTGUN"
+	register_item(shotgun)
 
 
 static func register_item(item: ItemData) -> void:

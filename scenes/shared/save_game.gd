@@ -24,6 +24,8 @@ const PLAYER_PROPERTIES: Array[String] = ["sprint_enabled", "jump_enabled", "cro
 const AREA_NAMES: Dictionary = {
 	"res://scenes/chapters/main/starting_forest.tscn": "Starting Forest",
 	"res://scenes/chapters/main/residence_area.tscn": "Residence",
+	"res://scenes/chapters/alt_route/starting_forest_alt.tscn": "Starting Forest (alt route)",
+	"res://scenes/chapters/alt_route/residence_area_alt.tscn": "Residence (alt route)",
 }
 ## Scenes where the play-time clock does not run.
 const MENU_SCENES: Array[String] = ["res://scenes/mainMenu/menu.tscn", "res://scenes/mainMenu/startup.tscn"]
@@ -289,6 +291,10 @@ func _capture_player(player: FirstPersonPlayer) -> Dictionary:
 	var weapon := player.get_node_or_null("Head/Camera3D/PipeWeapon")
 	if weapon != null:
 		state["pipe_equipped"] = bool(weapon.get("equipped"))
+	var shotgun := player.get_node_or_null("Head/Camera3D/ShotgunWeapon")
+	if shotgun != null:
+		state["shotgun"] = {"equipped": bool(shotgun.get("equipped")), "loaded": int(shotgun.get("loaded")),
+			"reserve": int(shotgun.get("reserve"))}
 	if health != null:
 		state["health"] = health.get("health")
 	return state
@@ -308,6 +314,12 @@ func _restore_player(player: FirstPersonPlayer, state: Dictionary) -> void:
 	var weapon := player.get_node_or_null("Head/Camera3D/PipeWeapon")
 	if weapon != null:
 		weapon.set_equipped(bool(state.get("pipe_equipped", player.inventory.has_item(&"metal_pipe"))))
+	# Taking the shotgun back into the inventory loads it like a newly found one; the save says otherwise.
+	var shotgun := player.get_node_or_null("Head/Camera3D/ShotgunWeapon")
+	if shotgun != null and state.has("shotgun"):
+		var saved: Dictionary = state.shotgun
+		shotgun.restore_shells(int(saved.get("loaded", 0)), int(saved.get("reserve", 0)))
+		shotgun.set_equipped(bool(saved.get("equipped", false)))
 	for property in PLAYER_PROPERTIES:
 		if state.has(property):
 			player.set(property, state[property])
@@ -332,6 +344,10 @@ func _capture_section(section: Node) -> Dictionary:
 			state.inventory_pickups_present.append(str(section.get_path_to(node)))
 	for gate in section.find_children("*", "RiggedMetalGate", true, false):
 		state.metal_gates[str(section.get_path_to(gate))] = gate.get_save_state()
+	state["saved_states"] = {}
+	for node in get_tree().get_nodes_in_group("saved_state"):
+		if section.is_ancestor_of(node):
+			state.saved_states[str(section.get_path_to(node))] = node.call("get_save_state")
 	for node in section.find_children("*", "InteractableBlock3D", true, false):
 		state.interactables[str(section.get_path_to(node))] = node.get("is_enabled")
 	for cutscene in get_tree().get_nodes_in_group("streaming_one_shot"):
@@ -377,6 +393,11 @@ func _restore_section(section: Node, state: Dictionary) -> void:
 		var gate := section.get_node_or_null(NodePath(path))
 		if gate != null:
 			gate.restore_save_state(state.metal_gates[path])
+	var saved_states: Dictionary = state.get("saved_states", {})
+	for path: String in saved_states:
+		var node := section.get_node_or_null(NodePath(path))
+		if node != null and node.has_method("restore_save_state"):
+			node.call("restore_save_state", saved_states[path])
 	var dead_mobs: Dictionary = state.get("dead_story_mobs", {})
 	for path: String in dead_mobs:
 		var mob := section.get_node_or_null(NodePath(path))

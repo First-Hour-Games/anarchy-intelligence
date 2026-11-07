@@ -1,0 +1,424 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/chapters/alt_route/ridgeback_road.gd" id="1_road"]
+[ext_resource type="Script" path="res://scenes/chapters/alt_route/blinking_light.gd" id="2_blinker"]
+[ext_resource type="Script" path="res://scenes/chapters/alt_route/route_subtitles.gd" id="3_subtitles"]
+[ext_resource type="PackedScene" path="res://scenes/items/shell_box_pickup.tscn" id="4_shell_box"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/the_ridgeback/ridgeback_ambusher.tscn" id="5_ambusher"]
+[ext_resource type="Material" path="res://models/props/metalFences/fence_cutout_material.tres" id="6_fence_material"]
+[ext_resource type="ArrayMesh" path="res://models/props/metalFences/fence1.tres" id="7_fence1"]
+[ext_resource type="ArrayMesh" path="res://models/props/metalFences/fence2.tres" id="8_fence2"]
+[ext_resource type="ArrayMesh" path="res://models/props/metalFences/fence3.tres" id="9_fence3"]
+[ext_resource type="PackedScene" path="res://models/props/vehicles/panda.tscn" id="10_panda"]
+[ext_resource type="PackedScene" path="res://models/props/vehicles/honda_prelude.tscn" id="11_honda"]
+[ext_resource type="PackedScene" path="res://models/props/vehicles/lincoln_town_car.tscn" id="12_lincoln"]
+[ext_resource type="PackedScene" path="res://models/props/vehicles/mercedes_benz_s_class.tscn" id="13_mercedes"]
+[ext_resource type="PackedScene" path="res://models/props/vehicles/cadillac_hearse.tscn" id="14_hearse"]
+[ext_resource type="PackedScene" path="res://models/props/vehicles/freelander.tscn" id="15_freelander"]
+
+[sub_resource type="BoxShape3D" id="FencePanel"]
+size = Vector3(1.9, 0.13378906, 3.1933594)
+
+[sub_resource type="BoxShape3D" id="TriggerBox"]
+size = Vector3(11.5, 3.0, 5.0)
+
+[node name="RidgebackRoad" type="Node3D"]
+editor_description = "The alt route's road past the yard gate: fenced off on both sides, blocked with wrecked cars in rows that each leave one way through, and a pack of Ridgebacks that leap between them. Placed at the world origin, so every child sits at its world position. Written by a layout script; hand-maintained since."
+script = ExtResource("1_road")
+
+[node name="Fences" type="Node3D" parent="."]
+
+[node name="WestFence1" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 44.4500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence1"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence2" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 48.7500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence3" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 53.0500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence3/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence4" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 57.3500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence4/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence5" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 61.6500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence5"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence5/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence6" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 65.9500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence6"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence6/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence7" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 70.2500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence7"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence7/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence8" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 74.5500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence8"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence8/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence9" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 78.8500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence9"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence9/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence10" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 83.1500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence10"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence10/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="WestFence11" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 122.3500, 1.4086, 87.4500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/WestFence11"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/WestFence11/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence1" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 66.4500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence1"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence2" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 70.7500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence3" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 75.0500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence3/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence4" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 79.3500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence4/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence5" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 83.6500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence5"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence5/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence6" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 87.9500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence6"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence6/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence7" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 92.2500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence7"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence7/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence8" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 96.5500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence8"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence8/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence9" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 100.8500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence9"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence9/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence10" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 105.1500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence10"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence10/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence11" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 109.4500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence11"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence11/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence12" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 113.7500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence12"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence12/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence13" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 118.0500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("9_fence3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence13"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence13/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence14" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 122.3500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("7_fence1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence14"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence14/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="EastFence15" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(0, -1.35, 0, 1.485, 0, 0, 0, 0, 1.35, 134.9500, 1.4086, 126.6500)
+material_override = ExtResource("6_fence_material")
+mesh = ExtResource("8_fence2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fences/EastFence15"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fences/EastFence15/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, 0)
+shape = SubResource("FencePanel")
+
+[node name="Cars" type="Node3D" parent="."]
+
+[node name="Row1Hearse" parent="Cars" instance=ExtResource("14_hearse")]
+transform = Transform3D(-0.0453693, 0, 1.29921, 0, 1.3, 0, -1.29921, 0, -0.0453693, 128.0000, 1.0666, 70.0000)
+
+[node name="Row1Panda" parent="Cars" instance=ExtResource("10_panda")]
+transform = Transform3D(0.0601863, 0, 1.14842, 0, 1.15, 0, -1.14842, 0, 0.0601863, 133.0000, 1.0189, 70.3000)
+
+[node name="Row2Lincoln" parent="Cars" instance=ExtResource("12_lincoln")]
+transform = Transform3D(0.0680367, 0, 1.29822, 0, 1.3, 0, -1.29822, 0, 0.0680367, 125.4000, 0.9640, 78.0000)
+
+[node name="Row2Mercedes" parent="Cars" instance=ExtResource("13_mercedes")]
+transform = Transform3D(-0.0697565, 0, 0.997564, 0, 1, 0, -0.997564, 0, -0.0697565, 130.2500, 0.9007, 77.7000)
+
+[node name="Row3Mercedes" parent="Cars" instance=ExtResource("13_mercedes")]
+transform = Transform3D(0.0174524, 0, 0.999848, 0, 1, 0, -0.999848, 0, 0.0174524, 125.0000, 0.9007, 86.2000)
+
+[node name="Row3Freelander" parent="Cars" instance=ExtResource("15_freelander")]
+transform = Transform3D(-0.0218155, 0, 1.24981, 0, 1.25, 0, -1.24981, 0, -0.0218155, 132.2000, 1.2108, 85.8000)
+
+[node name="Row4Hearse" parent="Cars" instance=ExtResource("14_hearse")]
+transform = Transform3D(0.0906834, 0, 1.29683, 0, 1.3, 0, -1.29683, 0, 0.0906834, 128.2500, 1.0666, 94.0000)
+
+[node name="Row4Panda" parent="Cars" instance=ExtResource("10_panda")]
+transform = Transform3D(-0.0401344, 0, 1.1493, 0, 1.15, 0, -1.1493, 0, -0.0401344, 133.0000, 1.0189, 93.7000)
+
+[node name="Row5Lincoln" parent="Cars" instance=ExtResource("12_lincoln")]
+transform = Transform3D(-0.0680367, 0, 1.29822, 0, 1.3, 0, -1.29822, 0, -0.0680367, 125.7000, 0.9640, 101.0000)
+
+[node name="Row5Honda" parent="Cars" instance=ExtResource("11_honda")]
+transform = Transform3D(0.0394364, 0, 1.12931, 0, 1.13, 0, -1.12931, 0, 0.0394364, 130.3500, 1.0000, 101.3000)
+
+[node name="Row6Hearse" parent="Cars" instance=ExtResource("14_hearse")]
+transform = Transform3D(0, 0, 1.3, 0, 1.3, 0, -1.3, 0, 0, 126.0000, 1.0666, 110.0000)
+
+[node name="Row6Panda" parent="Cars" instance=ExtResource("10_panda")]
+transform = Transform3D(0, 0, 1.15, 0, 1.15, 0, -1.15, 0, 0, 133.0000, 1.0189, 110.2000)
+
+[node name="Row7Lincoln" parent="Cars" instance=ExtResource("12_lincoln")]
+transform = Transform3D(-0.0226881, 0, 1.2998, 0, 1.3, 0, -1.2998, 0, -0.0226881, 127.8000, 0.9640, 118.0000)
+
+[node name="Row7Panda" parent="Cars" instance=ExtResource("10_panda")]
+transform = Transform3D(0.0200703, 0, 1.14982, 0, 1.15, 0, -1.14982, 0, 0.0200703, 133.0000, 1.0189, 118.2000)
+
+[node name="PocketLincoln" parent="Cars" instance=ExtResource("12_lincoln")]
+transform = Transform3D(1.29822, 0, 0.0680367, 0, 1.3, 0, -0.0680367, 0, 1.29822, 133.4000, 0.9640, 90.0000)
+
+[node name="PocketMercedes" parent="Cars" instance=ExtResource("13_mercedes")]
+transform = Transform3D(-0.999391, 0, 0.0348995, 0, 1, 0, -0.0348995, 0, -0.999391, 133.3000, 0.9007, 114.0000)
+
+[node name="HazardLights" type="Node3D" parent="."]
+
+[node name="Hazard1" type="OmniLight3D" parent="HazardLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 122.804, 0.85, 77.864)
+light_color = Color(1, 0.52, 0.12, 1)
+light_energy = 1.4
+light_volumetric_fog_energy = 1.6
+omni_range = 5.5
+omni_attenuation = 1.4
+script = ExtResource("2_blinker")
+period = 1.00
+
+[node name="Hazard2" type="OmniLight3D" parent="HazardLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 131.342, 0.85, 94.216)
+light_color = Color(1, 0.52, 0.12, 1)
+light_energy = 1.4
+light_volumetric_fog_energy = 1.6
+omni_range = 5.5
+omni_attenuation = 1.4
+script = ExtResource("2_blinker")
+period = 1.13
+
+[node name="Hazard3" type="OmniLight3D" parent="HazardLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 131.400, 0.85, 110.200)
+light_color = Color(1, 0.52, 0.12, 1)
+light_energy = 1.4
+light_volumetric_fog_energy = 1.6
+omni_range = 5.5
+omni_attenuation = 1.4
+script = ExtResource("2_blinker")
+period = 1.26
+
+[node name="Ridgebacks" type="Node3D" parent="."]
+
+[node name="Ridgeback1" parent="Ridgebacks" instance=ExtResource("5_ambusher")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.000, 0.12, 80.200)
+
+[node name="Ridgeback2" parent="Ridgebacks" instance=ExtResource("5_ambusher")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126.000, 0.12, 88.600)
+
+[node name="Ridgeback3" parent="Ridgebacks" instance=ExtResource("5_ambusher")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 130.000, 0.12, 96.300)
+
+[node name="Ridgeback4" parent="Ridgebacks" instance=ExtResource("5_ambusher")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.000, 0.12, 104.400)
+
+[node name="ShellBox" parent="." instance=ExtResource("4_shell_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 133.300, 1.640, 89.600)
+
+[node name="Subtitles" type="CanvasLayer" parent="."]
+script = ExtResource("3_subtitles")
+
+[node name="Trigger" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128.6, 1.5, 64.6)
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+shape = SubResource("TriggerBox")

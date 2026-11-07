@@ -2,15 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cnqhr0kmfmfx0"
+uid="uid://cpboqfylavcbf"
 path.s3tc="res://.godot/imported/prop_stationwagon_01_repaired_0.png-ea811f7ae2261db04bad80313a5e12d1.s3tc.ctex"
 path.etc2="res://.godot/imported/prop_stationwagon_01_repaired_0.png-ea811f7ae2261db04bad80313a5e12d1.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
-}
-generator_parameters={
-"md5": "f0bba47851ebbea715fb23aa785f5829"
 }
 
 [deps]

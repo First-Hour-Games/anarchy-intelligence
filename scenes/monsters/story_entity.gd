@@ -17,6 +17,9 @@ signal died
 @export var hits_to_kill: int = 0
 ## How fast the ragdoll is thrown away from the player by the killing blow.
 @export var death_push_speed: float = 2.0
+## It strikes at a player this close, and the strike still lands this far (metres).
+@export_range(0.5, 5.0, 0.05, "suffix:m") var strike_reach: float = 1.65
+@export_range(0.5, 5.0, 0.05, "suffix:m") var hit_reach: float = 1.9
 
 @export_group("Roaming")
 ## Free-roaming Wrapper (spawn points): wanders near its home, hunts a player it hears, and
@@ -323,7 +326,7 @@ func _physics_process(delta: float) -> void:
 	# It only moves unwatched, so nobody sees it get up.
 	if seated and motion.length() > 0.1:
 		_set_seated(false)
-	if in_territory and distance < 1.65 and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0 and (encounter_kind == 1 or not freeze_when_watched or not watched):
+	if in_territory and distance < strike_reach and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0 and (encounter_kind == 1 or not freeze_when_watched or not watched):
 		strike_time = 0.9
 		strike_hit = false
 		attack_cooldown = 2.0
@@ -333,7 +336,7 @@ func _physics_process(delta: float) -> void:
 	if strike_time > 0.0 and strike_time < 0.4 and not strike_hit:
 		strike_hit = true
 		var health := player.get_node_or_null("CombatHealth")
-		if health != null and distance < 1.9 and visible_player:
+		if health != null and distance < hit_reach and visible_player:
 			health.take_damage(GRAB_DAMAGE, self)
 		get_tree().call_group("opening_story", "narrate_once", "caught_warning", "Too close. I need to get away!")
 	alert_time = maxf(0.0, alert_time - delta)
@@ -424,7 +427,7 @@ func _roam(delta: float) -> void:
 				_wander_time += delta
 				motion = navigation_route.direction(self, nav_map, wander_target, delta) * wander_speed
 	var visible_player := not hidden and _clear_sight(player.camera.global_position)
-	if roam_state == RoamState.HUNTING and distance < 1.65 and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0:
+	if roam_state == RoamState.HUNTING and distance < strike_reach and visible_player and attack_cooldown <= 0.0 and strike_time <= 0.0:
 		strike_time = 0.9
 		strike_hit = false
 		attack_cooldown = 2.0
@@ -434,7 +437,7 @@ func _roam(delta: float) -> void:
 	if strike_time > 0.0 and strike_time < 0.4 and not strike_hit:
 		strike_hit = true
 		var health := player.get_node_or_null("CombatHealth")
-		if health != null and distance < 1.9 and visible_player:
+		if health != null and distance < hit_reach and visible_player:
 			health.take_damage(GRAB_DAMAGE, self)
 		get_tree().call_group("opening_story", "narrate_once", "caught_warning", "Too close. I need to get away!")
 	alert_time = maxf(0.0, alert_time - delta)

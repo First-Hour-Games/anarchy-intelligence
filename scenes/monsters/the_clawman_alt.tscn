@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/monsters/story_entity.gd" id="1"]
+[ext_resource type="PackedScene" path="res://models/enemies/the_clawman/TheClawman_alt.glb" id="2"]
+[ext_resource type="Script" path="res://scenes/monsters/clawman_alt_visual.gd" id="3"]
+
+[sub_resource type="CapsuleShape3D" id="shape"]
+radius = 0.45
+height = 2.15
+
+[node name="Clawman" type="CharacterBody3D"]
+floor_snap_length = 0.35
+script = ExtResource("1")
+encounter_kind = 1
+movement_speed = 2.2
+territory_radius = 22.0
+strike_reach = 2.1
+hit_reach = 2.45
+
+[node name="Visual" type="Node3D" parent="."]
+script = ExtResource("3")
+
+[node name="Model" parent="Visual" instance=ExtResource("2")]
+transform = Transform3D(-1.45, 0, 0, 0, 1.45, 0, 0, 0, -1.45, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 1.075, 0)
+shape = SubResource("shape")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.8
+target_desired_distance = 1.4

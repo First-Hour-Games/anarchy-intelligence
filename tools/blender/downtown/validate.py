@@ -12,6 +12,7 @@ prepare_downtown.py runs these checks first and exports nothing while any fail:
 - the hospital's path from the curb to its door stays clear.
 """
 
+import os
 import types
 from pathlib import Path
 
@@ -32,7 +33,8 @@ WALL_ITEMS = {"phone"}
 
 
 def load_plan():
-    path = HERE / "plan.py"
+    """The layout DOWNTOWN_PLAN names (see build_downtown.py), plan.py by default."""
+    path = HERE / (os.environ.get("DOWNTOWN_PLAN", "plan") + ".py")
     module = types.ModuleType("downtown_plan")
     module.__file__ = str(path)
     exec(compile(path.read_text(encoding="utf-8"), str(path), "exec"), module.__dict__)

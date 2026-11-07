@@ -60,6 +60,8 @@ licence and link are embedded in each file.
 | stairs | RVECH | https://sketchfab.com/3d-models/stairs-6560ab865d0f4374916a15ab538d87fb | Tutorial |
 | Table | yryabchenko | https://sketchfab.com/3d-models/table-1132fa2850a24917892733566bd68e74 | Tutorial |
 | Gem | TomaszObloj | https://sketchfab.com/3d-models/gem-ce73ada1698342d2bde0cb7b632a5b94 | Gas station; recoloured white and shiny |
+| Industrial Warehouse | VertexForge | https://sketchfab.com/3d-models/industrial-warehouse-e6049139a2dd412a88d127541808e1e2 | The white garage across from the gas station. The alt route's shed is a modified copy, with its side door cut out to swing open |
+| PSX Industrial Pack | Tomitos | https://sketchfab.com/3d-models/psx-industrial-pack-12cb749961974f94a4063e67dafb2d76 | Starting forest; the lockers, crates, barrels and generator in the alt route's shed |
 | Hourglass | Inuciian | https://sketchfab.com/3d-models/hourglass-50decbf440da4921907eb852e69a46ca | Unused, still exported |
 | Bush Test | Michele.Passerino | https://sketchfab.com/3d-models/bush-test-520dc8e3d01d4ddc8d97c710508f9f8b | Unused, still exported |
 | Snowy Car | maregajavier | https://sketchfab.com/3d-models/snowy-car-0186dc3ce18e49b9bae235ca5767b703 | Unused, still exported |
@@ -104,14 +106,23 @@ Concrete012 and brick_wall_02. See `models/buildings/downtown/textures/SOURCE.md
 ## Sound
 
 - **Freesound**, CC0, credited voluntarily: *Ghost Monster Scream* by NachtmahrTV, *monster sound
-  2.wav* by ZyryTSounds, *growl 2* by balloonhead (death scares).
-- **Kenney**, Impact Sounds, CC0 (bottles and hiding-spot doors).
+  2.wav* by ZyryTSounds, *growl 2* by balloonhead (death scares); *G35-03-Shotgun Blasts.wav* by
+  craigsmith and *Single Barreled Shotgun Loading.wav* by sentryx86 (the alt route's shotgun, see
+  `sounds/weapons/shotgun/CREDITS.md`); the pig screams, squeals and grunts of JarredGibb's *Animal
+  Farm* recordings (the alt route's Ridgebacks on the road, see `sounds/entities/ridgeback/CREDITS.md`);
+  *Wet Splat 1.mp3* by nebulasnails, *Gore Impact - "LOT OF HEART"* by magnuswaker, *squelch
+  watermelon* by MaddieCooper, *Bone Breaking* by wackoME and *bone break_5.wav* by Vinni_R (the alt
+  route's downtown Ridgebacks hitting the road, in the same folder); *Car alarm shift* by
+  itinerantmonk108 (`sounds/props/car_alarm/CREDITS.md`).
+- **Kenney**, Impact Sounds, CC0 (bottles, hiding-spot doors, and the alt route's gate padlock, the
+  Ridgebacks landing on car roofs and the downtown's windshields breaking).
 
 ## Original work for this game
 
 The downtown and its generated textures, Carrie's house and its wallpapers, the Corrupted Friend,
 the Ridgeback's animations (keyed on Codyanka's rig, whose original clips the game keeps as a
-fallback), and the Blender and Godot tooling in `tools/` were made for this game.
+fallback) and its legless crawler cut from Codyanka's mesh, the alt route's shotgun and its animations, the shed's workbench and work lamp, the
+gate's padlock and chain, and the Blender and Godot tooling in `tools/` were made for this game.
 
 ## Before release
 
@@ -153,6 +164,6 @@ text-to-speech; record a real line.
   - `ui/move.mp3`: Rogue Waves
 
   Untagged: the concrete, dirt, tile and wood footsteps, `sounds/ambience`, `sounds/player`,
-  `sounds/dialogue` and `sounds/ui`.
+  `sounds/dialogue`, `sounds/ui` and `sounds/chapters/tutorial/doorCreak.mp3`.
 - **Music:** `dreamStairs.ogg`, `theVisitor.ogg`, `welcomingHike.ogg`, `intro1.ogg`,
   `menu.ogg`, `tutorial.ogg`.

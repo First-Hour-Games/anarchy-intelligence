@@ -1,0 +1,378 @@
+{
+ "spine": {
+  "title": "The Spine",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_spine.glb",
+  "skin": "pale",
+  "scale": 1.0,
+  "pitch": 1.0,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     0.72,
+     0.86,
+     1.0
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     0.72,
+     0.86,
+     1.0
+    ]
+   }
+  ]
+ },
+ "reacher": {
+  "title": "The Reacher",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_reacher.glb",
+  "skin": "dirt",
+  "scale": 1.06,
+  "pitch": 0.94,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.66,
+     0.26
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.66,
+     0.26
+    ]
+   }
+  ]
+ },
+ "hanged": {
+  "title": "The Hanged",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_hanged.glb",
+  "skin": "frost",
+  "scale": 1.0,
+  "pitch": 1.06,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     -0.012,
+     2.1267,
+     0.2116
+    ],
+    "glow": [
+     0.66,
+     0.94,
+     1.0
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.0794,
+     2.0702,
+     0.2116
+    ],
+    "glow": [
+     0.66,
+     0.94,
+     1.0
+    ]
+   }
+  ]
+ },
+ "twin": {
+  "title": "The Twin",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_twin.glb",
+  "skin": "flesh",
+  "scale": 1.0,
+  "pitch": 1.1,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.84,
+     0.42
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.84,
+     0.42
+    ]
+   },
+   {
+    "bone": "clavicle_l",
+    "position": [
+     0.3552,
+     1.8786,
+     -0.0055
+    ],
+    "glow": [
+     1.0,
+     0.22,
+     0.12
+    ]
+   },
+   {
+    "bone": "clavicle_l",
+    "position": [
+     0.2976,
+     1.9306,
+     0.0278
+    ],
+    "glow": [
+     1.0,
+     0.22,
+     0.12
+    ]
+   }
+  ]
+ },
+ "hunch": {
+  "title": "The Hunch",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_hunch.glb",
+  "skin": "burnt",
+  "scale": 0.97,
+  "pitch": 0.86,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     1.9493,
+     0.1701
+    ],
+    "glow": [
+     1.0,
+     0.42,
+     0.1
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     1.9493,
+     0.1701
+    ],
+    "glow": [
+     1.0,
+     0.42,
+     0.1
+    ]
+   }
+  ]
+ },
+ "gaper": {
+  "title": "The Gaper",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_gaper.glb",
+  "skin": "pale",
+  "scale": 1.0,
+  "pitch": 1.14,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.3,
+     0.18
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.3,
+     0.18
+    ]
+   }
+  ]
+ },
+ "crowned": {
+  "title": "The Crowned",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_crowned.glb",
+  "skin": "tar",
+  "scale": 1.03,
+  "pitch": 0.92,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     0.86,
+     0.74,
+     1.0
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     0.86,
+     0.74,
+     1.0
+    ]
+   }
+  ]
+ },
+ "quill": {
+  "title": "The Quill",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_quill.glb",
+  "skin": "rot",
+  "scale": 0.96,
+  "pitch": 1.16,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     0.74,
+     1.0,
+     0.32
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     0.74,
+     1.0,
+     0.32
+    ]
+   }
+  ]
+ },
+ "brute": {
+  "title": "The Brute",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_brute.glb",
+  "skin": "blood",
+  "scale": 1.32,
+  "pitch": 0.76,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.18,
+     0.08
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.18,
+     0.08
+    ]
+   }
+  ]
+ },
+ "patient": {
+  "title": "The Patient",
+  "model": "res://models/enemies/the_ridgeback/walkers/walker_patient.glb",
+  "skin": "flesh",
+  "scale": 0.95,
+  "pitch": 1.1,
+  "eyes": [
+   {
+    "bone": "head",
+    "position": [
+     0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.92,
+     0.6
+    ]
+   },
+   {
+    "bone": "head",
+    "position": [
+     -0.044,
+     2.025,
+     0.13
+    ],
+    "glow": [
+     1.0,
+     0.92,
+     0.6
+    ]
+   }
+  ]
+ }
+}

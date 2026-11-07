@@ -46,6 +46,8 @@ static func finish(parent: Node3D, surface: SurfaceTool, label: String, material
 	item.name = label
 	item.mesh = surface.commit()
 	item.material_override = material
+	# Road, curb and sidewalk lie on the ground: nothing under them to shade, so they cast no shadows.
+	item.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if label.to_lower().contains("road"):
 		item.set_meta("surface", "gravel")
 	parent.add_child(item)

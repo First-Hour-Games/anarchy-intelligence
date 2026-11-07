@@ -1,0 +1,151 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/monsters/the_ridgeback/ridgeback_ambusher.gd" id="1_ai"]
+[ext_resource type="Script" path="res://scenes/monsters/the_ridgeback/ridgeback_visual.gd" id="2_visual"]
+[ext_resource type="PackedScene" path="res://models/enemies/the_ridgeback/THE_RIDGEBACK.glb" id="3_model"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_shriek_1.wav" id="4_shriek"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_shriek_2.wav" id="5_shriek"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_shriek_3.wav" id="6_shriek"]
+[ext_resource type="AudioStream" path="res://sounds/footsteps/concrete/concrete_1.wav" id="7_thud"]
+[ext_resource type="AudioStream" path="res://sounds/footsteps/concrete/concrete_2.wav" id="8_thud"]
+[ext_resource type="AudioStream" path="res://sounds/footsteps/concrete/concrete_3.wav" id="9_thud"]
+[ext_resource type="AudioStream" path="res://sounds/props/impacts/impactMetal_light_000.ogg" id="10_clang"]
+[ext_resource type="AudioStream" path="res://sounds/props/impacts/impactMetal_light_001.ogg" id="11_clang"]
+[ext_resource type="AudioStream" path="res://sounds/props/impacts/impactMetal_light_002.ogg" id="12_clang"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_strike.wav" id="13_strike"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_grunt_1.wav" id="14_grunt"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_grunt_2.wav" id="15_grunt"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_grunt_3.wav" id="16_grunt"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_roar_1.wav" id="17_roar"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_roar_2.wav" id="18_roar"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_roar_3.wav" id="19_roar"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_pain_1.wav" id="20_pain"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_pain_2.wav" id="21_pain"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_death_1.wav" id="22_death"]
+[ext_resource type="AudioStream" path="res://sounds/entities/ridgeback/ridgeback_death_2.wav" id="23_death"]
+
+[sub_resource type="CapsuleShape3D" id="Body"]
+radius = 0.42
+height = 1.7
+
+[sub_resource type="BoxShape3D" id="Head"]
+size = Vector3(0.55, 0.55, 0.55)
+
+[sub_resource type="AudioStreamRandomizer" id="Shrieks"]
+random_pitch = 1.1
+streams_count = 3
+stream_0/stream = ExtResource("4_shriek")
+stream_1/stream = ExtResource("5_shriek")
+stream_2/stream = ExtResource("6_shriek")
+
+[sub_resource type="AudioStreamRandomizer" id="Grunts"]
+random_pitch = 1.12
+streams_count = 3
+stream_0/stream = ExtResource("14_grunt")
+stream_1/stream = ExtResource("15_grunt")
+stream_2/stream = ExtResource("16_grunt")
+
+[sub_resource type="AudioStreamRandomizer" id="Roars"]
+random_pitch = 1.08
+streams_count = 3
+stream_0/stream = ExtResource("17_roar")
+stream_1/stream = ExtResource("18_roar")
+stream_2/stream = ExtResource("19_roar")
+
+[sub_resource type="AudioStreamRandomizer" id="Squeals"]
+random_pitch = 1.1
+streams_count = 2
+stream_0/stream = ExtResource("20_pain")
+stream_1/stream = ExtResource("21_pain")
+
+[sub_resource type="AudioStreamRandomizer" id="DyingScreams"]
+random_pitch = 1.06
+streams_count = 2
+stream_0/stream = ExtResource("22_death")
+stream_1/stream = ExtResource("23_death")
+
+[sub_resource type="AudioStreamRandomizer" id="Thud"]
+random_pitch = 1.15
+streams_count = 3
+stream_0/stream = ExtResource("7_thud")
+stream_1/stream = ExtResource("8_thud")
+stream_2/stream = ExtResource("9_thud")
+
+[sub_resource type="AudioStreamRandomizer" id="Clang"]
+random_pitch = 1.12
+streams_count = 3
+stream_0/stream = ExtResource("10_clang")
+stream_1/stream = ExtResource("11_clang")
+stream_2/stream = ExtResource("12_clang")
+
+[node name="RidgebackAmbusher" type="CharacterBody3D"]
+script = ExtResource("1_ai")
+
+[node name="BodyShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.5, -0.15)
+shape = SubResource("Body")
+
+[node name="PeekShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.15)
+shape = SubResource("Head")
+disabled = true
+
+[node name="Visual" type="Node3D" parent="."]
+script = ExtResource("2_visual")
+
+[node name="Model" parent="Visual" instance=ExtResource("3_model")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Shriek" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.4)
+stream = SubResource("Shrieks")
+unit_size = 6.0
+max_distance = 55.0
+
+[node name="Grunt" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -0.4)
+stream = SubResource("Grunts")
+volume_db = -4.0
+unit_size = 3.5
+max_distance = 28.0
+
+[node name="Roar" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.4)
+stream = SubResource("Roars")
+volume_db = 3.0
+unit_size = 7.0
+max_distance = 60.0
+
+[node name="Pain" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.4)
+stream = SubResource("Squeals")
+unit_size = 5.0
+max_distance = 40.0
+
+[node name="DeathCry" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.4)
+stream = SubResource("DyingScreams")
+volume_db = 1.0
+unit_size = 6.0
+max_distance = 50.0
+
+[node name="Thud" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("Thud")
+volume_db = 3.0
+pitch_scale = 0.62
+unit_size = 4.0
+max_distance = 32.0
+
+[node name="Clang" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("Clang")
+pitch_scale = 0.72
+unit_size = 7.0
+max_distance = 45.0
+
+[node name="Strike" type="AudioStreamPlayer3D" parent="."]
+process_mode = 3
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.5)
+stream = ExtResource("13_strike")
+volume_db = 2.0
+unit_size = 5.0
+max_distance = 30.0

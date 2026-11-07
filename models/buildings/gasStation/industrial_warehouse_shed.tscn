@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://models/buildings/gasStation/industrial_warehouse_0.jpg" id="1_c6sf5"]
+[ext_resource type="ArrayMesh" path="res://models/buildings/gasStation/industrial_warehouse_shed.res" id="1_hsc1l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_70whq"]
+resource_name = "IndustrialShed"
+albedo_texture = ExtResource("1_c6sf5")
+roughness = 0.87583
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_61fbw"]
+resource_name = "IndustrialShed"
+cull_mode = 1
+albedo_texture = ExtResource("1_c6sf5")
+roughness = 0.87583
+metadata/_gltf_primary_texture_coord = 0
+
+[node name="IndustrialWarehouseShed" type="Node3D" unique_id=2070765055]
+
+[node name="Building" type="MeshInstance3D" parent="." unique_id=1187140351]
+transform = Transform3D(0.00011077726, 0, 0, 0, -1.859618e-11, -0.00010369736, 0, 0.00011414254, -1.6894446e-11, -0.043832786, 0.7038603, 1.4797598)
+material_override = SubResource("StandardMaterial3D_70whq")
+cast_shadow = 2
+mesh = ExtResource("1_hsc1l")
+
+[node name="Inside" type="MeshInstance3D" parent="." unique_id=929259810]
+transform = Transform3D(0.00011077726, 0, 0, 0, -1.859618e-11, -0.00010369736, 0, 0.00011414254, -1.6894446e-11, -0.043832786, 0.7038603, 1.4797598)
+layers = 2048
+material_override = SubResource("StandardMaterial3D_61fbw")
+cast_shadow = 0
+mesh = ExtResource("1_hsc1l")

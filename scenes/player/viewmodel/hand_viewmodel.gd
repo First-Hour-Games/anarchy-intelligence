@@ -117,8 +117,12 @@ func _process(delta: float) -> void:
 
 	if not is_instance_valid(player):
 		return
-	var pipe := player.get_node_or_null("Head/Camera3D/PipeWeapon")
-	hands.visible = pipe == null or not (pipe.equipped or pipe.model_pivot.visible)
+	# The illustrated hands give way to any 3D weapon being held, raised or lowered.
+	var holding := false
+	for weapon in get_tree().get_nodes_in_group(&"held_weapons"):
+		if player.is_ancestor_of(weapon) and (weapon.equipped or weapon.model_pivot.visible):
+			holding = true
+	hands.visible = not holding
 
 	var horizontal_speed: float = Vector2(player.velocity.x, player.velocity.z).length()
 	var is_moving: bool = player.is_on_floor() and horizontal_speed > 0.1

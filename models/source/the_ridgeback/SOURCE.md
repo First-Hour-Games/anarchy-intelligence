@@ -78,3 +78,25 @@ project's clips: a four-legged set (`fours_scream`, `fours_lurk`, `fours_prowl`,
 with `fours_drop` and `fours_rise` between footings) and a standing one
 (`idle`, `watch`, `walk`, `run`, `scream`, `windup`, `attack`, `hit`, `death`),
 chosen with the visual's `four_legged`.
+
+## The walkers
+
+The alt route's rooftop Ridgebacks are ten walkers, each the creator's mesh
+grown into a different mutation on the same rig: blades down the spine, talons,
+a hanged neck, a second skull, a burnt hump, a hanging jaw, a crown of horns,
+quills, a brute, a patient in its gown. `tools/blender/build_ridgeback_walkers.py`
+builds them from `vendor/THE_RIDGEBACK.blend` (opened, never saved) with the
+definitions in `tools/blender/ridgeback/walkers.py`, using the creator's skins.
+It writes one GLB a walker to `models/enemies/the_ridgeback/walkers/` (the whole
+body, the legless crawler and the fallen legs, no clips) and `walkers.json`
+(each walker's skin, eyes, size and voice pitch). The game puts their meshes on
+the original GLBs' skeletons (`ridgeback_faller_visual.gd`), so every clip
+plays on them. The original Ridgeback's GLBs are not changed by it.
+
+```powershell
+& "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe" `
+  --background --factory-startup --disable-autoexec --python tools/blender/build_ridgeback_walkers.py `
+  -- --preview <folder>
+```
+
+`--only spine,twin` rebuilds just those; `--preview` also renders each one.

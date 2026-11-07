@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/chapters/alt_route/gate_padlock.gd" id="1_lock"]
+[ext_resource type="PackedScene" path="res://models/props/shed/gate_padlock.glb" id="2_model"]
+[ext_resource type="AudioStream" uid="uid://c55jydiyiv1da" path="res://sounds/props/impacts/impactMetal_light_001.ogg" id="3_break"]
+[ext_resource type="AudioStream" uid="uid://ca3wixciy4qje" path="res://sounds/props/impacts/impactMetal_light_002.ogg" id="4_land"]
+
+[sub_resource type="BoxShape3D" id="HitShape"]
+size = Vector3(0.32, 0.3, 0.26)
+
+[node name="GatePadlock" type="Area3D"]
+monitoring = false
+script = ExtResource("1_lock")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0.08)
+shape = SubResource("HitShape")
+
+[node name="BreakAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_break")
+max_distance = 25.0
+
+[node name="LandAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_land")
+volume_db = -6.0
+max_distance = 20.0
