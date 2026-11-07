@@ -938,7 +938,7 @@ transform = Transform3D(0.79614544, 0, 0.6051053, 0, 1, 0, -0.6051053, 0, 0.7961
 visible = false
 inventory_enabled = false
 walk_speed = 1.3
-sprint_speed = 2.6
+sprint_speed = 2.99
 sprint_enabled = false
 head_bob_frequency = 0.9
 

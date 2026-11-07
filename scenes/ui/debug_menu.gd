@@ -85,6 +85,9 @@ func _build_menu() -> void:
 	help.add_theme_font_size_override("font_size", 14)
 	column.add_child(help)
 	column.add_child(HSeparator.new())
+	_add_button(column, "Open save screen (saves where you stand)", _open_save_screen)
+	_add_button(column, "Open load screen", _open_load_screen)
+	column.add_child(HSeparator.new())
 	for entry in SCENES:
 		var path: String = entry["path"]
 		_add_button(column, "Go to " + entry["name"], jump_to_scene.bind(path))
@@ -105,7 +108,6 @@ func _build_menu() -> void:
 	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
-	_add_button(column, "Open save screen (saves where you stand)", _open_save_screen)
 	_skip_intro_button = _add_button(column, "Skip forest intro fade", _skip_forest_intro)
 	_add_button(column, "Resume", set_open.bind(false))
 	_status_label = Label.new()
@@ -144,6 +146,7 @@ func set_open(value: bool) -> void:
 		_overlay.show()
 		_status_label.text = ""
 		_refresh_scene_label()
+		_scroll.scroll_vertical = 0
 		_buttons[0].grab_focus()
 	else:
 		opened = false
@@ -198,6 +201,25 @@ func _open_save_screen() -> void:
 			player.unfreeze()
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	)
+
+
+func _open_load_screen() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	set_open(false)
+	var mouse_mode := Input.mouse_mode
+	var screen := SaveSlotScreen.open(scene, SaveSlotScreen.Mode.LOAD, _load_slot, true, true)
+	screen.closed.connect(func() -> void: Input.mouse_mode = mouse_mode)
+
+
+func _load_slot(slot: int) -> bool:
+	var error: Error = await SaveGame.load_slot(slot)
+	if error != OK:
+		return false
+	# The old scene takes the load screen with it, so release its pause here.
+	get_tree().paused = false
+	return true
 
 
 func _skip_forest_intro() -> void:
@@ -272,41 +294,23 @@ func jump_to_scene(path: String) -> void:
 	if not ResourceLoader.exists(path, "PackedScene"):
 		_status_label.text = "Scene not found: " + path
 		return
-	var error := ResourceLoader.load_threaded_request(path, "PackedScene")
-	if error != OK:
-		_status_label.text = "Cannot load scene: " + error_string(error)
-		return
 	_loading_path = path
 	for button in _buttons:
 		button.disabled = true
 	_status_label.text = "Loading " + path.get_file() + "..."
+	_jump_with_loading_screen.call_deferred(path)
 
 
-func _process(_delta: float) -> void:
-	if _loading_path.is_empty():
-		return
-	var progress: Array = []
-	var status := ResourceLoader.load_threaded_get_status(_loading_path, progress)
-	if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-		if not progress.is_empty():
-			_status_label.text = "Loading %s: %d%%" % [_loading_path.get_file(), roundi(float(progress[0]) * 100)]
-		return
-	if status != ResourceLoader.THREAD_LOAD_LOADED:
-		_pending_checkpoint = ""
-		_finish_loading("Scene loading failed: " + _loading_path)
-		return
-	var packed := ResourceLoader.load_threaded_get(_loading_path) as PackedScene
-	_finish_loading("")
-	if packed == null:
-		_pending_checkpoint = ""
-		_status_label.text = "Loaded resource is not a scene."
-		return
-	set_open(false)
-	var error := get_tree().change_scene_to_packed(packed)
+func _jump_with_loading_screen(path: String) -> void:
+	var error := await SceneLoader.change_to(path, _finish_scene_jump)
 	if error != OK:
 		_pending_checkpoint = ""
-		set_open(true)
-		_status_label.text = "Scene change failed: " + error_string(error)
+		_finish_loading("Scene change failed: " + error_string(error))
+
+
+func _finish_scene_jump(_scene: Node) -> void:
+	_finish_loading("")
+	_on_scene_changed()
 
 
 func _finish_loading(message: String) -> void:
@@ -318,6 +322,8 @@ func _finish_loading(message: String) -> void:
 
 
 func _on_scene_changed() -> void:
+	if not _loading_path.is_empty():
+		return
 	# Also release pause ownership if another system replaces the scene while open.
 	if opened:
 		set_open(false)

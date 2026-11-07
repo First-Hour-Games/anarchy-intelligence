@@ -4,7 +4,6 @@ extends CanvasLayer
 @onready var options_label: Label = $AspectRatioContainer/Control/MenuContainer/OptionsLabel
 @onready var quit_label: Label = $AspectRatioContainer/Control/MenuContainer/QuitLabel
 
-@onready var fade_rect: ColorRect = $AspectRatioContainer/Control/Fade
 @onready var music_player: AudioStreamPlayer = $MusicPlayer
 @onready var move_sfx_player: AudioStreamPlayer = $MoveSfxPlayer
 @onready var click_sfx_player: AudioStreamPlayer = $ClickSfxPlayer
@@ -339,33 +338,11 @@ func _begin_start_game() -> void:
 	PauseMenu._save_settings()
 	get_tree().paused = false
 	SaveGame.start_new_game()
-	SceneLoader.prefetch("res://scenes/chapters/intro/intro.tscn")
-	print("Start Game selected!")
-	
-	if OS.has_feature("editor"):
-		if music_player: music_player.stop()
-		await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn")
-		return
-
-	print("Fading screen and music over 3 seconds...")
-	var tween = create_tween().set_parallel(true)
-	if fade_rect:
-		fade_rect.color.a = 0.0
-		fade_rect.visible = true
-		tween.tween_property(fade_rect, "color:a", 1.0, 3.0)
-	
-	if music_player:
-		tween.tween_property(music_player, "volume_db", -80.0, 3.0)
-	
-	await tween.finished
-	
 	if music_player:
 		music_player.stop()
-	
-	print("Fade complete. Pausing 3 seconds in pitch black silence...")
-	await get_tree().create_timer(3.0).timeout
-	
-	await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn")
+	if await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn") != OK:
+		is_starting = false
+		start_menu_music()
 
 func _open_options() -> void:
 	is_in_options_menu = true

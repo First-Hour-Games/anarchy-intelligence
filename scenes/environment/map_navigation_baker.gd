@@ -87,7 +87,10 @@ func _bake() -> void:
 			navigation_mesh = cached
 			return
 
-	NavigationServer3D.bake_from_source_geometry_data(nav_mesh, source_geometry)
+	NavigationServer3D.bake_from_source_geometry_data_async(nav_mesh, source_geometry, _apply_bake.bind(nav_mesh, signature))
+
+
+func _apply_bake(nav_mesh: NavigationMesh, signature: String) -> void:
 	if cache_navigation:
 		nav_mesh.set_meta("source_signature", signature)
 		ResourceSaver.save(nav_mesh, cache_path)

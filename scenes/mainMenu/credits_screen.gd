@@ -17,7 +17,7 @@ const NOTE_COLOR := Color(0.6, 0.6, 0.6)
 const SCROLL_SPEED := 360.0
 const CONTENT_WIDTH := 560.0
 
-const TEAM: Array[String] = ["Duc Nguyen", "Henry Nguyen", "Irvin Soto", "Narciso Gonzales"]
+const TEAM: Array[String] = ["Henry Nguyen", "Irvin Soto", "Narciso Gonzales"]
 ## Each section: a heading, its lines, and an optional licence note under them.
 const SECTIONS: Array[Dictionary] = [
 	{

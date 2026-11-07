@@ -32,18 +32,55 @@ func run() -> void:
 	check(data.get("scene") == section.scene_file_path and data.get("location") == "Debug save", "The file names the current scene and marks itself as a debug save")
 	var menu := root.get_node("DebugMenu")
 	menu.set_open(true)
-	menu._open_save_screen()
+	var buttons: Array = menu.get("_buttons")
+	check(buttons[0].text.begins_with("Open save") and buttons[1].text.begins_with("Open load"), "Save and Load are the first two buttons")
+	buttons[0].pressed.emit()
 	for i in 6:
 		await process_frame
 	var screen: Variant = get_first_node_in_group("save_slot_screen")
-	check(not menu.opened and screen != null and screen.mode == SaveSlotScreen.Mode.SAVE and player.is_frozen, "The debug button closes the menu and opens the save screen")
+	check(not menu.opened and screen != null and screen.mode == screen.Mode.SAVE and player.is_frozen, "The debug button closes the menu and opens the save screen")
 	if screen != null:
 		await screen._transition_tween.finished
 		screen.close()
 		await screen.closed
 	check(not player.is_frozen, "Closing the save screen gives control back")
+
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	var previous_mouse := Input.mouse_mode
+	menu.set_open(true)
+	buttons[1].pressed.emit()
+	screen = section.get_child(-1)
+	check(not menu.opened and paused and screen.is_in_group("save_slot_screen") and screen.mode == screen.Mode.LOAD, "Load opens the slot picker and pauses gameplay")
+	if screen.is_in_group("save_slot_screen"):
+		await screen._transition_tween.finished
+		screen.close()
+		await screen.closed
+	check(not paused and Input.mouse_mode == previous_mouse, "Canceling Load restores pause and mouse state")
+
+	var destination := Node3D.new()
+	destination.name = "DebugLoadDestination"
+	var packed := PackedScene.new()
+	check(packed.pack(destination) == OK, "The load destination can be packed")
+	destination.free()
+	var destination_path := TEST_DIR + "/destination.tscn"
+	check(ResourceSaver.save(packed, destination_path) == OK, "The load destination is saved to disk")
+	section.scene_file_path = destination_path
+	check(saves.save_here(player, 1), "A slot points to the load destination")
+	menu.set_open(true)
+	buttons[1].pressed.emit()
+	screen = section.get_child(-1)
+	await screen._transition_tween.finished
+	screen._select(1)
+	screen._activate()
+	for i in 300:
+		await process_frame
+		if current_scene != null and current_scene.scene_file_path == destination_path and not paused:
+			break
+	check(current_scene != null and current_scene.name == "DebugLoadDestination" and not paused, "Selecting a slot changes scenes and resumes gameplay")
 	saves.delete_all()
-	section.queue_free()
+	DirAccess.remove_absolute(destination_path)
+	if current_scene != null:
+		current_scene.queue_free()
 	for i in 3:
 		await process_frame
 	quit(1 if failures else 0)

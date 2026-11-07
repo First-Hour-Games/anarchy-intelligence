@@ -47,7 +47,7 @@ var offsets: Array[Transform3D] = []
 
 ## Builds the ragdoll for visual's skeleton under owner_body, sending every bone off at push
 ## (world-space velocity). Returns the ragdoll, or null when the model has no skeleton.
-static func fall(owner_body: Node3D, visual: Node3D, push: Vector3) -> Node:
+static func fall(owner_body: Node3D, visual: Node3D, push: Vector3, impact_point := Vector3.INF) -> Node:
 	var skeletons := visual.find_children("*", "Skeleton3D", true, false)
 	if skeletons.is_empty():
 		return null
@@ -62,11 +62,11 @@ static func fall(owner_body: Node3D, visual: Node3D, push: Vector3) -> Node:
 	var player := owner_body.get_tree().get_first_node_in_group("player")
 	if player is PhysicsBody3D:
 		ignore.append(player)
-	ragdoll.call("_build", skeletons[0], visual, push, ignore)
+	ragdoll.call("_build", skeletons[0], visual, push, ignore, impact_point)
 	return ragdoll
 
 
-func _build(target: Skeleton3D, visual: Node3D, push: Vector3, ignore: Array[PhysicsBody3D]) -> void:
+func _build(target: Skeleton3D, visual: Node3D, push: Vector3, ignore: Array[PhysicsBody3D], impact_point: Vector3) -> void:
 	skeleton = target
 	var radii := _mesh_radii(visual)
 	var by_bone := {}
@@ -109,6 +109,23 @@ func _build(target: Skeleton3D, visual: Node3D, push: Vector3, ignore: Array[Phy
 			if closest[0].distance_to(closest[1]) < radius_of[i] + radius_of[j]:
 				bodies[i].add_collision_exception_with(bodies[j])
 				bodies[j].add_collision_exception_with(bodies[i])
+	if impact_point.is_finite():
+		_apply_impact(impact_point, push.normalized(), segments)
+
+
+## The struck body gets an extra impulse at contact, so the hit also turns the rig.
+func _apply_impact(contact: Vector3, direction: Vector3, segments: Array[PackedVector3Array]) -> void:
+	var nearest: RigidBody3D
+	var nearest_distance := INF
+	for i in segments.size():
+		var point := Geometry3D.get_closest_point_to_segment(contact, segments[i][0], segments[i][1])
+		var distance := contact.distance_squared_to(point)
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest = bodies[i]
+	if nearest != null:
+		var offset := (contact - nearest.global_position).limit_length(0.3)
+		nearest.apply_impulse(direction * nearest.mass * 2.0, offset)
 
 
 func _process(_delta: float) -> void:

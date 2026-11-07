@@ -75,6 +75,7 @@ signal climb_over_completed(player: Node3D)
 @export var climb_over_teleport: NodePath
 ## Cover the screen with five horizontal bands, then reveal them in reverse order.
 @export var climb_banded_fade: bool = false
+@export_range(0.01, 1.0, 0.005) var climb_banded_step_duration: float = 0.25
 ## Duration in seconds to fade out into black when climbing over.
 @export_range(0.1, 5.0, 0.1) var climb_fade_out_duration: float = 0.8
 ## Duration in seconds to hold in pitch black while the teleportation takes place.
@@ -366,7 +367,7 @@ func climb_over_barrier(interactor: Node3D = null) -> void:
 	# Fallback to scene change if configured for scene transition
 	var target_scene := next_scene_path if not next_scene_path.is_empty() else "res://scenes/chapters/main/map.tscn"
 	if ResourceLoader.exists(target_scene):
-		get_tree().change_scene_to_file(target_scene)
+		SceneLoader.change_to.call_deferred(target_scene)
 
 
 func get_climb_over_teleport_node() -> Node3D:
@@ -467,9 +468,12 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 	_climb_canvas = CanvasLayer.new()
 	_climb_canvas.name = "ClimbOverFadeCanvas"
 	_climb_canvas.layer = 115
+	var root_target := get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
+	root_target.add_child(_climb_canvas)
 
-	var fade_root := Control.new()
+	var fade_root := VBoxContainer.new()
 	fade_root.name = "ClimbFadeBands"
+	fade_root.add_theme_constant_override("separation", 0)
 	fade_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_climb_canvas.add_child(fade_root)
 	fade_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -480,24 +484,19 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 		black_rect.name = "BlackFadeBand%d" % (index + 1) if climb_banded_fade else "BlackFadeRect"
 		black_rect.color = Color(0, 0, 0, 0)
 		black_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		black_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		fade_root.add_child(black_rect)
-		black_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		black_rect.anchor_top = float(index) / band_count
-		black_rect.anchor_bottom = float(index + 1) / band_count
 		fade_rects.append(black_rect)
-
-	var root_target := get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
-	root_target.add_child(_climb_canvas)
 
 	if is_instance_valid(_climb_tween) and _climb_tween.is_valid():
 		_climb_tween.kill()
 	_climb_tween = create_tween()
 
-	# 1. Cover each band top to bottom, stepping by 25% every quarter-second.
+	# 1. Cover each band top to bottom in 25% steps.
 	for rect in fade_rects:
 		if climb_banded_fade:
 			for step in range(1, 5):
-				_climb_tween.tween_interval(0.25)
+				_climb_tween.tween_interval(climb_banded_step_duration)
 				_climb_tween.tween_callback(rect.set.bind("color", Color(0, 0, 0, step * 0.25)))
 		else:
 			_climb_tween.tween_property(
@@ -539,7 +538,7 @@ func _perform_climb_over_teleport(player: FirstPersonPlayer, teleport_node: Node
 	for index in range(fade_rects.size() - 1, -1, -1):
 		if climb_banded_fade:
 			for step in range(1, 5):
-				_climb_tween.tween_interval(0.25)
+				_climb_tween.tween_interval(climb_banded_step_duration)
 				_climb_tween.tween_callback(fade_rects[index].set.bind("color", Color(0, 0, 0, 1.0 - step * 0.25)))
 		else:
 			_climb_tween.tween_property(

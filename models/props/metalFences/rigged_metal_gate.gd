@@ -4,11 +4,14 @@ extends Node3D
 
 signal opened
 signal closed
+signal unlocked_with_key(player: Node3D)
 
 @export_category("Gate Motion")
 @export_range(10.0, 120.0, 1.0) var open_angle_degrees: float = 95.0
 @export_range(0.1, 3.0, 0.05) var swing_duration: float = 2.2
 @export var open_away_from_player: bool = true
+@export var starts_open: bool = false
+@export var stay_open: bool = false
 @export var gate_bone_name: StringName = &"Bone.001_01"
 
 @export_category("Lock")
@@ -47,7 +50,7 @@ var _asking_player: Node3D
 @onready var movement_audio_player: AudioStreamPlayer3D = get_node_or_null("MovementAudio") as AudioStreamPlayer3D
 
 func _ready() -> void:
-	is_locked = starts_locked
+	is_locked = starts_locked and not starts_open
 	_setup_audio()
 	_skeleton = $Model.find_child("Skeleton3D", true, false) as Skeleton3D
 	if _skeleton == null:
@@ -68,7 +71,10 @@ func _ready() -> void:
 	_closed_prompt_position = interactable.position
 	leaf_body.sync_to_physics = false
 	interactable.triggered.connect(toggle)
-	_set_angle(0.0)
+	is_open = starts_open
+	_target_angle = deg_to_rad(open_angle_degrees) if starts_open else 0.0
+	_set_angle(_target_angle)
+	interactable.is_enabled = not (stay_open and is_open)
 	if not _pending_save_state.is_empty():
 		restore_save_state(_pending_save_state)
 		_pending_save_state = {}
@@ -101,7 +107,7 @@ func _setup_audio() -> void:
 	movement_audio_player.bus = sound_bus
 
 func toggle(player: Node3D = null) -> void:
-	if is_moving or _bone < 0:
+	if is_moving or _bone < 0 or (stay_open and is_open):
 		return
 	if is_locked:
 		var inventory := _inventory(player)
@@ -139,33 +145,43 @@ func open_with_key() -> void:
 		return
 	is_locked = false
 	_swing(_asking_player)
+	unlocked_with_key.emit(_asking_player)
 
 func _on_choice_closed() -> void:
 	_asking_player = null
 	if not is_moving:
-		interactable.is_enabled = true
+		interactable.is_enabled = not (stay_open and is_open)
 
 func _inventory(player: Node3D) -> PlayerInventory:
 	return player.get_node_or_null("InventoryHUD") as PlayerInventory if is_instance_valid(player) else null
 
 func _swing(player: Node3D) -> void:
-	_play_movement_sound()
-	var opening := not is_open
 	var target := 0.0
-	if opening:
+	if not is_open:
 		var direction := 1.0
 		if open_away_from_player and is_instance_valid(player):
 			direction = 1.0 if to_local(player.global_position).z >= 0.0 else -1.0
 		target = deg_to_rad(open_angle_degrees) * direction
+	_swing_to(target)
+
+## Start closed while the destination is paused, then swing as it is revealed.
+func play_arrival_open(angle: float) -> void:
+	if _bone < 0:
+		return
+	restore_save_state({"locked": false})
+	_swing_to(angle)
+
+func _swing_to(target: float) -> void:
+	_play_movement_sound()
 	is_moving = true
 	_target_angle = target
 	interactable.is_enabled = false
 	_motion = create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	_motion.tween_method(_set_angle, _angle, target, swing_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_motion.finished.connect(func() -> void:
-		is_open = opening
+		is_open = not is_zero_approx(target)
 		is_moving = false
-		interactable.is_enabled = true
+		interactable.is_enabled = not (stay_open and is_open)
 		if is_open:
 			opened.emit()
 		else:
@@ -230,5 +246,5 @@ func restore_save_state(state: Dictionary) -> void:
 	_target_angle = saved_angle
 	is_open = not is_zero_approx(saved_angle)
 	is_moving = false
-	interactable.is_enabled = true
+	interactable.is_enabled = not (stay_open and is_open)
 	interactable.single_line_dialogue = ""

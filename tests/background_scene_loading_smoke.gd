@@ -22,8 +22,15 @@ func run() -> void:
 	while not loader.get("_pending").is_empty() and Time.get_ticks_msec() < deadline:
 		await process_frame
 	check(loader.get("_pending").is_empty() and not loader.is_ready(TUTORIAL), "canceled loading drained without retaining scene")
-	change_scene_to_file(INTRO)
+	change_scene_to_file("res://scenes/mainMenu/menu.tscn")
 	await scene_changed
+	current_scene.call("_start_game")
+	await process_frame
+	check(loader.is_loading() and loader.get("_overlay") != null, "Start Game immediately shows the loading screen")
+	await scene_changed
+	check(current_scene.scene_file_path == INTRO, "Start Game loads the intro")
+	while loader.is_loading():
+		await process_frame
 	var frames := 0
 	deadline = Time.get_ticks_msec() + 10000
 	while not loader.is_ready(TUTORIAL) and Time.get_ticks_msec() < deadline:
@@ -32,9 +39,11 @@ func run() -> void:
 	check(loader.is_ready(TUTORIAL), "intro prepares tutorial before transition")
 	print("Background preparation allowed ", frames, " main-loop frames")
 	var transition_start := Time.get_ticks_usec()
-	check(await loader.change_to(TUTORIAL) == OK, "prepared transition accepted")
-	await scene_changed
+	var transition: Callable = func(scene: Node) -> void:
+		check(scene.scene_file_path == TUTORIAL and loader.get("_overlay") != null, "loading screen covers destination setup")
+	check(await loader.change_to(TUTORIAL, transition) == OK, "prepared transition accepted")
 	check(current_scene.scene_file_path == TUTORIAL, "prepared tutorial became current scene")
+	check(loader.get("_overlay") == null and not paused, "loading screen releases pause when finished")
 	print("Prepared transition to ready scene: ", (Time.get_ticks_usec() - transition_start) / 1000.0, " ms")
 	check(loader.get("_packed") == null, "loader releases its scene reference after transition")
 	check(await loader.change_to("res://missing_scene.tscn") == ERR_FILE_NOT_FOUND, "failed transition returns error")

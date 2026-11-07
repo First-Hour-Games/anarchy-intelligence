@@ -30,12 +30,16 @@ func run() -> void:
 	for i in 4:
 		wrapper.take_melee_hit(Vector3(0, 0, 3), 0.1, 2.5)
 	check(not wrapper.dead and ragdoll_bones(wrapper) == 0, "Four pipe hits only stagger the Wrapper")
-	wrapper.take_melee_hit(Vector3(0, 0, 3), 0.1, 2.5)
+	wrapper.take_melee_hit(Vector3(0, 0, 3), 0.1, 2.5, Vector3(0.2, 1.4, 0.35))
 	check(wrapper.dead, "The fifth pipe hit kills the Wrapper")
 	check(ragdoll_bones(wrapper) >= 6, "Death builds a ragdoll (%d bones)" % ragdoll_bones(wrapper))
 	var bone: RigidBody3D = wrapper.get_node("Ragdoll").find_children("*", "RigidBody3D", false, false)[0]
 	var start: Vector3 = bone.global_position
-	for i in 60:
+	check(bone.linear_velocity.y < -3.0, "The killing blow drives the rig downward immediately")
+	for i in 6:
+		await physics_frame
+	check(start.y - bone.global_position.y > 0.2, "The body drops more than 20 cm in the first six physics frames")
+	for i in 54:
 		await physics_frame
 	check(wrapper.get_node("CollisionShape3D").disabled, "The standing collider is off once dead")
 	check(bone.global_position.distance_to(start) > 0.05, "The ragdoll moves under physics")
@@ -63,7 +67,7 @@ func run() -> void:
 	await physics_frame
 	check(restored.dead and restored.global_position.distance_to(Vector3(4, 0, 4)) < 0.01, "A saved corpse is restored where it fell")
 	check(ragdoll_bones(restored) >= 6, "A restored corpse is a ragdoll")
-	var hunt: AudioStreamPlayer = wrapper.get_node("HuntAudio")
+	var hunt: AudioStreamPlayer3D = wrapper.get_node("HuntAudio")
 	check(not hunt.playing, "Hunt music stays off for a dead Wrapper")
 	world.queue_free()
 	for i in 3:

@@ -89,17 +89,6 @@ grow_horizontal = 2
 grow_vertical = 0
 color = Color(0, 0, 0, 1)
 
-[node name="Fade" type="ColorRect" parent="AspectRatioContainer/Control" unique_id=1950018627]
-visible = false
-z_index = 5
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-
 [node name="Version" type="Label" parent="AspectRatioContainer/Control" unique_id=252474182]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 0

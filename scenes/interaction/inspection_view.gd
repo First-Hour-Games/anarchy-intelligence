@@ -399,6 +399,8 @@ func _refresh_hotspots() -> void:
 	var hotspots := _find_hotspots(self)
 	for hotspot in hotspots:
 		var btn := InspectionDotButton.new()
+		if hotspot.is_pickup:
+			btn.icon_texture = InspectionDotButton.PICKUP_TEXTURE
 		btn.dot_color = hotspot.dot_color
 		btn.glow_color = hotspot.glow_color
 		btn.dot_radius = hotspot.dot_radius

@@ -43,7 +43,6 @@ var _toast_tween: Tween
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	get_tree().scene_changed.connect(_on_scene_changed)
 	_build_toast()
 	_migrate_legacy_save()
 
@@ -196,6 +195,8 @@ func _write_save(section: Node3D, respawn: Transform3D, area: String, location: 
 
 ## Loads a slot's section and restores it. Returns the scene change result.
 func load_slot(slot: int) -> Error:
+	if SceneLoader.is_loading():
+		return ERR_BUSY
 	var data := read_slot(slot)
 	if data.is_empty():
 		return ERR_FILE_CORRUPT
@@ -203,8 +204,7 @@ func load_slot(slot: int) -> Error:
 	if not ResourceLoader.exists(path, "PackedScene"):
 		return ERR_FILE_NOT_FOUND
 	_pending = data
-	play_time = float(data.get("play_time", 0.0))
-	var error: Error = await SceneLoader.change_to(path)
+	var error: Error = await SceneLoader.change_to(path, _restore_loaded_scene)
 	if error != OK:
 		_pending = {}
 	return error
@@ -241,15 +241,11 @@ func _migrate_legacy_save() -> void:
 			DirAccess.remove_absolute(LEGACY_SAVE)
 
 
-func _on_scene_changed() -> void:
-	if _pending.is_empty():
-		return
+func _restore_loaded_scene(scene: Node) -> void:
 	var data := _pending
 	_pending = {}
-	var scene := get_tree().current_scene
-	if scene == null or scene.scene_file_path != str(data.get("scene", "")):
-		return
-	_restore(scene, data)
+	play_time = float(data.get("play_time", 0.0))
+	await _restore(scene, data)
 
 
 func _restore(scene: Node, data: Dictionary) -> void:

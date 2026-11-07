@@ -85,12 +85,16 @@ func run() -> void:
 	var scare = health.death_scare
 	check(scare != null and scare.rig != null and rigs() == 1, "A lethal hit starts one fall rig")
 	check(scare.rig.global_position.is_equal_approx(view.origin), "The fall starts exactly at the gameplay camera")
+	var initial_blur: float = scare._motion_blur.alpha
+	check(initial_blur > 0.0 and initial_blur <= health.DAZE_BLUR, "The fall starts with hit-like motion blur")
 	var lowest := INF
 	var farthest := 0.0
 	var spin := 0.0
+	var peak_blur := initial_blur
 	var start_ms := Time.get_ticks_msec()
 	while health.game_over == null and Time.get_ticks_msec() - start_ms < 9000:
 		await physics_frame
+		peak_blur = maxf(peak_blur, scare._motion_blur.alpha)
 		if is_instance_valid(scare.rig):
 			lowest = minf(lowest, scare.rig.global_position.y)
 			farthest = maxf(farthest, scare.rig.global_position.z)
@@ -103,6 +107,9 @@ func run() -> void:
 	check(spin <= scare_script.MAX_SPIN * 1.3, "Spin stays bounded (%.1f rad/s)" % spin)
 	check(health.game_over != null and took > 4.0 and took < 6.5, "Down, blackout, then the phone after %.1f s" % took)
 	check(scare.settled, "The body came to rest before the blackout")
+	check(peak_blur > health.DAZE_BLUR, "The fall builds to stronger motion blur than a hit")
+	check(scare._defocus.get_shader_parameter(&"lod") >= 5.0, "The view reaches full defocus before the phone")
+	check(scare._motion_blur.alpha == 0.0 and health.daze_blur.get(&"alpha") == 0.0, "The phone and gameplay camera are clear of death blur")
 	if health.game_over != null:
 		health.game_over.choose(0)
 		for i in 180:

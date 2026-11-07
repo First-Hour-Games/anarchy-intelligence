@@ -34,6 +34,8 @@ func run() -> void:
 	health.take_damage(20.0, map.get_node("Wrapper"))
 	check(not health.is_dead and health.death_scare == null and health.daze > 0.0 and not player.is_frozen, "A non-lethal hit only dazes")
 	health.health = health.max_health
+	health.daze = 0.0
+	health._apply_daze()
 
 	for entity: String in ["Wrapper", "Clawman", "THE_RIDGEBACK"]:
 		var attacker := map.get_node(entity) as Node3D
@@ -55,6 +57,7 @@ func run() -> void:
 		check(map.get_node("CRTOverlay").visible and map.get_node("AspectRatioBars").visible and not player.get_node("HandViewmodel").visible,
 				entity + " keeps the CRT and bars and hides the HUD")
 		check(scare.audio != null and scare.audio.bus == &"Effects" and scare.audio.playing, entity + " plays its kill sound")
+		check(scare.tinnitus.playing, entity + " starts the pulsating tone with the fall")
 		check(attacker.process_mode == Node.PROCESS_MODE_DISABLED and scare.attacker_visual.process_mode == Node.PROCESS_MODE_ALWAYS,
 				entity + " stops but keeps its lunge animating")
 		var from_attacker := Vector2(view.origin.x - attacker.global_position.x, view.origin.z - attacker.global_position.z).length()
@@ -66,9 +69,15 @@ func run() -> void:
 		await create_timer(2.6).timeout
 		check(scare.settled and health.game_over == null and scare.blackout.color.a < 0.5, entity + " stays down a few seconds before the blackout")
 		check(scare.rig.global_position.y > view.origin.y - scare_script.MAX_DROP, entity + " never falls through the level")
-		await create_timer(2.0).timeout
+		check(scare.tinnitus.playing, entity + " plays the pulsating tone while the view blurs")
+		var tone_level: float = scare.tinnitus.volume_db
+		await create_timer(0.9).timeout
+		check(scare.blackout.color.a > 0.0 and scare.tinnitus.playing and scare.tinnitus.volume_db < tone_level,
+				entity + " fades the tone with the blackout")
+		await create_timer(1.1).timeout
 		var game_over = health.game_over
-		check(game_over != null and scare.blackout.color.a >= 1.0 and not scare.audio.playing, entity + " blacks out into the phone game over")
+		check(game_over != null and scare.blackout.color.a >= 1.0 and not scare.audio.playing and not scare.tinnitus.playing,
+				entity + " stops both sounds when the phone game over appears")
 		if game_over == null:
 			continue
 		var respawned := {}

@@ -224,7 +224,7 @@ func _strike() -> void:
 	_hit_applied = true
 	var target := nearest.collider as Node3D
 	if target != null and target.has_method("take_melee_hit"):
-		target.take_melee_hit(_player.global_position, randf_range(1.5, 2.5), knockback_speed)
+		target.take_melee_hit(_player.global_position, randf_range(1.5, 2.5), knockback_speed, nearest.position)
 		_enemy_hit = true
 		if not _sound_is_hit:
 			_switch_to_hit_sound()

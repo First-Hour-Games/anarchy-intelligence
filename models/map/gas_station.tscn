@@ -161,10 +161,10 @@ metadata/_gltf_primary_texture_coord = 0
 size = Vector3(1.9, 0.13378906, 3.1933594)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pump_sign_glow"]
-resource_name = "Pump Sign White Glow"
+resource_name = "Weathered Red Neon"
 emission_enabled = true
 emission = Color(0.89794457, 0.23848048, 0.2532429, 1)
-emission_energy_multiplier = 6.22
+emission_energy_multiplier = 2.0
 
 [sub_resource type="TextMesh" id="TextMesh_jpyye"]
 text = "THIRD WARD GAS
@@ -963,22 +963,28 @@ material_override = SubResource("StandardMaterial3D_pump_sign_glow")
 cast_shadow = 0
 mesh = SubResource("TextMesh_jpyye")
 script = ExtResource("13_neon_sign")
+minimum_brightness = 0.85
+maximum_brightness = 1.02
+flicker_interval_min = 0.12
+flicker_interval_max = 0.6
+flicker_response = 12.0
 
 [node name="NeonAmbience" type="AudioStreamPlayer3D" parent="PumpSign" unique_id=2114512241]
 stream = ExtResource("14_neon_loop")
-volume_db = -18.0
-unit_size = 4.0
-max_distance = 24.0
-bus = &"Reverb"
+volume_db = -20.0
+unit_size = 6.0
+max_db = -16.0
+max_distance = 18.0
+bus = &"Outside"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="PumpSign" unique_id=1139558474]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.030258179)
 light_color = Color(0.9745385, 0.4699847, 0.4469819, 1)
-light_energy = 0.896
-light_volumetric_fog_energy = 2.455
+light_energy = 0.35
+light_volumetric_fog_energy = 0.2
 light_size = 0.417
-omni_range = 8.9
-omni_attenuation = -0.455
+omni_range = 6.0
+omni_attenuation = 1.4
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PumpSign" unique_id=1729137865]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.932373, 0.011901379, -0.05932045)
@@ -1006,22 +1012,28 @@ material_override = SubResource("StandardMaterial3D_pump_sign_glow")
 cast_shadow = 0
 mesh = SubResource("TextMesh_jpyye")
 script = ExtResource("13_neon_sign")
+minimum_brightness = 0.85
+maximum_brightness = 1.02
+flicker_interval_min = 0.12
+flicker_interval_max = 0.6
+flicker_response = 12.0
 
 [node name="NeonAmbience" type="AudioStreamPlayer3D" parent="PumpSign2" unique_id=1217211396]
 stream = ExtResource("14_neon_loop")
-volume_db = -18.0
-unit_size = 4.0
-max_distance = 24.0
-bus = &"Reverb"
+volume_db = -20.0
+unit_size = 6.0
+max_db = -16.0
+max_distance = 18.0
+bus = &"Outside"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="PumpSign2" unique_id=1059884405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.030258179)
 light_color = Color(0.9745385, 0.4699847, 0.4469819, 1)
-light_energy = 0.896
-light_volumetric_fog_energy = 2.455
+light_energy = 0.35
+light_volumetric_fog_energy = 0.2
 light_size = 0.417
-omni_range = 8.9
-omni_attenuation = -0.455
+omni_range = 6.0
+omni_attenuation = 1.4
 
 [node name="InteriorAmbienceZone" parent="." unique_id=1559050471 instance=ExtResource("36_ambient_zone")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004728, 2.88, -11.394415)
@@ -1036,22 +1048,29 @@ material_override = SubResource("StandardMaterial3D_pump_sign_glow")
 cast_shadow = 0
 mesh = SubResource("TextMesh_xsro1")
 script = ExtResource("13_neon_sign")
+minimum_brightness = 0.85
+maximum_brightness = 1.02
+flicker_interval_min = 0.12
+flicker_interval_max = 0.6
+flicker_response = 12.0
 
 [node name="NeonAmbience" type="AudioStreamPlayer3D" parent="stationV3/PumpSign3" unique_id=1807122775]
 stream = ExtResource("14_neon_loop")
-volume_db = -18.0
-unit_size = 4.0
-max_distance = 24.0
-bus = &"Reverb"
+volume_db = -20.0
+unit_size = 6.0
+max_db = -16.0
+max_distance = 18.0
+bus = &"Outside"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="stationV3/PumpSign3" unique_id=74269302]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2863903)
 light_color = Color(0.9745385, 0.4699847, 0.4469819, 1)
-light_volumetric_fog_energy = 2.455
+light_energy = 0.45
+light_volumetric_fog_energy = 0.2
 light_size = 0.417
 shadow_enabled = true
-omni_range = 50.0
-omni_attenuation = -0.36
+omni_range = 8.0
+omni_attenuation = 1.4
 
 [node name="StationWindow" type="CSGPolygon3D" parent="stationV3" unique_id=1388899311]
 transform = Transform3D(0.99999976, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, 2.64951, 0.8241737, -7.2015314)
@@ -1349,3 +1368,10 @@ transform = Transform3D(-9.930693e-06, 0, -0.0039999876, 0, 0.0039999993, 0, 0.0
 [node name="BoxCollision" type="CollisionShape3D" parent="Sketchfab_Scene5/CollisionBody"]
 position = Vector3(-8.93745, 327.35842, -256.1672)
 shape = SubResource("FreezerBoxCollision")
+
+[node name="CSGPolygon3D2" type="CSGPolygon3D" parent="." unique_id=352253115]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -20, 0.085, 4.436)
+material_override = SubResource("StandardMaterial3D_4raly")
+use_collision = true
+polygon = PackedVector2Array(10, 27, 10, 65, 27.5, 65, 34.276, 65, 34.276, 61.3, 27.5, 61.3, 26.86, 27)
+metadata/surface = "concrete"

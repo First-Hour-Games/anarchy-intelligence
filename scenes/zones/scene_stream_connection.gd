@@ -1,6 +1,7 @@
 @tool
 extends Node3D
 ## Both outdoor scenes use this marker at the same world-space road crossing.
+@export var stream_at_runtime := true
 @export_range(30.0, 300.0, 5.0) var preload_distance := 140.0
 ## Radial distance to release the neighbor; runtime keeps this beyond the preload radius.
 @export_range(20.0, 400.0, 5.0) var unload_distance := 180.0
@@ -31,7 +32,8 @@ func _ready() -> void:
 		_queue_editor_preview()
 		return
 	set_process(false)
-	WorldStreaming.register_section.call_deferred(get_parent(), self)
+	if stream_at_runtime:
+		WorldStreaming.register_section.call_deferred(get_parent(), self)
 
 func _process(delta: float) -> void:
 	if not Engine.is_editor_hint() or editor_neighbor_scene.is_empty() or not show_neighbor_in_editor:

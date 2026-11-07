@@ -11,6 +11,10 @@ extends CanvasLayer
 ## Emitted once the view has blacked out; CombatHealth then shows the game over.
 signal finished
 const CRT_SHADER := preload("res://shaders/crt.gdshader")
+const ACCUM_BLUR := preload("res://scenes/player/accum_blur_effect.gd")
+const DEFOCUS_SHADER := preload("res://shaders/blur.gdshader")
+const TINNITUS_TONE := preload("res://sounds/player/tinnitus_pulsating_tone_pure_wav.ogg")
+const TINNITUS_VOLUME_DB := -4.0
 ## The black bars round the TV's 4:3 picture on wide screens, in every chapter scene.
 const SCREEN_BARS := &"AspectRatioBars"
 const SOUNDS := {
@@ -45,6 +49,7 @@ var rig: RigidBody3D
 var camera: Camera3D
 var attacker_visual: Node3D
 var audio: AudioStreamPlayer
+var tinnitus: AudioStreamPlayer
 var blackout: ColorRect
 var hidden_layers: Array[CanvasLayer] = []
 var stopped_mobs: Dictionary = {}
@@ -58,6 +63,8 @@ var _start_height: float = 0.0
 var _rest := Transform3D.IDENTITY
 var _finished: bool = false
 var _restored: bool = false
+var _motion_blur: ACCUM_BLUR
+var _defocus: ShaderMaterial
 
 
 func start(attacker: Node3D) -> void:
@@ -69,11 +76,22 @@ func start(attacker: Node3D) -> void:
 		entity_kind = "ridgeback" if attacker is CorruptedFriend else "clawman" if attacker.get("encounter_kind") == 1 else "wrapper"
 	_stop_enemies(attacker)
 	_hide_hud()
+	_defocus = ShaderMaterial.new()
+	_defocus.shader = DEFOCUS_SHADER
+	var blur_rect := ColorRect.new()
+	blur_rect.material = _defocus
+	blur_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blur_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(blur_rect)
 	blackout = ColorRect.new()
 	blackout.color = Color(0, 0, 0, 0)
 	blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(blackout)
+	# Give the CRT a fresh screen copy containing both the defocus and the blackout.
+	var screen_copy := BackBufferCopy.new()
+	screen_copy.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	add_child(screen_copy)
 	if SOUNDS.has(entity_kind):
 		audio = AudioStreamPlayer.new()
 		audio.bus = &"Effects"
@@ -81,6 +99,13 @@ func start(attacker: Node3D) -> void:
 		audio.stream = SOUNDS[entity_kind]
 		add_child(audio)
 		audio.play()
+	tinnitus = AudioStreamPlayer.new()
+	tinnitus.name = "DeathTinnitus"
+	tinnitus.bus = &"Effects"
+	tinnitus.stream = TINNITUS_TONE
+	tinnitus.volume_db = TINNITUS_VOLUME_DB
+	add_child(tinnitus)
+	tinnitus.play()
 	viewport = get_viewport()
 	previous_camera = viewport.get_camera_3d()
 	if is_instance_valid(previous_camera) and player != null:
@@ -140,7 +165,12 @@ func _build_rig(player: Node3D, attacker: Node3D) -> void:
 	camera.far = previous_camera.far
 	camera.environment = previous_camera.environment
 	camera.attributes = previous_camera.attributes
-	camera.compositor = previous_camera.compositor
+	camera.compositor = previous_camera.compositor.duplicate() if previous_camera.compositor else Compositor.new()
+	_motion_blur = ACCUM_BLUR.new()
+	_motion_blur.alpha = 0.90
+	var effects := camera.compositor.compositor_effects
+	effects.append(_motion_blur)
+	camera.compositor.compositor_effects = effects
 	camera.cull_mask = previous_camera.cull_mask & ~(1 << (VIEWMODEL_LAYER - 1))
 	rig.add_child(camera)
 	add_child(rig)
@@ -194,6 +224,10 @@ func _settle() -> void:
 
 func _process(delta: float) -> void:
 	elapsed += delta
+	if _motion_blur:
+		_motion_blur.alpha = lerpf(0.90, 0.985, minf(elapsed / FALL_TIME, 1.0))
+	var defocus_progress := minf(elapsed / (FALL_TIME + DOWN_TIME), 1.0)
+	_defocus.set_shader_parameter(&"lod", 5.0 * defocus_progress)
 	if settled and is_instance_valid(camera):
 		var t := elapsed - FALL_TIME
 		var breath := sin(t * 1.7) * 0.006
@@ -204,6 +238,8 @@ func _process(delta: float) -> void:
 		blackout.color.a = dark
 	if is_instance_valid(audio):
 		audio.volume_db = lerpf(-3.0, -60.0, dark)
+	if tinnitus.playing:
+		tinnitus.volume_db = TINNITUS_VOLUME_DB + linear_to_db(maxf(1.0 - dark, 0.001))
 	if dark >= 1.0 and not _finished:
 		_finish()
 
@@ -220,8 +256,12 @@ func _input(event: InputEvent) -> void:
 
 func _finish() -> void:
 	_finished = true
+	set_process(false)
+	if _motion_blur:
+		_motion_blur.alpha = 0.0
 	if is_instance_valid(audio):
 		audio.stop()
+	tinnitus.stop()
 	finished.emit()
 
 
@@ -239,6 +279,8 @@ func restore_world() -> void:
 	if _restored:
 		return
 	_restored = true
+	if is_instance_valid(tinnitus):
+		tinnitus.stop()
 	if is_instance_valid(previous_camera):
 		previous_camera.make_current()
 	if is_instance_valid(rig):

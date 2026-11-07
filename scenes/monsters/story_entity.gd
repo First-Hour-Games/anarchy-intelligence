@@ -16,7 +16,8 @@ signal died
 ## Pipe hits that kill it; 0 means it can only be staggered. The count resets when the player respawns.
 @export var hits_to_kill: int = 0
 ## How fast the ragdoll is thrown away from the player by the killing blow.
-@export var death_push_speed: float = 2.0
+@export var death_push_speed: float = 1.0
+@export var death_drop_speed: float = 4.2
 
 @export_group("Roaming")
 ## Free-roaming Wrapper (spawn points): wanders near its home, hunts a player it hears, and
@@ -192,14 +193,16 @@ func is_watched_by_player() -> bool:
 		return false
 	return player.get_viewport().get_visible_rect().has_point(player.camera.unproject_position(focus))
 
-func take_melee_hit(from_position: Vector3, duration: float, push_speed: float) -> void:
+func take_melee_hit(from_position: Vector3, duration: float, push_speed: float, impact_point := Vector3.INF) -> void:
 	if dead or not enabled or suspended:
 		return
 	var away := global_position - from_position
 	away.y = 0.0
 	hits_taken += 1
 	if hits_to_kill > 0 and hits_taken >= hits_to_kill:
-		_die(away.normalized() * death_push_speed + Vector3.UP * 0.5)
+		var impact_direction := away.normalized()
+		var contact := impact_point if impact_point.is_finite() else global_position + Vector3.UP * 1.2 - impact_direction * 0.2
+		_die(impact_direction * death_push_speed + Vector3.DOWN * death_drop_speed, contact)
 		return
 	# Being hit gives the player away.
 	if roaming and roam_state != RoamState.HUNTING:
@@ -226,7 +229,7 @@ func restore_dead(origin: Vector3, yaw: float) -> void:
 	global_transform = Transform3D(Basis(Vector3.UP, yaw).scaled(global_basis.get_scale()), origin)
 	_die(Vector3.ZERO)
 
-func _die(push: Vector3) -> void:
+func _die(push: Vector3, impact_point := Vector3.INF) -> void:
 	dead = true
 	enabled = false
 	velocity = Vector3.ZERO
@@ -236,7 +239,7 @@ func _die(push: Vector3) -> void:
 	_set_seated(false)
 	# Off now, not deferred: the ragdoll's first physics step must not start inside it.
 	($CollisionShape3D as CollisionShape3D).disabled = true
-	RAGDOLL.fall(self, $Visual, push)
+	RAGDOLL.fall(self, $Visual, push, impact_point)
 	died.emit()
 
 func _physics_process(delta: float) -> void:
@@ -361,6 +364,14 @@ func _move(motion: Vector3, delta: float, facing := Vector3.ZERO, turn_rate := 4
 ## HUNTING for a roaming one. The hunt music follows it.
 func is_hunting() -> bool:
 	return not dead and (not roaming or roam_state == RoamState.HUNTING)
+
+
+func continue_pursuit(target: FirstPersonPlayer, nav_map: RID) -> void:
+	player = target
+	agent.set_navigation_map(nav_map)
+	last_heard = player.global_position
+	navigation_route.reset()
+	reset_physics_interpolation()
 
 ## How much noise the player is making, 0 to 1: none standing still, hidden or frozen.
 func player_noise() -> float:

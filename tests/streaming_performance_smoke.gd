@@ -44,6 +44,7 @@ func run() -> void:
 	# Skip the opening cinematic so its asynchronous checkpoint teleport cannot
 	# move the player during the stationary-position and crossing assertions.
 	var forest: Node3D = load(stream.FOREST).instantiate()
+	forest.get_node("ResidenceStreamConnection").stream_at_runtime = true
 	forest.auto_start_fade = false
 	forest.delay_dialogue_until_fade = false
 	forest.get_node("IntroFadeCanvas").free()
@@ -62,8 +63,12 @@ func run() -> void:
 		check(false, "initial sections loaded")
 		quit(1)
 		return
-	var expected_zones: int = stream._exclusion_zones.size()
-	check(expected_zones == 6, "all authored forest and residence clearing zones are cached")
+	var expected_zones := 0
+	for section: Node in stream._sections.values():
+		for node in section.find_children("*", "Node3D", true, false):
+			if node is TreeExclusionZone3D:
+				expected_zones += 1
+	check(stream._exclusion_zones.size() == expected_zones, "all authored forest and residence clearing zones are cached")
 	# Older scene overrides must also be safe when unload < preload.
 	stream.unload_distance = 100.0
 	await hold_position(player, Vector3(0, 0, -120))

@@ -1,10 +1,9 @@
-extends AudioStreamPlayer
-## A proximity music layer for the active Wrapper, independent of camera direction.
+extends AudioStreamPlayer3D
+## Local hunt audio emitted by the active Wrapper.
 
 @export_range(1.0, 50.0, 0.5) var start_distance: float = 16.0
 @export_range(1.0, 60.0, 0.5) var stop_distance: float = 20.0
-@export_range(0.0, 20.0, 0.5) var full_volume_distance: float = 5.0
-@export_range(-40.0, 0.0, 0.5) var hunt_volume_db: float = -8.0
+@export_range(-40.0, 0.0, 0.5) var hunt_volume_db: float = -12.0
 @export_range(0.05, 5.0, 0.05) var fade_in_seconds: float = 0.6
 @export_range(0.05, 5.0, 0.05) var fade_out_seconds: float = 1.2
 
@@ -34,8 +33,7 @@ func _process(delta: float) -> void:
 		_near = true
 	var target := 0.0
 	if _near:
-		var intensity := clampf((outer - distance) / maxf(outer - full_volume_distance, 0.1), 0.0, 1.0)
-		target = db_to_linear(hunt_volume_db) * intensity
+		target = db_to_linear(hunt_volume_db)
 		if not playing and stream != null:
 			play()
 	var duration := fade_in_seconds if target > _level else fade_out_seconds

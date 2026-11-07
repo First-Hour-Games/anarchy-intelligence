@@ -1,0 +1,186 @@
+[gd_scene format=3 uid="uid://co5hb3yt5dfgb"]
+
+[ext_resource type="PackedScene" uid="uid://csoh12v8wyj8w" path="res://models/map/residence/warehouses.glb" id="52_7g3ey"]
+[ext_resource type="PackedScene" uid="uid://tatdxnqbrla3" path="res://models/psx_industrial_pack/concrete_pipe_pile.glb" id="56_wtnph"]
+[ext_resource type="Script" uid="uid://c1y7n8v3ow0hv" path="res://models/props/wood_fence/modular_fence.gd" id="57_fay6p"]
+[ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_6.tscn" id="58_3xmin"]
+[ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_5.tscn" id="59_jlfsj"]
+[ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_4.tscn" id="60_kk1sr"]
+[ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_2.tscn" id="61_ymrkt"]
+[ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_3.tscn" id="62_aelp7"]
+[ext_resource type="PackedScene" path="res://models/props/wood_fence/wood_fence_1.tscn" id="63_8kpth"]
+
+[node name="StationApproach" type="Node3D" unique_id=1012318252]
+
+[node name="Sketchfab_Scene9" parent="." unique_id=544186788 instance=ExtResource("52_7g3ey")]
+transform = Transform3D(-5.2453664e-09, 0, -0.12, 0, 0.12, 0, 0.12, 0, -5.2453664e-09, 145.3, 0, 82.7492)
+
+[node name="ConcretePipePile2" parent="." unique_id=1520097276 instance=ExtResource("56_wtnph")]
+transform = Transform3D(-6.010316e-08, 0, -1.375, 0, 1.375, 0, 1.375, 0, -6.010316e-08, 144, 0.117420435, 66.1283)
+
+[node name="Fence" type="Node3D" parent="." unique_id=512468038]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 122.049805, -0.017783225, 43.372257)
+script = ExtResource("57_fay6p")
+segment_count = 19
+fence_scale = 0.3
+pattern_mode = 1
+random_seed = 12404
+
+[node name="Segment_01_Var6" parent="Fence" unique_id=1705175757 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_02_Var5" parent="Fence" unique_id=1038544506 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 2.1, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_03_Var6" parent="Fence" unique_id=1791297126 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.2, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_04_Var5" parent="Fence" unique_id=350959764 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 6.2999997, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_05_Var5" parent="Fence" unique_id=1816981225 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 8.4, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_06_Var4" parent="Fence" unique_id=788246077 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 10.5, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_07_Var2" parent="Fence" unique_id=2144946097 instance=ExtResource("61_ymrkt")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 12.6, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_08_Var2" parent="Fence" unique_id=587237259 instance=ExtResource("61_ymrkt")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 14.700001, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_09_Var3" parent="Fence" unique_id=699908083 instance=ExtResource("62_aelp7")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 16.800001, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_10_Var4" parent="Fence" unique_id=65743670 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 18.900002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_11_Var6" parent="Fence" unique_id=2070332556 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 21.000002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_12_Var1" parent="Fence" unique_id=1892803039 instance=ExtResource("63_8kpth")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 23.100002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_13_Var4" parent="Fence" unique_id=1548763117 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 25.200003, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_14_Var5" parent="Fence" unique_id=1502580495 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 27.300003, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_15_Var4" parent="Fence" unique_id=639484438 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 29.400003, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_16_Var6" parent="Fence" unique_id=1100978620 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 31.500004, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_17_Var1" parent="Fence" unique_id=1060509534 instance=ExtResource("63_8kpth")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 33.600002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_18_Var2" parent="Fence" unique_id=911498852 instance=ExtResource("61_ymrkt")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 35.7, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_19_Var4" parent="Fence" unique_id=1420073516 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 37.8, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Fence2" type="Node3D" parent="." unique_id=203022408]
+transform = Transform3D(-1.0000001, 0, 0, 0, 1, 0, 0, 0, -1.0000001, 122.049805, -0.017783225, 83.37225)
+script = ExtResource("57_fay6p")
+segment_count = 19
+fence_scale = 0.3
+pattern_mode = 3
+
+[node name="Segment_01_Var1" parent="Fence2" unique_id=1133982528 instance=ExtResource("63_8kpth")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_02_Var2" parent="Fence2" unique_id=1843102386 instance=ExtResource("61_ymrkt")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 2.1, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_03_Var3" parent="Fence2" unique_id=484774609 instance=ExtResource("62_aelp7")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.2, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_04_Var4" parent="Fence2" unique_id=157095637 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 6.2999997, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_05_Var5" parent="Fence2" unique_id=1607072428 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 8.4, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_06_Var6" parent="Fence2" unique_id=881304541 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 10.5, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_07_Var1" parent="Fence2" unique_id=66013146 instance=ExtResource("63_8kpth")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 12.6, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_08_Var2" parent="Fence2" unique_id=1315606687 instance=ExtResource("61_ymrkt")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 14.700001, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_09_Var3" parent="Fence2" unique_id=345007574 instance=ExtResource("62_aelp7")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 16.800001, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_10_Var4" parent="Fence2" unique_id=38925542 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 18.900002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_11_Var5" parent="Fence2" unique_id=453088574 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 21.000002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_12_Var6" parent="Fence2" unique_id=908306624 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 23.100002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_13_Var1" parent="Fence2" unique_id=1833680835 instance=ExtResource("63_8kpth")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 25.200003, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_14_Var2" parent="Fence2" unique_id=196759638 instance=ExtResource("61_ymrkt")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 27.300003, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_15_Var3" parent="Fence2" unique_id=1011235232 instance=ExtResource("62_aelp7")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 29.400003, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_16_Var4" parent="Fence2" unique_id=173916560 instance=ExtResource("60_kk1sr")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 31.500004, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_17_Var5" parent="Fence2" unique_id=942047574 instance=ExtResource("59_jlfsj")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 33.600002, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_18_Var6" parent="Fence2" unique_id=1223711857 instance=ExtResource("58_3xmin")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 35.7, 0, 0)
+metadata/modular_fence_segment = true
+
+[node name="Segment_19_Var1" parent="Fence2" unique_id=322602779 instance=ExtResource("63_8kpth")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 37.8, 0, 0)
+metadata/modular_fence_segment = true

@@ -22,7 +22,7 @@ var current_footstep_surface: StringName = &"dirt"
 
 @export_category("Movement")
 @export var walk_speed: float = 3.2
-@export var sprint_speed: float = 4.8
+@export var sprint_speed: float = 5.52
 @export var sprint_enabled: bool = true
 @export var ground_acceleration: float = 13.0
 @export var ground_deceleration: float = 17.0

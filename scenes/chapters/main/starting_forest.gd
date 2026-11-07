@@ -513,13 +513,6 @@ func finish_fade_immediately() -> void:
 	skip_fade()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if _is_fading and not _has_faded:
-		if event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"ui_cancel") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
-			skip_fade()
-			get_viewport().set_input_as_handled()
-
-
 func _on_fade_finished() -> void:
 	_restore_player_camera()
 	_restore_intro_player_ui()

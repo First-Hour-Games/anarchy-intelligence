@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
+[ext_resource type="Script" path="res://scenes/monsters/enemy_footsteps.gd" id="enemy_footsteps"]
 [ext_resource type="Script" path="res://scenes/monsters/story_entity.gd" id="1"]
 [ext_resource type="PackedScene" path="res://models/enemies/the_wrapper/MonsterPSX.fbx" id="2"]
 [ext_resource type="Script" path="res://scenes/monsters/wrapper_visual.gd" id="3_visual"]
 [ext_resource type="Script" path="res://scenes/monsters/wrapper_hunt_audio.gd" id="4_hunt"]
-[ext_resource type="AudioStream" path="res://sounds/entities/wrapper/wrapperHunt.mp3" id="5_hunt_stream"]
+[ext_resource type="AudioStream" path="res://sounds/entities/death_scares/wrapper_source.mp3" id="5_hunt_stream"]
 [ext_resource type="AudioStream" path="res://music/scaryMoment.ogg" id="6_appearance_stream"]
 [sub_resource type="CapsuleShape3D" id="shape"]
 radius = 0.4
@@ -23,13 +24,21 @@ shape = SubResource("shape")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.8
 target_desired_distance = 1.4
-[node name="HuntAudio" type="AudioStreamPlayer" parent="."]
+[node name="HuntAudio" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0, 1.3, 0)
 script = ExtResource("4_hunt")
 stream = ExtResource("5_hunt_stream")
 volume_db = -80.0
-bus = &"Music"
+pitch_scale = 1.1
+unit_size = 4.0
+max_db = -12.0
+max_distance = 22.0
 
 [node name="AppearanceAudio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_appearance_stream")
 volume_db = -2.0
 bus = &"Music"
+
+[node name="Footsteps" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0, 0.15, 0)
+script = ExtResource("enemy_footsteps")

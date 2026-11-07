@@ -69,9 +69,9 @@ func run_checks() -> void:
 	menu.call("_jump_to_checkpoint", "after_log")
 	for index in range(180):
 		await physics_frame
-		if current_scene is StartingForest and current_scene.get("_has_switched_music"):
+		if current_scene != null and current_scene.scene_file_path == menu.FOREST_PATH and current_scene.get("_has_switched_music"):
 			break
-	assert(current_scene is StartingForest)
+	assert(current_scene != null and current_scene.scene_file_path == menu.FOREST_PATH)
 	assert(current_scene.get("_has_switched_music"))
 	assert(current_scene.player.has_item(&"map"))
 	assert(menu.get("_pending_checkpoint") == "")

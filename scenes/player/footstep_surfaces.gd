@@ -1,6 +1,8 @@
 extends RefCounted
 
 const BANKS := {
+	&"wood": [preload("res://sounds/footsteps/wood/woodFootsteps1.ogg"), preload("res://sounds/footsteps/wood/woodFootsteps2.ogg"), preload("res://sounds/footsteps/wood/woodFootsteps3.ogg"), preload("res://sounds/footsteps/wood/woodFootsteps4.ogg"), preload("res://sounds/footsteps/wood/woodFootsteps5.ogg")],
+	&"grass": [preload("res://sounds/footsteps/grass/Grass-footsteps-1.ogg"), preload("res://sounds/footsteps/grass/Grass-footsteps-2.ogg"), preload("res://sounds/footsteps/grass/Grass-footsteps-3.ogg"), preload("res://sounds/footsteps/grass/Grass-footsteps-4.ogg"), preload("res://sounds/footsteps/grass/Grass-footsteps-5.ogg"), preload("res://sounds/footsteps/grass/Grass-footsteps-6.ogg"), preload("res://sounds/footsteps/grass/Grass-footsteps-7.ogg")],
 	&"concrete": [preload("res://sounds/footsteps/concrete/concrete_1.wav"), preload("res://sounds/footsteps/concrete/concrete_2.wav"), preload("res://sounds/footsteps/concrete/concrete_3.wav")],
 	&"tile": [preload("res://sounds/footsteps/tile/tile_1.wav"), preload("res://sounds/footsteps/tile/tile_2.wav"), preload("res://sounds/footsteps/tile/tile_3.wav")],
 	&"dirt": [preload("res://sounds/footsteps/dirt/dirt_1.wav"), preload("res://sounds/footsteps/dirt/dirt_2.wav"), preload("res://sounds/footsteps/dirt/dirt_3.wav")],

@@ -18,20 +18,24 @@ func run() -> void:
 	var wrapper := (load("res://scenes/monsters/the_wrapper.tscn") as PackedScene).instantiate() as CharacterBody3D
 	root.add_child(wrapper)
 	wrapper.set_physics_process(false)
-	var audio := wrapper.get_node("HuntAudio") as AudioStreamPlayer
+	var audio := wrapper.get_node("HuntAudio") as AudioStreamPlayer3D
 	audio.set_process(false)
-	var source := load("res://sounds/entities/wrapper/wrapperHunt.mp3") as AudioStreamMP3
-	check(audio.stream != source and audio.stream.loop and not source.loop, "hunt loops without mutating the imported MP3")
+	var source := load("res://sounds/entities/death_scares/wrapper_source.mp3") as AudioStreamMP3
+	check(audio.stream != source and audio.stream.data == source.data and audio.stream.loop and not source.loop,
+			"hunt loops the requested source without mutating the imported MP3")
 	player.global_position = Vector3(0, 0, 4)
 	audio._process(1.0)
 	check(not audio.playing, "hidden or inactive encounter stays silent")
 	wrapper.set("enabled", true)
 	audio._process(0.6)
-	check(audio.playing and audio.bus == &"Music", "near active Wrapper starts the hunt loop on the music bus")
-	var close_volume := audio.volume_db
+	check(audio.playing and audio.get_parent() == wrapper and is_equal_approx(audio.volume_db, -12.0) and is_equal_approx(audio.max_db, -12.0),
+			"near active Wrapper emits the louder loop at -12 dB from its own position")
+	check(is_equal_approx(audio.pitch_scale, 1.1), "Wrapper source loop plays 10 percent faster")
+	check(audio.attenuation_model != AudioStreamPlayer3D.ATTENUATION_DISABLED and audio.max_distance == 22.0,
+			"the 3D emitter attenuates over a local range")
 	player.global_position.z = 17.0
 	audio._process(1.2)
-	check(audio.playing and audio.volume_db < close_volume, "moving away lowers volume and boundary hysteresis keeps the loop running")
+	check(audio.playing, "boundary hysteresis keeps the loop running")
 	player.global_position.z = 22.0
 	audio._process(0.1)
 	check(audio.playing, "leaving range begins a fade instead of cutting the track")

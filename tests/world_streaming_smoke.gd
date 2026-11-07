@@ -106,6 +106,7 @@ func run() -> void:
 	root.get_node("DebugMenu").set_process_input(false)
 	# Use real scene assets and physics, skipping only the opening cinematic.
 	var forest: Node3D = load(FOREST).instantiate()
+	forest.get_node("ResidenceStreamConnection").stream_at_runtime = true
 	forest.auto_start_fade = false
 	forest.delay_dialogue_until_fade = false
 	forest.get_node("IntroFadeCanvas").free()
@@ -216,7 +217,7 @@ func run() -> void:
 	check(not paused, "persistent map closes and resumes gameplay")
 	player.position.z = 110
 	check(await wait_for(func(): return stream._sections.has(FOREST)), "return approach reloads forest")
-	var returned_forest: StartingForest = stream._sections.get(FOREST)
+	var returned_forest: Node3D = stream._sections.get(FOREST)
 	if returned_forest == null:
 		quit(1)
 		return
@@ -248,6 +249,7 @@ func run() -> void:
 	await process_frame
 	# Running the residence scene directly must also stream a playable forest.
 	var direct: Node3D = load(RESIDENCE).instantiate()
+	direct.get_node("ForestStreamConnection").stream_at_runtime = true
 	root.add_child(direct)
 	current_scene = direct
 	await process_frame
