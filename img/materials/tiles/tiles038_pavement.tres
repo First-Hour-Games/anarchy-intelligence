@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b8vd7pc8lsw2n"]
+
+[ext_resource type="Texture2D" uid="uid://bbyknewtvf7jr" path="res://img/materials/tiles/Tiles038_1K-JPG_Color.jpg" id="1_color"]
+[ext_resource type="Texture2D" uid="uid://c4rt3vvh83gb2" path="res://img/materials/tiles/Tiles038_1K-JPG_AmbientOcclusion.jpg" id="2_ao"]
+[ext_resource type="Texture2D" uid="uid://csj5d2fxpf5j0" path="res://img/materials/tiles/Tiles038_1K-JPG_Roughness.jpg" id="3_rough"]
+[ext_resource type="Texture2D" uid="uid://cnqblk7maqy0v" path="res://img/materials/tiles/Tiles038_1K-JPG_NormalGL.jpg" id="4_normal"]
+
+[resource]
+resource_name = "Tiles038_Pavement"
+cull_mode = 2
+albedo_texture = ExtResource("1_color")
+roughness_texture = ExtResource("3_rough")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_texture = ExtResource("4_normal")
+ao_enabled = true
+ao_texture = ExtResource("2_ao")
+ao_texture_channel = 4
+uv1_scale = Vector3(0.2, 0.5, 0.535)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.4142108
+uv1_world_triplanar = true

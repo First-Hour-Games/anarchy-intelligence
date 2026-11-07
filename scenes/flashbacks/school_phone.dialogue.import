@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://dlame332kfj7j"
+path="res://.godot/imported/school_phone.dialogue-dfc42349ecf1655ca6e879ae52428242.tres"
+
+[deps]
+
+source_file="res://scenes/flashbacks/school_phone.dialogue"
+dest_files=["res://.godot/imported/school_phone.dialogue-dfc42349ecf1655ca6e879ae52428242.tres"]
+
+[params]
+
+defaults=true

@@ -19,11 +19,11 @@ func run() -> void:
 	assert(held_bounds.size.y < 0.1)
 	flashlight.set_enabled(true)
 	flashlight._process(1.0)
-	assert(flashlight.model_pivot.visible and flashlight.beam.visible)
+	assert(not flashlight.model_pivot.visible and flashlight.beam.visible)
 	flashlight.set_enabled(false)
 	flashlight._process(1.0)
 	assert(not flashlight.model_pivot.visible and not flashlight.beam.visible)
-	print("PASS: Held flashlight uses gas station model, correct scale/orientation, and working toggle")
+	print("PASS: Held flashlight model stays hidden while beam toggle works")
 	flashlight.queue_free()
 	await process_frame
 	quit()

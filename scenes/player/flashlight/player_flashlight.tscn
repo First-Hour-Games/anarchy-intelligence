@@ -6,6 +6,10 @@
 [node name="Flashlight" type="Node3D"]
 script = ExtResource("1_flashlight")
 
+[node name="ToggleAudio" type="AudioStreamPlayer" parent="."]
+volume_db = -8.0
+bus = &"Effects"
+
 [node name="ModelPivot" type="Node3D" parent="."]
 visible = false
 position = Vector3(0.34, -0.52, -0.43)

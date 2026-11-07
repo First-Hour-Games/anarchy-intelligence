@@ -3,7 +3,13 @@ extends Node3D
 
 @export_enum("Hospital", "Welcome center") var building_kind: int = 0
 const FURNITURE := "res://assets/local_licensed/furniture_kit/Models/GLTF format/"
-const MEDICAL := "res://assets/local_licensed/clinic_hospital/"
+const HOSPITAL_MARKERS := "res://models/buildings/hospital/hospital_markers.json"
+const HOSPITAL_LIGHT := preload("res://scenes/environment/hospital_light.gd")
+const HOSPITAL_LIGHT_MODES := {"steady": 0, "flicker": 1, "strobe": 2, "dying": 3, "noise": 4, "pulse": 5}
+## Hospital floor finishes drawn as tiled vinyl (carpet, wood-look plank and the corridor's
+## wayfinding lines keep their flat colour).
+const TILED_FLOORS := ["Interior_HospitalFloor", "Interior_FloorBeige", "Interior_FloorTerrazzo", "Interior_FloorGreen",
+	"Interior_FloorGreenDark", "Interior_FloorLightGrey", "Interior_FloorSafety", "Interior_FloorConcrete"]
 
 func _ready() -> void:
 	var source := $Source as Node3D
@@ -19,11 +25,10 @@ func _ready() -> void:
 				if original != null:
 					var key := original.get_instance_id()
 					if not materials.has(key):
-						var finish := original.duplicate() as BaseMaterial3D
-						finish.cull_mode = BaseMaterial3D.CULL_DISABLED
-						materials[key] = finish
+						materials[key] = _hospital_finish(original)
 					instance.set_surface_override_material(index, materials[key])
-		if not Engine.is_editor_hint():
+		# Decor_ meshes (signs, wall equipment, light fittings) have no collision.
+		if not Engine.is_editor_hint() and not str(mesh.name).begins_with("Decor_"):
 			(mesh as MeshInstance3D).create_trimesh_collision()
 	if building_kind == 0:
 		_build_hospital()
@@ -39,45 +44,108 @@ func _ready() -> void:
 			_prop(FURNITURE + "chair.glb", Vector3(x, 0.08, -4), 0.9)
 		_light(Vector3(0, 2.8, -4), 9.0)
 
+## Imported hospital materials render both faces; floor finishes become tiled vinyl.
+func _hospital_finish(original: BaseMaterial3D) -> Material:
+	if original.resource_name in TILED_FLOORS:
+		var vinyl := ShaderMaterial.new()
+		vinyl.shader = preload("res://shaders/hospital_floor.gdshader")
+		vinyl.set_shader_parameter("tint", original.albedo_color)
+		return vinyl
+	var finish := original.duplicate() as BaseMaterial3D
+	finish.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return finish
+
+## The hospital interior is modelled in Blender (tools/blender/build_hospital_interior.py)
+## and exported with the shell; the markers file places what Godot owns: hiding spots,
+## bottles, the medical-pack props and the lights.
 func _build_hospital() -> void:
-	_box("GroundFloor", Vector3(-1, 0.06, -4.7), Vector3(37.8, 0.12, 9.4), Color(0.56, 0.58, 0.53))
-	_box("GroundFloorCeiling", Vector3(-1, 3.25, -4.7), Vector3(37.8, 0.12, 9.4), Color(0.64, 0.65, 0.60))
-	# A continuous inner shell closes gaps in the exterior-only source model.
-	_box("RearPartition", Vector3(-1, 1.81, -9.1), Vector3(37.8, 3.38, 0.6), Color(0.64, 0.65, 0.59))
-	for x: float in [-19.8, 17.8]:
-		_box("SidePartition", Vector3(x, 1.81, -4.7), Vector3(0.18, 3.38, 9.4), Color(0.64, 0.65, 0.59))
-	_box("FrontPartitionWest", Vector3(-15.81, 1.81, -0.35), Vector3(7.98, 3.38, 0.65), Color(0.64, 0.65, 0.59))
-	_box("FrontPartitionEast", Vector3(4.56, 1.81, -0.35), Vector3(26.48, 3.38, 0.65), Color(0.64, 0.65, 0.59))
-	_box("EntryHeader", Vector3(-10.2, 3.2, -0.12), Vector3(3.24, 0.6, 0.18), Color(0.64, 0.65, 0.59))
-	# Reception stays open; the rear rooms share a continuous central passage.
-	_box("ReceptionDesk", Vector3(-14, 0.72, -2), Vector3(3.8, 1.2, 0.85), Color(0.22, 0.32, 0.3))
-	_box("RecordsDesk", Vector3(11, 0.57, -7.7), Vector3(2.6, 0.9, 1), Color(0.28, 0.32, 0.27))
-	for x: float in [-15, -5, 5, 14]:
-		_box("RoomPartition", Vector3(x, 1.81, -5.3), Vector3(6, 3.38, 0.16), Color(0.64, 0.65, 0.59))
-	for x: float in [-9, 1, 9]:
-		_box("RoomDivider", Vector3(x, 1.81, -7.3), Vector3(0.16, 3.38, 4), Color(0.64, 0.65, 0.59))
-	for x: float in [-17, -15, -13]:
-		_prop(FURNITURE + "chair.glb", Vector3(x, 0.12, -3.9), 0.9)
-	for x: float in [-6, -2, 4]:
-		_prop(MEDICAL + "bed_1.glb", Vector3(x, 0.12, -7.6), 1.1)
-		_prop(MEDICAL + "tray_1.glb", Vector3(x + 1.3, 0.12, -7.1), 0.8)
-	_prop(MEDICAL + "machine_1.glb", Vector3(-7.7, 0.12, -8.2), 1.1)
-	_prop(MEDICAL + "cupboard_bottom.glb", Vector3(-17, 0.12, -8), 0.9)
-	_prop(MEDICAL + "cupboard_top.glb", Vector3(-17, 1.02, -8), 0.65)
-	for x: float in [-13.65, -10.35]:
-		_box("SupplyShelfUpright", Vector3(x, 0.955, -8.5), Vector3(0.08, 1.67, 0.65), Color(0.27, 0.34, 0.31))
-	for y: float in [0.55, 1.15, 1.75]:
-		_box("SupplyShelf", Vector3(-12, y, -8.5), Vector3(3.5, 0.08, 0.65), Color(0.27, 0.34, 0.31))
-		for x: float in [-13, -12, -11]:
-			_prop("res://assets/local_licensed/clinic_medical/Med_12.glb", Vector3(x, y + 0.04, -8.5), 0.22)
-	_box("PrivacyScreen", Vector3(-4, 1.07, -6.8), Vector3(0.1, 1.9, 1.6), Color(0.57, 0.62, 0.57))
-	_label("ShelterNotice", "EMERGENCY SHELTER\nREGISTER AT RECEPTION", Vector3(-14, 2.3, -4.8))
-	_label("SuppliesSign", "MEDICAL STORES", Vector3(-13, 2.8, -5.18))
-	_label("WardSign", "TREATMENT", Vector3(-4, 2.8, -5.18))
-	_label("RecordsSign", "STAFF RECORDS", Vector3(12, 2.8, -5.18))
-	for point: Vector3 in [Vector3(-13, 3, -2), Vector3(-3, 3, -3), Vector3(7, 3, -3), Vector3(13, 3, -7), Vector3(-13, 3, -7)]:
-		_light(point, 10.0)
 	_box("EntranceWalk", Vector3(-10.2, 0.04, 12), Vector3(3, 0.08, 24), Color(0.44, 0.45, 0.42))
+	var markers := hospital_markers()
+	for prop: Dictionary in markers.props:
+		_marker_prop(prop)
+	for light: Dictionary in markers.lights:
+		_marker_light(light)
+	if not Engine.is_editor_hint():
+		_build_hospital_hiding(markers)
+
+static func hospital_markers() -> Dictionary:
+	return (load(HOSPITAL_MARKERS) as JSON).data
+
+## Hospital-local resting point of a story document on its desk, ledge or shelf.
+func document_point(id: StringName) -> Vector3:
+	return _vector(hospital_markers().documents[str(id)])
+
+static func _vector(values: Array) -> Vector3:
+	return Vector3(values[0], values[1], values[2])
+
+## Hiding spots and throwable bottles for the Clawman encounter. Each spot opens
+## toward its local +Z.
+func _build_hospital_hiding(markers: Dictionary) -> void:
+	var kinds := {"locker": HidingSpot.Kind.LOCKER, "closet": HidingSpot.Kind.CLOSET, "bed": HidingSpot.Kind.UNDER_BED}
+	for spot: Dictionary in markers.hiding_spots:
+		_hiding_spot(spot.name, kinds[spot.kind], _vector(spot.position), deg_to_rad(spot.yaw))
+	for data: Dictionary in markers.bottles:
+		var bottle := BottlePickup.new()
+		bottle.name = "BottlePickup"
+		bottle.position = _vector(data.position)
+		add_child(bottle, true)
+
+## A pack model on its marker, scaled to its target height (or native size). Floor-standing
+## props get a box collider so they block players and the navigation mesh.
+func _marker_prop(data: Dictionary) -> void:
+	var packed := load(data.model) as PackedScene
+	if packed == null:
+		return
+	var holder := Node3D.new()
+	holder.name = data.name
+	add_child(holder)
+	holder.position = _vector(data.position)
+	holder.rotation.y = deg_to_rad(data.yaw)
+	var prop := packed.instantiate() as Node3D
+	holder.add_child(prop)
+	if data.target_height != null:
+		PropSizing.fit_height(prop, data.target_height)
+		holder.set_meta("target_height", data.target_height)
+	holder.set_meta("support_y", data.position[1])
+	if data.block and not Engine.is_editor_hint():
+		var body := StaticBody3D.new()
+		var shape := CollisionShape3D.new()
+		var box := BoxShape3D.new()
+		box.size = _vector(data.foot)
+		shape.shape = box
+		shape.position.y = box.size.y * 0.5
+		body.add_child(shape)
+		holder.add_child(body)
+
+func _marker_light(data: Dictionary) -> void:
+	var light: Light3D
+	if data.spot:
+		var spot := SpotLight3D.new()
+		spot.spot_range = data.range
+		spot.spot_angle = data.angle * 0.5
+		spot.shadow_enabled = data.shadow
+		light = spot
+	else:
+		var omni := OmniLight3D.new()
+		omni.omni_range = data.range
+		omni.set_script(HOSPITAL_LIGHT)
+		omni.set("mode", HOSPITAL_LIGHT_MODES[data.mode])
+		light = omni
+	light.name = data.name
+	light.light_color = Color(data.color[0], data.color[1], data.color[2])
+	light.light_energy = data.energy
+	add_child(light)
+	light.position = _vector(data.position)
+	if data.spot:
+		light.basis = Basis.looking_at(_vector(data.direction), Vector3.UP)
+
+func _hiding_spot(title: String, kind: HidingSpot.Kind, point: Vector3, yaw: float) -> void:
+	var spot := HidingSpot.new()
+	spot.name = title
+	spot.kind = kind
+	spot.position = point
+	spot.rotation.y = yaw
+	add_child(spot, true)
 
 func _box(title: String, point: Vector3, dimensions: Vector3, color: Color) -> void:
 	var box := CSGBox3D.new()
@@ -93,10 +161,6 @@ func _box(title: String, point: Vector3, dimensions: Vector3, color: Color) -> v
 		material.uv1_triplanar = true
 		material.uv1_scale = Vector3.ONE * 0.65
 	box.material = material
-	if title == "GroundFloor":
-		var flooring := ShaderMaterial.new()
-		flooring.shader = load("res://shaders/clinic_floor.gdshader")
-		box.material = flooring
 	add_child(box)
 
 func _prop(path: String, point: Vector3, factor: float) -> void:
@@ -106,18 +170,7 @@ func _prop(path: String, point: Vector3, factor: float) -> void:
 	var prop := packed.instantiate() as Node3D
 	add_child(prop)
 	prop.position = point
-	var bounds := AABB()
-	var found := false
-	for child: Node in prop.find_children("*", "MeshInstance3D", true, false):
-		var instance := child as MeshInstance3D
-		var relative := prop.global_transform.affine_inverse() * instance.global_transform
-		var mesh_bounds := relative * instance.get_aabb()
-		bounds = bounds.merge(mesh_bounds) if found else mesh_bounds
-		found = true
-	if found and bounds.size.y > 0.001:
-		var scale_factor := factor / bounds.size.y
-		prop.scale = Vector3.ONE * scale_factor
-		prop.position -= Vector3(bounds.get_center().x, bounds.position.y, bounds.get_center().z) * scale_factor
+	PropSizing.fit_height(prop, factor)
 	prop.set_meta("target_height", factor)
 
 func _label(title: String, words: String, point: Vector3) -> void:

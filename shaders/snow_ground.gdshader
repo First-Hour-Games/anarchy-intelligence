@@ -18,6 +18,9 @@ uniform float detail_patch_scale : hint_range(4.0, 50.0) = 18.0;
 uniform float detail_strength : hint_range(0.0, 1.0) = 0.32;
 uniform vec4 ground_tint : source_color = vec4(1.0);
 uniform float ground_saturation : hint_range(0.0, 1.0) = 1.0;
+// A world-space rectangle (x0, z0, x1, z1) where the ground is not drawn, such as over a
+// building's cellar. Buildings set it at runtime; the default leaves the ground whole.
+uniform vec4 cutout_rect = vec4(0.0);
 
 varying vec3 world_vertex_position;
 
@@ -75,6 +78,11 @@ void vertex() {
 }
 
 void fragment() {
+	if (cutout_rect.z > cutout_rect.x
+			&& all(greaterThan(world_vertex_position.xz, cutout_rect.xy))
+			&& all(lessThan(world_vertex_position.xz, cutout_rect.zw))) {
+		discard;
+	}
 	vec4 albedo_tex = sample_tiled_texture(albedo_texture, UV);
 	vec4 normal_tex;
 	if (anti_repeat_strength > 0.0) {

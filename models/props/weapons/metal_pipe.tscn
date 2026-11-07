@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/props/weapons/pipeWeapon.glb" id="1_model"]
+[ext_resource type="Material" path="res://models/props/weapons/pipe_metal_material.tres" id="2_material"]
+
+[node name="MetalPipe" instance=ExtResource("1_model")]
+
+[node name="Weapon_MetalPipe_PIPE_0" parent="Sketchfab_model/9fd903e01f2843cd8bcbfe8e8796e06a_fbx/RootNode/Weapon_MetalPipe" index="0"]
+material_override = ExtResource("2_material")

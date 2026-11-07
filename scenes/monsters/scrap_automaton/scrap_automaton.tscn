@@ -1,5 +1,6 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scenes/monsters/enemy_footsteps.gd" id="enemy_footsteps"]
 [ext_resource type="Script" uid="uid://b45p2ri1gotdx" path="res://scenes/monsters/scrap_automaton/scrap_automaton.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://dnhkxx7l45vus" path="res://img/monsters/scrap_automaton/directions/automaton_direction_00.png" id="2_direction_00"]
 [ext_resource type="Texture2D" uid="uid://bksh1scgly1rf" path="res://img/monsters/scrap_automaton/directions/automaton_direction_01.png" id="3_direction_01"]
@@ -73,3 +74,7 @@ no_depth_test = false
 texture_filter = 2
 sprite_frames = SubResource("SpriteFrames_directions")
 animation = &"directions"
+
+[node name="Footsteps" type="AudioStreamPlayer3D" parent="."]
+position = Vector3(0, 0.15, 0)
+script = ExtResource("enemy_footsteps")

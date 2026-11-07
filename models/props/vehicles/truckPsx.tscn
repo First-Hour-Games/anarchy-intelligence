@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://b66dcfilkdl78"]
+
+[ext_resource type="PackedScene" uid="uid://cvorohafch75w" path="res://models/props/vehicles/truck_psx__low_poly.glb" id="1_2axyt"]
+
+[node name="Sketchfab_Scene" unique_id=1302456634 instance=ExtResource("1_2axyt")]

@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/props/fence_key.tscn" id="1_key"]
+
+[node name="FenceKeyPreview" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_key")]
+rotation_degrees = Vector3(75, 0, -20)
+scale = Vector3(4, 4, 4)

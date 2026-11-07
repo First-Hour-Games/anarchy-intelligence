@@ -165,7 +165,7 @@ func run() -> void:
 				await process_frame
 			check(post_balloon.dialogue_line != null, "Post-teleport dialogue line is valid")
 			if post_balloon.dialogue_line != null:
-				check(post_balloon.dialogue_line.text.contains("Placeholder text"), "Post-teleport dialogue line contains placeholder text (got: '%s')" % post_balloon.dialogue_line.text)
+				check(post_balloon.dialogue_line.text == "I have driven this far, and I cannot go back now.", "Post-teleport dialogue plays the authored forest line (got: '%s')" % post_balloon.dialogue_line.text)
 			post_balloon._end_dialogue()
 			await process_frame
 			check(not player.is_frozen, "Player is unfrozen after post-teleport dialogue ends")

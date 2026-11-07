@@ -1,155 +1,297 @@
 extends CanvasLayer
-## A staged attacker close-up rendered in the same World3D as gameplay.
+## The player's death: the killing lunge knocks Thomas backward, his view falls and tumbles to
+## the ground in the real level, lies there a few seconds, then blacks out. CombatHealth shows
+## the phone game over on finished. Only lethal hits start it.
+##
+## The view is a temporary RigidBody3D with a sphere collider and its own camera, started from
+## the gameplay camera's exact transform; the gameplay player stays put (frozen, uncollidable)
+## so retry can restore it. Speeds are clamped, the fall depth is bounded and the sequence runs
+## on its own clock, so the phone appears even if the physics never settles.
+
+## Emitted once the view has blacked out; CombatHealth then shows the game over.
 signal finished
+const CRT_SHADER := preload("res://shaders/crt.gdshader")
+const ACCUM_BLUR := preload("res://scenes/player/accum_blur_effect.gd")
+const DEFOCUS_SHADER := preload("res://shaders/blur.gdshader")
+const TINNITUS_TONE := preload("res://sounds/player/tinnitus_pulsating_tone_pure_wav.ogg")
+const TINNITUS_VOLUME_DB := -4.0
+## The black bars round the TV's 4:3 picture on wide screens, in every chapter scene.
+const SCREEN_BARS := &"AspectRatioBars"
 const SOUNDS := {
 	"wrapper": preload("res://sounds/entities/death_scares/wrapper_kill.wav"),
 	"clawman": preload("res://sounds/entities/death_scares/clawman_kill.wav"),
 	"ridgeback": preload("res://sounds/entities/death_scares/ridgeback_kill.wav"),
 }
+## Held items (pipe, flashlight body) render on this layer; the fallen view leaves them out.
+const VIEWMODEL_LAYER := 2
+## Head-sized collider: the camera stays this far from floors and walls.
+const HEAD_RADIUS := 0.18
+const HEAD_MASS := 4.5
+## Knockback away from the attacker and the lift off the feet (m/s).
+const KNOCKBACK_SPEED := 2.4
+const KNOCKBACK_LIFT := 1.1
+## Backward tip and a little sideways roll (rad/s); spin and speed are clamped to these.
+const TIP_SPEED := 3.2
+const ROLL_SPEED := 1.2
+const MAX_SPIN := 5.0
+const MAX_SPEED := 6.0
+## The fall never goes deeper than this below where it started (a ledge or a hole).
+const MAX_DROP := 3.0
+## Seconds: tumbling, lying still, and blacking out.
+const FALL_TIME := 1.2
+const DOWN_TIME := 2.4
+const BLACKOUT_TIME := 1.3
+
 var viewport: Viewport
 var previous_camera: Camera3D
-var stage: Node3D
-var original_visual: Node3D
-var original_visible: bool
+## The temporary physics view: body, and the camera riding it.
+var rig: RigidBody3D
 var camera: Camera3D
-var actor: Node3D
-var actor_mount: Node3D
+var attacker_visual: Node3D
 var audio: AudioStreamPlayer
-var retry_button: Button
+var tinnitus: AudioStreamPlayer
+var blackout: ColorRect
 var hidden_layers: Array[CanvasLayer] = []
 var stopped_mobs: Dictionary = {}
-var entity_kind: String
-var head_skeleton: Skeleton3D
-var head_bone: int = -1
+var entity_kind: String = ""
+var elapsed: float = 0.0
+var settled: bool = false
+var _player: CollisionObject3D
+var _player_layers := Vector2i.ZERO
+var _visual_mode: ProcessMode = PROCESS_MODE_INHERIT
+var _start_height: float = 0.0
+var _rest := Transform3D.IDENTITY
+var _finished: bool = false
+var _restored: bool = false
+var _motion_blur: ACCUM_BLUR
+var _defocus: ShaderMaterial
+
 
 func start(attacker: Node3D) -> void:
-	layer = 110
-	entity_kind = "ridgeback" if attacker is CorruptedFriend else "clawman" if int(attacker.get("encounter_kind")) == 1 else "wrapper"
+	# Under the CRT (100) and the save screen (99), so both still filter and cover it.
+	layer = 98
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	var player := get_parent().get_parent() as Node3D
+	if is_instance_valid(attacker):
+		entity_kind = "ridgeback" if attacker is CorruptedFriend else "clawman" if attacker.get("encounter_kind") == 1 else "wrapper"
+	_stop_enemies(attacker)
+	_hide_hud()
+	_defocus = ShaderMaterial.new()
+	_defocus.shader = DEFOCUS_SHADER
+	var blur_rect := ColorRect.new()
+	blur_rect.material = _defocus
+	blur_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blur_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(blur_rect)
+	blackout = ColorRect.new()
+	blackout.color = Color(0, 0, 0, 0)
+	blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(blackout)
+	# Give the CRT a fresh screen copy containing both the defocus and the blackout.
+	var screen_copy := BackBufferCopy.new()
+	screen_copy.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	add_child(screen_copy)
+	if SOUNDS.has(entity_kind):
+		audio = AudioStreamPlayer.new()
+		audio.bus = &"Effects"
+		audio.volume_db = -3.0
+		audio.stream = SOUNDS[entity_kind]
+		add_child(audio)
+		audio.play()
+	tinnitus = AudioStreamPlayer.new()
+	tinnitus.name = "DeathTinnitus"
+	tinnitus.bus = &"Effects"
+	tinnitus.stream = TINNITUS_TONE
+	tinnitus.volume_db = TINNITUS_VOLUME_DB
+	add_child(tinnitus)
+	tinnitus.play()
+	viewport = get_viewport()
+	previous_camera = viewport.get_camera_3d()
+	if is_instance_valid(previous_camera) and player != null:
+		_build_rig(player, attacker)
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## The enemies stop where they are; the killer keeps playing its lunge.
+func _stop_enemies(attacker: Node3D) -> void:
 	for mob: Node in get_tree().get_nodes_in_group("corrupted_friend"):
 		stopped_mobs[mob] = mob.process_mode
 		mob.process_mode = Node.PROCESS_MODE_DISABLED
+	if is_instance_valid(attacker):
+		attacker_visual = attacker.get_node_or_null("Visual") as Node3D
+	if attacker_visual != null:
+		_visual_mode = attacker_visual.process_mode
+		attacker_visual.process_mode = Node.PROCESS_MODE_ALWAYS
+		if attacker_visual.has_method("play"):
+			attacker_visual.call("play", "attack")
+
+
+## The HUD goes; the CRT the whole game is seen through, and the bars round its 4:3 picture, stay.
+func _hide_hud() -> void:
 	var scene := get_tree().current_scene
-	if scene:
-		for node: Node in scene.find_children("*", "CanvasLayer", true, false):
-			var canvas := node as CanvasLayer
-			if canvas != self and canvas.visible:
-				hidden_layers.append(canvas)
-				canvas.hide()
-	viewport = get_viewport()
-	previous_camera = viewport.get_camera_3d()
-	var player := get_parent().get_parent() as Node3D
-	var direction := attacker.global_position - player.global_position
-	direction.y = 0.0
-	if direction.length_squared() < 0.01:
-		direction = -player.global_basis.z
-	direction = direction.normalized()
-	var distance := 1.3 if entity_kind == "wrapper" else 0.85 if entity_kind == "ridgeback" else 1.05
-	stage = Node3D.new()
-	get_tree().current_scene.add_child(stage)
-	stage.global_transform = Transform3D(Basis(Vector3.UP, atan2(direction.x, direction.z)), player.global_position + direction * distance)
-	original_visual = attacker.get_node("Visual")
-	original_visible = original_visual.visible
-	actor = attacker.get_node("Visual").duplicate() as Node3D
-	actor_mount = Node3D.new()
-	stage.add_child(actor_mount)
-	actor_mount.add_child(actor)
-	if entity_kind == "wrapper":
-		# Keep facing outside the imported animation's root transform tracks.
-		actor_mount.rotation.y = PI
-		actor.rotation.y = 0.0
-	actor.show()
-	original_visual.hide()
-	actor.position = Vector3.ZERO
-	# Preserve the visual's model-specific forward correction.
-	if actor.has_method("play"):
-		actor.call("play", "windup" if entity_kind == "clawman" else "attack")
-	else:
-		var players := actor.find_children("*", "AnimationPlayer", true, false)
-		if not players.is_empty():
-			var animations := players[0] as AnimationPlayer
-			for clip: StringName in animations.get_animation_list():
-				if "attack" in str(clip).to_lower() or "scream" in str(clip).to_lower():
-					animations.play(clip)
-					break
-	var face := Vector3(0, 1.6, 0)
-	for node: Node in actor.find_children("*", "Skeleton3D", true, false):
-		var skeleton := node as Skeleton3D
-		for index in skeleton.get_bone_count():
-			if "head" in skeleton.get_bone_name(index).to_lower():
-				head_skeleton = skeleton
-				head_bone = index
-				face = stage.to_local(skeleton.global_transform * skeleton.get_bone_global_pose(index).origin)
-				break
+	if scene == null:
+		return
+	for node: Node in scene.find_children("*", "CanvasLayer", true, false):
+		var canvas := node as CanvasLayer
+		if canvas != self and canvas.visible and not holds_crt(canvas) and canvas.name != SCREEN_BARS:
+			hidden_layers.append(canvas)
+			canvas.hide()
+
+
+func _build_rig(player: Node3D, attacker: Node3D) -> void:
+	var view := previous_camera.global_transform.orthonormalized()
+	_start_height = view.origin.y
+	rig = RigidBody3D.new()
+	rig.name = "DeathFallRig"
+	rig.top_level = true
+	rig.mass = HEAD_MASS
+	rig.continuous_cd = true
+	rig.linear_damp = 0.6
+	rig.angular_damp = 2.5
+	var surface := PhysicsMaterial.new()
+	surface.friction = 1.0
+	surface.rough = true
+	surface.bounce = 0.05
+	rig.physics_material_override = surface
+	var head := CollisionShape3D.new()
+	var sphere := SphereShape3D.new()
+	sphere.radius = HEAD_RADIUS
+	head.shape = sphere
+	rig.add_child(head)
 	camera = Camera3D.new()
-	camera.fov = 62.0
-	camera.near = 0.03
-	stage.add_child(camera)
-	camera.position = face + Vector3(0, 0.02, -distance)
-	camera.look_at(stage.to_global(face))
+	camera.fov = previous_camera.fov
+	camera.near = minf(previous_camera.near, 0.05)
+	camera.far = previous_camera.far
+	camera.environment = previous_camera.environment
+	camera.attributes = previous_camera.attributes
+	camera.compositor = previous_camera.compositor.duplicate() if previous_camera.compositor else Compositor.new()
+	_motion_blur = ACCUM_BLUR.new()
+	_motion_blur.alpha = 0.90
+	var effects := camera.compositor.compositor_effects
+	effects.append(_motion_blur)
+	camera.compositor.compositor_effects = effects
+	camera.cull_mask = previous_camera.cull_mask & ~(1 << (VIEWMODEL_LAYER - 1))
+	rig.add_child(camera)
+	add_child(rig)
+	rig.global_transform = view
+	# The standing player and the killer must not shove the falling head about.
+	_player = player as CollisionObject3D
+	if _player != null:
+		rig.add_collision_exception_with(_player)
+		_player_layers = Vector2i(_player.collision_layer, _player.collision_mask)
+		_player.collision_layer = 0
+		_player.collision_mask = 0
+	if is_instance_valid(attacker) and attacker is PhysicsBody3D:
+		rig.add_collision_exception_with(attacker)
+	var away := -view.basis.z
+	if is_instance_valid(attacker):
+		away = player.global_position - attacker.global_position
+	away.y = 0.0
+	away = away.normalized() if away.length_squared() > 0.0001 else Vector3.BACK
+	rig.linear_velocity = away * KNOCKBACK_SPEED + Vector3.UP * KNOCKBACK_LIFT
+	# Tips backward (the view swings up and over) with a little roll to one side.
+	var tip := Vector3.UP.cross(away).normalized()
+	rig.angular_velocity = tip * TIP_SPEED + away * ROLL_SPEED * (1.0 if randf() < 0.5 else -1.0)
 	camera.current = true
-	var light := OmniLight3D.new()
-	light.position = face + Vector3(-0.65, 0.45, -1.0)
-	light.light_color = Color(0.9, 0.78, 0.65)
-	light.light_energy = 1.6
-	stage.add_child(light)
-	var fill := OmniLight3D.new()
-	fill.position = face + Vector3(0.3, 0.05, -0.75)
-	fill.light_color = Color(0.65, 0.75, 0.85)
-	fill.light_energy = 1.0
-	stage.add_child(fill)
-	var picture := ColorRect.new()
-	picture.color = Color(0, 0, 0, 0)
-	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(picture)
-	audio = AudioStreamPlayer.new()
-	audio.bus = &"Effects"
-	audio.volume_db = -3.0
-	audio.stream = SOUNDS[entity_kind]
-	add_child(audio)
-	audio.play()
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	var tween := create_tween()
-	tween.tween_interval(0.12)
-	tween.tween_property(actor_mount, "position:z", -0.48, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(actor_mount, "rotation:x", -0.09, 0.18)
-	tween.tween_interval(0.85)
-	tween.tween_property(audio, "volume_db", -60.0, 0.4)
-	tween.parallel().tween_property(picture, "color", Color.BLACK, 0.4)
-	tween.tween_callback(_show_retry)
 
-func _process(_delta: float) -> void:
-	if is_instance_valid(head_skeleton) and is_instance_valid(camera):
-		var face := stage.to_local(head_skeleton.global_transform * head_skeleton.get_bone_global_pose(head_bone).origin)
-		camera.position.y = face.y + 0.02
-		camera.look_at(stage.to_global(face))
 
-func _show_retry() -> void:
-	audio.stop()
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 20)
-	center.add_child(column)
-	var title := Label.new()
-	title.text = "CAUGHT"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 38)
-	column.add_child(title)
-	retry_button = Button.new()
-	retry_button.text = "RETRY FROM CHECKPOINT"
-	retry_button.pressed.connect(func() -> void: finished.emit())
-	column.add_child(retry_button)
-	retry_button.grab_focus()
+func _physics_process(_delta: float) -> void:
+	if not is_instance_valid(rig) or settled:
+		return
+	if rig.angular_velocity.length() > MAX_SPIN:
+		rig.angular_velocity = rig.angular_velocity.normalized() * MAX_SPIN
+	if rig.linear_velocity.length() > MAX_SPEED:
+		rig.linear_velocity = rig.linear_velocity.normalized() * MAX_SPEED
+	# No floor under it: stop at the bound instead of falling forever.
+	if rig.global_position.y < _start_height - MAX_DROP:
+		_settle()
+	elif elapsed >= FALL_TIME and (rig.sleeping or rig.linear_velocity.length() < 0.25):
+		_settle()
+	elif elapsed >= FALL_TIME * 2.0:
+		_settle()
 
+
+## Lying still: physics stops and the view only breathes and drifts a little.
+func _settle() -> void:
+	settled = true
+	rig.freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
+	rig.freeze = true
+	rig.linear_velocity = Vector3.ZERO
+	rig.angular_velocity = Vector3.ZERO
+	_rest = camera.transform
+
+
+func _process(delta: float) -> void:
+	elapsed += delta
+	if _motion_blur:
+		_motion_blur.alpha = lerpf(0.90, 0.985, minf(elapsed / FALL_TIME, 1.0))
+	var defocus_progress := minf(elapsed / (FALL_TIME + DOWN_TIME), 1.0)
+	_defocus.set_shader_parameter(&"lod", 5.0 * defocus_progress)
+	if settled and is_instance_valid(camera):
+		var t := elapsed - FALL_TIME
+		var breath := sin(t * 1.7) * 0.006
+		var sway := Basis.from_euler(Vector3(sin(t * 0.9) * 0.012, sin(t * 0.6) * 0.008, sin(t * 0.75) * 0.015))
+		camera.transform = Transform3D(_rest.basis * sway, _rest.origin + Vector3.UP * breath)
+	var dark := clampf((elapsed - FALL_TIME - DOWN_TIME) / BLACKOUT_TIME, 0.0, 1.0)
+	if is_instance_valid(blackout):
+		blackout.color.a = dark
+	if is_instance_valid(audio):
+		audio.volume_db = lerpf(-3.0, -60.0, dark)
+	if tinnitus.playing:
+		tinnitus.volume_db = TINNITUS_VOLUME_DB + linear_to_db(maxf(1.0 - dark, 0.001))
+	if dark >= 1.0 and not _finished:
+		_finish()
+
+
+## Pause and the other menus wait for the next life.
+func _input(event: InputEvent) -> void:
+	if _finished or not event.is_pressed():
+		return
+	var key := event as InputEventKey
+	if event.is_action_pressed(&"pause") or event.is_action_pressed(&"ui_cancel") \
+			or (key != null and key.keycode in [KEY_ESCAPE, KEY_TAB, KEY_I]):
+		get_viewport().set_input_as_handled()
+
+
+func _finish() -> void:
+	_finished = true
+	set_process(false)
+	if _motion_blur:
+		_motion_blur.alpha = 0.0
+	if is_instance_valid(audio):
+		audio.stop()
+	tinnitus.stop()
+	finished.emit()
+
+
+## True for the layer that holds the gameplay CRT filter, found the way SaveSlotScreen finds it.
+static func holds_crt(canvas: CanvasLayer) -> bool:
+	for node: Node in canvas.find_children("*", "ColorRect", true, false):
+		var material := (node as ColorRect).material as ShaderMaterial
+		if material != null and material.shader == CRT_SHADER:
+			return true
+	return false
+
+
+## Puts the world back for retry and removes every temporary node with this layer.
 func restore_world() -> void:
+	if _restored:
+		return
+	_restored = true
+	if is_instance_valid(tinnitus):
+		tinnitus.stop()
 	if is_instance_valid(previous_camera):
 		previous_camera.make_current()
-	if is_instance_valid(stage):
-		stage.queue_free()
-	if is_instance_valid(original_visual):
-		original_visual.visible = original_visible
+	if is_instance_valid(rig):
+		rig.queue_free()
+	rig = null
+	camera = null
+	if is_instance_valid(_player):
+		_player.collision_layer = _player_layers.x
+		_player.collision_mask = _player_layers.y
+	if is_instance_valid(attacker_visual):
+		attacker_visual.process_mode = _visual_mode
 	for canvas in hidden_layers:
 		if is_instance_valid(canvas):
 			canvas.show()
@@ -157,4 +299,3 @@ func restore_world() -> void:
 		if is_instance_valid(mob):
 			mob.process_mode = stopped_mobs[mob]
 	queue_free()
-

@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/map/lincoln_town_car.glb" id="1_model"]
+
+[sub_resource type="BoxShape3D" id="CarCollision"]
+size = Vector3(1.908164, 1.298235, 4.559027)
+
+[node name="LincolnTownCar" instance=ExtResource("1_model")]
+
+[node name="CarBody" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CarBody"]
+position = Vector3(0.0, -0.109101, -0.0)
+shape = SubResource("CarCollision")

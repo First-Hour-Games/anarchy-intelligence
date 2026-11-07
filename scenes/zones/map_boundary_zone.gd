@@ -13,6 +13,7 @@ signal player_entered_zone(player: Node3D)
 signal player_exited_zone(player: Node3D)
 signal boundary_warning_triggered(player: Node3D, message: String)
 signal player_returned_to_bounds(player: Node3D, new_position: Vector3)
+signal dialogue_finished
 
 enum ZoneBehavior {
 	ALLOWED_PLAY_AREA,  ## Player should stay inside this volume. Leaving it triggers the boundary warning.
@@ -60,6 +61,7 @@ enum ZoneBehavior {
 @export var speaker_name: String = "Thomas"
 @export var dialogue_balloon_scene: PackedScene = preload("res://scenes/ui/dialogue_box/bottom_dialogue_balloon.tscn")
 @export var freeze_player_during_dialogue: bool = true
+@export var animate_dialogue_close: bool = true
 
 @export_category("Blink & Return")
 ## If enabled, plays an eyelid blink transition after the dialogue and teleports the player back inside near the boundary edge facing inwards.
@@ -356,6 +358,7 @@ func _play_dialogue(interactor: Node3D = null, custom_text: String = "") -> void
 			target_player = get_tree().get_first_node_in_group(&"player")
 
 		var on_dialogue_finished := func() -> void:
+			dialogue_finished.emit()
 			if blink_and_return and is_instance_valid(target_player):
 				_play_blink_and_teleport(target_player)
 			else:
@@ -369,6 +372,8 @@ func _play_dialogue(interactor: Node3D = null, custom_text: String = "") -> void
 			, CONNECT_ONE_SHOT)
 
 		if balloon.has_method(&"start"):
+			if not animate_dialogue_close and balloon is BottomDialogueBalloon:
+				balloon.fold_duration = 0.0
 			balloon.start(res_to_play, cue_to_play, extra_states)
 	, CONNECT_ONE_SHOT)
 

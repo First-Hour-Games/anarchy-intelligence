@@ -34,8 +34,13 @@ static func is_close_cover(source: Node) -> bool:
 	return "sign" in path or "board" in path or "mapstand" in path
 
 static func refresh(cover: Dictionary, solid_cache: Dictionary) -> bool:
-	var source := cover["source"] as Node3D
-	if not is_instance_valid(source) or not source.is_visible_in_tree():
+	# Cached scenery can be freed by pickups, regeneration, or world streaming.
+	# A stale Object cannot even be cast, so validate the Variant first.
+	var source_reference: Variant = cover.get("source")
+	if not is_instance_valid(source_reference):
+		return false
+	var source := source_reference as Node3D
+	if source == null or source.is_queued_for_deletion() or not source.is_inside_tree() or not source.is_visible_in_tree():
 		return false
 	var mesh: Mesh = cover["mesh"]
 	if source is MeshInstance3D:

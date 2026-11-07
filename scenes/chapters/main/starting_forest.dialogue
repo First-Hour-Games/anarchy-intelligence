@@ -75,6 +75,12 @@ Thomas: There could be someone down the road.
 
 => visitor_center_barrier_post_teleport
 
+~ gas_station_flashlight_pickup
+
+Thomas: This could help me navigate in the dark easier.
+
+=> END
+
 ~ post_teleport
 
 => visitor_center_barrier_post_teleport

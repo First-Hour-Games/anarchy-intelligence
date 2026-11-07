@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/props/freekey.glb" id="1_key"]
+
+[node name="FenceKey" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_key")]
+position = Vector3(-0.00217, 0.00030, 0.06966)
+scale = Vector3(0.012580607, 0.012580607, 0.012580607)

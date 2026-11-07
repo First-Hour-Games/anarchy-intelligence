@@ -44,7 +44,7 @@ func run() -> void:
 	check(is_instance_valid(brochure_hotspot), "BrochurePickUp hotspot found in InspectableView")
 
 	# Start inspection
-	var board := forest.get_node("Interactables/MapInspect") as InteractableBlock3D
+	var board := forest.get_node("Interactables/MapInspect") as Node3D
 	player.global_position = board.global_position + Vector3(0, 0, 1)
 	board.interact(player)
 	while inspect_view._is_transitioning:
@@ -69,10 +69,12 @@ func run() -> void:
 	check(is_instance_valid(center_hotspot), "MapCenterHotspot found on board")
 	var center_btn: InspectionDotButton = inspect_view._hotspot_map.get(center_hotspot)
 	check(is_instance_valid(center_btn) and center_btn.visible, "MapCenterHotspot dot button is visible")
+	check(center_btn.icon_texture == InspectionDotButton.EYE_TEXTURE, "The map inspection hotspot uses the eye icon")
 
-	# BrochurePickUp eye icon button exists and can be clicked to pick up the brochure
+	# The brochure pickup uses the hand icon.
 	var brochure_btn: InspectionDotButton = inspect_view._hotspot_map.get(brochure_hotspot)
-	check(is_instance_valid(brochure_btn) and brochure_btn.visible, "BrochurePickUp eye icon button is visible")
+	check(is_instance_valid(brochure_btn) and brochure_btn.visible, "Brochure pickup button is visible")
+	check(brochure_btn.icon_texture == InspectionDotButton.PICKUP_TEXTURE, "The brochure pickup uses the supplied white hand icon")
 
 	# Click the eye icon
 	brochure_btn.clicked.emit()

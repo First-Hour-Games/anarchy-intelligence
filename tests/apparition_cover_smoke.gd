@@ -2,6 +2,7 @@ extends SceneTree
 
 const Controller = preload("res://scenes/atmosphere/forest_apparitions.gd")
 const Silhouette = preload("res://scenes/atmosphere/apparition_silhouette.gd")
+const CoverAnchor = preload("res://scenes/atmosphere/apparition_cover_anchor.gd")
 var failures: int = 0
 var world: Node3D
 var player: FirstPersonPlayer
@@ -230,6 +231,18 @@ func run() -> void:
 	dog.shape = Silhouette.Shape.DOG
 	world.add_child(dog)
 	check(dog._material.shader == Silhouette.VOID_SHADER, "Dog and Hat man share the same void material")
+	controller.clear_sighting()
+	var removable := box("RemovedPickupCover", Vector3(2, 3, 0.3), Vector3(0, 1.5, -5))
+	var stale_cover := CoverAnchor.from_mesh(removable.mesh, removable.global_transform, removable)
+	check(CoverAnchor.refresh(stale_cover, controller._bark_cache), "live pickup scenery can be cached as cover")
+	removable.queue_free()
+	check(not CoverAnchor.refresh(stale_cover, controller._bark_cache), "queued scenery is rejected before it is freed")
+	await process_frame
+	check(not CoverAnchor.refresh(stale_cover, controller._bark_cache), "freed cached source is rejected before any Object cast")
+	controller._covers = [stale_cover]
+	controller._occluding_covers = [stale_cover]
+	check(controller._generic_hat_man_candidate().is_empty(), "automatic candidate search safely skips a collected cover prop")
+	check(controller._cover_line_clear(player.camera.global_position, Vector3(0, 1.5, -5)), "line-of-sight checking safely skips freed cover")
 	world.queue_free()
 	await process_frame
 	quit(1 if failures else 0)

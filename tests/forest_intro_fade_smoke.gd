@@ -1,7 +1,5 @@
 extends SceneTree
 
-const StartingForestScript = preload("res://scenes/chapters/main/starting_forest.gd")
-
 var failures: int = 0
 
 
@@ -17,12 +15,13 @@ func check(value: bool, words: String) -> void:
 
 func run() -> void:
 	print("--- Running Starting Forest Intro Fade Smoke Test ---")
+	var starting_forest_script := load("res://scenes/chapters/main/starting_forest.gd")
 
 	var packed_forest := load("res://scenes/chapters/main/starting_forest.tscn") as PackedScene
 	check(packed_forest != null, "starting_forest.tscn loaded")
 
 	var forest: Node3D = packed_forest.instantiate()
-	check(forest != null and forest.get_script() == StartingForestScript, "forest is instance of StartingForest script")
+	check(forest != null and forest.get_script() == starting_forest_script, "forest is instance of StartingForest script")
 
 	# Disable auto_start_fade so we can inspect the initial 0-volume and black screen states explicitly
 	forest.auto_start_fade = false
@@ -82,6 +81,23 @@ func run() -> void:
 	check(not forest.opening_balloon.balloon.visible, "Story has not started during camera intro")
 	var hud_root := player.get_node("HandViewmodel/AspectRatioContainer") as Control
 	check(is_zero_approx(hud_root.modulate.a), "Player UI hidden during raised camera intro")
+	for action in [&"ui_accept", &"ui_cancel"]:
+		var event := InputEventAction.new()
+		event.action = action
+		event.pressed = true
+		root.push_input(event)
+		event = event.duplicate()
+		event.pressed = false
+		root.push_input(event)
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	root.push_input(click)
+	click = click.duplicate()
+	click.pressed = false
+	root.push_input(click)
+	check(forest._is_fading and not forest._has_faded and player.is_frozen,
+		"Accept, cancel and clicking cannot skip the five days later intro")
 
 	# Step the timeline to verify the raised hold and descent independently.
 	forest._fade_tween.custom_step(0.55)

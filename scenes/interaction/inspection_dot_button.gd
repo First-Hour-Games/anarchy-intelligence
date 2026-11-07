@@ -1,13 +1,14 @@
 class_name InspectionDotButton extends Control
 
-## An interactive eye icon button for inspection mode.
+## An interactive icon button for inspection mode.
 ## Displays a square frame with semi-transparent black background and white outline,
-## with res://img/player/eyeInteract.png centered inside.
+## with the hotspot's icon centered inside.
 ## Scales up and highlights with a smooth animation when hovered.
 
 signal clicked()
 
 const EYE_TEXTURE: Texture2D = preload("res://img/player/eyeInteract.png")
+const PICKUP_TEXTURE: Texture2D = preload("res://img/player/pickup_hand.svg")
 const COLOR_UNHOVERED: Color = Color(0.85, 0.85, 0.85, 0.95)
 const COLOR_HOVERED: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SCALE_UNHOVERED: Vector2 = Vector2(1.0, 1.0)
@@ -28,6 +29,10 @@ var glow_radius: float = 16.0
 
 var _is_hovered: bool = false
 var _hover_tween: Tween = null
+var icon_texture: Texture2D = EYE_TEXTURE:
+	set(value):
+		icon_texture = value
+		queue_redraw()
 
 
 func _init() -> void:
@@ -38,7 +43,6 @@ func _init() -> void:
 	pivot_offset = Vector2(20.0, 20.0)
 	scale = SCALE_UNHOVERED
 	modulate = COLOR_UNHOVERED
-	gui_input.connect(_on_gui_input)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -47,8 +51,12 @@ func _gui_input(event: InputEvent) -> void:
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		_play_click_pop()
-		clicked.emit()
+		activate()
+
+
+func activate() -> void:
+	_play_click_pop()
+	clicked.emit()
 
 
 func _notification(what: int) -> void:
@@ -94,12 +102,12 @@ func _draw() -> void:
 	# 2. Square frame outline: white outline
 	draw_rect(frame_rect, FRAME_OUTLINE_COLOR, false, FRAME_OUTLINE_WIDTH)
 
-	# 3. Centered eye icon inside frame
-	if EYE_TEXTURE:
+	# 3. Centered hotspot icon inside frame
+	if icon_texture:
 		var pad := ICON_PADDING
 		var icon_rect := Rect2(Vector2(pad, pad), size - Vector2(pad * 2.0, pad * 2.0))
 		# Subtle shadow for extra depth
-		draw_texture_rect(EYE_TEXTURE, Rect2(icon_rect.position + Vector2(1.0, 1.0), icon_rect.size), false, Color(0.0, 0.0, 0.0, 0.4))
-		# Main eye icon
-		draw_texture_rect(EYE_TEXTURE, icon_rect, false, Color.WHITE)
+		draw_texture_rect(icon_texture, Rect2(icon_rect.position + Vector2(1.0, 1.0), icon_rect.size), false, Color(0.0, 0.0, 0.0, 0.4))
+		# Main icon
+		draw_texture_rect(icon_texture, icon_rect, false, Color.WHITE)
 

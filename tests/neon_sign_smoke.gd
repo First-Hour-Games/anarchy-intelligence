@@ -19,11 +19,17 @@ func run_checks() -> void:
 	assert(imported.resource_path.ends_with("neonBuzz.mp3"))
 	for sign in [sign_a, sign_b, station.get_node("stationV3/PumpSign3")]:
 		var audio := sign.get_node("NeonAmbience") as AudioStreamPlayer3D
-		assert(audio.bus == &"Reverb")
+		assert(audio.bus == &"Outside")
+		assert(audio.volume_db <= -20.0 and audio.unit_size == 6.0 and audio.max_distance == 18.0)
+		assert(audio.max_db <= -16.0)
+		var light := sign.get_node("OmniLight3D") as OmniLight3D
+		assert(light.light_energy <= 0.451 and light.omni_range <= 8.0)
+		assert(light.omni_attenuation > 0.0 and is_equal_approx(light.light_volumetric_fog_energy, 0.2))
 		assert(audio.playing)
 		assert((audio.stream as AudioStreamMP3).loop)
 		assert(audio.stream != imported)
 	assert(not imported.loop)
+	assert(is_equal_approx(base, 2.0))
 	sign_a.set_process(false)
 	sign_b.set_process(false)
 	var rng_a: RandomNumberGenerator = sign_a.get("_rng")
@@ -39,13 +45,13 @@ func run_checks() -> void:
 		sign_a.call("_process", 1.0 / 60.0)
 		sign_b.call("_process", 1.0 / 60.0)
 		var energy := (sign_a.material_override as StandardMaterial3D).emission_energy_multiplier
-		assert(energy >= base * 0.6 - 0.0001 and energy <= base * 1.08 + 0.0001)
+		assert(energy >= base * 0.85 - 0.0001 and energy <= base * 1.02 + 0.0001)
 		assert(is_equal_approx(light_a.light_energy / base_light, energy / base))
 		lowest = minf(lowest, energy)
 		highest = maxf(highest, energy)
 		if not is_equal_approx(energy, (sign_b.material_override as StandardMaterial3D).emission_energy_multiplier):
 			independent = true
-	assert(lowest < base * 0.9 and highest > base and independent)
+	assert(lowest < base * 0.95 and highest > base and independent)
 	assert(original.emission_energy_multiplier == base)
 	sign_a.set("flicker_enabled", false)
 	sign_a.call("_process", 0.1)

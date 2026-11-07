@@ -1,0 +1,25 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bni1jhnthjsu"]
+
+[ext_resource type="Texture2D" uid="uid://2hgkrspehxbl" path="res://img/materials/office_ceiling001/OfficeCeiling001_1K-JPG_AmbientOcclusion.jpg" id="AmbientOcclusion"]
+[ext_resource type="Texture2D" uid="uid://b7avm1djbdcw" path="res://img/materials/office_ceiling001/OfficeCeiling001_1K-JPG_Color.jpg" id="Color"]
+[ext_resource type="Texture2D" uid="uid://mkwmciiosgf4" path="res://img/materials/office_ceiling001/OfficeCeiling001_1K-JPG_Emission.jpg" id="Emission"]
+[ext_resource type="Texture2D" uid="uid://bq37xkyvtk3qw" path="res://img/materials/office_ceiling001/OfficeCeiling001_1K-JPG_Metalness.jpg" id="Metalness"]
+[ext_resource type="Texture2D" uid="uid://ctmfxrn5346oa" path="res://img/materials/office_ceiling001/OfficeCeiling001_1K-JPG_NormalGL.jpg" id="NormalGL"]
+[ext_resource type="Texture2D" uid="uid://cgufoxhh55aaj" path="res://img/materials/office_ceiling001/OfficeCeiling001_1K-JPG_Roughness.jpg" id="Roughness"]
+
+[resource]
+resource_name = "School Office Ceiling"
+albedo_color = Color(0.8, 0.8, 0.8, 1)
+albedo_texture = ExtResource("Color")
+metallic = 1.0
+metallic_texture = ExtResource("Metalness")
+roughness_texture = ExtResource("Roughness")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.15
+emission_texture = ExtResource("Emission")
+normal_enabled = true
+normal_texture = ExtResource("NormalGL")
+ao_enabled = true
+ao_texture = ExtResource("AmbientOcclusion")
+uv1_scale = Vector3(2, 2, 0.333)

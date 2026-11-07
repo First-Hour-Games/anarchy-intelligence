@@ -1,0 +1,45 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/log_climb_banded_fade_smoke.gd:15)
+WARNING: Failed to correctly set transform for shape at index %d in body '%s'. The basis of the transform was singular, which is not supported by Jolt Physics. This is likely caused by one or more axes having a scale of zero. The basis (and thus its scale) will be treated as identity.
+   at: set_shape_transform (modules/jolt_physics/objects/jolt_shaped_object_3d.cpp:414)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/log_climb_banded_fade_smoke.gd:16)
+[ProceduralGrassGenerator] Collected 0 exclusion AABBs (margin=1.5m)
+[ProceduralGrassGenerator] Done in 39 ms! Low grass: 3680, Tall grass: 700
+WARNING: Source geometry parsing for navigation mesh baking had to parse RenderingServer meshes at runtime.
+		This poses a significant performance issues as visual meshes store geometry data on the GPU and transferring this data back to the CPU blocks the rendering.
+		For runtime (re)baking navigation meshes use and parse collision shapes as source geometry or create geometry data procedurally in scripts.
+   at: add_mesh (scene/resources/3d/navigation_mesh_source_geometry_data_3d.cpp:205)
+   GDScript backtrace (most recent call first):
+       [0] _bake (res://scenes/environment/map_navigation_baker.gd:73)
+       [1] _ready (res://scenes/environment/map_navigation_baker.gd:38)
+WARNING: Property agent_height is ceiled to cell_height voxel units and loses precision.
+   at: generator_bake_from_source_geometry_data (modules/navigation_3d/3d/nav_mesh_generator_3d.cpp:367)
+   GDScript backtrace (most recent call first):
+       [0] _bake (res://scenes/environment/map_navigation_baker.gd:84)
+       [1] _ready (res://scenes/environment/map_navigation_baker.gd:38)
+WARNING: Property agent_radius is ceiled to cell_size voxel units and loses precision.
+   at: generator_bake_from_source_geometry_data (modules/navigation_3d/3d/nav_mesh_generator_3d.cpp:373)
+   GDScript backtrace (most recent call first):
+       [0] _bake (res://scenes/environment/map_navigation_baker.gd:84)
+       [1] _ready (res://scenes/environment/map_navigation_baker.gd:38)
+PASS forest log enables banded fade
+PASS five black bands created
+PASS band 1 covers equal fifth of viewport
+PASS band 2 covers equal fifth of viewport
+PASS band 3 covers equal fifth of viewport
+PASS band 4 covers equal fifth of viewport
+PASS band 5 covers equal fifth of viewport
+PASS band stays clear before quarter-second step
+PASS first band steps to 25% before second
+PASS second quarter-second step reaches 50%
+PASS player stays put before blackout
+PASS all bands opaque before teleport
+PASS teleport occurs during full blackout
+PASS bottom band reveals first in 25% steps
+PASS transition finishes and restores player control
+PASS overlay cleaned up after transition

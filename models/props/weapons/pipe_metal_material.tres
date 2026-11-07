@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://models/props/weapons/pipeWeapon_0.png" id="1_texture"]
+
+[resource]
+resource_name = "RustedMetalPipe"
+albedo_texture = ExtResource("1_texture")
+metallic = 0.25
+roughness = 0.82
+cull_mode = 2
+texture_filter = 0

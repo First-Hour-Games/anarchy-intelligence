@@ -7,6 +7,7 @@ const SCENES: Array[Dictionary] = [
 	{"name": "Starting forest", "path": "res://scenes/chapters/main/starting_forest.tscn"},
 ]
 const FOREST_PATH := "res://scenes/chapters/main/starting_forest.tscn"
+const MAP_PATH := "res://scenes/chapters/main/map.tscn"
 
 var opened := false
 var _previous_mouse: Input.MouseMode
@@ -84,6 +85,9 @@ func _build_menu() -> void:
 	help.add_theme_font_size_override("font_size", 14)
 	column.add_child(help)
 	column.add_child(HSeparator.new())
+	_add_button(column, "Open save screen (saves where you stand)", _open_save_screen)
+	_add_button(column, "Open load screen", _open_load_screen)
+	column.add_child(HSeparator.new())
 	for entry in SCENES:
 		var path: String = entry["path"]
 		_add_button(column, "Go to " + entry["name"], jump_to_scene.bind(path))
@@ -94,6 +98,13 @@ func _build_menu() -> void:
 	column.add_child(checkpoints)
 	_add_button(column, "Before the log: test the climb", _jump_to_checkpoint.bind("before_log"))
 	_add_button(column, "After climbing the log: continue on foot", _jump_to_checkpoint.bind("after_log"))
+	_add_button(column, "In front of the gas station", _jump_to_checkpoint.bind("gas_station"))
+	var map_checkpoints := Label.new()
+	map_checkpoints.text = "MAP CHECKPOINTS (keeps saved progress)"
+	map_checkpoints.add_theme_font_size_override("font_size", 14)
+	column.add_child(map_checkpoints)
+	_add_button(column, "Carrie's house: the Wrapper in the armchair (replay, doesn't save)", _jump_to_map_checkpoint.bind("carrie_house"))
+	_add_button(column, "Hospital entrance: Clawman, hiding spots, bottles", _jump_to_map_checkpoint.bind("hospital"))
 	column.add_child(HSeparator.new())
 	_add_button(column, "Skip to next scene", _skip_next_scene)
 	_add_button(column, "Reload current scene", _reload_scene)
@@ -135,6 +146,7 @@ func set_open(value: bool) -> void:
 		_overlay.show()
 		_status_label.text = ""
 		_refresh_scene_label()
+		_scroll.scroll_vertical = 0
 		_buttons[0].grab_focus()
 	else:
 		opened = false
@@ -167,6 +179,49 @@ func _reload_scene() -> void:
 		jump_to_scene(scene.scene_file_path)
 
 
+## The gem save screen without a gem: the file restarts the player where they stood.
+func _open_save_screen() -> void:
+	var player := get_tree().get_first_node_in_group("player") as FirstPersonPlayer
+	if player == null or get_tree().current_scene == null:
+		_status_label.text = "There's no player in this scene to save."
+		return
+	set_open(false)
+	# The file's picture is the game view, so wait for a frame drawn without this menu.
+	await get_tree().process_frame
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+	if not is_instance_valid(player):
+		return
+	var thumbnail := SaveGame.capture_thumbnail()
+	player.freeze()
+	var save := func(slot: int) -> bool: return SaveGame.save_here(player, slot, thumbnail)
+	var screen := SaveSlotScreen.open(get_tree().root, SaveSlotScreen.Mode.SAVE, save, true, true)
+	screen.closed.connect(func() -> void:
+		if is_instance_valid(player):
+			player.unfreeze()
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	)
+
+
+func _open_load_screen() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	set_open(false)
+	var mouse_mode := Input.mouse_mode
+	var screen := SaveSlotScreen.open(scene, SaveSlotScreen.Mode.LOAD, _load_slot, true, true)
+	screen.closed.connect(func() -> void: Input.mouse_mode = mouse_mode)
+
+
+func _load_slot(slot: int) -> bool:
+	var error: Error = await SaveGame.load_slot(slot)
+	if error != OK:
+		return false
+	# The old scene takes the load screen with it, so release its pause here.
+	get_tree().paused = false
+	return true
+
+
 func _skip_forest_intro() -> void:
 	var scene := get_tree().current_scene
 	if scene != null and scene.has_method("finish_fade_immediately"):
@@ -183,47 +238,79 @@ func _jump_to_checkpoint(checkpoint: String) -> void:
 		_pending_checkpoint = ""
 
 
+func _jump_to_map_checkpoint(checkpoint: String) -> void:
+	if not _loading_path.is_empty():
+		return
+	var scene := get_tree().current_scene
+	if scene != null and scene.scene_file_path == MAP_PATH:
+		set_open(false)
+		apply_map_checkpoint(scene, checkpoint)
+		return
+	_pending_checkpoint = checkpoint
+	jump_to_scene(MAP_PATH)
+	if _loading_path.is_empty():
+		_pending_checkpoint = ""
+
+
+## Hospital: places the player inside the entrance, facing down the corridor. Walking in advances
+## the story to the hospital stage as normal play would.
+## Carrie's house: places the player on the porch, facing the open front door, with the story set
+## back to finding Carrie's notebook so the house plays again. Saving stops for that session.
+func apply_map_checkpoint(scene: Node, checkpoint: String) -> void:
+	var player := scene.get_node_or_null("Player") as FirstPersonPlayer
+	if player == null:
+		return
+	if player.is_hidden():
+		player.hiding_spot.call("force_out")
+	var target := Vector3.INF
+	match checkpoint:
+		"hospital":
+			var hospital := scene.get_node_or_null("Buildings/NeighborhoodHospital") as Node3D
+			if hospital == null:
+				return
+			if not player.has_item(PlayerInventory.FLASHLIGHT_ITEM):
+				player.inventory.add_item(PlayerInventory.FLASHLIGHT_ITEM)
+			player.global_position = hospital.to_global(Vector3(-10.2, 0.2, -2.6))
+			target = hospital.to_global(Vector3(5, 0.2, -4.15))
+		"carrie_house":
+			var house := scene.get_node_or_null("Buildings/ResidentialLots/CarrieHouse") as Node3D
+			var story := scene.get_node_or_null("OpeningStory")
+			if house == null or story == null:
+				return
+			story.call("debug_replay_house")
+			player.global_position = house.call("point", &"porch") + Vector3.UP * 0.1
+			target = house.call("point", &"front_door")
+		_:
+			return
+	player.velocity = Vector3.ZERO
+	player.look_at(Vector3(target.x, player.global_position.y, target.z), Vector3.UP)
+	player.head.rotation.x = 0.0
+	player.snap_to_ground.call_deferred()
+
+
 func jump_to_scene(path: String) -> void:
 	if not OS.is_debug_build() or not _loading_path.is_empty():
 		return
 	if not ResourceLoader.exists(path, "PackedScene"):
 		_status_label.text = "Scene not found: " + path
 		return
-	var error := ResourceLoader.load_threaded_request(path, "PackedScene")
-	if error != OK:
-		_status_label.text = "Cannot load scene: " + error_string(error)
-		return
 	_loading_path = path
 	for button in _buttons:
 		button.disabled = true
 	_status_label.text = "Loading " + path.get_file() + "..."
+	_jump_with_loading_screen.call_deferred(path)
 
 
-func _process(_delta: float) -> void:
-	if _loading_path.is_empty():
-		return
-	var progress: Array = []
-	var status := ResourceLoader.load_threaded_get_status(_loading_path, progress)
-	if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-		if not progress.is_empty():
-			_status_label.text = "Loading %s: %d%%" % [_loading_path.get_file(), roundi(float(progress[0]) * 100)]
-		return
-	if status != ResourceLoader.THREAD_LOAD_LOADED:
-		_pending_checkpoint = ""
-		_finish_loading("Scene loading failed: " + _loading_path)
-		return
-	var packed := ResourceLoader.load_threaded_get(_loading_path) as PackedScene
-	_finish_loading("")
-	if packed == null:
-		_pending_checkpoint = ""
-		_status_label.text = "Loaded resource is not a scene."
-		return
-	set_open(false)
-	var error := get_tree().change_scene_to_packed(packed)
+func _jump_with_loading_screen(path: String) -> void:
+	var error := await SceneLoader.change_to(path, _finish_scene_jump)
 	if error != OK:
 		_pending_checkpoint = ""
-		set_open(true)
-		_status_label.text = "Scene change failed: " + error_string(error)
+		_finish_loading("Scene change failed: " + error_string(error))
+
+
+func _finish_scene_jump(_scene: Node) -> void:
+	_finish_loading("")
+	_on_scene_changed()
 
 
 func _finish_loading(message: String) -> void:
@@ -235,6 +322,8 @@ func _finish_loading(message: String) -> void:
 
 
 func _on_scene_changed() -> void:
+	if not _loading_path.is_empty():
+		return
 	# Also release pause ownership if another system replaces the scene while open.
 	if opened:
 		set_open(false)
@@ -243,5 +332,11 @@ func _on_scene_changed() -> void:
 		var checkpoint := _pending_checkpoint
 		_pending_checkpoint = ""
 		var scene := get_tree().current_scene
-		if scene != null and scene.scene_file_path == FOREST_PATH and scene.has_method("debug_jump_to_log"):
-			scene.call("debug_jump_to_log", checkpoint == "after_log")
+		if scene != null and scene.scene_file_path == FOREST_PATH:
+			if checkpoint == "gas_station" and scene.has_method("debug_jump_to_gas_station"):
+				scene.call("debug_jump_to_gas_station")
+			elif scene.has_method("debug_jump_to_log"):
+				scene.call("debug_jump_to_log", checkpoint == "after_log")
+		elif scene != null and scene.scene_file_path == MAP_PATH:
+			# Wait one frame so the story's saved-checkpoint restore has already run.
+			apply_map_checkpoint.call_deferred(scene, checkpoint)

@@ -24,6 +24,9 @@ extends NavigationRegion3D
 @export var cell_height := 0.125
 @export var cache_navigation: bool = true
 const CACHE_PATH := "user://town_navigation_v4.res"
+@export var cache_path: String = CACHE_PATH
+## Optional local bounds keep small encounters from baking an entire outdoor map.
+@export var baking_bounds := AABB()
 var cache_reused: bool = false
 
 
@@ -35,8 +38,12 @@ func _ready() -> void:
 	_bake()
 
 
+func _geometry_root(path: NodePath) -> Node:
+	return get_node_or_null(path)
+
+
 func _bake() -> void:
-	var map := get_world_3d().navigation_map
+	var map := get_navigation_map()
 	NavigationServer3D.map_set_cell_size(map, cell_size)
 	NavigationServer3D.map_set_cell_height(map, cell_height)
 	var nav_mesh := NavigationMesh.new()
@@ -47,6 +54,7 @@ func _bake() -> void:
 	nav_mesh.cell_size = cell_size
 	nav_mesh.cell_height = cell_height
 	nav_mesh.edge_max_error = 0.75
+	nav_mesh.filter_baking_aabb = baking_bounds
 	# Match the actual open doorways and floors used by physics. Imported showcase
 	# meshes include closed doors even where the gameplay collision removes them.
 	nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
@@ -54,29 +62,36 @@ func _bake() -> void:
 	nav_mesh.geometry_source_group_name = &"town_navigation_source"
 
 	var source_geometry := NavigationMeshSourceGeometryData3D.new()
-	var found_any := false
+	var source_roots: Array[Node] = []
 	for path in geometry_root_paths:
-		var root := get_node_or_null(path)
+		var root := _geometry_root(path)
 		if root == null:
 			push_warning("Navigation baker could not find geometry root at %s." % path)
 			continue
-		found_any = true
 		root.add_to_group(&"town_navigation_source")
-	if not found_any:
+		source_roots.append(root)
+	if source_roots.is_empty():
 		return
 	# Parse once in the map's shared coordinate frame. Parsing each root
 	# separately strips that root's transform (notably ground height/offset).
 	NavigationServer3D.parse_source_geometry_data(nav_mesh, source_geometry, get_parent())
+	for source_root in source_roots:
+		source_root.remove_from_group(&"town_navigation_source")
 	var signature := str([hash(source_geometry.get_vertices()), hash(source_geometry.get_indices()), agent_radius, agent_height, agent_max_climb, agent_max_slope_degrees, cell_size, cell_height, nav_mesh.edge_max_error])
-	if cache_navigation and ResourceLoader.exists(CACHE_PATH):
-		var cached := ResourceLoader.load(CACHE_PATH, "NavigationMesh", ResourceLoader.CACHE_MODE_IGNORE) as NavigationMesh
+	if baking_bounds.has_volume():
+		signature += str(baking_bounds)
+	if cache_navigation and ResourceLoader.exists(cache_path):
+		var cached := ResourceLoader.load(cache_path, "NavigationMesh", ResourceLoader.CACHE_MODE_IGNORE) as NavigationMesh
 		if cached != null and cached.get_meta("source_signature", "") == signature:
 			cache_reused = true
 			navigation_mesh = cached
 			return
 
-	NavigationServer3D.bake_from_source_geometry_data(nav_mesh, source_geometry)
+	NavigationServer3D.bake_from_source_geometry_data_async(nav_mesh, source_geometry, _apply_bake.bind(nav_mesh, signature))
+
+
+func _apply_bake(nav_mesh: NavigationMesh, signature: String) -> void:
 	if cache_navigation:
 		nav_mesh.set_meta("source_signature", signature)
-		ResourceSaver.save(nav_mesh, CACHE_PATH)
+		ResourceSaver.save(nav_mesh, cache_path)
 	navigation_mesh = nav_mesh

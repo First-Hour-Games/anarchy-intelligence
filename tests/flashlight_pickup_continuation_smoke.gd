@@ -14,22 +14,50 @@ func check(condition: bool, message: String) -> void:
 
 
 func run() -> void:
-	var forest: StartingForest = load("res://scenes/chapters/main/starting_forest.tscn").instantiate()
+	var forest: Variant = load("res://scenes/chapters/main/starting_forest.tscn").instantiate()
 	forest.auto_start_fade = false
 	forest.get_node("BottomDialogueBalloon").auto_start = false
 	root.add_child(forest)
 	await process_frame
 	await physics_frame
-	var player := forest.player
-	var scare := forest.get_node("GasStationRidgebackScare")
+	await physics_frame
+	var player: FirstPersonPlayer = forest.player
+	var scare: Node = forest.get_node("GasStationRidgebackScare")
 	var world_flashlight := forest.get_node("FlashlightItem") as Node3D
 	var pickup := world_flashlight.get_node("Pickup") as FlashlightPickup
+	var pallet_block := forest.get_node("Pallet2Block") as Node3D
+	var pallet_after := forest.get_node("Pallet2After") as Node3D
+	check(pallet_block.visible and not pallet_after.visible, "blocking pallet shows before flashlight pickup")
+	check(_collision_active(pallet_block) and not _collision_active(pallet_after), "only blocking pallet collides before pickup")
+	check(_physics_hits_pallet(pallet_block) and not _physics_hits_pallet(pallet_after), "physics detects the blocking pallet and ignores the hidden after pallet")
+	var approach := player.global_transform
+	var normal := pallet_block.global_basis.z.normalized()
+	approach.origin = pallet_block.to_global(Vector3(0, 0, 0.0625)) + normal * 2.0 - Vector3(0, 0.9, 0)
+	var capsule_query := PhysicsShapeQueryParameters3D.new()
+	var player_shape := player.get_node("CollisionShape3D") as CollisionShape3D
+	capsule_query.shape = player_shape.shape
+	capsule_query.transform = approach * player_shape.transform
+	capsule_query.motion = -normal * 4.0
+	capsule_query.collision_mask = player.collision_mask
+	capsule_query.exclude = [player.get_rid()]
+	var fractions := player.get_world_3d().direct_space_state.cast_motion(capsule_query)
+	capsule_query.transform.origin += capsule_query.motion * minf(1.0, fractions[1] + 0.01)
+	capsule_query.motion = Vector3.ZERO
+	var overlaps := player.get_world_3d().direct_space_state.intersect_shape(capsule_query)
+	var hits_blocker := overlaps.any(func(hit: Dictionary) -> bool: return pallet_block.is_ancestor_of(hit.collider))
+	check(fractions[0] < 1.0 and hits_blocker, "blocking pallet stops a sweep using the player's capsule before pickup")
 	check(not scare.enabled and not scare.is_physics_processing(), "Demo pickup ambush is disabled by default")
 	check(not scare.ridge.visible and not scare.ridge.is_physics_processing(), "Demo monster stays inactive")
 	pickup.interact(player)
+	await physics_frame
+	await physics_frame
+	check(not pallet_block.visible and pallet_after.visible, "flashlight pickup swaps the two pallet meshes")
+	check(not _collision_active(pallet_block) and _collision_active(pallet_after), "pallet swap removes old collision and enables new collision")
+	check(not _physics_hits_pallet(pallet_block) and _physics_hits_pallet(pallet_after), "physics switches from the blocker to the after-pickup pallet")
 	var screen = load("res://scenes/ui/item_pickup/item_pickup_screen.gd").instance
 	check(player.inventory.has_item(PlayerInventory.FLASHLIGHT_ITEM), "Pickup adds the flashlight to inventory")
 	check(screen.is_active and player.is_frozen, "Pickup inspection opens and temporarily freezes the player")
+	check(forest.get_node_or_null("FlashlightPickupDialogue") == null, "Pickup dialogue waits for confirmation")
 	check(not world_flashlight.visible, "Collected world model and its lights are hidden without the scare")
 	var preview := screen._model_pivot.get_child(0) as Node3D
 	check(preview.scene_file_path == "res://scenes/items/flashlight_preview.tscn", "Pickup inspection uses the visual-only flashlight preview")
@@ -40,8 +68,21 @@ func run() -> void:
 	await create_timer(0.4).timeout
 	screen.close()
 	await create_timer(0.4).timeout
-	check(not screen.is_active and not player.is_frozen, "Confirming pickup returns control to the player")
+	check(not screen.is_active, "Confirming pickup closes the inspection")
 	check(player.flashlight.is_enabled(), "Confirming pickup equips and switches on the flashlight")
+	var dialogue := forest.get_node_or_null("FlashlightPickupDialogue") as BottomDialogueBalloon
+	check(dialogue != null and player.is_frozen, "Confirmation starts dialogue and keeps the player still")
+	if dialogue != null:
+		check(dialogue.dialogue_line != null and dialogue.dialogue_line.character == "Thomas" and dialogue.dialogue_line.text == "This could help me navigate in the dark easier.", "Thomas says the requested flashlight pickup line")
+		if dialogue.dialogue_line != null:
+			dialogue.finish_opening_animation()
+			await process_frame
+			if dialogue.dialogue_label.is_typing:
+				dialogue.dialogue_label.skip_typing()
+			await process_frame
+			dialogue.next(dialogue.dialogue_line.next_id)
+		await create_timer(0.5).timeout
+	check(not player.is_frozen, "Finishing pickup dialogue returns control to the player")
 	for turn in 4:
 		player.rotation.y += PI
 		await create_timer(0.15).timeout
@@ -50,7 +91,36 @@ func run() -> void:
 	check(not player.is_frozen, "Player remains free to continue the game")
 	player.flashlight.toggle()
 	check(not player.flashlight.is_enabled(), "Equipped flashlight still toggles normally")
+	check(not pallet_block.visible and pallet_after.visible, "switching flashlight off does not undo pallet swap")
 	screen.queue_free()
 	forest.queue_free()
 	await process_frame
+	var restored: Variant = load("res://scenes/chapters/main/starting_forest.tscn").instantiate()
+	restored.auto_start_fade = false
+	restored.get_node("BottomDialogueBalloon").auto_start = false
+	root.add_child(restored)
+	get_root().get_node("SaveGame").call("_restore_player", restored.player, {"items": ["flashlight"], "flashlight_on": false})
+	await physics_frame
+	await physics_frame
+	check(not restored.get_node("Pallet2Block").visible and restored.get_node("Pallet2After").visible, "restoring flashlight ownership restores after-pallet layout")
+	check(not _collision_active(restored.get_node("Pallet2Block")) and _collision_active(restored.get_node("Pallet2After")), "restored pallet collision matches restored layout")
+	check(not _physics_hits_pallet(restored.get_node("Pallet2Block")) and _physics_hits_pallet(restored.get_node("Pallet2After")), "restored pallet layout is applied to actual physics bodies")
+	restored.queue_free()
+	await process_frame
 	quit(1 if failures else 0)
+
+
+func _collision_active(pallet: Node3D) -> bool:
+	var shapes := pallet.find_children("*", "CollisionShape3D", true, false)
+	for shape: CollisionShape3D in shapes:
+		if not shape.disabled:
+			return true
+	return false
+
+
+func _physics_hits_pallet(pallet: Node3D) -> bool:
+	var center := pallet.to_global(Vector3(0, 0, 0.0625))
+	var normal := pallet.global_basis.z.normalized()
+	var query := PhysicsRayQueryParameters3D.create(center + normal, center - normal, 1)
+	var hit := pallet.get_world_3d().direct_space_state.intersect_ray(query)
+	return not hit.is_empty() and pallet.is_ancestor_of(hit.collider)

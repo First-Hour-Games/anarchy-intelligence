@@ -1,0 +1,1457 @@
+{
+ "footprint": {
+  "min": [
+   -5.1,
+   -10.1
+  ],
+  "max": [
+   5.1,
+   0.1
+  ]
+ },
+ "floors": {
+  "CELLAR": -1.9,
+  "GROUND": 0.6,
+  "UPPER": 3.65,
+  "ATTIC": 6.4
+ },
+ "points": {
+  "yard_front": [
+   2.2,
+   0.0,
+   4.6
+  ],
+  "porch": [
+   2.2,
+   0.5499999999999999,
+   1.3
+  ],
+  "front_door": [
+   2.2,
+   0.6,
+   0.0
+  ],
+  "hall": [
+   2.2,
+   0.6,
+   -1.4
+  ],
+  "door_note": [
+   1.28,
+   1.45,
+   0.15
+  ],
+  "wrapper_post": [
+   -2.5999999999999996,
+   0.6,
+   -1.5
+  ],
+  "wrapper_seat": [
+   -2.5999999999999996,
+   0.6,
+   -2.35
+  ],
+  "tv": [
+   -2.6,
+   0.6,
+   -0.36
+  ],
+  "voice": [
+   -2.3000000000000003,
+   4.85,
+   -2.15
+  ],
+  "notebook": [
+   -1.6,
+   4.4225,
+   -0.425
+  ],
+  "carrie_room": [
+   -3.1,
+   3.65,
+   -2.6
+  ],
+  "stairs_bottom": [
+   4.300000000000001,
+   0.6,
+   -0.7000000000000001
+  ],
+  "stairs_top": [
+   4.300000000000001,
+   3.65,
+   -5.175
+  ],
+  "back_stair_bottom": [
+   4.275,
+   0.6,
+   -9.2
+  ],
+  "kitchen": [
+   2.9000000000000004,
+   0.6,
+   -9.25
+  ],
+  "back_door": [
+   2.25,
+   0.5499999999999999,
+   -10.6
+  ],
+  "back_yard": [
+   2.25,
+   0.0,
+   -12.6
+  ]
+ },
+ "furniture": [
+  {
+   "name": "Sofa",
+   "role": "furniture",
+   "min": [
+    -1.9,
+    0.6,
+    -4.94
+   ],
+   "max": [
+    0.1,
+    1.45,
+    -4.14
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Armchair",
+   "role": "furniture",
+   "min": [
+    -3.05,
+    0.6,
+    -2.85
+   ],
+   "max": [
+    -2.15,
+    1.5,
+    -1.95
+   ],
+   "blocks": true
+  },
+  {
+   "name": "TV",
+   "role": "interact",
+   "min": [
+    -2.95,
+    0.6,
+    -0.6
+   ],
+   "max": [
+    -2.25,
+    1.65,
+    -0.12
+   ],
+   "blocks": true
+  },
+  {
+   "name": "ChimneyBreast",
+   "role": "furniture",
+   "min": [
+    -4.9,
+    0.6,
+    -4.4
+   ],
+   "max": [
+    -4.45,
+    3.4,
+    -3.0
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Hearth",
+   "role": "furniture",
+   "min": [
+    -4.45,
+    0.6,
+    -4.4
+   ],
+   "max": [
+    -3.85,
+    0.6599999999999999,
+    -3.0
+   ],
+   "blocks": false
+  },
+  {
+   "name": "CoatRack",
+   "role": "furniture",
+   "min": [
+    0.75,
+    0.6,
+    -0.6
+   ],
+   "max": [
+    1.1,
+    2.4,
+    -0.25
+   ],
+   "blocks": true
+  },
+  {
+   "name": "HallTable",
+   "role": "furniture",
+   "min": [
+    2.9,
+    0.6,
+    -2.65
+   ],
+   "max": [
+    3.55,
+    1.4,
+    -2.15
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DiningTable",
+   "role": "furniture",
+   "min": [
+    -3.4,
+    0.6,
+    -8.3
+   ],
+   "max": [
+    -1.6,
+    1.3599999999999999,
+    -6.9
+   ],
+   "blocks": true
+  },
+  {
+   "name": "ChinaCabinet",
+   "role": "furniture",
+   "min": [
+    0.0,
+    0.6,
+    -9.8
+   ],
+   "max": [
+    0.54,
+    2.5,
+    -8.6
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Counter",
+   "role": "furniture",
+   "min": [
+    0.66,
+    0.6,
+    -9.9
+   ],
+   "max": [
+    1.55,
+    1.52,
+    -9.3
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Stove",
+   "role": "furniture",
+   "min": [
+    0.66,
+    0.6,
+    -9.25
+   ],
+   "max": [
+    1.31,
+    1.5499999999999998,
+    -8.5
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Icebox",
+   "role": "furniture",
+   "min": [
+    0.66,
+    0.6,
+    -6.9
+   ],
+   "max": [
+    1.36,
+    2.3,
+    -6.2
+   ],
+   "blocks": true
+  },
+  {
+   "name": "KitchenTable",
+   "role": "furniture",
+   "min": [
+    2.94,
+    0.6,
+    -7.8
+   ],
+   "max": [
+    3.54,
+    1.3599999999999999,
+    -7.0
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Radio",
+   "role": "interact",
+   "min": [
+    0.8,
+    1.52,
+    -9.75
+   ],
+   "max": [
+    1.15,
+    1.82,
+    -9.5
+   ],
+   "blocks": false
+  },
+  {
+   "name": "CarrieBed",
+   "role": "hide",
+   "min": [
+    -4.6,
+    3.65,
+    -2.15
+   ],
+   "max": [
+    -3.6,
+    4.25,
+    -0.15
+   ],
+   "blocks": true
+  },
+  {
+   "name": "CarrieWardrobe",
+   "role": "hide",
+   "min": [
+    -4.8,
+    3.65,
+    -4.14
+   ],
+   "max": [
+    -3.8,
+    5.65,
+    -3.6
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DollhouseTable",
+   "role": "furniture",
+   "min": [
+    -2.6,
+    3.65,
+    -3.0
+   ],
+   "max": [
+    -1.4,
+    4.25,
+    -1.95
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Dollhouse",
+   "role": "story",
+   "min": [
+    -2.38,
+    4.25,
+    -2.94
+   ],
+   "max": [
+    -1.62,
+    4.9,
+    -2.01
+   ],
+   "blocks": true
+  },
+  {
+   "name": "CarrieDesk",
+   "role": "furniture",
+   "min": [
+    -2.2,
+    3.65,
+    -0.7
+   ],
+   "max": [
+    -1.0,
+    4.4,
+    -0.15
+   ],
+   "blocks": true
+  },
+  {
+   "name": "ParentsBed",
+   "role": "furniture",
+   "min": [
+    1.5,
+    3.65,
+    -2.3
+   ],
+   "max": [
+    3.1,
+    4.25,
+    -0.25
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Dresser",
+   "role": "furniture",
+   "min": [
+    3.05,
+    3.65,
+    -4.1
+   ],
+   "max": [
+    3.55,
+    4.65,
+    -2.9
+   ],
+   "blocks": true
+  },
+  {
+   "name": "SewingTable",
+   "role": "furniture",
+   "min": [
+    -2.4,
+    3.65,
+    -9.6
+   ],
+   "max": [
+    -1.0,
+    4.4,
+    -8.8
+   ],
+   "blocks": true
+  },
+  {
+   "name": "SewingBoards",
+   "role": "blocked",
+   "min": [
+    -2.45,
+    3.65,
+    -5.94
+   ],
+   "max": [
+    -1.35,
+    5.75,
+    -5.84
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Bathtub",
+   "role": "furniture",
+   "min": [
+    0.4,
+    3.65,
+    -9.85
+   ],
+   "max": [
+    2.0,
+    4.2,
+    -9.1
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Basin",
+   "role": "furniture",
+   "min": [
+    2.4,
+    3.65,
+    -9.85
+   ],
+   "max": [
+    2.9,
+    4.5,
+    -9.45
+   ],
+   "blocks": true
+  },
+  {
+   "name": "AtticTrunk",
+   "role": "furniture",
+   "min": [
+    -2.6,
+    6.4,
+    -6.9
+   ],
+   "max": [
+    -1.4,
+    7.0,
+    -6.3
+   ],
+   "blocks": true
+  },
+  {
+   "name": "AtticBoxes",
+   "role": "furniture",
+   "min": [
+    1.0,
+    6.4,
+    -7.0
+   ],
+   "max": [
+    2.4,
+    7.2,
+    -5.8
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Furnace",
+   "role": "furniture",
+   "min": [
+    -1.0,
+    -1.9,
+    -5.8
+   ],
+   "max": [
+    0.6,
+    -0.2999999999999998,
+    -4.4
+   ],
+   "blocks": true
+  },
+  {
+   "name": "CellarShelves",
+   "role": "furniture",
+   "min": [
+    -4.9,
+    -1.9,
+    -4.0
+   ],
+   "max": [
+    -4.4,
+    0.10000000000000009,
+    -1.0
+   ],
+   "blocks": true
+  },
+  {
+   "name": "WashingMachine",
+   "role": "interact",
+   "min": [
+    2.2,
+    -1.9,
+    -9.8
+   ],
+   "max": [
+    2.9,
+    -0.8999999999999999,
+    -9.2
+   ],
+   "blocks": true
+  },
+  {
+   "name": "LaundryTub",
+   "role": "furniture",
+   "min": [
+    1.3,
+    -1.9,
+    -9.8
+   ],
+   "max": [
+    2.0,
+    -0.9999999999999999,
+    -9.3
+   ],
+   "blocks": true
+  },
+  {
+   "name": "CoalBin",
+   "role": "furniture",
+   "min": [
+    -4.8,
+    -1.9,
+    -9.8
+   ],
+   "max": [
+    -3.8,
+    -0.8999999999999999,
+    -8.6
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DiningChair1",
+   "role": "dressing",
+   "min": [
+    -3.25,
+    0.6,
+    -8.8
+   ],
+   "max": [
+    -2.8,
+    1.5499999999999998,
+    -8.35
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DiningChair2",
+   "role": "dressing",
+   "min": [
+    -2.2,
+    0.6,
+    -8.8
+   ],
+   "max": [
+    -1.75,
+    1.5499999999999998,
+    -8.35
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DiningChair3",
+   "role": "dressing",
+   "min": [
+    -3.25,
+    0.6,
+    -6.85
+   ],
+   "max": [
+    -2.8,
+    1.5499999999999998,
+    -6.4
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DiningChair4",
+   "role": "dressing",
+   "min": [
+    -2.2,
+    0.6,
+    -6.85
+   ],
+   "max": [
+    -1.75,
+    1.5499999999999998,
+    -6.4
+   ],
+   "blocks": true
+  },
+  {
+   "name": "LivingRug",
+   "role": "dressing",
+   "min": [
+    -3.9,
+    0.6,
+    -3.3
+   ],
+   "max": [
+    -0.9,
+    0.61,
+    -1.1
+   ],
+   "blocks": false
+  },
+  {
+   "name": "FloorLamp",
+   "role": "dressing",
+   "min": [
+    0.15,
+    0.6,
+    -4.9
+   ],
+   "max": [
+    0.45,
+    2.2,
+    -4.6
+   ],
+   "blocks": false
+  },
+  {
+   "name": "HallRunner",
+   "role": "dressing",
+   "min": [
+    1.45,
+    0.6,
+    -4.6
+   ],
+   "max": [
+    2.35,
+    0.61,
+    -0.75
+   ],
+   "blocks": false
+  },
+  {
+   "name": "CarrieDeskChair",
+   "role": "dressing",
+   "min": [
+    -1.85,
+    3.65,
+    -1.12
+   ],
+   "max": [
+    -1.45,
+    4.45,
+    -0.72
+   ],
+   "blocks": true
+  },
+  {
+   "name": "CarrieRug",
+   "role": "dressing",
+   "min": [
+    -3.5,
+    3.65,
+    -3.6
+   ],
+   "max": [
+    -0.9,
+    3.6599999999999997,
+    -2.65
+   ],
+   "blocks": false
+  },
+  {
+   "name": "CarrieDoll",
+   "role": "dressing",
+   "min": [
+    -4.22,
+    4.1899999999999995,
+    -0.86
+   ],
+   "max": [
+    -3.97,
+    4.529999999999999,
+    -0.66
+   ],
+   "blocks": false
+  },
+  {
+   "name": "ParentsRug",
+   "role": "dressing",
+   "min": [
+    1.5,
+    3.65,
+    -3.4
+   ],
+   "max": [
+    3.1,
+    3.6599999999999997,
+    -2.45
+   ],
+   "blocks": false
+  },
+  {
+   "name": "Nightstand",
+   "role": "dressing",
+   "min": [
+    3.15,
+    3.65,
+    -0.75
+   ],
+   "max": [
+    3.5,
+    4.25,
+    -0.3
+   ],
+   "blocks": true
+  },
+  {
+   "name": "DressForm",
+   "role": "dressing",
+   "min": [
+    -4.25,
+    3.65,
+    -7.15
+   ],
+   "max": [
+    -3.75,
+    5.15,
+    -6.65
+   ],
+   "blocks": true
+  },
+  {
+   "name": "Toilet",
+   "role": "dressing",
+   "min": [
+    2.95,
+    3.65,
+    -9.85
+   ],
+   "max": [
+    3.4,
+    4.05,
+    -9.2
+   ],
+   "blocks": true
+  }
+ ],
+ "hiding": [
+  {
+   "name": "CoatCloset",
+   "kind": "closet",
+   "position": [
+    4.01,
+    0.6,
+    -4.3
+   ],
+   "yaw": -90.0
+  },
+  {
+   "name": "CarrieBed",
+   "kind": "bed",
+   "position": [
+    -4.07,
+    3.65,
+    -1.15
+   ],
+   "yaw": 90.0
+  },
+  {
+   "name": "CarrieWardrobe",
+   "kind": "closet",
+   "position": [
+    -4.3,
+    3.65,
+    -3.92
+   ],
+   "yaw": 0.0
+  },
+  {
+   "name": "WalkInCloset",
+   "kind": "closet",
+   "position": [
+    0.6499999999999999,
+    3.65,
+    -3.1999999999999997
+   ],
+   "yaw": -90.0
+  }
+ ],
+ "lights": [
+  {
+   "room": "LIVING ROOM",
+   "position": [
+    -2.1500000000000004,
+    2.98,
+    -2.55
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "HALL",
+   "position": [
+    2.1,
+    2.98,
+    -2.55
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "DINING ROOM",
+   "position": [
+    -2.1500000000000004,
+    2.98,
+    -7.45
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "KITCHEN",
+   "position": [
+    2.1,
+    2.98,
+    -7.45
+   ],
+   "kind": "bowl",
+   "mode": "dying",
+   "energy": 0.5,
+   "range": 6.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "CARRIE'S ROOM",
+   "position": [
+    -2.3000000000000003,
+    5.83,
+    -2.15
+   ],
+   "kind": "bowl",
+   "mode": "flicker",
+   "energy": 0.55,
+   "range": 5.5,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "PARENTS' ROOM",
+   "position": [
+    1.95,
+    5.83,
+    -2.15
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "LANDING",
+   "position": [
+    0.0,
+    5.83,
+    -5.1
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "SEWING ROOM",
+   "position": [
+    -2.3000000000000003,
+    5.83,
+    -7.95
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "BATH",
+   "position": [
+    1.9,
+    5.83,
+    -7.95
+   ],
+   "kind": "bowl",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "CELLAR",
+   "position": [
+    0.0,
+    -0.12,
+    -5.0
+   ],
+   "kind": "bulb",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "ATTIC",
+   "position": [
+    0.0,
+    8.53,
+    -5.0
+   ],
+   "kind": "bulb",
+   "mode": "off",
+   "energy": 0.0,
+   "range": 0.0,
+   "color": [
+    1.0,
+    0.82,
+    0.6
+   ]
+  },
+  {
+   "room": "PORCH",
+   "position": [
+    2.2,
+    3.12,
+    1.0
+   ],
+   "kind": "porch",
+   "mode": "steady",
+   "energy": 0.35,
+   "range": 7.0,
+   "color": [
+    0.92,
+    0.68,
+    0.42
+   ]
+  }
+ ],
+ "doors": [
+  {
+   "name": "CellarDoor",
+   "wall": "G_StairEnclosure",
+   "start": -6.0,
+   "hinge": "b",
+   "swing": -1.0,
+   "open_degrees": 0.0
+  },
+  {
+   "name": "BackStairDoor",
+   "wall": "G_StairEnclosure",
+   "start": -9.85,
+   "hinge": "a",
+   "swing": 1.0,
+   "open_degrees": 90.0
+  },
+  {
+   "name": "CoatClosetDoor",
+   "wall": "G_StairSide",
+   "start": -4.6,
+   "hinge": "a",
+   "swing": -1.0,
+   "open_degrees": 0.0
+  },
+  {
+   "name": "CarrieDoor",
+   "wall": "U_FrontRoomsBack",
+   "start": -2.5,
+   "hinge": "a",
+   "swing": 1.0,
+   "open_degrees": 95.0
+  },
+  {
+   "name": "ParentsDoor",
+   "wall": "U_FrontRoomsBack",
+   "start": 1.6,
+   "hinge": "b",
+   "swing": 1.0,
+   "open_degrees": 0.0
+  },
+  {
+   "name": "BathDoor",
+   "wall": "U_BackRoomsFront",
+   "start": 1.6,
+   "hinge": "a",
+   "swing": -1.0,
+   "open_degrees": 0.0
+  },
+  {
+   "name": "WalkInClosetDoorWest",
+   "wall": "U_FrontSplit",
+   "start": -3.6,
+   "hinge": "a",
+   "swing": -1.0,
+   "open_degrees": 0.0
+  },
+  {
+   "name": "WalkInClosetDoorEast",
+   "wall": "U_ClosetEast",
+   "start": -3.6,
+   "hinge": "a",
+   "swing": 1.0,
+   "open_degrees": 0.0
+  }
+ ],
+ "doorways": [
+  {
+   "wall": "ExtFront",
+   "centre": [
+    2.2,
+    0.6,
+    0.0
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 1.1999999999999997,
+   "open": true
+  },
+  {
+   "wall": "ExtBack",
+   "centre": [
+    2.25,
+    0.6,
+    -10.0
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 1.0,
+   "open": true
+  },
+  {
+   "wall": "G_FrontBack",
+   "centre": [
+    -2.8,
+    0.6,
+    -5.0
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 1.6,
+   "open": true
+  },
+  {
+   "wall": "G_FrontBack",
+   "centre": [
+    1.9,
+    0.6,
+    -5.0
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 1.4000000000000001,
+   "open": true
+  },
+  {
+   "wall": "G_LeftRight",
+   "centre": [
+    0.6,
+    0.6,
+    -2.4
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 2.8,
+   "open": true
+  },
+  {
+   "wall": "G_LeftRight",
+   "centre": [
+    0.6,
+    0.6,
+    -7.7
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 1.4000000000000004,
+   "open": true
+  },
+  {
+   "wall": "G_StairEnclosure",
+   "centre": [
+    3.6,
+    0.6,
+    -5.6
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 0.7999999999999998,
+   "open": false
+  },
+  {
+   "wall": "G_StairEnclosure",
+   "centre": [
+    3.6,
+    0.6,
+    -9.25
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 1.1999999999999993,
+   "open": true
+  },
+  {
+   "wall": "G_StairSide",
+   "centre": [
+    3.65,
+    0.6,
+    -4.199999999999999
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 0.7999999999999998,
+   "open": false
+  },
+  {
+   "wall": "U_FrontRoomsBack",
+   "centre": [
+    -1.9,
+    3.65,
+    -4.2
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 1.2,
+   "open": true
+  },
+  {
+   "wall": "U_FrontRoomsBack",
+   "centre": [
+    2.1,
+    3.65,
+    -4.2
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 1.0,
+   "open": false
+  },
+  {
+   "wall": "U_BackRoomsFront",
+   "centre": [
+    2.05,
+    3.65,
+    -6.0
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "width": 0.8999999999999999,
+   "open": false
+  },
+  {
+   "wall": "U_FrontSplit",
+   "centre": [
+    0.3,
+    3.65,
+    -3.2
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 0.8000000000000003,
+   "open": false
+  },
+  {
+   "wall": "U_ClosetEast",
+   "centre": [
+    1.3,
+    3.65,
+    -3.2
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "width": 0.8000000000000003,
+   "open": false
+  }
+ ],
+ "rooms": [
+  {
+   "name": "LIVING ROOM",
+   "floor": 0.6,
+   "min": [
+    -4.9,
+    -5.0
+   ],
+   "max": [
+    0.6,
+    -0.1
+   ]
+  },
+  {
+   "name": "HALL",
+   "floor": 0.6,
+   "min": [
+    0.6,
+    -5.0
+   ],
+   "max": [
+    3.6,
+    -0.1
+   ]
+  },
+  {
+   "name": "DINING ROOM",
+   "floor": 0.6,
+   "min": [
+    -4.9,
+    -9.9
+   ],
+   "max": [
+    0.6,
+    -5.0
+   ]
+  },
+  {
+   "name": "KITCHEN",
+   "floor": 0.6,
+   "min": [
+    0.6,
+    -9.9
+   ],
+   "max": [
+    3.6,
+    -5.0
+   ]
+  },
+  {
+   "name": "CARRIE'S ROOM",
+   "floor": 3.65,
+   "min": [
+    -4.9,
+    -4.2
+   ],
+   "max": [
+    0.3,
+    -0.1
+   ]
+  },
+  {
+   "name": "PARENTS' ROOM",
+   "floor": 3.65,
+   "min": [
+    0.3,
+    -4.2
+   ],
+   "max": [
+    3.6,
+    -0.1
+   ]
+  },
+  {
+   "name": "LANDING",
+   "floor": 3.65,
+   "min": [
+    -4.9,
+    -6.0
+   ],
+   "max": [
+    4.9,
+    -4.2
+   ]
+  },
+  {
+   "name": "SEWING ROOM",
+   "floor": 3.65,
+   "min": [
+    -4.9,
+    -9.9
+   ],
+   "max": [
+    0.3,
+    -6.0
+   ]
+  },
+  {
+   "name": "BATH",
+   "floor": 3.65,
+   "min": [
+    0.3,
+    -9.9
+   ],
+   "max": [
+    3.5,
+    -6.0
+   ]
+  },
+  {
+   "name": "CELLAR",
+   "floor": -1.9,
+   "min": [
+    -4.9,
+    -9.9
+   ],
+   "max": [
+    4.9,
+    -0.1
+   ]
+  },
+  {
+   "name": "ATTIC",
+   "floor": 6.4,
+   "min": [
+    -3.5,
+    -8.5
+   ],
+   "max": [
+    3.5,
+    -1.5
+   ]
+  }
+ ]
+}

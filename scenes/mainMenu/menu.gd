@@ -4,7 +4,6 @@ extends CanvasLayer
 @onready var options_label: Label = $AspectRatioContainer/Control/MenuContainer/OptionsLabel
 @onready var quit_label: Label = $AspectRatioContainer/Control/MenuContainer/QuitLabel
 
-@onready var fade_rect: ColorRect = $AspectRatioContainer/Control/Fade
 @onready var music_player: AudioStreamPlayer = $MusicPlayer
 @onready var move_sfx_player: AudioStreamPlayer = $MoveSfxPlayer
 @onready var click_sfx_player: AudioStreamPlayer = $ClickSfxPlayer
@@ -19,10 +18,19 @@ var music_volume_percent: int = 80
 var is_starting: bool = false
 var input_ready_at: int = 0
 var can_continue: bool = false
+## Startup disables this until its black overlay has finished revealing the menu.
+@export var play_music_on_ready: bool = true
 @export var progress_save_path: String = "user://opening_story_v1.json"
 var reset_label: Label
+## Opens the four save files (SaveSlotScreen); shown while any file exists.
+var load_label: Label
+var slots_open: bool = false
 var graphics_label: Label
 var reset_warning: ConfirmationDialog
+## Opens the team and 3D model credits (credits_screen.gd).
+var credits_label: Label
+var credits_open: bool = false
+const CREDITS_SCREEN := preload("res://scenes/mainMenu/credits_screen.gd")
 
 const SELECTED_FONT_SIZE: int = 36
 const UNSELECTED_FONT_SIZE: int = 24
@@ -34,8 +42,16 @@ func _ready() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	input_ready_at = Time.get_ticks_msec() + 250
-	can_continue = PauseMenu.has_started_chapter or FileAccess.file_exists(progress_save_path)
+	can_continue = SaveGame.has_any_save()
 	_build_reset_option()
+	load_label = options_label.duplicate() as Label
+	load_label.name = "LoadLabel"
+	options_label.get_parent().add_child(load_label)
+	options_label.get_parent().move_child(load_label, options_label.get_index())
+	credits_label = options_label.duplicate() as Label
+	credits_label.name = "CreditsLabel"
+	quit_label.get_parent().add_child(credits_label)
+	quit_label.get_parent().move_child(credits_label, quit_label.get_index())
 	graphics_label = quit_label.duplicate() as Label
 	graphics_label.name = "GraphicsLabel"
 	graphics_label.hide()
@@ -48,11 +64,7 @@ func _ready() -> void:
 	_apply_master_volume()
 	_apply_music_volume()
 
-	main_options = [
-		{"label": start_label, "action": _start_game},
-		{"label": options_label, "action": _open_options},
-		{"label": quit_label, "action": _quit_game}
-	]
+	_rebuild_main_options()
 	
 	sub_options = [
 		{"label": start_label, "action": _toggle_master_volume_step},
@@ -65,14 +77,61 @@ func _ready() -> void:
 	_setup_mouse_listeners()
 	_update_menu_display(false)
 	
-	# Start background music
+	if play_music_on_ready:
+		start_menu_music()
+
+func start_menu_music() -> void:
+	if not is_starting and is_instance_valid(music_player) and not music_player.playing:
+		music_player.play()
+
+func _rebuild_main_options() -> void:
+	main_options = [{"label": start_label, "action": _start_game}]
+	if can_continue:
+		main_options.append({"label": load_label, "action": _open_load_screen})
+	main_options.append({"label": options_label, "action": _open_options})
+	main_options.append({"label": credits_label, "action": _open_credits})
+	main_options.append({"label": quit_label, "action": _quit_game})
+	selected_index = clampi(selected_index, 0, main_options.size() - 1)
+
+func _open_credits() -> void:
+	if credits_open or is_starting:
+		return
+	credits_open = true
+	var screen: CanvasLayer = CREDITS_SCREEN.new()
+	screen.closed.connect(_on_credits_closed)
+	add_child(screen)
+
+func _on_credits_closed() -> void:
+	credits_open = false
+	input_ready_at = Time.get_ticks_msec() + 200
+	if click_sfx_player:
+		click_sfx_player.play()
+
+func _open_load_screen() -> void:
+	if slots_open or is_starting:
+		return
+	slots_open = true
+	var screen := SaveSlotScreen.open(self, SaveSlotScreen.Mode.LOAD, _load_slot)
+	screen.closed.connect(_on_load_screen_closed)
+
+func _on_load_screen_closed() -> void:
+	slots_open = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	input_ready_at = Time.get_ticks_msec() + 200
+
+func _load_slot(slot: int) -> bool:
+	is_starting = true
+	PauseMenu._save_settings()
 	if music_player:
-		music_player.finished.connect(music_player.play)
-		if not music_player.playing:
-			music_player.play()
+		music_player.stop()
+	var error: Error = await SaveGame.load_slot(slot)
+	if error != OK:
+		is_starting = false
+		return false
+	return true
 
 func _setup_mouse_listeners() -> void:
-	var all_labels: Array[Label] = [start_label, options_label, quit_label, graphics_label]
+	var all_labels: Array[Label] = [start_label, load_label, options_label, credits_label, quit_label, graphics_label]
 	if is_instance_valid(reset_label):
 		all_labels.append(reset_label)
 
@@ -92,7 +151,7 @@ func _setup_mouse_listeners() -> void:
 		lbl.mouse_entered.connect(_on_label_mouse_entered.bind(idx))
 
 func _on_label_mouse_entered(idx: int) -> void:
-	if is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or credits_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if selected_index == idx:
 		return
@@ -102,7 +161,7 @@ func _on_label_mouse_entered(idx: int) -> void:
 		_update_menu_display(true)
 
 func _on_label_gui_input(event: InputEvent, idx: int) -> void:
-	if is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or credits_open or is_starting or (is_instance_valid(reset_warning) and reset_warning.visible) or Time.get_ticks_msec() < input_ready_at:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		selected_index = idx
@@ -125,7 +184,7 @@ func _mark_input_handled() -> void:
 		get_viewport().set_input_as_handled()
 
 func _input(event: InputEvent) -> void:
-	if is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
+	if slots_open or credits_open or is_starting or reset_warning.visible or Time.get_ticks_msec() < input_ready_at:
 		return
 	if not event.is_pressed() or event.is_echo():
 		return
@@ -191,6 +250,8 @@ func _input(event: InputEvent) -> void:
 func _update_menu_display(play_sound: bool = true) -> void:
 	if is_in_options_menu:
 		start_label.show()
+		load_label.hide()
+		credits_label.hide()
 		options_label.show()
 		reset_label.show()
 		graphics_label.show()
@@ -214,13 +275,16 @@ func _update_menu_display(play_sound: bool = true) -> void:
 		graphics_label.hide()
 		quit_label.show()
 		
-		start_label.text = "Continue Game" if can_continue else "Start Game"
+		load_label.visible = can_continue
+		credits_label.show()
+		credits_label.text = "Credits"
+		start_label.text = "New Game"
+		load_label.text = "Load Game"
 		options_label.text = "Options"
 		quit_label.text = "Quit"
 		
-		_apply_label_style(start_label, selected_index == 0)
-		_apply_label_style(options_label, selected_index == 1)
-		_apply_label_style(quit_label, selected_index == 2)
+		for i in main_options.size():
+			_apply_label_style(main_options[i]["label"], selected_index == i)
 
 	if play_sound and move_sfx_player:
 		move_sfx_player.play()
@@ -273,36 +337,12 @@ func _start_game() -> void:
 func _begin_start_game() -> void:
 	PauseMenu._save_settings()
 	get_tree().paused = false
-	if can_continue:
-		await SceneLoader.change_to("res://scenes/chapters/main/map.tscn")
-		return
-	SceneLoader.prefetch("res://scenes/chapters/intro/intro.tscn")
-	print("Start Game selected!")
-	
-	if OS.has_feature("editor"):
-		if music_player: music_player.stop()
-		await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn")
-		return
-
-	print("Fading screen and music over 3 seconds...")
-	var tween = create_tween().set_parallel(true)
-	if fade_rect:
-		fade_rect.color.a = 0.0
-		fade_rect.visible = true
-		tween.tween_property(fade_rect, "color:a", 1.0, 3.0)
-	
-	if music_player:
-		tween.tween_property(music_player, "volume_db", -80.0, 3.0)
-	
-	await tween.finished
-	
+	SaveGame.start_new_game()
 	if music_player:
 		music_player.stop()
-	
-	print("Fade complete. Pausing 3 seconds in pitch black silence...")
-	await get_tree().create_timer(3.0).timeout
-	
-	await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn")
+	if await SceneLoader.change_to("res://scenes/chapters/intro/intro.tscn") != OK:
+		is_starting = false
+		start_menu_music()
 
 func _open_options() -> void:
 	is_in_options_menu = true
@@ -322,7 +362,10 @@ func _toggle_music_volume_step() -> void:
 
 func _close_options() -> void:
 	is_in_options_menu = false
-	selected_index = 1
+	selected_index = 0
+	for i in main_options.size():
+		if main_options[i]["label"] == options_label:
+			selected_index = i
 	_setup_mouse_listeners()
 	_update_menu_display(false)
 
@@ -353,6 +396,13 @@ func _ask_reset_progress() -> void:
 	reset_warning.get_cancel_button().grab_focus()
 
 func _reset_progress() -> void:
+	if SaveGame.delete_all() != OK:
+		var gem_error := AcceptDialog.new()
+		gem_error.title = "Could not reset progress"
+		gem_error.dialog_text = "Your save could not be deleted. Your progress has been kept."
+		add_child(gem_error)
+		gem_error.popup_centered()
+		return
 	if FileAccess.file_exists(progress_save_path):
 		var result := DirAccess.remove_absolute(progress_save_path)
 		if result != OK:
@@ -364,6 +414,8 @@ func _reset_progress() -> void:
 			return
 	PauseMenu.has_started_chapter = false
 	can_continue = false
+	_rebuild_main_options()
+	_setup_mouse_listeners()
 	if not is_in_options_menu:
 		selected_index = 0
 	reset_warning.hide()

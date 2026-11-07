@@ -17,10 +17,10 @@ emission_energy_multiplier = 4.0
 
 [node name="gasPumps" unique_id=1616454800 instance=ExtResource("1_pumps")]
 
-[node name="Station" parent="." index="0" unique_id=1459526285]
+[node name="Station" parent="." index="0" unique_id=595754469]
 material_override = ExtResource("2_station_material")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Station" parent_id_path=PackedInt32Array(1459526285) index="0" unique_id=10577170]
+[node name="StaticBody3D" type="StaticBody3D" parent="Station" index="0" unique_id=10577170]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Station/StaticBody3D" index="0" unique_id=2061603338]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.0856817, -3)
@@ -30,5 +30,6 @@ shape = SubResource("BoxShape3D_jpyye")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.0856817, -7.5931144)
 shape = SubResource("BoxShape3D_jpyye")
 
-[node name="Lights" parent="." index="1" unique_id=814480492]
+[node name="Lights" parent="." index="1" unique_id=75551271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0054836273, 5.77, 8.304877)
 surface_material_override/0 = SubResource("StandardMaterial3D_lights")

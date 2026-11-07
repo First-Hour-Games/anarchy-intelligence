@@ -1,0 +1,19 @@
+~ start
+
+...
+[color=blue]Hello?[/color]
+[color=blue]This is Thomas. Who is this?[/color]
+You do not need to know me.
+I am just a guidance.
+
+do clear_dialogue_text()
+[color=blue]Why did you want me to return to my home?[/color]
+Because you still have a few things on your plate.
+The people, the places, the memory...
+
+do clear_dialogue_text()
+[color=blue]What have you done to my hometown?[/color]
+Responsibilities are held unvalidated for such entity like me.
+You still need to keep going and slowly you will see...
+
+=> END

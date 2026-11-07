@@ -23,9 +23,14 @@ func run() -> void:
 	assert(menu.start_label.get_theme_font_size("font_size") == 24, "Start label should shrink to 24")
 	print("PASS: Main menu Options button hover updates selected_index and styling")
 
-	# Hover Quit label (index 2)
+	# Hover Credits label (index 2)
+	menu.credits_label.mouse_entered.emit()
+	assert(menu.selected_index == 2, "Credits hover should set index to 2")
+	print("PASS: Main menu Credits button hover updates selected_index")
+
+	# Hover Quit label (index 3)
 	menu.quit_label.mouse_entered.emit()
-	assert(menu.selected_index == 2, "Quit hover should set index to 2")
+	assert(menu.selected_index == 3, "Quit hover should set index to 3")
 	assert(menu.quit_label.get_theme_font_size("font_size") == 36, "Quit label should be size 36")
 	print("PASS: Main menu Quit button hover updates selected_index and styling")
 

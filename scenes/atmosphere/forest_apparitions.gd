@@ -134,6 +134,8 @@ func _at_edge(point: Vector3) -> bool:
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_player = get_parent().get_node_or_null("Player") as FirstPersonPlayer
+	if _player == null:
+		_player = get_tree().get_first_node_in_group("player") as FirstPersonPlayer
 	_cache_trees.call_deferred()
 
 func _cache_trees() -> void:
